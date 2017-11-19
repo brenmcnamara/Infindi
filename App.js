@@ -1,19 +1,18 @@
 /* @flow */
 
-import Firebase from 'react-native-firebase';
 import Icons from './icons';
+import InfindiCore from './src/infindi-core';
 import React, { Component } from 'react';
 
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 export default class App extends Component<{}> {
   componentDidMount(): void {
-    Firebase.auth()
-      .signInWithEmailAndPassword('me@brendan9.com', 'renogade19')
+    InfindiCore.Auth.genLogin('me@blah.com', 'renogade19')
       .then(user => {
         console.log('logged in', user.email);
       })
-      .catch(error => console.log('error', error));
+      .catch(error => console.log('error', error.message));
   }
 
   render() {
