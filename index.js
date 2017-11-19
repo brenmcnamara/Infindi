@@ -1,7 +1,10 @@
 /* @flow */
 
+import Colors from './src/design/colors';
 import HomeScreen from './src/components/HomeScreen.react';
 import Icons from './src/design/icons';
+
+import withProvider from './src/components/hoc/withProvider';
 
 import { Navigation } from 'react-native-navigation';
 
@@ -15,7 +18,7 @@ const ConverseButton = {
   icon: Icons.InfindiLogoNavBar,
 };
 
-Navigation.registerComponent('Home', () => HomeScreen);
+Navigation.registerComponent('Home', () => withProvider(HomeScreen));
 
 Navigation.startTabBasedApp({
   tabs: [
@@ -25,7 +28,10 @@ Navigation.startTabBasedApp({
         leftButtons: [SettingsListButton],
         rightButtons: [ConverseButton],
       },
-      navigatorStyle: {},
+      navigatorStyle: {
+        navBarBackgroundColor: Colors.BACKGROUND_COLOR,
+        navBarNoBorder: true,
+      },
       screen: 'Home',
     },
   ],

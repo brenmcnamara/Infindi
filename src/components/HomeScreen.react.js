@@ -1,16 +1,18 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import React, { Component } from 'react';
 import Unimplemented from './Unimplemented.react';
 
-export default class HomeScreen extends Component<{}> {
-  static navigatorStyle = {
-    navBarBackgroundColor: Colors.BACKGROUND_COLOR,
-    navBarNoBorder: true,
-  };
+import { connect } from 'react-redux';
+
+class HomeScreen extends Component<{}> {
+  static navigatorStyle = {};
 
   render() {
     return <Unimplemented />;
   }
 }
+
+const mapReduxStateToProps = () => ({});
+
+export default connect(mapReduxStateToProps)(HomeScreen);
