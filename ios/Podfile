@@ -1,22 +1,33 @@
 
 platform :ios, '9.0'
 
+# Remove this line to see the warnings that happen when calling 'pod install'.
+# Refer to this issue: https://github.com/CocoaPods/CocoaPods/issues/4370
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'Infindi' do
 
+  # Linking react native firebase here.
   pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
+  # Dependencies for react native firebase. Refer to this documentation:
+  # https://rnfirebase.io/docs/v2.2.*/installation-ios#2.1)-Add-the-required-pods
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
   pod 'React', :path => '../node_modules/react-native'
+
   pod 'Firebase/Core'
+  pod 'Firebase/Auth'
 
   target 'InfindiTests' do
     inherit! :search_paths
-
   end
 
 end
 
+# The react-native dependency gets dumped in the 'Pods' directory, and we
+# get js module collisions, which are errors picked up during the javascript
+# packaging / bundling process. Refer to this issue:
+# https://github.com/invertase/react-native-firebase/issues/414
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     if target.name == "React"
