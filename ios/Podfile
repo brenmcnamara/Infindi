@@ -1,15 +1,26 @@
 
 platform :ios, '9.0'
 
+install! 'cocoapods', :deterministic_uuids => false
+
 target 'Infindi' do
 
-  pod 'Firebase/Core'
-
   pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+  pod 'React', :path => '../node_modules/react-native'
+  pod 'Firebase/Core'
 
   target 'InfindiTests' do
     inherit! :search_paths
 
   end
 
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
 end

@@ -1,9 +1,10 @@
 /* @flow */
 
-import Icons from "./icons";
-import React, { Component } from "react";
+import Firebase from 'react-native-firebase';
+import Icons from './icons';
+import React, { Component } from 'react';
 
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 export default class App extends Component<{}> {
   render() {
@@ -20,26 +21,26 @@ export default class App extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
 
   header: {
-    fontFamily: "Lato-Regular",
+    fontFamily: 'Lato-Regular',
     fontSize: 32,
     marginBottom: 40,
-    textAlign: "center"
+    textAlign: 'center',
   },
 
   logo: {
-    marginBottom: 10
+    marginBottom: 10,
   },
 
   subHeader: {
-    fontFamily: "Lato-Light",
+    fontFamily: 'Lato-Light',
     fontSize: 18,
     margin: 10,
-    textAlign: "center"
-  }
+    textAlign: 'center',
+  },
 });

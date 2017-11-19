@@ -16,6 +16,9 @@
 ; Ignore polyfills
 .*/Libraries/polyfills/.*
 
+; Ignore ios and any javascript in Pods
+.*/ios/Pods/.*
+
 ; React Native Firebase
 .*/node_modules/react-native-firebase/lib/.*
 
