@@ -8,12 +8,8 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 
 export default class App extends Component<{}> {
   componentDidMount(): void {
-    console.log('mounted');
-    InfindiCore.Auth.genLogin('me@brendan9.com', 'renogade19')
-      .then(payload => {
-        console.log('success!', payload);
-      })
-      .catch(error => console.log('error', error));
+    InfindiCore.initialize();
+    InfindiCore.onEvent(console.log);
   }
 
   render() {
