@@ -17,7 +17,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [FIRApp configure];
+#ifdef DEBUG
+  NSString *serviceInfoPath = [[NSBundle mainBundle] pathForResource: @"GoogleService-Info-debug" ofType: @"plist"];
+#else
+  NSString *serviceInfoPath = [[NSBundle mainBundle] pathForResource: @"GoogleService-Info" ofType: @"plist"];
+#endif
+
+  FIROptions *options = [[FIROptions alloc] initWithContentsOfFile: serviceInfoPath];
+  [FIRApp configureWithOptions: options];
 
   NSURL *jsCodeLocation;
 

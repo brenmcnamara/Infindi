@@ -58,6 +58,8 @@
 		8139982C1FC1205E0043EB57 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998181FC1205E0043EB57 /* Lato-Light.ttf */; };
 		814C3ED41FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */; };
 		814C3ED51FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */; };
+		8190EE501FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */; };
+		8190EE511FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */; };
 		829CA85410CB3FC2B9553E9C /* libPods-Infindi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 480A060FC54C4DA216708D4A /* libPods-Infindi.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
@@ -363,6 +365,7 @@
 		813998171FC1205E0043EB57 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
 		813998181FC1205E0043EB57 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
 		814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-debug.plist"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		993A6AB777D04CFF37599415 /* Pods-Infindi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Infindi.release.xcconfig"; path = "Pods/Target Support Files/Pods-Infindi/Pods-Infindi.release.xcconfig"; sourceTree = "<group>"; };
 		A1BCFD5BE78168C8ADB44B9C /* libPods-InfindiTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-InfindiTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -511,6 +514,7 @@
 				813997F81FC11FCC0043EB57 /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */,
+				8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -1114,6 +1118,7 @@
 				814C3ED51FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */,
 				8139981C1FC1205E0043EB57 /* Lato-Regular.ttf in Resources */,
 				813998221FC1205E0043EB57 /* Lato-BoldItalic.ttf in Resources */,
+				8190EE511FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1132,6 +1137,7 @@
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				813998211FC1205E0043EB57 /* Lato-BoldItalic.ttf in Resources */,
 				813998251FC1205E0043EB57 /* Lato-Italic.ttf in Resources */,
+				8190EE501FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */,
 				813998271FC1205E0043EB57 /* Lato-Black.ttf in Resources */,
 				8139981B1FC1205E0043EB57 /* Lato-Regular.ttf in Resources */,
 			);
@@ -1405,6 +1411,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = UTHR9MM5YU;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"$(inherited)",
+					"PB_FIELD_32BIT=1",
+					"PB_NO_PACKED_STRUCTS=1",
+				);
 				INFOPLIST_FILE = Infindi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1431,6 +1444,13 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UTHR9MM5YU;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"$(inherited)",
+					"PB_FIELD_32BIT=1",
+					"PB_NO_PACKED_STRUCTS=1",
+				);
 				INFOPLIST_FILE = Infindi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1604,6 +1624,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
