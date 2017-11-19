@@ -35,7 +35,6 @@
 		2DCD954D1E0B4F2C00145EB5 /* InfindiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* InfindiTests.m */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		6079DA9E19E8D84D1464BAB8 /* libPods-InfindiTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1BCFD5BE78168C8ADB44B9C /* libPods-InfindiTests.a */; };
-		81312A821FC1E20E0004E5A9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		813998191FC1205E0043EB57 /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8139980F1FC1205E0043EB57 /* Lato-LightItalic.ttf */; };
 		8139981A1FC1205E0043EB57 /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8139980F1FC1205E0043EB57 /* Lato-LightItalic.ttf */; };
 		8139981B1FC1205E0043EB57 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998101FC1205E0043EB57 /* Lato-Regular.ttf */; };
@@ -60,6 +59,7 @@
 		814C3ED51FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */; };
 		8190EE501FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */; };
 		8190EE511FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */; };
+		819A9F1B1FC2306500E6BA6C /* libReactNativeNavigation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 819A9F1A1FC2303800E6BA6C /* libReactNativeNavigation.a */; };
 		829CA85410CB3FC2B9553E9C /* libPods-Infindi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 480A060FC54C4DA216708D4A /* libPods-Infindi.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
@@ -311,6 +311,13 @@
 			remoteGlobalIDString = 9936F32F1F5F2E5B0010BF04;
 			remoteInfo = "privatedata-tvOS";
 		};
+		819A9F191FC2303800E6BA6C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 819A9EF21FC2303800E6BA6C /* ReactNativeNavigation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D8AFADBD1BEE6F3F00A4592D;
+			remoteInfo = ReactNativeNavigation;
+		};
 		832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */;
@@ -366,6 +373,7 @@
 		813998181FC1205E0043EB57 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
 		814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-debug.plist"; sourceTree = "<group>"; };
+		819A9EF21FC2303800E6BA6C /* ReactNativeNavigation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeNavigation.xcodeproj; path = "../node_modules/react-native-navigation/ios/ReactNativeNavigation.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		993A6AB777D04CFF37599415 /* Pods-Infindi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Infindi.release.xcconfig"; path = "Pods/Target Support Files/Pods-Infindi/Pods-Infindi.release.xcconfig"; sourceTree = "<group>"; };
 		A1BCFD5BE78168C8ADB44B9C /* libPods-InfindiTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-InfindiTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -387,6 +395,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				819A9F1B1FC2306500E6BA6C /* libReactNativeNavigation.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -609,9 +618,18 @@
 			name = Lato;
 			sourceTree = "<group>";
 		};
+		819A9EF31FC2303800E6BA6C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				819A9F1A1FC2303800E6BA6C /* libReactNativeNavigation.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				819A9EF21FC2303800E6BA6C /* ReactNativeNavigation.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -842,6 +860,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = 819A9EF31FC2303800E6BA6C /* Products */;
+					ProjectRef = 819A9EF21FC2303800E6BA6C /* ReactNativeNavigation.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1086,6 +1108,13 @@
 			remoteRef = 814C3F031FC12F6C00DCC760 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		819A9F1A1FC2303800E6BA6C /* libReactNativeNavigation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativeNavigation.a;
+			remoteRef = 819A9F191FC2303800E6BA6C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		832341B51AAA6A8300B99B32 /* libRCTText.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1292,7 +1321,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81312A821FC1E20E0004E5A9 /* AppDelegate.m in Sources */,
 				00E356F31AD99517003FC87E /* InfindiTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1418,6 +1446,28 @@
 					"PB_FIELD_32BIT=1",
 					"PB_NO_PACKED_STRUCTS=1",
 				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/Core/Sources",
+					"\"${PODS_ROOT}/leveldb-library\"",
+					"\"${PODS_ROOT}/leveldb-library/include\"",
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAnalytics\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseDatabase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstanceID\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleToolboxForMac\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFirebase\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+					"\"${PODS_ROOT}/Headers/Public/nanopb\"",
+					"\"${PODS_ROOT}/Headers/Public/yoga\"",
+					"$(SRCROOT)/../node_modules/react-native-navigation/ios/**",
+				);
 				INFOPLIST_FILE = Infindi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1450,6 +1500,28 @@
 					"$(inherited)",
 					"PB_FIELD_32BIT=1",
 					"PB_NO_PACKED_STRUCTS=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/Core/Sources",
+					"\"${PODS_ROOT}/leveldb-library\"",
+					"\"${PODS_ROOT}/leveldb-library/include\"",
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAnalytics\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseDatabase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstanceID\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleToolboxForMac\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFirebase\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+					"\"${PODS_ROOT}/Headers/Public/nanopb\"",
+					"\"${PODS_ROOT}/Headers/Public/yoga\"",
+					"$(SRCROOT)/../node_modules/react-native-navigation/ios/**",
 				);
 				INFOPLIST_FILE = Infindi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

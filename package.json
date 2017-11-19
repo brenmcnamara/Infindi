@@ -10,7 +10,8 @@
 		"invariant": "^2.2.2",
 		"react": "16.0.0",
 		"react-native": "0.50.3",
-		"react-native-firebase": "^3.1.0"
+		"react-native-firebase": "^3.1.0",
+		"react-native-navigation": "^1.1.281"
 	},
 	"devDependencies": {
 		"babel-eslint": "^8.0.2",
