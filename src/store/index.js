@@ -1,9 +1,11 @@
 /* @flow */
 
+import authentication from '../middleware/authentication';
 import rootReducer from '../reducers/root';
+import thunk from 'redux-thunk';
 
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 
 export type State = {||};
 
-export default createStore(rootReducer);
+export default createStore(rootReducer, applyMiddleware(thunk, authentication));

@@ -5,9 +5,11 @@ import Unimplemented from './Unimplemented.react';
 
 import { connect } from 'react-redux';
 
-class HomeScreen extends Component<{}> {
-  static navigatorStyle = {};
+import { type ReduxProps } from 'redux';
 
+export type Props = ReduxProps;
+
+class HomeScreen extends Component<Props> {
   render() {
     return <Unimplemented />;
   }
