@@ -16,7 +16,7 @@ const Database = Firebase.database();
 export type Action = Action$AuthStatusChange;
 
 export type Action$AuthStatusChange = {|
-  +authStatus: AuthStatus,
+  +status: AuthStatus,
   +type: 'AUTH_STATUS_CHANGE',
 |};
 
@@ -32,13 +32,16 @@ export default (store: Store) => (next: Function) => {
         authStatus.type === 'NOT_INITIALIZED')
     ) {
       const userInfo = await genUserInfo(firebaseUser.uid);
-      next({ type: 'LOGIN', payload: { firebaseUser, userInfo } });
+      next({
+        type: 'AUTH_STATUS_CHANGE',
+        status: { type: 'LOGGED_IN', payload: { firebaseUser, userInfo } },
+      });
     } else if (
       !firebaseUser &&
       (authStatus.type === 'LOGOUT_INITIALIZE' ||
         authStatus.type === 'NOT_INITIALIZED')
     ) {
-      next({ type: 'LOGOUT' });
+      next({ type: 'AUTH_STATUS_CHANGE', status: { type: 'LOGGED_OUT' } });
     }
   });
 
@@ -46,11 +49,17 @@ export default (store: Store) => (next: Function) => {
     if (action.type === 'LOGIN_INITIALIZE') {
       const { email, password } = action;
       Auth.signInWithEmailAndPassword(email, password).catch(error => {
-        console.log('login error!', error.code);
+        next({
+          type: 'AUTH_STATUS_CHANGE',
+          status: { type: 'LOGIN_FAILURE', errorCode: error.code },
+        });
       });
     } else if (action.type === 'LOGOUT_INITIALIZE') {
       Auth.signOut().catch(error => {
-        console.log('logout error!', error.code);
+        next({
+          type: 'AUTH_STATUS_CHANGE',
+          status: { type: 'LOGOUT_FAILURE', errorCode: error.code },
+        });
       });
     }
     // Pass through any actions that we get and listen for any

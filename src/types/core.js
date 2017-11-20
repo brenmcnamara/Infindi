@@ -1,5 +1,7 @@
 /* @flow */
 
+export type ID = string;
+
 export type YearMonthDay = string; // YYYY/MM/DD
 
 export type SecondsSinceEpoch = number;

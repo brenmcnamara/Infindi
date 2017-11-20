@@ -1,6 +1,12 @@
 /* @flow */
 
-import { type Fuzzy, type Location, type YearMonthDay } from './core';
+import {
+  type Fuzzy,
+  type ID,
+  type Location,
+  type SecondsSinceEpoch,
+  type YearMonthDay,
+} from './core';
 
 /**
  * Firebase has a pre-defined User type, which is a bare-bones model containing
@@ -11,9 +17,12 @@ import { type Fuzzy, type Location, type YearMonthDay } from './core';
  */
 export type UserInfo = {|
   +currentResidence: Fuzzy<Location>,
+  +createdAt: SecondsSinceEpoch,
   +DOB: YearMonthDay,
   +firstName: string,
+  +id: ID,
   +lastName: string,
   +modelType: 'UserInfo',
   +type: 'MODEL',
+  +updatedAt: SecondsSinceEpoch,
 |};
