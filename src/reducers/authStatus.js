@@ -15,7 +15,7 @@ export type LoginPayload = {|
   +userInfo: UserInfo,
 |};
 
-export type LoginStatus =
+export type AuthStatus =
   | { type: 'LOGOUT_INITIALIZE' }
   | { type: 'LOGGED_OUT' }
   | { type: 'LOGOUT_FAILURE' }
@@ -24,7 +24,7 @@ export type LoginStatus =
   | { type: 'LOGGED_IN', payload: LoginPayload }
   | { type: 'LOGIN_FAILURE' };
 
-export type State = LoginStatus;
+export type State = AuthStatus;
 
 const DEFAULT_STATE = { type: 'NOT_INITIALIZED' };
 

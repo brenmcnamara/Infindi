@@ -12,6 +12,7 @@
     "sourceType": "module"
   },
   "globals": {
+    "__DEV__": true,
     "Promise": true
   },
   "env": {

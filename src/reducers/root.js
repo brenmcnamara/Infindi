@@ -1,9 +1,11 @@
 /* @flow */
 
-import loginStatus from './loginStatus';
+import authStatus, { type State as State$AuthStatus } from './authStatus';
 
 import { combineReducers } from 'redux';
 
-export type State = {};
+export type State = {|
+  +authStatus: State$AuthStatus,
+|};
 
-export default combineReducers({ loginStatus });
+export default combineReducers({ authStatus });

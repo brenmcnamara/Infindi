@@ -5,11 +5,15 @@ import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 
 import { applyMiddleware, createStore } from 'redux';
+import { createLogger } from 'redux-logger';
 
-import { type State as State$LoginStatus } from '../reducers/loginStatus';
+let middleware;
 
-export type State = {|
-  +loginStatus: State$LoginStatus,
-|};
+if (__DEV__) {
+  const reduxLogger = createLogger({ collapsed: true });
+  middleware = applyMiddleware(thunk, authentication, reduxLogger);
+} else {
+  middleware = applyMiddleware(thunk, authentication);
+}
 
-export default createStore(rootReducer, applyMiddleware(thunk, authentication));
+export default createStore(rootReducer, middleware);
