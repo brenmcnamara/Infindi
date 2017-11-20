@@ -6,6 +6,10 @@ import thunk from 'redux-thunk';
 
 import { applyMiddleware, createStore } from 'redux';
 
-export type State = {||};
+import { type State as State$LoginStatus } from '../reducers/loginStatus';
+
+export type State = {|
+  +loginStatus: State$LoginStatus,
+|};
 
 export default createStore(rootReducer, applyMiddleware(thunk, authentication));

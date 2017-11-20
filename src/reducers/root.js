@@ -1,9 +1,9 @@
 /* @flow */
 
-import temp from './temp';
+import loginStatus from './loginStatus';
 
 import { combineReducers } from 'redux';
 
 export type State = {};
 
-export default combineReducers({ temp });
+export default combineReducers({ loginStatus });

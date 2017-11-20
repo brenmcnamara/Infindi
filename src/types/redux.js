@@ -1,12 +1,13 @@
 /* @flow */
 
+import { type Action as Action$Auth } from '../actions/authentication';
 import { type State } from '../reducers/root';
 
 export type ReduxProps = {
   +dispatch: Dispatch,
 };
 
-export type PureAction = {||};
+export type PureAction = Action$Auth;
 
 export type ThunkAction = (dispatch: Dispatch) => void;
 
