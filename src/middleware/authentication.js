@@ -21,6 +21,10 @@ export type Action$AuthStatusChange = {|
 |};
 
 export default (store: Store) => (next: Function) => {
+  // Convenience function.
+  const changeStatus = (status: AuthStatus) => {
+    return next({ type: 'AUTH_STATUS_CHANGE', status });
+  };
   // Listen to firebase changes for authentication and
   // generate the relevant actions.
   Auth.onAuthStateChanged(async () => {
@@ -28,39 +32,65 @@ export default (store: Store) => (next: Function) => {
     const firebaseUser: ?Firebase$User = Auth.currentUser;
     if (
       firebaseUser &&
-      (authStatus.type === 'LOGIN_INITIALIZED' ||
+      (authStatus.type === 'LOGIN_INITIALIZE' ||
         authStatus.type === 'NOT_INITIALIZED')
     ) {
       const userInfo = await genUserInfo(firebaseUser.uid);
-      next({
-        type: 'AUTH_STATUS_CHANGE',
-        status: { type: 'LOGGED_IN', payload: { firebaseUser, userInfo } },
-      });
+      changeStatus({ type: 'LOGGED_IN', payload: { firebaseUser, userInfo } });
     } else if (
       !firebaseUser &&
       (authStatus.type === 'LOGOUT_INITIALIZE' ||
         authStatus.type === 'NOT_INITIALIZED')
     ) {
-      next({ type: 'AUTH_STATUS_CHANGE', status: { type: 'LOGGED_OUT' } });
+      changeStatus({ type: 'LOGGED_OUT' });
     }
   });
 
   return (action: AllActions) => {
-    if (action.type === 'LOGIN_INITIALIZE') {
-      const { email, password } = action;
-      Auth.signInWithEmailAndPassword(email, password).catch(error => {
-        next({
-          type: 'AUTH_STATUS_CHANGE',
-          status: { type: 'LOGIN_FAILURE', errorCode: error.code },
+    next(action);
+
+    switch (action.type) {
+      case 'LOGIN_INITIALIZE': {
+        const { email, password } = action;
+        Auth.signInWithEmailAndPassword(email, password).catch(error => {
+          changeStatus({ errorCode: error.code, type: 'LOGIN_FAILURE' });
         });
-      });
-    } else if (action.type === 'LOGOUT_INITIALIZE') {
-      Auth.signOut().catch(error => {
-        next({
-          type: 'AUTH_STATUS_CHANGE',
-          status: { type: 'LOGOUT_FAILURE', errorCode: error.code },
+        return changeStatus({ email, password, type: 'LOGIN_INITIALIZE' });
+      }
+
+      case 'LOGOUT_INITIALIZE': {
+        Auth.signOut().catch(error => {
+          changeStatus({ errorCode: error.code, type: 'LOGOUT_FAILURE' });
         });
-      });
+        return changeStatus({ type: 'LOGOUT_INITIALIZE' });
+      }
+
+      case 'PASSWORD_RESET_INITIALIZE': {
+        const { email } = action;
+        Auth.sendPasswordResetEmail(email).catch(error => {
+          changeStatus({
+            errorCode: error.code,
+            type: 'PASSWORD_RESET_INITIALIZE_FAILURE',
+          });
+        });
+        return changeStatus({ email, type: 'PASSWORD_RESET_INITIALIZE' });
+      }
+
+      case 'PASSWORD_RESET_CONFIRMATION': {
+        const { code, password } = action;
+        changeStatus({ type: 'PASSWORD_RESET_ATTEMPT', code, password });
+        Auth.confirmPasswordReset(code, password)
+          .then(() => {
+            changeStatus({ type: 'PASSWORD_RESET_SUCCESS' });
+          })
+          .catch(error => {
+            changeStatus({
+              errorCode: error.code,
+              type: 'PASSWORD_RESET_FAILURE',
+            });
+          });
+        break;
+      }
     }
     // Pass through any actions that we get and listen for any
     // authentication actions where we would need to trigger
