@@ -3,8 +3,7 @@
 export type Action =
   | Action$LoginInitialize
   | Action$LogoutInitialize
-  | Action$PasswordResetInitialize
-  | Action$PasswordResetComplete;
+  | Action$PasswordResetInitialize;
 
 type Action$LoginInitialize = {|
   +email: string,

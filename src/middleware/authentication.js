@@ -75,22 +75,6 @@ export default (store: Store) => (next: Function) => {
         });
         return changeStatus({ email, type: 'PASSWORD_RESET_INITIALIZE' });
       }
-
-      case 'PASSWORD_RESET_CONFIRMATION': {
-        const { code, password } = action;
-        changeStatus({ type: 'PASSWORD_RESET_ATTEMPT', code, password });
-        Auth.confirmPasswordReset(code, password)
-          .then(() => {
-            changeStatus({ type: 'PASSWORD_RESET_SUCCESS' });
-          })
-          .catch(error => {
-            changeStatus({
-              errorCode: error.code,
-              type: 'PASSWORD_RESET_FAILURE',
-            });
-          });
-        break;
-      }
     }
     // Pass through any actions that we get and listen for any
     // authentication actions where we would need to trigger
