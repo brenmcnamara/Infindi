@@ -1,33 +1,22 @@
 /* @flow */
 
-export type Action =
-  | Action$LoginInitialize
-  | Action$LogoutInitialize
-  | Action$PasswordResetInitialize;
+import { type LoginCredentials } from '../reducers/authStatus';
 
-type Action$LoginInitialize = {|
-  +email: string,
-  +password: string,
-  +type: 'LOGIN_INITIALIZE',
+export type Action = Action$LoginRequest | Action$LogoutRequest;
+
+type Action$LoginRequest = {|
+  +loginCredentials: LoginCredentials,
+  +type: 'LOGIN_REQUEST',
 |};
 
-export function login(email: string, password: string) {
-  return { type: 'LOGIN_INITIALIZE', email, password };
+export function login(loginCredentials: LoginCredentials) {
+  return { loginCredentials, type: 'LOGIN_REQUEST' };
 }
 
-type Action$LogoutInitialize = {|
-  +type: 'LOGOUT_INITIALIZE',
+type Action$LogoutRequest = {|
+  +type: 'LOGOUT_REQUEST',
 |};
 
 export function logout() {
-  return { type: 'LOGOUT_INITIALIZE' };
-}
-
-type Action$PasswordResetInitialize = {|
-  +email: string,
-  +type: 'PASSWORD_RESET_INITIALIZE',
-|};
-
-export function passwordResetInitialize(email: string) {
-  return { email, type: 'PASSWORD_RESET_INITIALIZE' };
+  return { type: 'LOGOUT_REQUEST' };
 }

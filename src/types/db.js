@@ -48,7 +48,7 @@ export type UserInfo = {|
  */
 export type UserRole = {|
   +alias: string, // Human-readable name for the role
-  +canAddAccounts: bool,
+  +canAddAccount: bool,
   +createdAt: SecondsSinceEpoch,
   +id: ID,
   +modelType: 'UserRole',

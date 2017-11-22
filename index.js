@@ -45,25 +45,17 @@ Navigation.startTabBasedApp({
 
 import Store from './src/store';
 
-import {
-  login,
-  logout,
-  passwordResetInitialize,
-} from './src/actions/authentication';
+import { login, logout } from './src/actions/authentication';
 
 if (__DEV__) {
   const TEST_EMAIL = 'infindi.testing@gmail.com';
   const TEST_PWORD = 'public_password2';
 
   global.loginTestUser = () => {
-    Store.dispatch(login(TEST_EMAIL, TEST_PWORD));
+    Store.dispatch(login({ email: TEST_EMAIL, password: TEST_PWORD }));
   };
 
   global.logout = () => {
     Store.dispatch(logout());
-  };
-
-  global.passwordResetStart = () => {
-    Store.dispatch(passwordResetInitialize(TEST_EMAIL));
   };
 }
