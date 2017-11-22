@@ -2,9 +2,8 @@
 
 import {
   type Fuzzy,
-  type ID,
   type Location,
-  type SecondsSinceEpoch,
+  type ModelStub,
   type YearMonthDay,
 } from './core';
 
@@ -15,18 +14,13 @@ import {
  * This has a 1:1 relationship between a firebase User and shares the same
  * id.
  */
-export type UserInfo = {|
+export type UserInfo = ModelStub<'UserInfo'> & {|
   +currentResidence: Fuzzy<Location>,
-  +createdAt: SecondsSinceEpoch,
   +DOB: YearMonthDay,
   +firstName: string,
   +gender: ?Fuzzy<'MALE' | 'FEMALE'>,
-  +id: ID,
   +lastName: string,
-  +modelType: 'UserInfo',
   +roleInline: UserRole,
-  +type: 'MODEL',
-  +updatedAt: SecondsSinceEpoch,
 |};
 
 /**
@@ -46,14 +40,9 @@ export type UserInfo = {|
  * For an api reference on how to define new rules, start here:
  * https://firebase.google.com/docs/database/security/securing-data
  */
-export type UserRole = {|
-  +alias: string, // Human-readable name for the role
+export type UserRole = ModelStub<'UserRole'> & {|
+  +alias: string,
   +canAddAccount: bool,
-  +createdAt: SecondsSinceEpoch,
-  +id: ID,
-  +modelType: 'UserRole',
-  +type: 'MODEL',
-  +updatedAt: SecondsSinceEpoch,
 |};
 
 /**
@@ -72,21 +61,21 @@ export type UserRole = {|
  * we can detect security anonolies like: logging in from a new device,
  * logging in simultaneously in multiple places, etc...
  */
-export type UserSession = {|
-  +id: ID,
-  +createdAt: SecondsSinceEpoch,
-  +modelType: 'UserSession',
-  +type: 'MODEL',
-  +updatedAt: SecondsSinceEpoch,
-|};
+export type UserSession = ModelStub<'UserSession'> & {||};
 
 /**
  * TODO: Add some documentation here.
  */
-export type UserDebugLogs = {|
-  +id: ID,
-  +createdAt: SecondsSinceEpoch,
-  +modelType: 'UserDebugLogs',
-  +type: 'MODEL',
-  +updatedAt: SecondsSinceEpoch,
+export type UserDebugLogs = ModelStub<'UserDebugLogs'> & {||};
+
+/**
+ * A users financial goal, serialized into a descriptive object. A financial
+ * goal represents some goal set for / by the user, and is used to guide their
+ * experience in the app. This includes the content that they see, the
+ * recommendations they are given, etc...
+ */
+export type FinancialGoal = FinancialGoal$SaveForRetirement;
+
+export type FinancialGoal$SaveForRetirement = ModelStub<'FinancialGoal'> & {|
+  +goalType: 'SAVE_FOR_RETIREMENT',
 |};

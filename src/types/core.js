@@ -12,10 +12,10 @@ export type Pointer<T: string> = {|
   +type: 'POINTER',
 |};
 
-export type ModelStub = {|
+export type ModelStub<T: string> = {|
   +createdAtSecs: SecondsSinceEpoch,
   +id: string,
-  +modelType: string,
+  +modelType: T,
   +type: 'MODEL',
   +updatedAtSecs: SecondsSinceEpoch,
 |};
