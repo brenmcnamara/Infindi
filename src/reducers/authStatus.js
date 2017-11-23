@@ -1,13 +1,7 @@
 /* @flow */
 
 import { type Action } from '../types/redux';
-import { type Firebase$User } from '../types/firebase';
-import { type UserInfo } from '../types/db';
-
-export type LoginCredentials = {|
-  +email: string,
-  +password: string,
-|};
+import { type LoginCredentials, type LoginPayload } from '../types/db';
 
 // https://rnfirebase.io/docs/v3.1.*/auth/reference/auth#signInWithEmailAndPassword
 export type LoginErrorCode =
@@ -53,11 +47,6 @@ export type CheckingVerificationErrorCode =
   | 'auth/invalid-action-code'
   | 'auth/user-disabled'
   | 'auth/user-not-disabled';
-
-export type LoginPayload = {|
-  +firebaseUser: Firebase$User,
-  +userInfo: UserInfo,
-|};
 
 export type VerificationPayload = {|
   +email: string,

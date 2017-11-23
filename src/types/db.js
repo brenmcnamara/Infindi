@@ -1,11 +1,29 @@
 /* @flow */
 
+import { type Firebase$User } from './firebase';
 import {
   type Fuzzy,
   type Location,
   type ModelStub,
   type YearMonthDay,
 } from './core';
+
+/**
+ * Login credentials used to login a user.
+ */
+export type LoginCredentials = {|
+  +email: string,
+  +password: string,
+|};
+
+/**
+ * Login payload that is returned given a success login.
+ */
+export type LoginPayload = {|
+  +firebaseUser: Firebase$User,
+  +idToken: string,
+  +userInfo: UserInfo,
+|};
 
 /**
  * Firebase has a pre-defined User type, which is a bare-bones model containing

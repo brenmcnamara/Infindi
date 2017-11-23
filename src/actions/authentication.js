@@ -1,6 +1,6 @@
 /* @flow */
 
-import { type LoginCredentials } from '../reducers/authStatus';
+import { type LoginCredentials } from '../types/db';
 
 export type Action = Action$LoginRequest | Action$LogoutRequest;
 

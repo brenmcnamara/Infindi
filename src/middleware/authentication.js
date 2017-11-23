@@ -5,16 +5,16 @@ import Firebase from 'react-native-firebase';
 import invariant from 'invariant';
 
 import { type Action as AllActions, type Store } from '../types/redux';
-import {
-  type AuthStatus,
-  type LoginCredentials,
-  type LoginPayload,
-} from '../reducers/authStatus';
+import { type AuthStatus } from '../reducers/authStatus';
 import {
   type Firebase$DataSnapshot,
   type Firebase$User,
 } from '../types/firebase';
-import { type UserInfo } from '../types/db';
+import {
+  type LoginCredentials,
+  type LoginPayload,
+  type UserInfo,
+} from '../types/db';
 
 const Auth = Firebase.auth();
 const Database = Firebase.database();
@@ -123,8 +123,11 @@ async function genLoginPayload(): Promise<?LoginPayload> {
   if (!firebaseUser) {
     return null;
   }
-  const userInfo = await genUserInfo(firebaseUser.uid);
-  return { firebaseUser, userInfo };
+  const [userInfo, idToken] = await Promise.all([
+    genUserInfo(firebaseUser.uid),
+    firebaseUser.getIdToken(),
+  ]);
+  return { firebaseUser, idToken, userInfo };
 }
 
 function getLoginPayload(authStatus: AuthStatus): ?LoginPayload {
