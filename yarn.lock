@@ -3850,6 +3850,10 @@ react-native-firebase@^3.1.0:
     opencollective "^1.0.3"
     prop-types "^15.6.0"
 
+react-native-floating-label-text-input@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-floating-label-text-input/-/react-native-floating-label-text-input-0.1.5.tgz#7592171d8ef590b64a821741dabc00c5653e2e8a"
+
 react-native-navigation@^1.1.281:
   version "1.1.281"
   resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-1.1.281.tgz#33dab24f78513d93fd005411cfa7b20dbfdffac4"

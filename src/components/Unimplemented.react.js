@@ -20,7 +20,7 @@ export default class HomeScreen extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: Colors.BACKGROUND_COLOR,
+    backgroundColor: Colors.BACKGROUND,
     flex: 1,
     paddingTop: 40,
   },
