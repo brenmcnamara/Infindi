@@ -1,6 +1,8 @@
 /* @flow */
 
+import Content from './shared/Content.react';
 import React, { Component } from 'react';
+import Screen from './shared/Screen.react';
 import Unimplemented from './Unimplemented.react';
 
 import { connect } from 'react-redux';
@@ -11,7 +13,13 @@ export type Props = ReduxProps;
 
 class HomeScreen extends Component<Props> {
   render() {
-    return <Unimplemented />;
+    return (
+      <Screen>
+        <Content>
+          <Unimplemented />
+        </Content>
+      </Screen>
+    );
   }
 }
 

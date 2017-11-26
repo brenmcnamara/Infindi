@@ -169,6 +169,7 @@ function mapReduxStateToProps(state: StoreState) {
       loginType = 'NORMAL';
       break;
 
+    case 'LOGGED_IN':
     case 'LOGIN_INITIALIZE':
       loginType = 'LOADING';
       break;

@@ -3,6 +3,7 @@
 import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Icons from '../design/icons';
+import IfAuthenticated from './shared/IfAuthenticated.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextDesign from '../design/text';
@@ -10,6 +11,7 @@ import TextDesign from '../design/text';
 import { connect } from 'react-redux';
 import { getUserFirstName } from '../store/state-utils';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { logout } from '../actions/authentication';
 
 import { type ReduxProps } from '../types/redux';
 import { type State } from '../reducers/root';
@@ -20,10 +22,12 @@ class SettingsScreen extends Component<Props> {
   render() {
     return (
       <Screen theme="LIGHT">
-        <Content>
-          {this._renderHeader()}
-          {this._renderLogout()}
-        </Content>
+        <IfAuthenticated>
+          <Content>
+            {this._renderHeader()}
+            {this._renderLogout()}
+          </Content>
+        </IfAuthenticated>
       </Screen>
     );
   }
@@ -43,7 +47,7 @@ class SettingsScreen extends Component<Props> {
 
   _renderLogout() {
     return (
-      <TouchableOpacity style={styles.listItem}>
+      <TouchableOpacity onPress={this._onPressLogout} style={styles.listItem}>
         <Image
           resizeMode="contain"
           source={Icons.Power}
@@ -53,10 +57,14 @@ class SettingsScreen extends Component<Props> {
       </TouchableOpacity>
     );
   }
+
+  _onPressLogout = (): void => {
+    this.props.dispatch(logout());
+  };
 }
 
 const mapReduxStateToProps = (state: State) => ({
-  firstName: getUserFirstName(state),
+  firstName: getUserFirstName(state) || '',
 });
 
 export default connect(mapReduxStateToProps)(SettingsScreen);
