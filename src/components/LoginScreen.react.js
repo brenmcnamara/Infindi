@@ -6,17 +6,73 @@ import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import Text from '../design/text';
+import TextDesign from '../design/text';
 import TextButton from './shared/TextButton.react';
 
-import { Image, StyleSheet, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Animated,
+  Easing,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { connect } from 'react-redux';
+import { login } from '../actions/authentication';
 
-export type Props = {
-  transitionInLogin: bool,
+import { type LoginCredentials } from '../types/db';
+import { type ReduxProps } from '../types/redux';
+
+export type Props = ReduxProps & {
+  type: 'NORMAL' | 'ERROR' | 'LOADING',
 };
 
-export default class LoginScreen extends Component<Props> {
+type State = {
+  credentials: LoginCredentials,
+  errorViewProgress: Animated.Value,
+};
+
+class LoginScreen extends Component<Props, State> {
+  state: State = {
+    credentials: {
+      email: '',
+      password: '',
+    },
+    errorViewProgress: new Animated.Value(0),
+  };
+
+  componentDidMount(): void {
+    if (this.props.type === 'ERROR') {
+      this.state.errorViewProgress.setValue(1);
+    }
+  }
+
+  componentWillReceiveProps(nextProps: Props): void {
+    if (nextProps.type === 'ERROR') {
+      Animated.timing(this.state.errorViewProgress, {
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    }
+  }
+
   render() {
+    const animatedErrorStyles = {
+      opacity: this.state.errorViewProgress,
+      transform: [
+        {
+          translateY: this.state.errorViewProgress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [20, 0],
+          }),
+        },
+      ],
+    };
+
     return (
       <Screen avoidKeyboard={true}>
         <Content>
@@ -29,43 +85,78 @@ export default class LoginScreen extends Component<Props> {
           <View style={styles.loginForm}>
             <TextInput
               autoCapitalize="none"
+              autoCorrect={false}
               autoFocus={true}
+              editable={this.props.type !== 'LOADING'}
               keyboardType="email-address"
-              onEndEditing={this._onSubmitEmail}
+              onChangeText={this._onChangeEmail}
+              onSubmitEditing={this._onSubmitEmail}
               placeholder="Email"
               returnKeyType="next"
-              style={[styles.formInput, Text.header3]}
+              style={[styles.formInput, TextDesign.header3]}
             />
             <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={this.props.type !== 'LOADING'}
+              onChangeText={this._onChangePassword}
               onEndEditing={this._onSubmitPassword}
               placeholder="Password"
               ref="passwordInputRef"
               returnKeyType="done"
               secureTextEntry={true}
-              style={[styles.formInput, Text.header3]}
+              style={[styles.formInput, TextDesign.header3]}
             />
           </View>
+          <Animated.View style={[styles.loginError, animatedErrorStyles]}>
+            <Text style={[TextDesign.error, styles.marginBottom8]}>
+              Login Failed.
+            </Text>
+            <Text style={TextDesign.error}>Please check your credentials.</Text>
+          </Animated.View>
         </Content>
         <Footer style={styles.footer}>
-          <TextButton
-            onPress={this._onPressLogin}
-            size="LARGE"
-            text="LOGIN"
-            type="PRIMARY"
-          />
+          {this.props.type === 'LOADING' ? (
+            <ActivityIndicator size="small" />
+          ) : (
+            <TextButton
+              onPress={this._onPressLogin}
+              size="LARGE"
+              text="LOGIN"
+              type="PRIMARY"
+            />
+          )}
         </Footer>
       </Screen>
     );
   }
 
+  _onChangeEmail = (email: string): void => {
+    const credentials = { ...this.state.credentials, email };
+    // $FlowFixMe - Need to find solution to exact type spread.
+    this.setState({ credentials });
+  };
+
+  _onChangePassword = (password: string): void => {
+    const credentials = { ...this.state.credentials, password };
+    // $FlowFixMe - Need to find solution to exact type spread.
+    this.setState({ credentials });
+  };
+
   _onSubmitEmail = (): void => {
     this.refs.passwordInputRef.focus();
   };
 
-  _onSubmitPassword = (): void => {};
+  _onSubmitPassword = (): void => {
+    this.props.dispatch(login(this.state.credentials));
+  };
 
-  _onPressLogin = (): void => {};
+  _onPressLogin = (): void => {
+    this.props.dispatch(login(this.state.credentials));
+  };
 }
+
+export default connect()(LoginScreen);
 
 const styles = StyleSheet.create({
   formInput: {
@@ -80,6 +171,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  loginError: {
+    alignItems: 'center',
+  },
+
   loginForm: {
     paddingHorizontal: 40,
   },
@@ -90,6 +185,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 24,
+  },
+
+  marginBottom8: {
+    marginBottom: 8,
   },
 
   root: {

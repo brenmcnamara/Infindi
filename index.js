@@ -3,27 +3,45 @@
 import Colors from './src/design/colors';
 import HomeScreen from './src/components/HomeScreen.react';
 import Icons from './src/design/icons';
+import SettingsScreen from './src/components/SettingsScreen.react';
 
 import withAuthenticationGuard from './src/components/hoc/withAuthenticationGuard';
+import withNavigatorControls from './src/components/hoc/withNavigatorControls';
 import withProvider from './src/components/hoc/withProvider';
 
+import { ButtonIDs } from './src/constants';
 import { Navigation } from 'react-native-navigation';
 
 const SettingsListButton = {
   disableIconTint: true,
   icon: Icons.List,
+  id: ButtonIDs.SETTINGS_BUTTON,
 };
 
 const ConverseButton = {
   disableIconTint: true,
   icon: Icons.InfindiLogoNavBar,
+  id: ButtonIDs.CONVERSE_BUTTON,
 };
 
 Navigation.registerComponent('Home', () =>
-  withProvider(withAuthenticationGuard(HomeScreen)),
+  withProvider(withAuthenticationGuard(withNavigatorControls(HomeScreen))),
 );
 
+Navigation.registerComponent('Settings', () => withProvider(SettingsScreen));
+
 Navigation.startTabBasedApp({
+  drawer: {
+    left: {
+      screen: 'Settings',
+    },
+    style: {
+      contentOverlayColor: 'rgba(0,0,0,0.25)',
+      leftDrawerWidth: 50,
+    },
+    type: 'TheSideBar',
+  },
+
   tabs: [
     {
       label: 'One',
@@ -38,6 +56,10 @@ Navigation.startTabBasedApp({
       screen: 'Home',
     },
   ],
+
+  tabsStyle: {
+    tabBarBackgroundColor: '#FFFFFF',
+  },
 });
 
 // -----------------------------------------------------------------------------

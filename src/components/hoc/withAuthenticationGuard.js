@@ -5,9 +5,9 @@ import LoginScreen from '../LoginScreen.react';
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { isAuthenticated } from '../../store/state-utils';
-import { Modal, View } from 'react-native';
+import { Modal as ModalRaw, StyleSheet, View } from 'react-native';
 
+import { type AuthStatusType } from '../../reducers/authStatus';
 import { type ReduxProps } from '../../types/redux';
 import { type State } from '../../reducers/root';
 
@@ -24,6 +24,7 @@ export default function withAuthenticationGuard(component: *) {
 
 type Props = ReduxProps & {
   component: *,
+  authStatusType: AuthStatusType,
   passThroughProps: *,
 };
 
@@ -33,22 +34,91 @@ type Props = ReduxProps & {
  */
 class AuthenticationGuard extends Component<Props> {
   render() {
-    return (
-      <View>
-        <Modal animationType="none" show={true}>
-          <LoginScreen transitionInLogin={false} />
-        </Modal>
-      </View>
-    );
+    const Comp = this.props.component;
+    const comp = <Comp {...this.props.passThroughProps} />;
+    switch (this.props.authStatusType) {
+      case 'NOT_INITIALIZED':
+        return (
+          <Root>
+            <Modal>
+              <LoadingScreen />
+            </Modal>
+            {comp}
+          </Root>
+        );
+
+      case 'LOGGED_OUT':
+      case 'LOGOUT_INITIALIZE':
+      case 'LOGOUT_FAILURE':
+        return (
+          <Root>
+            <Modal>
+              <LoginScreen type="NORMAL" />
+            </Modal>
+            {comp}
+          </Root>
+        );
+
+      case 'LOGIN_INITIALIZE':
+        return (
+          <Root>
+            <Modal>
+              <LoginScreen type="LOADING" />
+            </Modal>
+            {comp}
+          </Root>
+        );
+
+      case 'LOGIN_FAILURE':
+        return (
+          <Root>
+            <Modal>
+              <LoginScreen type="ERROR" />
+            </Modal>
+            {comp}
+          </Root>
+        );
+
+      case 'LOGGED_IN':
+        return (
+          <Root>
+            <Comp {...this.props.passThroughProps} />
+          </Root>
+        );
+    }
   }
 }
 
 const mapReduxStateToProps = (state: State) => {
   return {
-    isAuthenticated: isAuthenticated(state),
+    authStatusType: state.authStatus.type,
   };
 };
 
 const ConnectedAuthenticationGuard = connect(mapReduxStateToProps)(
   AuthenticationGuard,
 );
+
+const Modal = (props: { children?: ?any }) => {
+  return (
+    <View>
+      <ModalRaw animationType="fade" show={true}>
+        {props.children}
+      </ModalRaw>
+    </View>
+  );
+};
+
+const AUTH_GUARD_KEY = 'AUTH_GUARD';
+
+const Root = (props: { children?: ?any }) => {
+  return (
+    <View key={AUTH_GUARD_KEY} style={styles.root}>
+      {props.children}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});

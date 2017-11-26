@@ -80,6 +80,15 @@ export type AuthStatus =
       +type: 'LOGIN_FAILURE',
     |};
 
+export type AuthStatusType =
+  | 'LOGOUT_INITIALIZE'
+  | 'LOGGED_OUT'
+  | 'LOGOUT_FAILURE'
+  | 'NOT_INITIALIZED'
+  | 'LOGIN_INITIALIZE'
+  | 'LOGGED_IN'
+  | 'LOGIN_FAILURE';
+
 export type State = AuthStatus;
 
 const DEFAULT_STATE = { type: 'NOT_INITIALIZED' };

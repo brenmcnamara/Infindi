@@ -14,6 +14,12 @@ const normal = {
   color: 'black',
 };
 
+const error = {
+  fontFamily: 'Lato-Regular',
+  fontSize: 16,
+  color: Colors.ERROR,
+};
+
 const primaryButton = {
   fontFamily: 'Lato-Regular',
   color: Colors.TEXT_PRIMARY,
@@ -42,6 +48,7 @@ export default {
 
   header3,
   normal,
+  error,
 
   normalButton,
   primaryButton,
