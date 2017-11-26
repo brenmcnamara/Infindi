@@ -8,15 +8,18 @@ import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 export type Props = {
   avoidKeyboard: bool,
   children?: ?any,
+  theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
 export type DefaultProps = {
   avoidKeyboard: bool,
+  theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
 export default class Screen extends Component<Props> {
   static defaultProps: DefaultProps = {
     avoidKeyboard: false,
+    theme: 'NORMAL',
   };
 
   render() {
@@ -24,8 +27,17 @@ export default class Screen extends Component<Props> {
     const keyboardProps = this.props.avoidKeyboard
       ? { behavior: 'padding' }
       : {};
+    const rootStyles = [
+      styles.root,
+      {
+        backgroundColor:
+          this.props.theme === 'NORMAL'
+            ? Colors.BACKGROUND
+            : Colors.BACKGROUND_LIGHT,
+      },
+    ];
     return (
-      <Component {...keyboardProps} style={styles.root}>
+      <Component {...keyboardProps} style={rootStyles}>
         {this.props.children}
       </Component>
     );

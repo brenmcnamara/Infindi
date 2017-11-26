@@ -115,7 +115,9 @@ async function genUserInfo(id: string): Promise<UserInfo> {
   const path = `UserInfo/${id}`;
   // TODO: Look into what errors this may return.
   const snapshot: Firebase$DataSnapshot = await Database.ref(path).once();
-  return snapshot.val();
+  const userInfo: UserInfo = snapshot.val();
+  invariant(userInfo, 'Data Error: UserInfo is missing for logged in user');
+  return userInfo;
 }
 
 async function genLoginPayload(): Promise<?LoginPayload> {

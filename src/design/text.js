@@ -9,7 +9,7 @@ const header3 = {
 };
 
 const normal = {
-  fontFamily: 'Lato-Regular',
+  fontFamily: 'Lato-Light',
   fontSize: 16,
   color: 'black',
 };

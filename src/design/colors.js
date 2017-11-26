@@ -8,9 +8,12 @@ const GRAY_3 = '#9B9B9B';
 const GRAY_4 = '#4A4A4A';
 const GREEN = '#3BA68E';
 const RED = '#B54C59';
+const WHITE = '#FFFFFF';
 
 export default {
+  // TODO: Rename to BACKGROUND_NORMAL
   BACKGROUND: GRAY_1,
+  BACKGROUND_LIGHT: WHITE,
   BORDER: GRAY_2,
   ERROR: RED,
   NAV_BAR_BUTTON: BLACK,

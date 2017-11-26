@@ -25,26 +25,30 @@ const ConverseButton = {
 };
 
 Navigation.registerComponent('Home', () =>
-  withProvider(withAuthenticationGuard(withNavigatorControls(HomeScreen))),
+  withProvider(withNavigatorControls(HomeScreen)),
 );
+// withProvider(withAuthenticationGuard(withNavigatorControls(HomeScreen))),
+// );
 
 Navigation.registerComponent('Settings', () => withProvider(SettingsScreen));
 
 Navigation.startTabBasedApp({
   drawer: {
+    animationType: 'wunder-list',
     left: {
       screen: 'Settings',
     },
     style: {
-      contentOverlayColor: 'rgba(0,0,0,0.25)',
-      leftDrawerWidth: 50,
+      contentOverlayColor: 'rgba(0, 0, 0, 0.1)',
+      leftDrawerWidth: 60, // Percent
     },
     type: 'TheSideBar',
   },
 
   tabs: [
     {
-      label: 'One',
+      icon: Icons.Home,
+      label: 'Home',
       navigatorButtons: {
         leftButtons: [SettingsListButton],
         rightButtons: [ConverseButton],
