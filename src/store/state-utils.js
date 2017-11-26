@@ -9,10 +9,6 @@ export function isAuthenticated(state: State): bool {
 }
 
 export function getUserFirstName(state: State): string {
-  // TODO: Remove this temporary call here.
-  if (state.authStatus.type !== 'LOGGED_IN') {
-    return 'blah';
-  }
   invariant(
     state.authStatus.type === 'LOGGED_IN',
     'Trying to get firstName of unauthenticated user',
