@@ -9,6 +9,8 @@ import Screen from './shared/Screen.react';
 import TextDesign from '../design/text';
 import TextButton from './shared/TextButton.react';
 
+import invariant from 'invariant';
+
 import {
   ActivityIndicator,
   Animated,
@@ -24,9 +26,10 @@ import { login } from '../actions/authentication';
 
 import { type LoginCredentials } from '../types/db';
 import { type ReduxProps } from '../types/redux';
+import { type State as StoreState } from '../reducers/root';
 
 export type Props = ReduxProps & {
-  type: 'NORMAL' | 'ERROR' | 'LOADING',
+  loginType: 'NORMAL' | 'ERROR' | 'LOADING',
 };
 
 type State = {
@@ -44,13 +47,13 @@ class LoginScreen extends Component<Props, State> {
   };
 
   componentDidMount(): void {
-    if (this.props.type === 'ERROR') {
+    if (this.props.loginType === 'ERROR') {
       this.state.errorViewProgress.setValue(1);
     }
   }
 
   componentWillReceiveProps(nextProps: Props): void {
-    if (nextProps.type === 'ERROR') {
+    if (nextProps.loginType === 'ERROR') {
       Animated.timing(this.state.errorViewProgress, {
         duration: 400,
         easing: Easing.out(Easing.cubic),
@@ -87,7 +90,7 @@ class LoginScreen extends Component<Props, State> {
               autoCapitalize="none"
               autoCorrect={false}
               autoFocus={true}
-              editable={this.props.type !== 'LOADING'}
+              editable={this.props.loginType !== 'LOADING'}
               keyboardType="email-address"
               onChangeText={this._onChangeEmail}
               onSubmitEditing={this._onSubmitEmail}
@@ -98,7 +101,7 @@ class LoginScreen extends Component<Props, State> {
             <TextInput
               autoCapitalize="none"
               autoCorrect={false}
-              editable={this.props.type !== 'LOADING'}
+              editable={this.props.loginType !== 'LOADING'}
               onChangeText={this._onChangePassword}
               onEndEditing={this._onSubmitPassword}
               placeholder="Password"
@@ -116,7 +119,7 @@ class LoginScreen extends Component<Props, State> {
           </Animated.View>
         </Content>
         <Footer style={styles.footer}>
-          {this.props.type === 'LOADING' ? (
+          {this.props.loginType === 'LOADING' ? (
             <ActivityIndicator size="small" />
           ) : (
             <TextButton
@@ -156,7 +159,35 @@ class LoginScreen extends Component<Props, State> {
   };
 }
 
-export default connect()(LoginScreen);
+function mapReduxStateToProps(state: StoreState) {
+  const { authStatus } = state;
+  let loginType;
+  switch (authStatus.type) {
+    case 'LOGGED_OUT':
+    case 'LOGOUT_FAILURE':
+    case 'LOGOUT_INITIALIZE':
+      loginType = 'NORMAL';
+      break;
+
+    case 'LOGIN_INITIALIZE':
+      loginType = 'LOADING';
+      break;
+
+    case 'LOGIN_FAILURE':
+      loginType = 'ERROR';
+      break;
+
+    default:
+      invariant(
+        false,
+        'LoginScreen does not handle auth status %s',
+        authStatus.type,
+      );
+  }
+  return { loginType };
+}
+
+export default connect(mapReduxStateToProps)(LoginScreen);
 
 const styles = StyleSheet.create({
   formInput: {
@@ -189,10 +220,5 @@ const styles = StyleSheet.create({
 
   marginBottom8: {
     marginBottom: 8,
-  },
-
-  root: {
-    backgroundColor: Colors.BACKGROUND,
-    flex: 1,
   },
 });
