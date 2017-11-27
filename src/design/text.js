@@ -3,15 +3,16 @@
 import Colors from './colors';
 
 const header3 = {
+  color: 'black',
   fontFamily: 'Lato-Regular',
   fontSize: 18,
-  color: 'black',
 };
 
 const normal = {
+  color: 'black',
   fontFamily: 'Lato-Light',
   fontSize: 16,
-  color: 'black',
+  lineHeight: 22,
 };
 
 const error = {

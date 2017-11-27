@@ -1,5 +1,6 @@
 /* @flow */
 
+import AccountsScreen from './src/components/AccountsScreen.react';
 import Colors from './src/design/colors';
 import HomeScreen from './src/components/HomeScreen.react';
 import Icons from './src/design/icons';
@@ -26,6 +27,9 @@ const ConverseButton = {
   id: ButtonIDs.CONVERSE_BUTTON,
 };
 
+Navigation.registerComponent('Accounts', () =>
+  withProvider(withNavigatorControls(AccountsScreen)),
+);
 Navigation.registerComponent('Home', () =>
   withProvider(withNavigatorControls(HomeScreen)),
 );
@@ -99,6 +103,19 @@ function changeAppType(appType: AppType) {
             navBarNoBorder: true,
           },
           screen: 'Home',
+        },
+        {
+          icon: Icons.Bank,
+          label: 'Accounts',
+          navigatorButtons: {
+            leftButtons: [SettingsListButton],
+            rightButtons: [ConverseButton],
+          },
+          navigatorStyle: {
+            navBarBackgroundColor: Colors.BACKGROUND,
+            navBarNoBorder: true,
+          },
+          screen: 'Accounts',
         },
       ],
 

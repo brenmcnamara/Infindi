@@ -1,5 +1,7 @@
 /* @flow */
 
+import Bank from '../../assets/icons/Bank-33x28.png';
+import BankColored from '../../assets/icons/BankColored-123x106.png';
 import Home from '../../assets/icons/Home-28x28.png';
 import InfindiLogo from '../../assets/icons/InfindiLogo-59x28.png';
 import InfindiLogoNavBar from '../../assets/icons/InfindiLogo-33x16.png';
@@ -10,6 +12,8 @@ import UserFemale from '../../assets/icons/UserFemale-22x22.png';
 import UserMale from '../../assets/icons/UserMale-22x22.png';
 
 export default {
+  Bank,
+  BankColored,
   Home,
   InfindiLogo,
   InfindiLogoNavBar,
