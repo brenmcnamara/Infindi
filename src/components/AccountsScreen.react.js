@@ -1,9 +1,11 @@
 /* @flow */
 
 import Content from './shared/Content.react';
+import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
+import TextButton from './shared/TextButton.react';
 import TextDesign from '../design/text';
 
 import { AccountNullState } from '../../content';
@@ -16,7 +18,12 @@ export type Props = ReduxProps & {};
 
 class AccountsScreen extends Component<Props> {
   render() {
-    return <Screen>{this._renderNullState()}</Screen>;
+    return (
+      <Screen>
+        {this._renderNullState()}
+        {this._renderAddAccountButton()}
+      </Screen>
+    );
   }
 
   _renderNullState() {
@@ -46,6 +53,21 @@ class AccountsScreen extends Component<Props> {
       </Content>
     );
   }
+
+  _renderAddAccountButton() {
+    return (
+      <Footer style={styles.footer}>
+        <TextButton
+          onPress={this._onPressAddAccount}
+          size="LARGE"
+          text="ADD ACCOUNT"
+          type="PRIMARY"
+        />
+      </Footer>
+    );
+  }
+
+  _onPressAddAccount = (): void => {};
 }
 
 function mapReduxStateToProps() {
@@ -58,6 +80,11 @@ const styles = StyleSheet.create({
   bankIcon: {
     marginBottom: 40,
     width: 123,
+  },
+
+  footer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   marginBottom16: {
