@@ -37,6 +37,7 @@ export type UserInfo = ModelStub<'UserInfo'> & {|
   +DOB: YearMonthDay,
   +firstName: string,
   +gender: ?Fuzzy<'MALE' | 'FEMALE'>,
+  +isTestUser: bool,
   +lastName: string,
   +roleInline: UserRole,
 |};
