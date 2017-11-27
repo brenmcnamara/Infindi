@@ -103,7 +103,7 @@ class LoginScreen extends Component<Props, State> {
               autoCorrect={false}
               editable={this.props.loginType !== 'LOADING'}
               onChangeText={this._onChangePassword}
-              onEndEditing={this._onSubmitPassword}
+              onSubmitEditing={this._onSubmitPassword}
               placeholder="Password"
               ref="passwordInputRef"
               returnKeyType="done"
