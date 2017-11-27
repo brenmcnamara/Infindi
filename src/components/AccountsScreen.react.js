@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextDesign from '../design/text';
 
+import { AccountNullState } from '../../content';
 import { connect } from 'react-redux';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
@@ -38,8 +39,7 @@ class AccountsScreen extends Component<Props> {
               You Have No Accounts
             </Text>
             <Text style={[TextDesign.normal, styles.textCenter]}>
-              One to two sentences on why it is important to add accounts.
-              Should convey that we need account info for this app to be useful.
+              {AccountNullState}
             </Text>
           </View>
         </View>
