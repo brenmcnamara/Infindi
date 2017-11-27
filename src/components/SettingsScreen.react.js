@@ -38,7 +38,7 @@ class SettingsScreen extends Component<Props> {
         <Image
           resizeMode="contain"
           source={Icons.UserMale}
-          style={[styles.iconLarge, styles.marginRight8]}
+          style={[styles.iconLarge, styles.iconToTextSpacing]}
         />
         <Text style={TextDesign.header3}>{this.props.firstName}</Text>
       </View>
@@ -51,7 +51,7 @@ class SettingsScreen extends Component<Props> {
         <Image
           resizeMode="contain"
           source={Icons.Power}
-          style={[styles.iconMedium, styles.marginRight8]}
+          style={[styles.iconMedium, styles.iconToTextSpacing]}
         />
         <Text style={TextDesign.normal}>Logout</Text>
       </TouchableOpacity>
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: Colors.BORDER,
     flexDirection: 'row',
-    height: 44, // Nav bar height
+    height: 64,
     marginTop: 20, // Status bar height,
     paddingLeft: 24 - ICON_WIDTH_LARGE / 2,
   },
@@ -91,14 +91,14 @@ const styles = StyleSheet.create({
     width: ICON_WIDTH_NORMAL,
   },
 
+  iconToTextSpacing: {
+    marginRight: 16,
+  },
+
   listItem: {
     alignItems: 'center',
     flexDirection: 'row',
     paddingLeft: 24 - ICON_WIDTH_NORMAL / 2,
     paddingVertical: 8,
-  },
-
-  marginRight8: {
-    marginRight: 8,
   },
 });
