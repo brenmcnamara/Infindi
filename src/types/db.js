@@ -39,7 +39,7 @@ export type UserInfo = ModelStub<'UserInfo'> & {|
   +gender: ?Fuzzy<'MALE' | 'FEMALE'>,
   +isTestUser: bool,
   +lastName: string,
-  +roleInline: UserRole,
+  +accessInline: UserAccess,
 |};
 
 /**
@@ -47,9 +47,9 @@ export type UserInfo = ModelStub<'UserInfo'> & {|
  * user has. Once created, this cannot be mutated, except through some
  * priveledges process run by an admin.
  *
- * NOTE: The user role is inlined into the user info object. While this will
+ * NOTE: The user access is inlined into the user info object. While this will
  * result in a ton of extra state being generated (there are probably only a few
- * configurations role that we care about) as well as some other headaches, we
+ * configurations access that we care about) as well as some other headaches, we
  * have to do it this way due to limitations on how you can define security
  * rules in Firebase. Would like to eventually move this out into its own table.
  *
@@ -59,7 +59,7 @@ export type UserInfo = ModelStub<'UserInfo'> & {|
  * For an api reference on how to define new rules, start here:
  * https://firebase.google.com/docs/database/security/securing-data
  */
-export type UserRole = ModelStub<'UserRole'> & {|
+export type UserAccess = ModelStub<'UserAccess'> & {|
   +alias: string,
   +canAddAccount: bool,
 |};
@@ -97,4 +97,20 @@ export type FinancialGoal = FinancialGoal$SaveForRetirement;
 
 export type FinancialGoal$SaveForRetirement = ModelStub<'FinancialGoal'> & {|
   +goalType: 'SAVE_FOR_RETIREMENT',
+|};
+
+/**
+ * A users credentials for plaid. These credentials allow a user to access
+ * their plaid items given the relevant sandbox. Each credential is for a
+ * specific plaid "item". Look here for plaid documentation on items:
+ * https://plaid.com/docs/api/#retrieve-item
+ *
+ * NOTE: These credentials may expire relatively frequently and need to be
+ * updated.
+ */
+export type PlaidCredentials = ModelStub<'PlaidCredentials'> & {|
+  +accessToken: string,
+  +environment: 'sandbox' | 'development' | 'production',
+  +itemID: string,
+  +metadata: Object,
 |};
