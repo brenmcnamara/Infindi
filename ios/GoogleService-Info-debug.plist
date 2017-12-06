@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>1084795039593-8evisvo938uvi3sgj1r5s88loljgieec.apps.googleusercontent.com</string>
+	<string>196693238594-n64ch7smieldb0mir48phkj4puftqdpl.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1084795039593-8evisvo938uvi3sgj1r5s88loljgieec</string>
+	<string>com.googleusercontent.apps.196693238594-n64ch7smieldb0mir48phkj4puftqdpl</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDvtg6TiW_jxExLluDZuJIH6cYFOqdv7pc</string>
+	<string>AIzaSyA57YjUlro3OiABfPsx7nP39YGqo_Mt_0k</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1084795039593</string>
+	<string>196693238594</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.findi.main.debug</string>
 	<key>PROJECT_ID</key>
-	<string>findi-f4a1f</string>
+	<string>infindi-20cf1</string>
 	<key>STORAGE_BUCKET</key>
-	<string>findi-f4a1f.appspot.com</string>
+	<string>infindi-20cf1.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1084795039593:ios:86c2b38d0641824e</string>
+	<string>1:196693238594:ios:86c2b38d0641824e</string>
 	<key>DATABASE_URL</key>
-	<string>https://findi-f4a1f.firebaseio.com</string>
+	<string>https://infindi-20cf1.firebaseio.com</string>
 </dict>
 </plist>

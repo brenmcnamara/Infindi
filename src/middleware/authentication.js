@@ -6,10 +6,7 @@ import invariant from 'invariant';
 
 import { type Action as AllActions, type Store } from '../types/redux';
 import { type AuthStatus } from '../reducers/authStatus';
-import {
-  type Firebase$DataSnapshot,
-  type Firebase$User,
-} from '../types/firebase';
+import { type Firebase$User } from '../types/firebase';
 import {
   type LoginCredentials,
   type LoginPayload,
@@ -17,7 +14,7 @@ import {
 } from '../types/db';
 
 const Auth = Firebase.auth();
-const Database = Firebase.database();
+const Database = Firebase.firestore();
 
 export type Action = Action$AuthStatusChange;
 
@@ -112,11 +109,15 @@ function performLogout(loginPayload: LoginPayload, changeStatus: ChangeStatus) {
 // -----------------------------------------------------------------------------
 
 async function genUserInfo(id: string): Promise<UserInfo> {
-  const path = `UserInfo/${id}`;
   // TODO: Look into what errors this may return.
-  const snapshot: Firebase$DataSnapshot = await Database.ref(path).once();
-  const userInfo: UserInfo = snapshot.val();
-  invariant(userInfo, 'Data Error: UserInfo is missing for logged in user');
+  const document = await Database.collection('UserInfo')
+    .doc(id)
+    .get();
+  invariant(
+    document.exists,
+    'Data Error: UserInfo is missing for logged in user',
+  );
+  const userInfo: UserInfo = document.data();
   return userInfo;
 }
 

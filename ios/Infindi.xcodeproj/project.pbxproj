@@ -55,10 +55,8 @@
 		8139982A1FC1205E0043EB57 /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998171FC1205E0043EB57 /* Lato-BlackItalic.ttf */; };
 		8139982B1FC1205E0043EB57 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998181FC1205E0043EB57 /* Lato-Light.ttf */; };
 		8139982C1FC1205E0043EB57 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998181FC1205E0043EB57 /* Lato-Light.ttf */; };
-		814C3ED41FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */; };
-		814C3ED51FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */; };
-		8190EE501FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */; };
-		8190EE511FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */; };
+		8185FC251FD84B770055FC60 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8185FC241FD84B770055FC60 /* GoogleService-Info.plist */; };
+		8185FC271FD84C400055FC60 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */; };
 		819A9F1B1FC2306500E6BA6C /* libReactNativeNavigation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 819A9F1A1FC2303800E6BA6C /* libReactNativeNavigation.a */; };
 		829CA85410CB3FC2B9553E9C /* libPods-Infindi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 480A060FC54C4DA216708D4A /* libPods-Infindi.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -371,8 +369,8 @@
 		813998161FC1205E0043EB57 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
 		813998171FC1205E0043EB57 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
 		813998181FC1205E0043EB57 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
-		814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-debug.plist"; sourceTree = "<group>"; };
+		8185FC241FD84B770055FC60 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-debug.plist"; sourceTree = "<group>"; };
 		819A9EF21FC2303800E6BA6C /* ReactNativeNavigation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeNavigation.xcodeproj; path = "../node_modules/react-native-navigation/ios/ReactNativeNavigation.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		993A6AB777D04CFF37599415 /* Pods-Infindi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Infindi.release.xcconfig"; path = "Pods/Target Support Files/Pods-Infindi/Pods-Infindi.release.xcconfig"; sourceTree = "<group>"; };
@@ -522,8 +520,8 @@
 			children = (
 				813997F81FC11FCC0043EB57 /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				814C3ED31FC12F6C00DCC760 /* GoogleService-Info.plist */,
-				8190EE2C1FC204A4008E8B45 /* GoogleService-Info-debug.plist */,
+				8185FC241FD84B770055FC60 /* GoogleService-Info.plist */,
+				8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -1144,10 +1142,8 @@
 				8139982C1FC1205E0043EB57 /* Lato-Light.ttf in Resources */,
 				8139982A1FC1205E0043EB57 /* Lato-BlackItalic.ttf in Resources */,
 				813998201FC1205E0043EB57 /* Lato-Hairline.ttf in Resources */,
-				814C3ED51FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */,
 				8139981C1FC1205E0043EB57 /* Lato-Regular.ttf in Resources */,
 				813998221FC1205E0043EB57 /* Lato-BoldItalic.ttf in Resources */,
-				8190EE511FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1155,7 +1151,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				814C3ED41FC12F6C00DCC760 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				8139981D1FC1205E0043EB57 /* Lato-Bold.ttf in Resources */,
 				813998231FC1205E0043EB57 /* Lato-HairlineItalic.ttf in Resources */,
@@ -1166,9 +1161,10 @@
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				813998211FC1205E0043EB57 /* Lato-BoldItalic.ttf in Resources */,
 				813998251FC1205E0043EB57 /* Lato-Italic.ttf in Resources */,
-				8190EE501FC204A4008E8B45 /* GoogleService-Info-debug.plist in Resources */,
 				813998271FC1205E0043EB57 /* Lato-Black.ttf in Resources */,
+				8185FC271FD84C400055FC60 /* GoogleService-Info-debug.plist in Resources */,
 				8139981B1FC1205E0043EB57 /* Lato-Regular.ttf in Resources */,
+				8185FC251FD84B770055FC60 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1210,9 +1206,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Infindi/Pods-Infindi-resources.sh",
+				"$PODS_CONFIGURATION_BUILD_DIR/gRPC/gRPCCertificates.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
