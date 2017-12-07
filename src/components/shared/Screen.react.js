@@ -16,6 +16,8 @@ export type DefaultProps = {
   theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
+const NAV_BAR_HEIGHT = 64;
+
 export default class Screen extends Component<Props> {
   static defaultProps: DefaultProps = {
     avoidKeyboard: false,
@@ -47,6 +49,7 @@ export default class Screen extends Component<Props> {
 const styles = StyleSheet.create({
   root: {
     backgroundColor: Colors.BACKGROUND,
+    paddingTop: NAV_BAR_HEIGHT,
     flex: 1,
   },
 });
