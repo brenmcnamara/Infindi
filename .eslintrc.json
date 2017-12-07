@@ -38,6 +38,7 @@
     "flowtype/valid-syntax": 1,
     "max-len": ["error", 100],
     "no-console": 1,
+    "no-unused-vars": ["error", { "args": "none" }],
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "semi": ["error", "always"]
