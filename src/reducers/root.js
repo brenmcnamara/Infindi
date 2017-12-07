@@ -1,13 +1,13 @@
 /* @flow */
 
 import authStatus, { type State as State$AuthStatus } from './authStatus';
-import navControls, { type State as State$NavControls } from './navControls';
+import navState, { type State as State$NavState } from './navState';
 
 import { combineReducers } from 'redux';
 
 export type State = {|
   +authStatus: State$AuthStatus,
-  +navControls: State$NavControls,
+  +navState: State$NavState,
 |};
 
-export default combineReducers({ authStatus, navControls });
+export default combineReducers({ authStatus, navState });

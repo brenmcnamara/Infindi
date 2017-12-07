@@ -5,7 +5,7 @@ import invariant from 'invariant';
 import type { Next, PureAction, Store } from '../types/redux';
 import type { AuthStatus } from '../reducers/authStatus';
 import type {
-  Controls,
+  ControlsPayload,
   Mode,
   ModeControls,
   Tab,
@@ -15,7 +15,7 @@ import type {
 export type Action = Action$SetControls;
 
 export type Action$SetControls = {|
-  +controls: Controls,
+  +controlsPayload: ControlsPayload,
   +transitionStatus: 'IN_PROGRESS' | 'COMPLETE',
   +type: 'SET_CONTROLS',
 |};
@@ -40,27 +40,27 @@ export default (store: Store) => (next: Next) => {
   }
 
   return (action: PureAction) => {
-    const navControls = store.getState().navControls;
-    const currentControls =
-      navControls.transitionStatus === 'IN_PROGRESS'
-        ? navControls.previousControls
-        : navControls.controls;
+    const navState = store.getState().navState;
+    const currentControlsPayload =
+      navState.transitionStatus === 'IN_PROGRESS'
+        ? navState.previousControlsPayload
+        : navState.controlsPayload;
     next(action);
 
     switch (action.type) {
       case 'AUTH_STATUS_CHANGE': {
-        const currentMode = currentControls.mode;
+        const currentMode = currentControlsPayload.mode;
         const nextMode = getModeFromAuthStatus(action.status);
         if (currentMode !== nextMode) {
           const nextTab = nextMode === 'MAIN' ? 'HOME' : null;
-          const newControls = { mode: nextMode, tab: nextTab };
+          const newControlsPayload = { mode: nextMode, tab: nextTab };
           // NOTE: There could be a race condition here. Hoping that redux will
           // dispatch the IN_PROGRESS controls before getModeControls is applied
           // but may need a more robust way to do this.
           next({
-            type: 'SET_CONTROLS',
+            controlsPayload: newControlsPayload,
             transitionStatus: 'IN_PROGRESS',
-            controls: newControls,
+            type: 'SET_CONTROLS',
           });
           getModeControls()
             .setMode(nextMode)
@@ -72,7 +72,7 @@ export default (store: Store) => (next: Next) => {
                 newMode,
               );
               next({
-                controls: newControls,
+                controlsPayload: newControlsPayload,
                 transitionStatus: 'COMPLETE',
                 type: 'SET_CONTROLS',
               });
@@ -86,7 +86,10 @@ export default (store: Store) => (next: Next) => {
         // dispatch the IN_PROGRESS controls before getTabControls is applied
         // but may need a more robust way to do this.
         next({
-          controls: { mode: currentControls.mode, tab: 'ACCOUNTS' },
+          controlsPayload: {
+            mode: currentControlsPayload.mode,
+            tab: 'ACCOUNTS',
+          },
           transitionStatus: 'IN_PROGRESS',
           type: 'SET_CONTROLS',
         });
@@ -100,7 +103,10 @@ export default (store: Store) => (next: Next) => {
               newTab,
             );
             next({
-              controls: { mode: currentControls.mode, tab: 'ACCOUNTS' },
+              controlsPayload: {
+                mode: currentControlsPayload.mode,
+                tab: 'ACCOUNTS',
+              },
               transitionStatus: 'COMPLETE',
               type: 'SET_CONTROLS',
             });
@@ -109,12 +115,12 @@ export default (store: Store) => (next: Next) => {
       }
 
       case 'NAVIGATE_TO_HOME': {
-        const newControls = { mode: currentControls.mode, tab: 'HOME' };
+        const newControls = { mode: currentControlsPayload.mode, tab: 'HOME' };
         // NOTE: There could be a race condition here. Hoping that redux will
         // dispatch the IN_PROGRESS controls before getModeControls is applied
         // but may need a more robust way to do this.
         next({
-          controls: newControls,
+          controlsPayload: newControls,
           transitionStatus: 'IN_PROGRESS',
           type: 'SET_CONTROLS',
         });
@@ -128,7 +134,7 @@ export default (store: Store) => (next: Next) => {
               newTab,
             );
             next({
-              controls: newControls,
+              controlsPayload: newControls,
               transitionStatus: 'COMPLETE',
               type: 'SET_CONTROLS',
             });

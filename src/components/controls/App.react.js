@@ -75,13 +75,12 @@ class App extends Component<Props, State> {
 }
 
 function mapReduxStateToProps(state: ReduxState) {
-  console.log(state);
-  const { navControls } = state;
+  const { navState } = state;
   return {
     initialMode:
-      navControls.transitionStatus === 'COMPLETE'
-        ? navControls.controls.mode
-        : navControls.previousControls.mode,
+      navState.transitionStatus === 'COMPLETE'
+        ? navState.controlsPayload.mode
+        : navState.previousControlsPayload.mode,
   };
 }
 

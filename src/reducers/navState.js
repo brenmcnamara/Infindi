@@ -1,27 +1,27 @@
 /* @flow */
 
-// TODO: Rename to navState
-
 import invariant from 'invariant';
 
-import { INITIAL_CONTROLS } from '../controls';
+import { INITIAL_CONTROLS_PAYLOAD } from '../controls';
 
 import type { Action } from '../types/redux';
-import type { Controls } from '../controls';
+import type { ControlsPayload } from '../controls';
 
+// TODO: This type is not getting applied by flow. Why?
 export type State =
   | {|
-      +incomingControls: Controls,
-      +previousControls: Controls,
+      +incomingControlsPayload: ControlsPayload,
+      +previousControlsPayload: ControlsPayload,
       +transitionStatus: 'IN_PROGRESS',
     |}
   | {|
-      +controls: Controls,
+      +controlsPayload: ControlsPayload,
       +transitionStatus: 'COMPLETE',
     |};
 
+// TODO: Flow is not type-checking this. Why?
 const DEFAULT_STATE: State = {
-  controls: INITIAL_CONTROLS,
+  controlsPayload: INITIAL_CONTROLS_PAYLOAD,
   transitionStatus: 'COMPLETE',
 };
 
@@ -37,13 +37,13 @@ export default function navState(
           'Can only transition to IN_PROGRESS controls from COMPLETE controls',
         );
         return {
-          incomingControls: action.controls,
-          previousControls: state.controls,
+          incomingControlsPayload: action.controlsPayload,
+          previousControlsPayload: state.controlsPayload,
           transitionStatus: 'IN_PROGRESS',
         };
       } else {
         return {
-          controls: action.controls,
+          controlsPayload: action.controlsPayload,
           transitionStatus: 'COMPLETE',
         };
       }

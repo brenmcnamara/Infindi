@@ -5,7 +5,7 @@ export type Mode = 'AUTH' | 'LOADING' | 'MAIN';
 export type Tab = 'ACCOUNTS' | 'HOME';
 
 // TODO: Rename to ControlsPayload
-export type Controls = {|
+export type ControlsPayload = {|
   +mode: Mode,
   +tab: Tab | null,
 |};
@@ -20,7 +20,7 @@ export type TabControls = {|
 
 export type NavigatorControls = {||};
 
-export const INITIAL_CONTROLS = {
+export const INITIAL_CONTROLS_PAYLOAD: ControlsPayload = {
   mode: 'LOADING',
   tab: null,
 };
