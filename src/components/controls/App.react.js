@@ -1,5 +1,7 @@
 /* @flow */
 
+import LoadingScreen from '../LoadingScreen.react';
+import LoginScreen from '../LoginScreen.react';
 import React, { Component } from 'react';
 import Tabs from './Tabs.react';
 
@@ -39,13 +41,13 @@ class App extends Component<Props, State> {
   render() {
     switch (this.state.currentMode) {
       case 'AUTH': {
-        return this._renderAuth();
+        return <LoginScreen />;
       }
       case 'LOADING': {
-        return this._renderLoading();
+        return <LoadingScreen />;
       }
       case 'MAIN': {
-        return this._renderMain();
+        return <Tabs />;
       }
     }
     invariant(false, 'Unrecognized app mode %s', this.state.currentMode);
@@ -63,13 +65,24 @@ class App extends Component<Props, State> {
     return <Tabs />;
   }
 
-  _setMode = (mode: Mode): void => {
-    this.setState({ currentMode: mode });
+  _setMode = (mode: Mode): Promise<Mode> => {
+    return new Promise(resolve => {
+      this.setState({ currentMode: mode }, () => {
+        resolve(this.state.currentMode);
+      });
+    });
   };
 }
 
 function mapReduxStateToProps(state: ReduxState) {
-  return { initialMode: state.navControls.mode };
+  console.log(state);
+  const { navControls } = state;
+  return {
+    initialMode:
+      navControls.transitionStatus === 'COMPLETE'
+        ? navControls.controls.mode
+        : navControls.previousControls.mode,
+  };
 }
 
 export default connect(mapReduxStateToProps)(App);

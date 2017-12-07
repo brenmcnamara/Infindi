@@ -31,3 +31,5 @@ export type Store = {|
 |};
 
 export type Dispatch = (action: Action) => void;
+
+export type Next = (action: PureAction) => any;

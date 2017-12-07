@@ -79,14 +79,37 @@ class Tabs extends Component<Props, State> {
     );
   }
 
-  _setTab = (tab: Tab): void => {
-    this.setState({ currentTab: tab });
+  _setTab = (tab: Tab): Promise<Tab> => {
+    return new Promise(resolve => {
+      this.setState({ currentTab: tab }, () => {
+        resolve(this.state.currentTab);
+      });
+    });
   };
 }
 
 function mapReduxStateToProps(state: ReduxState) {
-  const tab = state.navControls.tab;
-  invariant(tab, 'Tab control is empty when trying to render Tabs compnent');
+  const { navControls } = state;
+  // NOTE: We could be transition in or out of the tab controls. We should
+  // prefer rendering the currently set controls, but if the current controls
+  // don't have tabs, then we need to render the IN_PROGRESS controls.
+  let tab: Tab;
+  if (navControls.transitionStatus === 'COMPLETE') {
+    console.log(navControls);
+    invariant(
+      navControls.controls.tab,
+      'Cannot render Tabs.react on a complete transition without a tab',
+    );
+    tab = navControls.controls.tab;
+  } else if (navControls.previousControls.tab) {
+    tab = navControls.previousControls.tab;
+  } else {
+    invariant(
+      navControls.incomingControls.tab,
+      'Either previous controls or incoming controls must have tab for Tabs.react to render',
+    );
+    tab = navControls.incomingControls.tab;
+  }
   return { initialTab: tab };
 }
 
