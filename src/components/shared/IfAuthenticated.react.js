@@ -4,7 +4,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { type ReduxProps } from '../../types/redux';
+import { type ReduxProps } from '../../typesDEPRECATED/redux';
 import { type State } from '../../reducers/root';
 
 type Props = ReduxProps & {

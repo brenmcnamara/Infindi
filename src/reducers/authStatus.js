@@ -1,7 +1,7 @@
 /* @flow */
 
-import type { LoginCredentials, LoginPayload } from '../types/db';
-import type { PureAction } from '../types/redux';
+import type { LoginCredentials, LoginPayload } from '../typesDEPRECATED/db';
+import type { PureAction } from '../typesDEPRECATED/redux';
 
 // https://rnfirebase.io/docs/v3.1.*/auth/reference/auth#signInWithEmailAndPassword
 export type LoginErrorCode =

@@ -2,8 +2,8 @@
 
 import invariant from 'invariant';
 
-import type { ID, ModelStub } from './types/core';
-import type { PureAction, Reducer } from './types/redux';
+import type { ID, ModelStub } from 'common/src/types/core';
+import type { PureAction, Reducer } from './typesDEPRECATED/redux';
 
 // TODO: Port this from Infindi-Backend
 type InfindiError = { errorCode: string, errorMessage: string };

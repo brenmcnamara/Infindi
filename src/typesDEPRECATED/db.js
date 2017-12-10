@@ -190,6 +190,8 @@ export type Account = ModelStub<'Account'> & {
   +userRef: Pointer<'User'>,
 };
 
+export type AccountType = 'CD';
+
 /**
  * A bank transaction
  */

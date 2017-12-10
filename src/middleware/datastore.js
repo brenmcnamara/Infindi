@@ -25,9 +25,9 @@ import {
   getModeForAuthStatus,
 } from '../store/state-utils';
 
-import type { Account, LoginPayload } from '../types/db';
+import type { Account, LoginPayload } from '../typesDEPRECATED/db';
 import type { ModelCollection } from '../datastore';
-import type { PureAction, Next, Store } from '../types/redux';
+import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
 
 const Database = Firebase.firestore();
 
@@ -105,6 +105,7 @@ async function downloadInitialUserData(loginPayload: LoginPayload, next: Next) {
     const account: Account = document.data();
     collection[account.id] = account;
   });
+  // $FlowFixMe - Will fix this later.
   next({
     collection,
     modelName: 'Account',

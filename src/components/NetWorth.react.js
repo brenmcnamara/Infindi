@@ -10,7 +10,7 @@ import nullthrows from 'nullthrows';
 
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { Dollars } from '../types/core';
+import type { Dollars } from 'common/src/types/core';
 
 export type Props = {
   netWorth: Dollars | null,

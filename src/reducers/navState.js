@@ -5,7 +5,7 @@ import invariant from 'invariant';
 import { INITIAL_CONTROLS_PAYLOAD } from '../controls';
 
 import type { ControlsPayload } from '../controls';
-import type { PureAction } from '../types/redux';
+import type { PureAction } from '../typesDEPRECATED/redux';
 
 // TODO: This type is not getting applied by flow. Why?
 export type State =

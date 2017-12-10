@@ -15,7 +15,7 @@ import type {
   AccountLoader,
   AccountLoaderCollection,
 } from '../reducers/accounts';
-import type { Dollars } from '../types/core';
+import type { Dollars } from 'common/src/types/core';
 
 export type Props = {
   accounts: AccountLoaderCollection,

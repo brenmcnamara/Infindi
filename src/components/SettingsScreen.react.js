@@ -13,7 +13,7 @@ import { getUserFirstName } from '../store/state-utils';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { logout } from '../actions/authentication';
 
-import { type ReduxProps } from '../types/redux';
+import { type ReduxProps } from '../typesDEPRECATED/redux';
 import { type State } from '../reducers/root';
 
 export type Props = ReduxProps & { firstName: string };

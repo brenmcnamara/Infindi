@@ -8,7 +8,7 @@ import { NavigatorIOS } from 'react-native';
 
 import { connect } from 'react-redux';
 
-import type { ReduxProps } from '../../types/redux';
+import type { ReduxProps } from '../../typesDEPRECATED/redux';
 
 export type NavigatorPayload = {
   component: Object,

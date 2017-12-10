@@ -20,8 +20,8 @@ import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { isObjectEmpty } from '../common/obj-utils';
 
 import type { AccountLoaderCollection } from '../reducers/accounts';
-import type { Dollars } from '../types/core';
-import type { ReduxProps } from '../types/redux';
+import type { Dollars } from 'common/src/types/core';
+import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
 
 export type Props = ReduxProps & {

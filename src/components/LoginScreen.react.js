@@ -24,8 +24,8 @@ import {
 import { connect } from 'react-redux';
 import { login } from '../actions/authentication';
 
-import { type LoginCredentials } from '../types/db';
-import { type ReduxProps } from '../types/redux';
+import { type LoginCredentials } from 'common/src/types/db';
+import { type ReduxProps } from '../typesDEPRECATED/redux';
 import { type State as StoreState } from '../reducers/root';
 
 export type Props = ReduxProps & {

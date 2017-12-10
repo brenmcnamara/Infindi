@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { StyleSheet, Text } from 'react-native';
 
-import type { Dollars } from '../../types/core';
+import type { Dollars } from 'common/src/types/core';
 
 export type Props = {
   dollars: Dollars,

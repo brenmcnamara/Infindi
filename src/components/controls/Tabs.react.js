@@ -16,7 +16,7 @@ import {
 } from '../../actions/navigation';
 import { TabBarIOS } from 'react-native';
 
-import type { ReduxProps } from '../../types/redux';
+import type { ReduxProps } from '../../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../../reducers/root';
 import type { Tab } from '../../controls';
 

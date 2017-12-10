@@ -4,16 +4,16 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
-import type { Action as AllActions, Store } from '../types/redux';
+import type { Action as AllActions, Store } from '../typesDEPRECATED/redux';
 import type { AuthStatus } from '../reducers/authStatus';
-import type { Firebase$User } from '../types/firebase';
-import type { ID } from '../types/core';
+import type { Firebase$User } from 'common/src/types/firebase';
+import type { ID } from 'common/src/types/core';
 import type {
   LoginCredentials,
   LoginPayload,
   UserInfo,
   UserMetrics,
-} from '../types/db';
+} from '../typesDEPRECATED/db';
 
 const Auth = Firebase.auth();
 const Database = Firebase.firestore();

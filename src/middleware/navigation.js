@@ -4,7 +4,7 @@ import invariant from 'invariant';
 
 import { getModeForAuthStatus } from '../store/state-utils';
 
-import type { Next, PureAction, Store } from '../types/redux';
+import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 import type {
   ControlsPayload,
   ModeControls,

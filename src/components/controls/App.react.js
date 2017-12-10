@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { setModeControls } from '../../actions/navigation';
 
 import type { Mode } from '../../controls';
-import type { ReduxProps } from '../../types/redux';
+import type { ReduxProps } from '../../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../../reducers/root';
 
 export type Props = ReduxProps & {
