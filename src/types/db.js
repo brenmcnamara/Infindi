@@ -1,12 +1,20 @@
 /* @flow */
 
-import { type Firebase$User } from './firebase';
-import {
-  type Fuzzy,
-  type Location,
-  type ModelStub,
-  type YearMonthDay,
+import type {
+  Dollars,
+  Fuzzy,
+  ID,
+  Location,
+  ModelStub,
+  Pointer,
+  Seconds,
+  YearMonthDay,
 } from './core';
+import type { Firebase$User } from './firebase';
+import type {
+  Account as Plaid$Account,
+  Transaction as Plaid$Transaction,
+} from './plaid';
 
 /**
  * Login credentials used to login a user.
@@ -23,6 +31,7 @@ export type LoginPayload = {|
   +firebaseUser: Firebase$User,
   +idToken: string,
   +userInfo: UserInfo,
+  +userMetrics: UserMetrics,
 |};
 
 /**
@@ -39,25 +48,23 @@ export type UserInfo = ModelStub<'UserInfo'> & {|
   +gender: ?Fuzzy<'MALE' | 'FEMALE'>,
   +isTestUser: bool,
   +lastName: string,
-  +accessInline: UserAccess,
 |};
+
+/**
+ * This model contains data related to important metrics that we are tracking
+ * for the current user. These metrics are all related to the users finances
+ * and are mostly calculated from the more concrete information the user
+ * provides, such as accounts and transactions.
+ */
+export type UserMetrics = ModelStub<'UserMetric'> & {
+  +netWorth: Dollars | null,
+  +savingsRate: Dollars | null,
+};
 
 /**
  * This is a detailed object containing the permissions that a partcilar
  * user has. Once created, this cannot be mutated, except through some
  * priveledges process run by an admin.
- *
- * NOTE: The user access is inlined into the user info object. While this will
- * result in a ton of extra state being generated (there are probably only a few
- * configurations access that we care about) as well as some other headaches, we
- * have to do it this way due to limitations on how you can define security
- * rules in Firebase. Would like to eventually move this out into its own table.
- *
- * For documentation on how firebase authorization rules work,
- * start here: https://firebase.google.com/docs/database/security/quickstart
- *
- * For an api reference on how to define new rules, start here:
- * https://firebase.google.com/docs/database/security/securing-data
  */
 export type UserAccess = ModelStub<'UserAccess'> & {|
   +alias: string,
@@ -108,9 +115,93 @@ export type FinancialGoal$SaveForRetirement = ModelStub<'FinancialGoal'> & {|
  * NOTE: These credentials may expire relatively frequently and need to be
  * updated.
  */
-export type PlaidCredentials = ModelStub<'PlaidCredentials'> & {|
+export type PlaidCredentials = ModelStub<'PlaidCredentials'> & {
   +accessToken: string,
   +environment: 'sandbox' | 'development' | 'production',
   +itemID: string,
   +metadata: Object,
+  +userRef: Pointer<'User'>,
+};
+
+/**
+ * PlaidItemDownloadRequest contains all the metadata in charge of tracking
+ * plaid downloads for items. Each download request tracks the download of a
+ * plaid credentials object. There can be at most 1 plaid download running at
+ * a time per plaid credential, though there can be many interrupted or failed
+ * downloads existing.
+ */
+export type PlaidDownloadStatus =
+  | {|
+      +type: 'NOT_INITIALIZED',
+    |}
+  | {|
+      +claim: PlaidDownloadClaim,
+      +type: 'IN_PROGRESS',
+    |}
+  | {|
+      +totalDownloadTime: Seconds,
+      +type: 'COMPLETE',
+    |}
+  | {|
+      +lastClaim: PlaidDownloadClaim,
+      +type: 'CANCELED',
+    |}
+  | {|
+      +errorCode: string,
+      +errorMessage: string,
+      +type: 'FAILURE',
+    |};
+
+/**
+ * When a worker wants to claim a download request to work on, it needs to
+ * submit a claim transaction to tell other workers not to try to work on this
+ * request.
+ *
+ * It could be the case that a worker is killed before it can complete a task.
+ * In order to prevent download requests from being left behind as a result of
+ * this, each claim needs to include a timeout before the worker is required
+ * to update the claim. The timeout and start time of the claim must be
+ * specified.
+ */
+export type PlaidDownloadClaim = {|
+  +createdAt: Date,
+  +timeout: Seconds,
+  +updatedAt: Date,
+  +workerID: ID,
 |};
+
+export type PlaidDownloadRequest = ModelStub<'PlaidDownloadRequest'> & {
+  +credentialsRef: Pointer<'PlaidCredentials'>,
+  +status: PlaidDownloadStatus,
+  +userRef: Pointer<'User'>,
+};
+
+/**
+ * Represents the bank account of a user.
+ */
+export type Account = ModelStub<'Account'> & {
+  +alias: ?number,
+  +balance: Dollars,
+  +name: string,
+  +sourceOfTruth: {|
+    +type: 'PLAID',
+    +value: Plaid$Account,
+  |},
+  +userRef: Pointer<'User'>,
+};
+
+/**
+ * A bank transaction
+ */
+export type Transaction = ModelStub<'Transaction'> & {
+  +accountRef: Pointer<'Account'>,
+  +amount: Dollars,
+  +category: ?string,
+  +name: string,
+  +sourceOfTruth: {|
+    +type: 'PLAID',
+    +value: Plaid$Transaction,
+  |},
+  +transactionDate: Date,
+  +userRef: Pointer<'User'>,
+};

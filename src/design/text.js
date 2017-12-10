@@ -2,17 +2,40 @@
 
 import Colors from './colors';
 
+const header2 = {
+  color: Colors.TEXT_NORMAL,
+  fontFamily: 'Lato-Regular',
+  fontSize: 22,
+};
+
 const header3 = {
-  color: 'black',
+  color: Colors.TEXT_NORMAL,
   fontFamily: 'Lato-Regular',
   fontSize: 18,
 };
 
 const normal = {
-  color: 'black',
+  color: Colors.TEXT_NORMAL,
   fontFamily: 'Lato-Light',
   fontSize: 16,
   lineHeight: 22,
+};
+
+const normalWithEmphasis = {
+  ...normal,
+  fontFamily: 'Lato-Regular',
+};
+
+const small = {
+  color: Colors.TEXT_FAINT,
+  fontFamily: 'Lato-Light',
+  fontSize: 12,
+  lineHeight: 22,
+};
+
+const smallWithEmphasis = {
+  ...small,
+  fontFamily: 'Lato-Regular',
 };
 
 const error = {
@@ -47,8 +70,12 @@ export default {
   mediumFontSize,
   largeFontSize,
 
+  header2,
   header3,
   normal,
+  normalWithEmphasis,
+  small,
+  smallWithEmphasis,
   error,
 
   normalButton,

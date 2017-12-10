@@ -14,7 +14,7 @@ export type Props = ReduxProps;
 class HomeScreen extends Component<Props> {
   render() {
     return (
-      <Screen>
+      <Screen avoidNavBar={true}>
         <Content>
           <Unimplemented />
         </Content>

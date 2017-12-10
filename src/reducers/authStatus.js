@@ -1,7 +1,7 @@
 /* @flow */
 
-import { type Action } from '../types/redux';
-import { type LoginCredentials, type LoginPayload } from '../types/db';
+import type { LoginCredentials, LoginPayload } from '../types/db';
+import type { PureAction } from '../types/redux';
 
 // https://rnfirebase.io/docs/v3.1.*/auth/reference/auth#signInWithEmailAndPassword
 export type LoginErrorCode =
@@ -95,7 +95,7 @@ const DEFAULT_STATE = { type: 'NOT_INITIALIZED' };
 
 export default function authStatus(
   state: State = DEFAULT_STATE,
-  action: Action,
+  action: PureAction,
 ) {
   if (action.type === 'AUTH_STATUS_CHANGE') {
     return action.status;

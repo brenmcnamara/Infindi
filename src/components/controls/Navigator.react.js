@@ -12,6 +12,7 @@ import type { ReduxProps } from '../../types/redux';
 
 export type NavigatorPayload = {
   component: Object,
+  couldBeScrollable?: bool,
 };
 
 export type Props = ReduxProps & {
@@ -24,14 +25,15 @@ export type Props = ReduxProps & {
  */
 class Navigator extends Component<Props> {
   render() {
-    const Component = this.props.payload.component;
+    const { payload } = this.props;
+    const Component = payload.component;
     return (
       <NavigatorIOS
         initialRoute={{
           barTintColor: Colors.BACKGROUND,
           component: Component,
           leftButtonIcon: Icons.List,
-          shadowHidden: true,
+          shadowHidden: !payload.couldBeScrollable,
           tintColor: Colors.NAV_BAR_BUTTON,
           title: '',
         }}

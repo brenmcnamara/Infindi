@@ -2,11 +2,11 @@
 
 import invariant from 'invariant';
 
+import { getModeForAuthStatus } from '../store/state-utils';
+
 import type { Next, PureAction, Store } from '../types/redux';
-import type { AuthStatus } from '../reducers/authStatus';
 import type {
   ControlsPayload,
-  Mode,
   ModeControls,
   Tab,
   TabControls,
@@ -50,7 +50,7 @@ export default (store: Store) => (next: Next) => {
     switch (action.type) {
       case 'AUTH_STATUS_CHANGE': {
         const currentMode = currentControlsPayload.mode;
-        const nextMode = getModeFromAuthStatus(action.status);
+        const nextMode = getModeForAuthStatus(action.status);
         if (currentMode !== nextMode) {
           const nextTab = nextMode === 'MAIN' ? 'HOME' : null;
           const newControlsPayload = { mode: nextMode, tab: nextTab };
@@ -154,19 +154,3 @@ export default (store: Store) => (next: Next) => {
     }
   };
 };
-
-function getModeFromAuthStatus(authStatus: AuthStatus): Mode {
-  switch (authStatus.type) {
-    case 'LOGIN_INITIALIZE':
-    case 'LOGIN_FAILURE':
-    case 'LOGOUT_INITIALIZE':
-    case 'LOGOUT_FAILURE':
-    case 'LOGGED_OUT':
-      return 'AUTH';
-    case 'LOGGED_IN':
-      return 'MAIN';
-    case 'NOT_INITIALIZED':
-      return 'LOADING';
-  }
-  invariant(false, 'Unrecognized auth status: %s', authStatus.type);
-}

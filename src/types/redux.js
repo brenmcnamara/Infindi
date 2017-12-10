@@ -1,10 +1,12 @@
 /* @flow */
 
-import { type Action as Action$Auth } from '../actions/authentication';
-import { type Action as Action$AuthMiddleware } from '../middleware/authentication';
-import { type Action as Action$Nav } from '../actions/navigation';
-import { type Action as Action$NavMiddleware } from '../middleware/navigation';
-import { type State } from '../reducers/root';
+import type { Account } from '../types/db';
+import type { Action as Action$Auth } from '../actions/authentication';
+import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
+import type { Action as Action$Datastore } from '../datastore';
+import type { Action as Action$Nav } from '../actions/navigation';
+import type { Action as Action$NavMiddleware } from '../middleware/navigation';
+import type { State } from '../reducers/root';
 
 export type ReduxProps = {
   +dispatch: Dispatch,
@@ -13,6 +15,7 @@ export type ReduxProps = {
 export type PureAction =
   | Action$Auth
   | Action$AuthMiddleware
+  | Action$Datastore<'Account', Account>
   | Action$Nav
   | Action$NavMiddleware;
 
@@ -33,3 +36,10 @@ export type Store = {|
 export type Dispatch = (action: Action) => void;
 
 export type Next = (action: PureAction) => any;
+
+export type Reducer<TState> = (state: TState, action: PureAction) => TState;
+
+// TODO: Can we make this more precise?
+export type CombineReducers<TState: Object> = (reducerMap: {
+  [key: string]: Reducer<*>,
+}) => Reducer<TState>;

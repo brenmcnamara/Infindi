@@ -4,13 +4,15 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
-import { type Action as AllActions, type Store } from '../types/redux';
-import { type AuthStatus } from '../reducers/authStatus';
-import { type Firebase$User } from '../types/firebase';
-import {
-  type LoginCredentials,
-  type LoginPayload,
-  type UserInfo,
+import type { Action as AllActions, Store } from '../types/redux';
+import type { AuthStatus } from '../reducers/authStatus';
+import type { Firebase$User } from '../types/firebase';
+import type { ID } from '../types/core';
+import type {
+  LoginCredentials,
+  LoginPayload,
+  UserInfo,
+  UserMetrics,
 } from '../types/db';
 
 const Auth = Firebase.auth();
@@ -117,8 +119,18 @@ async function genUserInfo(id: string): Promise<UserInfo> {
     document.exists,
     'Data Error: UserInfo is missing for logged in user',
   );
-  const userInfo: UserInfo = document.data();
-  return userInfo;
+  return document.data();
+}
+
+async function genUserMetrics(id: ID): Promise<UserMetrics> {
+  const document = await Database.collection('UserMetrics')
+    .doc(id)
+    .get();
+  invariant(
+    document.exists,
+    'Data Error: UserMetrics is missing for logged in user',
+  );
+  return document.data();
 }
 
 async function genLoginPayload(): Promise<?LoginPayload> {
@@ -126,11 +138,12 @@ async function genLoginPayload(): Promise<?LoginPayload> {
   if (!firebaseUser) {
     return null;
   }
-  const [userInfo, idToken] = await Promise.all([
+  const [userInfo, userMetrics, idToken] = await Promise.all([
     genUserInfo(firebaseUser.uid),
+    genUserMetrics(firebaseUser.uid),
     firebaseUser.getIdToken(),
   ]);
-  return { firebaseUser, idToken, userInfo };
+  return { firebaseUser, idToken, userInfo, userMetrics };
 }
 
 function getLoginPayload(authStatus: AuthStatus): ?LoginPayload {

@@ -73,7 +73,9 @@ class Tabs extends Component<Props, State> {
           selected={this.state.currentTab === 'ACCOUNTS'}
           title="Accounts"
         >
-          <Navigator payload={{ component: AccountsScreen }} />
+          <Navigator
+            payload={{ component: AccountsScreen, couldBeScrollable: true }}
+          />
         </TabBarIOS.Item>
       </TabBarIOS>
     );

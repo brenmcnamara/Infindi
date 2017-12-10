@@ -4,8 +4,8 @@ import invariant from 'invariant';
 
 import { INITIAL_CONTROLS_PAYLOAD } from '../controls';
 
-import type { Action } from '../types/redux';
 import type { ControlsPayload } from '../controls';
+import type { PureAction } from '../types/redux';
 
 // TODO: This type is not getting applied by flow. Why?
 export type State =
@@ -27,7 +27,7 @@ const DEFAULT_STATE: State = {
 
 export default function navState(
   state: State = DEFAULT_STATE,
-  action: Action,
+  action: PureAction,
 ): State {
   switch (action.type) {
     case 'SET_CONTROLS': {

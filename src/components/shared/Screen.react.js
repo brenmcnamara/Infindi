@@ -7,12 +7,14 @@ import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 
 export type Props = {
   avoidKeyboard: bool,
+  avoidNavbar: bool,
   children?: ?any,
   theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
 export type DefaultProps = {
   avoidKeyboard: bool,
+  avoidNavbar: bool,
   theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
@@ -20,6 +22,7 @@ const NAV_BAR_HEIGHT = 64;
 
 export default class Screen extends Component<Props> {
   static defaultProps: DefaultProps = {
+    avoidNavbar: false,
     avoidKeyboard: false,
     theme: 'NORMAL',
   };
@@ -31,6 +34,7 @@ export default class Screen extends Component<Props> {
       : {};
     const rootStyles = [
       styles.root,
+      this.props.avoidNavBar ? { paddingTop: NAV_BAR_HEIGHT } : null,
       {
         backgroundColor:
           this.props.theme === 'NORMAL'
@@ -49,7 +53,6 @@ export default class Screen extends Component<Props> {
 const styles = StyleSheet.create({
   root: {
     backgroundColor: Colors.BACKGROUND,
-    paddingTop: NAV_BAR_HEIGHT,
     flex: 1,
   },
 });
