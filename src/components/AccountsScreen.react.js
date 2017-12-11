@@ -46,7 +46,7 @@ type RowItem =
 class AccountsScreen extends Component<Props> {
   render() {
     return (
-      <Screen>
+      <Screen avoidNavBar={true}>
         {/* CONTENT */}
         {this._renderAccounts()}
         {this._renderAccountsLoading()}
@@ -62,7 +62,9 @@ class AccountsScreen extends Component<Props> {
     return (
       <If predicate={isDownloading}>
         <Content>
-          <Text>Loading</Text>
+          <View style={styles.loadingContainer}>
+            <Text>Loading...</Text>
+          </View>
         </Content>
       </If>
     );
@@ -74,6 +76,7 @@ class AccountsScreen extends Component<Props> {
       <If predicate={!isDownloading && !isObjectEmpty(loaderCollection)}>
         <Content>
           <FlatList
+            automaticallyAdjustContentInsets={false}
             data={[
               {
                 key: '1',
@@ -178,6 +181,12 @@ const styles = StyleSheet.create({
 
   footer: {
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  loadingContainer: {
+    alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
   },
 
