@@ -3,7 +3,7 @@
 import invariant from 'invariant';
 
 import type { AuthStatus } from '../reducers/authStatus';
-import type { LoginPayload } from '../typesDEPRECATED/db';
+import type { LoginPayload } from 'common/src/types/db';
 import type { Mode } from '../controls';
 import type { State } from '../reducers/root';
 

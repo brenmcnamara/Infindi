@@ -25,7 +25,7 @@ import {
   getModeForAuthStatus,
 } from '../store/state-utils';
 
-import type { Account, LoginPayload } from '../typesDEPRECATED/db';
+import type { Account, LoginPayload } from 'common/src/types/db';
 import type { ModelCollection } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
 

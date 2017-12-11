@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { AccountType } from '../typesDEPRECATED/db';
+export type AccountType = 'CD' | string;
 
 export type GroupType = 'AVAILABLE_CASH' | 'OTHER';
 

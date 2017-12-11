@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { LoginCredentials, LoginPayload } from '../typesDEPRECATED/db';
+import type { LoginCredentials, LoginPayload } from 'common/src/types/db';
 import type { PureAction } from '../typesDEPRECATED/redux';
 
 // https://rnfirebase.io/docs/v3.1.*/auth/reference/auth#signInWithEmailAndPassword

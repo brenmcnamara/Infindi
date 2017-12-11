@@ -1199,7 +1199,7 @@ commander@^2.9.0, commander@~2.11.0:
 
 "common@git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git":
   version "1.0.0"
-  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#f97537e4860131e03aa4fad4c82630f7e59a7bfd"
+  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#bb7be1b71cb3068fff9fc77be69449d255dcd76e"
 
 compressible@~2.0.5:
   version "2.0.12"

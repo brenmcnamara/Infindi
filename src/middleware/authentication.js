@@ -13,7 +13,7 @@ import type {
   LoginPayload,
   UserInfo,
   UserMetrics,
-} from '../typesDEPRECATED/db';
+} from 'common/src/types/db';
 
 const Auth = Firebase.auth();
 const Database = Firebase.firestore();
