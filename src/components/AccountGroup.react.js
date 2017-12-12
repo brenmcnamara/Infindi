@@ -8,6 +8,7 @@ import TextDesign from '../design/text';
 
 import invariant from 'invariant';
 
+import { getFormattedAccountType } from '../common/db-utils';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -40,7 +41,7 @@ export default class AccountGroup extends Component<Props> {
     return (
       <View style={styles.header}>
         <Text style={[TextDesign.smallWithEmphasis, styles.groupType]}>
-          AVAILABLE CASH
+          {this._getFormattedGroupType()}
         </Text>
         <InfoButton onPress={() => this._onInfoGroupType('AVAILABLE_CASH')} />
         <MoneyText
@@ -72,10 +73,10 @@ export default class AccountGroup extends Component<Props> {
           </View>
           <View style={styles.accountLoaderBottom}>
             <Text style={[styles.accountBank, TextDesign.small]}>
-              WELLS FARGO
+              {account.institutionName}
             </Text>
             <Text style={[styles.accountType, TextDesign.small]}>
-              CHECKING ACCOUNT
+              {getFormattedAccountType(account)}
             </Text>
           </View>
         </TouchableOpacity>
@@ -97,6 +98,10 @@ export default class AccountGroup extends Component<Props> {
       },
       0,
     );
+  }
+
+  _getFormattedGroupType(): string {
+    return this.props.groupType.replace(/_/g, ' ');
   }
 }
 
@@ -162,6 +167,6 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    marginTop: 16,
+    marginVertical: 16,
   },
 });

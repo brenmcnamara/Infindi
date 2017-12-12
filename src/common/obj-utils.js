@@ -46,6 +46,27 @@ export function mapObjectToArray<T, K: string, V>(
 }
 
 /**
+ * Enumerate the key . value pairs of an object and filter our values in the
+ * object.
+ */
+export function filterObject<K: string, V>(
+  obj: Obj<K, V>,
+  predicate: ObjectEnumeratorFn<any, K, V>,
+): Obj<K, V> {
+  const newObj = {};
+  let i = 0;
+  // $FlowFixMe - Assumption of reasonable object implementation.
+  for (let key: K in obj) {
+    if (obj.hasOwnProperty(key) && predicate(obj[key], key, i)) {
+      const val: V = obj[key];
+      newObj[key] = val;
+      ++i;
+    }
+  }
+  return newObj;
+}
+
+/**
  * Enumerate the key / value pairs of an object and reduce them to a single
  * value.
  */
@@ -66,6 +87,22 @@ export function reduceObject<T, K: string, V>(
   }
 
   return result;
+}
+
+/**
+ * Get the values of the object as an array.
+ */
+export function getValues<V>(obj: Obj<*, V>): Array<V> {
+  if (Object.values) {
+    return Object.values(obj);
+  }
+  let values = [];
+  for (let prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      values.push(obj[prop]);
+    }
+  }
+  return values;
 }
 
 export function isObjectEmpty(obj: Obj<*, *>): bool {

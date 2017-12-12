@@ -1,13 +1,40 @@
 /* @flow */
 
-export type AccountType = 'CD' | string;
+import invariant from 'invariant';
 
-export type GroupType = 'AVAILABLE_CASH' | 'OTHER';
+import type { Account } from 'common/src/types/db';
+import type { AccountLoader } from '../reducers/accounts';
 
-export function getGroupTypeForAccountType(type: AccountType): GroupType {
-  switch (type) {
-    case 'CD':
+export type GroupType = 'AVAILABLE_CASH' | 'SHORT_TERM_DEBT' | 'OTHER';
+
+export function getGroupTypeForAccountLoader(loader: AccountLoader): GroupType {
+  invariant(loader.type === 'STEADY', 'Only supporting steady account loaders');
+  return getGroupTypeForAccount(loader.model);
+}
+
+export function getGroupTypeForAccount(account: Account): GroupType {
+  invariant(
+    account.sourceOfTruth.type === 'PLAID',
+    'Only support plaid accounts',
+  );
+  const plaidAccount = account.sourceOfTruth.value;
+  switch (plaidAccount.subtype) {
+    case 'checking':
+    case 'savings':
+      return 'AVAILABLE_CASH';
+    case 'credit card':
+      return 'SHORT_TERM_DEBT';
+    case 'cd':
     default:
       return 'OTHER';
   }
+}
+
+export function getFormattedAccountType(account: Account): string {
+  invariant(
+    account.sourceOfTruth.type === 'PLAID',
+    'Only support plaid accounts',
+  );
+  const plaidAccount = account.sourceOfTruth.value;
+  return plaidAccount.subtype.trim().toUpperCase();
 }

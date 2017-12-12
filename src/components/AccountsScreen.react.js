@@ -15,9 +15,10 @@ import invariant from 'invariant';
 
 import { AccountNullState } from '../../content';
 import { connect } from 'react-redux';
-import { getLoginPayload } from '../store/state-utils';
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
-import { isObjectEmpty } from '../common/obj-utils';
+import { filterObject, isObjectEmpty } from '../common/obj-utils';
+import { getGroupTypeForAccountLoader } from '../common/db-utils';
+import { getLoginPayload } from '../store/state-utils';
 
 import type { AccountLoaderCollection } from '../reducers/accounts';
 import type { Dollars } from 'common/src/types/core';
@@ -71,25 +72,14 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderAccounts() {
-    const { isDownloading, loaderCollection, netWorth } = this.props;
+    const { isDownloading, loaderCollection } = this.props;
+
     return (
       <If predicate={!isDownloading && !isObjectEmpty(loaderCollection)}>
         <Content>
           <FlatList
             automaticallyAdjustContentInsets={false}
-            data={[
-              {
-                key: '1',
-                netWorth,
-                rowType: 'NET_WORTH',
-              },
-              {
-                key: '2',
-                accounts: loaderCollection,
-                accountType: 'AVAILABLE_CASH',
-                rowType: 'ACCOUNTS',
-              },
-            ]}
+            data={this._getData()}
             renderItem={({ item }) => this._renderRowItem(item)}
           />
         </Content>
@@ -147,13 +137,57 @@ class AccountsScreen extends Component<Props> {
         return <NetWorth netWorth={item.netWorth} />;
       case 'ACCOUNTS':
         return (
-          <AccountGroup groupType="AVAILABLE_CASH" accounts={item.accounts} />
+          <AccountGroup groupType={item.groupType} accounts={item.accounts} />
         );
     }
     invariant(false, 'Unrecognized item type: %s', item.rowType);
   };
 
   _onPressAddAccount = (): void => {};
+
+  _getData() {
+    const { loaderCollection, netWorth } = this.props;
+    const availableCashGroup = filterObject(loaderCollection, loader => {
+      return getGroupTypeForAccountLoader(loader) === 'AVAILABLE_CASH';
+    });
+    const shortTermDebtGroup = filterObject(loaderCollection, loader => {
+      return getGroupTypeForAccountLoader(loader) === 'SHORT_TERM_DEBT';
+    });
+    const otherGroup = filterObject(loaderCollection, loader => {
+      return getGroupTypeForAccountLoader(loader) === 'OTHER';
+    });
+    return [
+      {
+        key: '1',
+        netWorth,
+        rowType: 'NET_WORTH',
+      },
+      isObjectEmpty(availableCashGroup)
+        ? null
+        : {
+            key: '2',
+            accounts: availableCashGroup,
+            groupType: 'AVAILABLE_CASH',
+            rowType: 'ACCOUNTS',
+          },
+      isObjectEmpty(shortTermDebtGroup)
+        ? null
+        : {
+            key: '3',
+            accounts: shortTermDebtGroup,
+            groupType: 'SHORT_TERM_DEBT',
+            rowType: 'ACCOUNTS',
+          },
+      isObjectEmpty(otherGroup)
+        ? null
+        : {
+            key: '4',
+            accounts: otherGroup,
+            groupType: 'OTHER',
+            rowType: 'ACCOUNTS',
+          },
+    ].filter(truthy => truthy);
+  }
 }
 
 function mapReduxStateToProps(state: ReduxState) {
