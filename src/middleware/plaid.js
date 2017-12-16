@@ -7,7 +7,12 @@ import invariant from 'invariant';
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 import type { PlaidLinkPayload } from '../modules/PlaidLink';
 
-export type Action = Action$PlaidLinkSuccess;
+export type Action = Action$PlaidLinkAvailability | Action$PlaidLinkSuccess;
+
+export type Action$PlaidLinkAvailability = {|
+  +isAvailable: bool,
+  +type: 'PLAID_LINK_AVAILABILITY',
+|};
 
 export type Action$PlaidLinkStatus = {|
   +status: 'SHOWING' | 'HIDING',
@@ -16,6 +21,13 @@ export type Action$PlaidLinkStatus = {|
 
 export default (store: Store) => (next: Next) => {
   let isLinkShowing: bool = false;
+
+  PlaidLink.genIsAvailable().then(isAvailable => {
+    next({
+      isAvailable,
+      type: 'PLAID_LINK_AVAILABILITY',
+    });
+  });
 
   return (action: PureAction) => {
     next(action);

@@ -8,21 +8,48 @@
 
 #import "PlaidLinkManager.h"
 
+#import "Environment.h"
+
 @interface PlaidLinkManager()
 
+@property (nonatomic, assign) PlaidLinkAvailability availability;
+@property (nonatomic, copy) PlaidLinkAvailabilityBlock availabilityBlock;
 @property (nonatomic, strong) PLKPlaidLinkViewController *linkController;
 @property (nonatomic, copy) PlaidLinkCompletionBlock completionBlock;
+@property (nonatomic, strong) UIViewController *containingController;
 
 @end
 
 @implementation PlaidLinkManager
 
-+ (id)sharedInstance {
++ (PlaidLinkManager *)sharedInstance {
   static id instance = nil;
   if (instance == nil) {
     instance = [[PlaidLinkManager alloc] init];
   }
   return instance;
+}
+
+- (void)initializeWithContainingController:(UIViewController *)containingController {
+  self.containingController = containingController;
+
+  if (![[Environment sharedInstance] allowPlaidLink]) {
+    self.availability = PlaidLinkAvailabilityNo;
+    if (self.availabilityBlock) {
+      self.availabilityBlock(NO);
+    }
+    return;
+  }
+
+  [PLKPlaidLink setupWithSharedConfiguration:^(BOOL success, NSError * _Nullable error) {
+    self.availability = success && error == nil
+      ? PlaidLinkAvailabilityYes
+      : PlaidLinkAvailabilityNo;
+    if (self.availabilityBlock) {
+      self.availabilityBlock(self.availability == PlaidLinkAvailabilityYes);
+      self.availabilityBlock = nil;
+    }
+  }];
 }
 
 - (PLKPlaidLinkViewController *)linkController {
@@ -34,13 +61,25 @@
 
 - (void)showPlaidLink: (PlaidLinkCompletionBlock)completionBlock {
   NSAssert(self.containingController != nil, @"Cannot show plaid link without containing controller");
+  NSAssert(self.availability != PlaidLinkAvailabilityNo, @"Cannot show plaid link when link is not available");
   self.completionBlock = completionBlock;
   [self.containingController presentViewController: self.linkController animated: YES completion: nil];
 }
 
 - (void)hidePlaidLink {
+  NSAssert(self.availability != PlaidLinkAvailabilityNo, @"Cannot hide plaid link when link is not available");
   self.completionBlock = nil;
-  [self.linkController dismissViewControllerAnimated: YES completion: nil];
+  [self.linkController dismissViewControllerAnimated: YES completion:^{
+    self.linkController = nil;
+  }];
+}
+
+- (void)checkLinkAvailability: (PlaidLinkAvailabilityBlock)availabilityBlock {
+  if (self.availability == PlaidLinkAvailabilityUnknown) {
+    self.availabilityBlock = availabilityBlock;
+    return;
+  }
+  availabilityBlock(self.availability == PlaidLinkAvailabilityYes);
 }
 
 #pragma mark - PLKPlaidLinkViewDelegate

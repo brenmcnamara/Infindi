@@ -19,6 +19,12 @@ export type PlaidLinkPayload =
 export type PlaidLinkCompletionCallback = (payload: PlaidLinkPayload) => any;
 
 export default {
+  genIsAvailable(): Promise<bool> {
+    return new Promise(resolve => {
+      NativeModules.PlaidLink.checkAvailability(resolve);
+    });
+  },
+
   hide(): void {
     NativeModules.PlaidLink.hide();
   },

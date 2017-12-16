@@ -29,6 +29,7 @@ import type { State as ReduxState } from '../reducers/root';
 
 export type Props = ReduxProps & {
   isDownloading: bool,
+  isLinkAvailable: bool,
   loaderCollection: AccountLoaderCollection,
   netWorth: Dollars | null,
 };
@@ -48,6 +49,7 @@ type RowItem =
 
 class AccountsScreen extends Component<Props> {
   render() {
+    console.log(this.props.isPlaidLinkAvailable);
     return (
       <Screen avoidNavBar={true} avoidTabbar={true}>
         {/* CONTENT */}
@@ -122,7 +124,9 @@ class AccountsScreen extends Component<Props> {
 
   _renderAddAccountButton() {
     return (
-      <If predicate={!this.props.isDownloading}>
+      <If
+        predicate={this.props.isPlaidLinkAvailable && !this.props.isDownloading}
+      >
         <Footer style={styles.footer}>
           <TextButton
             onPress={this._onPressAddAccount}
@@ -206,6 +210,7 @@ function mapReduxStateToProps(state: ReduxState) {
   );
   return {
     isDownloading: accounts.type === 'DOWNLOADING',
+    isPlaidLinkAvailable: state.plaid.isLinkAvailable,
     netWorth: loginPayload.userMetrics.netWorth,
     loaderCollection:
       accounts.type === 'STEADY' ? accounts.loaderCollection : {},

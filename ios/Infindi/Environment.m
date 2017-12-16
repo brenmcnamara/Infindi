@@ -22,7 +22,11 @@
 }
 
 -(NSString *)hostname {
-  return [[self variables] objectForKey:@"hostname"];
+  return [[self variables] objectForKey: @"hostname"];
+}
+
+-(BOOL)allowPlaidLink {
+  return [[[self variables] objectForKey: @"allowPlaidLink"] boolValue];
 }
 
 @end

@@ -53,7 +53,7 @@
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;
 
-  [PlaidLinkManager sharedInstance].containingController = rootViewController;
+  [[PlaidLinkManager sharedInstance] initializeWithContainingController: rootViewController];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   self.window.rootViewController = rootViewController;  

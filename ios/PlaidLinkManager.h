@@ -8,12 +8,21 @@
 #import <LinkKit/LinkKit.h>
 
 typedef void (^ PlaidLinkCompletionBlock)(NSError *, NSString *, NSDictionary<NSString *, id> *);
+typedef void (^ PlaidLinkAvailabilityBlock)(BOOL isLinkAvailable);
+
+typedef enum {
+  PlaidLinkAvailabilityUnknown,
+  PlaidLinkAvailabilityYes,
+  PlaidLinkAvailabilityNo,
+} PlaidLinkAvailability;
 
 @interface PlaidLinkManager : NSObject <PLKPlaidLinkViewDelegate>
 
-@property (nonatomic, weak) UIViewController *containingController;
-
 + (PlaidLinkManager *)sharedInstance;
+
+- (void)initializeWithContainingController: (UIViewController *)containingController;
+
+- (void)checkLinkAvailability: (PlaidLinkAvailabilityBlock)isLinkAvailable;
 
 - (void)showPlaidLink: (PlaidLinkCompletionBlock)completionBlock;
 

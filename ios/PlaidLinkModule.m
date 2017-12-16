@@ -38,4 +38,10 @@ RCT_EXPORT_METHOD(hide) {
   [[PlaidLinkManager sharedInstance] hidePlaidLink];
 }
 
+RCT_EXPORT_METHOD(checkAvailability: (RCTResponseSenderBlock) callback) {
+  [[PlaidLinkManager sharedInstance] checkLinkAvailability:^(BOOL isLinkAvailable) {
+    callback(@[[NSNumber numberWithBool: isLinkAvailable]]);
+  }];
+}
+
 @end

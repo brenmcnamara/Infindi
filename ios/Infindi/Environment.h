@@ -12,6 +12,8 @@
 
 - (NSDictionary *)variables;
 
+- (BOOL)allowPlaidLink;
+
 - (NSString *)hostname;
 
 @end

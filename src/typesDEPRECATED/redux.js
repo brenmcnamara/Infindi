@@ -6,6 +6,8 @@ import type { Action as Action$AuthMiddleware } from '../middleware/authenticati
 import type { Action as Action$Datastore } from '../datastore';
 import type { Action as Action$Nav } from '../actions/navigation';
 import type { Action as Action$NavMiddleware } from '../middleware/navigation';
+import type { Action as Action$Plaid } from '../actions/plaid';
+import type { Action as Action$PlaidMiddleware } from '../middleware/plaid';
 import type { State } from '../reducers/root';
 
 export type ReduxProps = {
@@ -17,7 +19,9 @@ export type PureAction =
   | Action$AuthMiddleware
   | Action$Datastore<'Account', Account>
   | Action$Nav
-  | Action$NavMiddleware;
+  | Action$NavMiddleware
+  | Action$Plaid
+  | Action$PlaidMiddleware;
 
 export type ThunkAction = (dispatch: Dispatch) => void;
 
