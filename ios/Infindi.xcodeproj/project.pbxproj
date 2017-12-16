@@ -35,6 +35,7 @@
 		2DCD954D1E0B4F2C00145EB5 /* InfindiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* InfindiTests.m */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		6079DA9E19E8D84D1464BAB8 /* libPods-InfindiTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1BCFD5BE78168C8ADB44B9C /* libPods-InfindiTests.a */; };
+		8112C8D81FE2669E00BE8883 /* SessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8112C8D71FE2669E00BE8883 /* SessionManager.m */; };
 		813998191FC1205E0043EB57 /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8139980F1FC1205E0043EB57 /* Lato-LightItalic.ttf */; };
 		8139981A1FC1205E0043EB57 /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8139980F1FC1205E0043EB57 /* Lato-LightItalic.ttf */; };
 		8139981B1FC1205E0043EB57 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998101FC1205E0043EB57 /* Lato-Regular.ttf */; };
@@ -55,6 +56,8 @@
 		8139982A1FC1205E0043EB57 /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998171FC1205E0043EB57 /* Lato-BlackItalic.ttf */; };
 		8139982B1FC1205E0043EB57 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998181FC1205E0043EB57 /* Lato-Light.ttf */; };
 		8139982C1FC1205E0043EB57 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813998181FC1205E0043EB57 /* Lato-Light.ttf */; };
+		8148A6071FE30519002457DE /* Infindi-Env.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8148A6061FE30519002457DE /* Infindi-Env.plist */; };
+		8148A62D1FE30557002457DE /* Environment.m in Sources */ = {isa = PBXBuildFile; fileRef = 8148A62C1FE30557002457DE /* Environment.m */; };
 		8185FC251FD84B770055FC60 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8185FC241FD84B770055FC60 /* GoogleService-Info.plist */; };
 		8185FC271FD84C400055FC60 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */; };
 		829CA85410CB3FC2B9553E9C /* libPods-Infindi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 480A060FC54C4DA216708D4A /* libPods-Infindi.a */; };
@@ -351,6 +354,8 @@
 		4A23ACBCE8C42399329B24E2 /* Pods-Infindi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Infindi.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Infindi/Pods-Infindi.debug.xcconfig"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		8112C8D61FE2669E00BE8883 /* SessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionManager.h; sourceTree = "<group>"; };
+		8112C8D71FE2669E00BE8883 /* SessionManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionManager.m; sourceTree = "<group>"; };
 		8139980F1FC1205E0043EB57 /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-LightItalic.ttf"; sourceTree = "<group>"; };
 		813998101FC1205E0043EB57 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
 		813998111FC1205E0043EB57 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
@@ -361,6 +366,9 @@
 		813998161FC1205E0043EB57 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
 		813998171FC1205E0043EB57 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
 		813998181FC1205E0043EB57 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
+		8148A6061FE30519002457DE /* Infindi-Env.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Infindi-Env.plist"; sourceTree = "<group>"; };
+		8148A62B1FE30557002457DE /* Environment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Environment.h; path = Infindi/Environment.h; sourceTree = "<group>"; };
+		8148A62C1FE30557002457DE /* Environment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = Environment.m; path = Infindi/Environment.m; sourceTree = "<group>"; };
 		8185FC241FD84B770055FC60 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-debug.plist"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
@@ -510,6 +518,7 @@
 			children = (
 				813997F81FC11FCC0043EB57 /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+				8148A6061FE30519002457DE /* Infindi-Env.plist */,
 				8185FC241FD84B770055FC60 /* GoogleService-Info.plist */,
 				8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -518,6 +527,10 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				8112C8D61FE2669E00BE8883 /* SessionManager.h */,
+				8112C8D71FE2669E00BE8883 /* SessionManager.m */,
+				8148A62B1FE30557002457DE /* Environment.h */,
+				8148A62C1FE30557002457DE /* Environment.m */,
 			);
 			name = Infindi;
 			sourceTree = "<group>";
@@ -1122,6 +1135,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				8148A6071FE30519002457DE /* Infindi-Env.plist in Resources */,
 				8139981D1FC1205E0043EB57 /* Lato-Bold.ttf in Resources */,
 				813998231FC1205E0043EB57 /* Lato-HairlineItalic.ttf in Resources */,
 				8139982B1FC1205E0043EB57 /* Lato-Light.ttf in Resources */,
@@ -1298,6 +1312,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8112C8D81FE2669E00BE8883 /* SessionManager.m in Sources */,
+				8148A62D1FE30557002457DE /* Environment.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
