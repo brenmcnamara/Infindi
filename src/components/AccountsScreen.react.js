@@ -1,6 +1,7 @@
 /* @flow */
 
 import AccountGroup from './AccountGroup.react';
+import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
@@ -19,6 +20,7 @@ import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupTypeForAccountLoader } from '../common/db-utils';
 import { getLoginPayload } from '../store/state-utils';
+import { plaidLinkAccount } from '../actions/plaid';
 
 import type { AccountLoaderCollection } from '../reducers/accounts';
 import type { Dollars } from 'common/src/types/core';
@@ -47,7 +49,7 @@ type RowItem =
 class AccountsScreen extends Component<Props> {
   render() {
     return (
-      <Screen avoidNavBar={true}>
+      <Screen avoidNavBar={true} avoidTabbar={true}>
         {/* CONTENT */}
         {this._renderAccounts()}
         {this._renderAccountsLoading()}
@@ -120,14 +122,17 @@ class AccountsScreen extends Component<Props> {
 
   _renderAddAccountButton() {
     return (
-      <Footer style={styles.footer}>
-        <TextButton
-          onPress={this._onPressAddAccount}
-          size="LARGE"
-          text="ADD ACCOUNT"
-          type="PRIMARY"
-        />
-      </Footer>
+      <If predicate={!this.props.isDownloading}>
+        <Footer style={styles.footer}>
+          <TextButton
+            onPress={this._onPressAddAccount}
+            shouldFillParent={true}
+            size="LARGE"
+            text="ADD ACCOUNT"
+            type="PRIMARY"
+          />
+        </Footer>
+      </If>
     );
   }
 
@@ -143,7 +148,9 @@ class AccountsScreen extends Component<Props> {
     invariant(false, 'Unrecognized item type: %s', item.rowType);
   };
 
-  _onPressAddAccount = (): void => {};
+  _onPressAddAccount = (): void => {
+    this.props.dispatch(plaidLinkAccount());
+  };
 
   _getData() {
     const { loaderCollection, netWorth } = this.props;
@@ -215,6 +222,8 @@ const styles = StyleSheet.create({
 
   footer: {
     alignItems: 'center',
+    borderColor: Colors.BORDER_HAIRLINE,
+    borderTopWidth: 1,
     justifyContent: 'center',
   },
 

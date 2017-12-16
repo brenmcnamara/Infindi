@@ -15,15 +15,18 @@ export type Props = {
 export type DefaultProps = {
   avoidKeyboard: bool,
   avoidNavbar: bool,
+  avoidTabbar: bool,
   theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
 const NAV_BAR_HEIGHT = 64;
+const TAB_BAR_HEIGHT = 50;
 
 export default class Screen extends Component<Props> {
   static defaultProps: DefaultProps = {
     avoidNavbar: false,
     avoidKeyboard: false,
+    avoidTabbar: false,
     theme: 'NORMAL',
   };
 
@@ -35,6 +38,7 @@ export default class Screen extends Component<Props> {
     const rootStyles = [
       styles.root,
       this.props.avoidNavBar ? { paddingTop: NAV_BAR_HEIGHT } : null,
+      this.props.avoidTabbar ? { paddingBottom: TAB_BAR_HEIGHT } : null,
       {
         backgroundColor:
           this.props.theme === 'NORMAL'

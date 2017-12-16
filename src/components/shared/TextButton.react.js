@@ -11,6 +11,7 @@ export type ButtonSize = 'SMALL' | 'MEDIUM' | 'LARGE';
 export type Props = {
   // TODO: Proper typing for this.
   onPress: Function,
+  shouldFillParent: bool,
   size: 'LARGE' | 'MEDIUM' | 'SMALL',
   text: string,
   type: 'PRIMARY' | 'NORMAL' | 'SPECIAL',
@@ -18,12 +19,14 @@ export type Props = {
 
 export type DefaultProps = {
   size: ButtonSize,
+  shouldFillParent: bool,
   type: ButtonType,
 };
 
 export default class TextButton extends Component<Props> {
   static defaultProps: DefaultProps = {
     size: 'MEDIUM',
+    shouldFillParent: false,
     type: 'NORMAL',
   };
 
@@ -45,8 +48,18 @@ export default class TextButton extends Component<Props> {
           ? TextDesign.specialButton
           : TextDesign.normalButton,
     ];
+    const rootStyles = [
+      styles.root,
+      this.props.shouldFillParent
+        ? {
+            alignSelf: 'stretch',
+            flex: 1,
+            justifyContent: 'center',
+          }
+        : null,
+    ];
     return (
-      <TouchableOpacity onPress={onPress} style={styles.root}>
+      <TouchableOpacity onPress={onPress} style={rootStyles}>
         <Text style={buttonStyles}>{text}</Text>
       </TouchableOpacity>
     );
@@ -57,6 +70,7 @@ const styles = StyleSheet.create({
   root: {},
 
   text: {
+    textAlign: 'center',
     padding: 8,
   },
 });

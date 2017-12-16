@@ -60,6 +60,8 @@
 		8148A62D1FE30557002457DE /* Environment.m in Sources */ = {isa = PBXBuildFile; fileRef = 8148A62C1FE30557002457DE /* Environment.m */; };
 		8185FC251FD84B770055FC60 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8185FC241FD84B770055FC60 /* GoogleService-Info.plist */; };
 		8185FC271FD84C400055FC60 /* GoogleService-Info-debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */; };
+		81AB76761FE5B7B7000F2696 /* PlaidLinkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 81AB76751FE5B7B7000F2696 /* PlaidLinkManager.m */; };
+		81AB767A1FE5C178000F2696 /* PlaidLinkModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 81AB76791FE5C178000F2696 /* PlaidLinkModule.m */; };
 		829CA85410CB3FC2B9553E9C /* libPods-Infindi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 480A060FC54C4DA216708D4A /* libPods-Infindi.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
@@ -371,6 +373,10 @@
 		8148A62C1FE30557002457DE /* Environment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = Environment.m; path = Infindi/Environment.m; sourceTree = "<group>"; };
 		8185FC241FD84B770055FC60 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-debug.plist"; sourceTree = "<group>"; };
+		81AB76741FE5B7B7000F2696 /* PlaidLinkManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaidLinkManager.h; sourceTree = "<group>"; };
+		81AB76751FE5B7B7000F2696 /* PlaidLinkManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaidLinkManager.m; sourceTree = "<group>"; };
+		81AB76781FE5C178000F2696 /* PlaidLinkModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaidLinkModule.h; sourceTree = "<group>"; };
+		81AB76791FE5C178000F2696 /* PlaidLinkModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaidLinkModule.m; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		993A6AB777D04CFF37599415 /* Pods-Infindi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Infindi.release.xcconfig"; path = "Pods/Target Support Files/Pods-Infindi/Pods-Infindi.release.xcconfig"; sourceTree = "<group>"; };
 		A1BCFD5BE78168C8ADB44B9C /* libPods-InfindiTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-InfindiTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -516,8 +522,12 @@
 		13B07FAE1A68108700A75B9A /* Infindi */ = {
 			isa = PBXGroup;
 			children = (
+				81AB76191FE58F7B000F2696 /* Managers */,
+				81AB76771FE5C165000F2696 /* Modules */,
 				813997F81FC11FCC0043EB57 /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+				8148A62B1FE30557002457DE /* Environment.h */,
+				8148A62C1FE30557002457DE /* Environment.m */,
 				8148A6061FE30519002457DE /* Infindi-Env.plist */,
 				8185FC241FD84B770055FC60 /* GoogleService-Info.plist */,
 				8185FC261FD84C400055FC60 /* GoogleService-Info-debug.plist */,
@@ -527,10 +537,6 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				8112C8D61FE2669E00BE8883 /* SessionManager.h */,
-				8112C8D71FE2669E00BE8883 /* SessionManager.m */,
-				8148A62B1FE30557002457DE /* Environment.h */,
-				8148A62C1FE30557002457DE /* Environment.m */,
 			);
 			name = Infindi;
 			sourceTree = "<group>";
@@ -617,6 +623,26 @@
 				813998101FC1205E0043EB57 /* Lato-Regular.ttf */,
 			);
 			name = Lato;
+			sourceTree = "<group>";
+		};
+		81AB76191FE58F7B000F2696 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				8112C8D61FE2669E00BE8883 /* SessionManager.h */,
+				8112C8D71FE2669E00BE8883 /* SessionManager.m */,
+				81AB76741FE5B7B7000F2696 /* PlaidLinkManager.h */,
+				81AB76751FE5B7B7000F2696 /* PlaidLinkManager.m */,
+			);
+			name = Managers;
+			sourceTree = "<group>";
+		};
+		81AB76771FE5C165000F2696 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				81AB76781FE5C178000F2696 /* PlaidLinkModule.h */,
+				81AB76791FE5C178000F2696 /* PlaidLinkModule.m */,
+			);
+			name = Modules;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -1273,9 +1299,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Infindi/Pods-Infindi-frameworks.sh",
+				"${PODS_ROOT}/Plaid/ios/LinkKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LinkKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1312,7 +1341,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				81AB76761FE5B7B7000F2696 /* PlaidLinkManager.m in Sources */,
 				8112C8D81FE2669E00BE8883 /* SessionManager.m in Sources */,
+				81AB767A1FE5C178000F2696 /* PlaidLinkModule.m in Sources */,
 				8148A62D1FE30557002457DE /* Environment.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,

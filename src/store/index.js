@@ -3,6 +3,7 @@
 import authentication from '../middleware/authentication';
 import datastore from '../middleware/datastore';
 import navigation from '../middleware/navigation';
+import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 
@@ -18,10 +19,17 @@ if (__DEV__) {
     authentication,
     datastore,
     navigation,
-    reduxLogger,
+    plaid,
+    // reduxLogger,
   );
 } else {
-  middleware = applyMiddleware(thunk, authentication, datastore, navigation);
+  middleware = applyMiddleware(
+    thunk,
+    authentication,
+    datastore,
+    navigation,
+    plaid,
+  );
 }
 
 export default createStore(rootReducer, middleware);

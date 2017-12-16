@@ -52,7 +52,7 @@ export default (store: Store) => (next: Next) => {
         const currentMode = currentControlsPayload.mode;
         const nextMode = getModeForAuthStatus(action.status);
         if (currentMode !== nextMode) {
-          const nextTab = nextMode === 'MAIN' ? 'HOME' : null;
+          const nextTab = nextMode === 'MAIN' ? 'ACCOUNTS' : null;
           const newControlsPayload = { mode: nextMode, tab: nextTab };
           // NOTE: There could be a race condition here. Hoping that redux will
           // dispatch the IN_PROGRESS controls before getModeControls is applied

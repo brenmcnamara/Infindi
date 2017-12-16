@@ -2,6 +2,20 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>PLKPlaidLinkConfiguration</key>
+	<dict>
+		<key>clientName</key>
+		<string>Infindi</string>
+		<key>key</key>
+		<string>9ef581824905d24a16c3fa522b949d</string>
+		<key>env</key>
+		<string>Sandbox</string>
+		<key>product</key>
+		<array>
+			<string>auth</string>
+			<string>transactions</string>
+		</array>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

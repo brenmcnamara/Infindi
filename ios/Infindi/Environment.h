@@ -3,8 +3,6 @@
 //  Infindi
 //
 //  Created by Brendan McNamara on 12/14/17.
-//  Copyright © 2017 Facebook. All rights reserved.
-//
 
 #import <Foundation/Foundation.h>
 
