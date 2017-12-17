@@ -4,6 +4,8 @@ import PlaidLink from '../modules/PlaidLink';
 
 import invariant from 'invariant';
 
+import { genCreatePlaidCredentials } from '../backend';
+
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 import type { PlaidLinkPayload } from '../modules/PlaidLink';
 
@@ -53,6 +55,7 @@ export default (store: Store) => (next: Next) => {
 };
 
 async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
+  PlaidLink.hide();
   switch (payload.type) {
     case 'LINK_QUIT': {
       console.log('QUIT!');
@@ -69,10 +72,16 @@ async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
     case 'LINK_SUCCESS': {
       // Send download to backend.
       const { metadata, publicToken } = payload;
-      console.log('SUCCESS', publicToken);
-      // Start download request.
+      console.log('SUCCESSFULL LINKED', publicToken);
+      // NOTE: We are not awaiting here because there are commands below we
+      // do not want to block.
+
+      const credentials = await genCreatePlaidCredentials(
+        publicToken,
+        metadata,
+      );
+      console.log('SUCCESSFULLY GENERATED CREDENTIALS', credentials);
       break;
     }
   }
-  PlaidLink.hide();
 }

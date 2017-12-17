@@ -4,6 +4,8 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
+import { initialize as initializeBackend } from '../backend';
+
 import type { Action as AllActions, Store } from '../typesDEPRECATED/redux';
 import type { AuthStatus } from '../reducers/authStatus';
 import type { Firebase$User } from 'common/src/types/firebase';
@@ -45,6 +47,7 @@ export default (store: Store) => (next: Function) => {
     const loginPayload: ?LoginPayload = await genLoginPayload();
 
     if (canLogin(authStatus) && loginPayload) {
+      initializeBackend(loginPayload);
       changeStatus({ loginPayload, type: 'LOGGED_IN' });
     } else if (canLogout(authStatus) && !loginPayload) {
       changeStatus({ type: 'LOGGED_OUT' });
