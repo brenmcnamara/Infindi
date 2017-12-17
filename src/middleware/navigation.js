@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import { getModeForAuthStatus } from '../store/state-utils';
+import { getMode } from '../store/state-utils';
 
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 import type {
@@ -48,36 +48,41 @@ export default (store: Store) => (next: Next) => {
     next(action);
 
     switch (action.type) {
-      case 'AUTH_STATUS_CHANGE': {
+      // Keep track of actions that may cause a change in the mode.
+      // TODO: In the future, we may want to just check for the current and
+      // next mode of the state, and not only do that under certain actions.
+      case 'AUTH_STATUS_CHANGE':
+      case 'ENV_STATUE_CHANGE': {
         const currentMode = currentControlsPayload.mode;
-        const nextMode = getModeForAuthStatus(action.status);
-        if (currentMode !== nextMode) {
-          const nextTab = nextMode === 'MAIN' ? 'ACCOUNTS' : null;
-          const newControlsPayload = { mode: nextMode, tab: nextTab };
-          // NOTE: There could be a race condition here. Hoping that redux will
-          // dispatch the IN_PROGRESS controls before getModeControls is applied
-          // but may need a more robust way to do this.
-          next({
-            controlsPayload: newControlsPayload,
-            transitionStatus: 'IN_PROGRESS',
-            type: 'SET_CONTROLS',
-          });
-          getModeControls()
-            .setMode(nextMode)
-            .then(newMode => {
-              invariant(
-                newMode === nextMode,
-                'Expected mode to be set to %s. Actual: %s',
-                nextMode,
-                newMode,
-              );
-              next({
-                controlsPayload: newControlsPayload,
-                transitionStatus: 'COMPLETE',
-                type: 'SET_CONTROLS',
-              });
-            });
+        const nextMode = getMode(store.getState());
+        if (currentMode === nextMode) {
+          return;
         }
+        const nextTab = nextMode === 'MAIN' ? 'ACCOUNTS' : null;
+        const newControlsPayload = { mode: nextMode, tab: nextTab };
+        // NOTE: There could be a race condition here. Hoping that redux will
+        // dispatch the IN_PROGRESS controls before getModeControls is applied
+        // but may need a more robust way to do this.
+        next({
+          controlsPayload: newControlsPayload,
+          transitionStatus: 'IN_PROGRESS',
+          type: 'SET_CONTROLS',
+        });
+        getModeControls()
+          .setMode(nextMode)
+          .then(newMode => {
+            invariant(
+              newMode === nextMode,
+              'Expected mode to be set to %s. Actual: %s',
+              nextMode,
+              newMode,
+            );
+            next({
+              controlsPayload: newControlsPayload,
+              transitionStatus: 'COMPLETE',
+              type: 'SET_CONTROLS',
+            });
+          });
         break;
       }
 

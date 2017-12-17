@@ -15,8 +15,15 @@ import TextDesign from '../design/text';
 import invariant from 'invariant';
 
 import { AccountNullState } from '../../content';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { connect } from 'react-redux';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupTypeForAccountLoader } from '../common/db-utils';
 import { getLoginPayload } from '../store/state-utils';
@@ -49,7 +56,6 @@ type RowItem =
 
 class AccountsScreen extends Component<Props> {
   render() {
-    console.log(this.props.isPlaidLinkAvailable);
     return (
       <Screen avoidNavBar={true} avoidTabbar={true}>
         {/* CONTENT */}
@@ -68,7 +74,7 @@ class AccountsScreen extends Component<Props> {
       <If predicate={isDownloading}>
         <Content>
           <View style={styles.loadingContainer}>
-            <Text>Loading...</Text>
+            <ActivityIndicator />
           </View>
         </Content>
       </If>

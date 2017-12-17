@@ -39,13 +39,20 @@ export function getUserFirstName(state: State): ?string {
   return loginPayload.userInfo.firstName;
 }
 
+export function getMode(state: State): Mode {
+  if (state.envStatus.status === 'ENV_LOADING') {
+    return 'LOADING';
+  }
+  return getModeForAuthStatus(state.authStatus);
+}
+
 // -----------------------------------------------------------------------------
 //
-// QUERY PARTIAL REDUX STATE
+// UTILITIES
 //
 // -----------------------------------------------------------------------------
 
-export function getModeForAuthStatus(authStatus: AuthStatus): Mode {
+function getModeForAuthStatus(authStatus: AuthStatus): Mode {
   switch (authStatus.type) {
     case 'LOGIN_INITIALIZE':
     case 'LOGIN_FAILURE':

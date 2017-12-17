@@ -20,7 +20,7 @@ if (__DEV__) {
     datastore,
     navigation,
     plaid,
-    // reduxLogger,
+    reduxLogger,
   );
 } else {
   middleware = applyMiddleware(

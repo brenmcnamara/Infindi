@@ -19,11 +19,7 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
-import {
-  getLatestMode,
-  getLoginPayload,
-  getModeForAuthStatus,
-} from '../store/state-utils';
+import { getLatestMode, getLoginPayload, getMode } from '../store/state-utils';
 
 import type { Account, LoginPayload } from 'common/src/types/db';
 import type { ModelCollection } from '../datastore';
@@ -39,7 +35,7 @@ export default (store: Store) => (next: Next) => {
 
     switch (action.type) {
       case 'AUTH_STATUS_CHANGE': {
-        const newMode = getModeForAuthStatus(action.status);
+        const newMode = getMode(store.getState());
         if (currentMode === newMode) {
           return;
         }

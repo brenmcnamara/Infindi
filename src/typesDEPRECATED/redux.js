@@ -4,6 +4,7 @@ import type { Account } from 'common/src/types/db';
 import type { Action as Action$Auth } from '../actions/authentication';
 import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
 import type { Action as Action$Datastore } from '../datastore';
+import type { Action as Action$EnvStatus } from '../actions/env';
 import type { Action as Action$Nav } from '../actions/navigation';
 import type { Action as Action$NavMiddleware } from '../middleware/navigation';
 import type { Action as Action$Plaid } from '../actions/plaid';
@@ -18,6 +19,7 @@ export type PureAction =
   | Action$Auth
   | Action$AuthMiddleware
   | Action$Datastore<'Account', Account>
+  | Action$EnvStatus
   | Action$Nav
   | Action$NavMiddleware
   | Action$Plaid

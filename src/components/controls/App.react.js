@@ -1,5 +1,6 @@
 /* @flow */
 
+import Environment from '../../modules/Environment';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
 import React, { Component } from 'react';
@@ -8,6 +9,7 @@ import Tabs from './Tabs.react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
+import { envDoneLoading, envFailedLoading } from '../../actions/env';
 import { setModeControls } from '../../actions/navigation';
 
 import type { Mode } from '../../controls';
@@ -30,8 +32,18 @@ class App extends Component<Props, State> {
     };
   }
 
+  componentWillMount(): void {
+    const { dispatch } = this.props;
+    // TODO: For now we are doing this here, but may want to move this into
+    // some middleware as the project gets more complex.
+    Environment.genLoad()
+      .then(() => dispatch(envDoneLoading()))
+      .catch(() => dispatch(envFailedLoading()));
+  }
+
   componentDidMount(): void {
-    this.props.dispatch(
+    const { dispatch } = this.props;
+    dispatch(
       setModeControls({
         setMode: this._setMode,
       }),
