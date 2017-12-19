@@ -15,6 +15,8 @@ export default {
   // TODO: Rename to BACKGROUND_NORMAL
   BACKGROUND: GRAY_1,
   BACKGROUND_LIGHT: WHITE,
+  BANNER_BACKGROUND_INFO: BLUE,
+  BANNER_TEXT_INFO: GRAY_1,
   BORDER: GRAY_2,
   // TODO: This is my best guess of the default nav bar hairline color. Should
   // figure out what the color actually is.

@@ -1,15 +1,28 @@
 /* @flow */
 
+import Common from 'common';
 import PlaidLink from '../modules/PlaidLink';
 
 import invariant from 'invariant';
 
-import { genCreatePlaidCredentials } from '../backend';
+import {
+  genCreatePlaidCredentials,
+  genCreatePlaidDownloadRequest,
+  genPlaidDownloadStatus,
+} from '../backend';
 
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 import type { PlaidLinkPayload } from '../modules/PlaidLink';
 
-export type Action = Action$PlaidLinkAvailability | Action$PlaidLinkSuccess;
+export type Action =
+  | Action$PlaidHasDownloadRequests
+  | Action$PlaidLinkAvailability
+  | Action$PlaidLinkSuccess;
+
+export type Action$PlaidHasDownloadRequests = {|
+  +hasDownloadRequests: bool,
+  +type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
+|};
 
 export type Action$PlaidLinkAvailability = {|
   +isAvailable: bool,
@@ -34,6 +47,13 @@ export default (store: Store) => (next: Next) => {
   return (action: PureAction) => {
     next(action);
     switch (action.type) {
+      case 'AUTH_STATUS_CHANGE': {
+        if (action.status.type === 'LOGGED_IN') {
+          genOnUserLoggedIn(next);
+        }
+        break;
+      }
+
       case 'PLAID_LINK_ACCOUNT': {
         invariant(
           !isLinkShowing,
@@ -54,6 +74,24 @@ export default (store: Store) => (next: Next) => {
   };
 };
 
+async function genOnUserLoggedIn(next: Next) {
+  // TODO: May want to poll for this data at some point. Not worried about
+  // doing this now, since it is unlikely that someone would have multiple
+  // clients they are using.
+  const statusList = await genPlaidDownloadStatus();
+  // "some" operation from obj-utils.
+  const hasDownloadRequests = Common.ObjUtils.reduceObject(
+    statusList,
+    (memo, status) => memo || status.type !== 'COMPLETE',
+    false,
+  );
+  console.log(statusList, hasDownloadRequests);
+  next({
+    hasDownloadRequests,
+    type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
+  });
+}
+
 async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
   PlaidLink.hide();
   switch (payload.type) {
@@ -72,15 +110,20 @@ async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
     case 'LINK_SUCCESS': {
       // Send download to backend.
       const { metadata, publicToken } = payload;
-      console.log('SUCCESSFULL LINKED', publicToken);
       // NOTE: We are not awaiting here because there are commands below we
       // do not want to block.
 
-      const credentials = await genCreatePlaidCredentials(
+      const credentialsRef = await genCreatePlaidCredentials(
         publicToken,
         metadata,
       );
-      console.log('SUCCESSFULLY GENERATED CREDENTIALS', credentials);
+
+      next({
+        hasDownloadRequests: true,
+        type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
+      });
+      console.log('SUCCESSFULLY GENERATED CREDENTIALS', credentialsRef);
+      genCreatePlaidDownloadRequest(credentialsRef.refID);
       break;
     }
   }

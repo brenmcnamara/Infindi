@@ -1,6 +1,7 @@
 /* @flow */
 
 import AccountGroup from './AccountGroup.react';
+import Banner from './shared/Banner.react';
 import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
@@ -35,6 +36,7 @@ import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
 
 export type Props = ReduxProps & {
+  hasDownloadRequests: bool,
   isDownloading: bool,
   isLinkAvailable: bool,
   loaderCollection: AccountLoaderCollection,
@@ -82,11 +84,16 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderAccounts() {
-    const { isDownloading, loaderCollection } = this.props;
+    const { isDownloading, hasDownloadRequests, loaderCollection } = this.props;
 
     return (
       <If predicate={!isDownloading && !isObjectEmpty(loaderCollection)}>
         <Content>
+          <Banner
+            show={hasDownloadRequests}
+            type="INFO"
+            text="You have accounts updating..."
+          />
           <FlatList
             automaticallyAdjustContentInsets={false}
             data={this._getData()}
@@ -215,6 +222,7 @@ function mapReduxStateToProps(state: ReduxState) {
     'Trying to render account data when no user is logged in',
   );
   return {
+    hasDownloadRequests: state.plaid.hasDownloadRequests,
     isDownloading: accounts.type === 'DOWNLOADING',
     isPlaidLinkAvailable: state.plaid.isLinkAvailable,
     netWorth: loginPayload.userMetrics.netWorth,

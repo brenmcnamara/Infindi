@@ -10,7 +10,8 @@ import Environment from './modules/Environment';
 
 import invariant from 'invariant';
 
-import type { LoginPayload } from 'common/src/types/db';
+import type { ID, Pointer } from 'common/src/types/core';
+import type { LoginPayload, PlaidDownloadStatus } from 'common/src/types/db';
 
 let loginPayload: ?LoginPayload = null;
 
@@ -29,14 +30,16 @@ export function initialize(_loginPayload: LoginPayload): void {
 //
 // -----------------------------------------------------------------------------
 
-export type CreatePlaidCredentialsPayload = {};
+export type CreatePlaidCredentialsPayload = Pointer<'PlaidCredentials'>;
 
 export async function genCreatePlaidCredentials(
   publicToken: string,
   metadata: Object,
 ): Promise<CreatePlaidCredentialsPayload> {
+  await Environment.genLazyLoad();
   const uri = createURI('/plaid/credentials');
-  return await genPostRequest(uri, { publicToken, metadata });
+  const json = await genPostRequest(uri, { publicToken, metadata });
+  return json.data;
 }
 
 // -----------------------------------------------------------------------------
@@ -45,13 +48,30 @@ export async function genCreatePlaidCredentials(
 //
 // -----------------------------------------------------------------------------
 
-export type CreatePlaidDownloadRequestPayload = {};
+export type CreatePlaidDownloadRequestPayload = Pointer<'JobRequest'>;
 
 export async function genCreatePlaidDownloadRequest(
   credentialsID: string,
 ): Promise<CreatePlaidDownloadRequestPayload> {
+  await Environment.genLazyLoad();
   const uri = createURI(`/plaid/download/${credentialsID}`);
-  return await genPostRequest(uri, {});
+  const json = await genPostRequest(uri, {});
+  return json.data;
+}
+
+// -----------------------------------------------------------------------------
+//
+// GET PLAID DOWNLOAD STATUS
+//
+// -----------------------------------------------------------------------------
+
+export type PlaidDownloadStatusPayload = { [itemID: ID]: PlaidDownloadStatus };
+
+export async function genPlaidDownloadStatus(): Promise<PlaidDownloadStatusPayload,> {
+  await Environment.genLazyLoad();
+  const uri = createURI('/plaid/credentials/status');
+  const json = await genGetRequest(uri);
+  return json.data;
 }
 
 // -----------------------------------------------------------------------------
@@ -69,7 +89,6 @@ async function genPostRequest<T: Object>(
   uri: string,
   body: Object,
 ): Promise<T> {
-  console.log('genning post request');
   const { idToken } = getLoginPayload();
   const response = await fetch(uri, {
     headers: {
@@ -80,7 +99,19 @@ async function genPostRequest<T: Object>(
     method: 'POST',
     body: JSON.stringify(body),
   });
-  console.log('GOT RESPONSE FROM POST REQUEST', response);
+  return await response.json();
+}
+
+async function genGetRequest<T: Object>(uri: string): Promise<T> {
+  const { idToken } = getLoginPayload();
+  const response = await fetch(uri, {
+    headers: {
+      Accept: 'application/json',
+      Authorization: idToken,
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  });
   return await response.json();
 }
 

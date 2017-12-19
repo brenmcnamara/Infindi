@@ -36,7 +36,7 @@ class App extends Component<Props, State> {
     const { dispatch } = this.props;
     // TODO: For now we are doing this here, but may want to move this into
     // some middleware as the project gets more complex.
-    Environment.genLoad()
+    Environment.genLazyLoad()
       .then(() => dispatch(envDoneLoading()))
       .catch(() => dispatch(envFailedLoading()));
   }

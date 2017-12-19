@@ -58,7 +58,7 @@ export default (store: Store) => (next: Next) => {
         if (currentMode === nextMode) {
           return;
         }
-        const nextTab = nextMode === 'MAIN' ? 'ACCOUNTS' : null;
+        const nextTab = nextMode === 'MAIN' ? 'HOME' : null;
         const newControlsPayload = { mode: nextMode, tab: nextTab };
         // NOTE: There could be a race condition here. Hoping that redux will
         // dispatch the IN_PROGRESS controls before getModeControls is applied

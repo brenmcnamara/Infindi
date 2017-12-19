@@ -7,7 +7,10 @@ import { NativeModules } from 'react-native';
 let variables: ?Object = null;
 
 export default {
-  genLoad(): Promise<void> {
+  genLazyLoad(): Promise<void> {
+    if (variables) {
+      return Promise.resolve();
+    }
     return new Promise(resolve => {
       NativeModules.Environment.fetchVariables(_variables => {
         variables = _variables;

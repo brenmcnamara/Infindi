@@ -1199,7 +1199,9 @@ commander@^2.9.0, commander@~2.11.0:
 
 "common@git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git":
   version "1.0.0"
-  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#bb7be1b71cb3068fff9fc77be69449d255dcd76e"
+  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#ba38a607f32c895f44b74763a834d89be207743d"
+  dependencies:
+    uuid "^3.1.0"
 
 compressible@~2.0.5:
   version "2.0.12"
@@ -1951,6 +1953,10 @@ flat-cache@^1.2.1:
     del "^2.0.2"
     graceful-fs "^4.1.2"
     write "^0.2.1"
+
+flow-bin@0.56.0:
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.56.0.tgz#ce43092203a344ba9bf63c0cabe95d95145f6cad"
 
 for-in@^1.0.1:
   version "1.0.2"
