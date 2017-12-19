@@ -73,7 +73,7 @@ export default class AccountGroup extends Component<Props> {
           </View>
           <View style={styles.accountLoaderBottom}>
             <Text style={[styles.accountBank, TextDesign.small]}>
-              {account.institutionName}
+              {formatInstitutionName(account.institutionName)}
             </Text>
             <Text style={[styles.accountType, TextDesign.small]}>
               {getFormattedAccountType(account)}
@@ -103,6 +103,10 @@ export default class AccountGroup extends Component<Props> {
   _getFormattedGroupType(): string {
     return this.props.groupType.replace(/_/g, ' ');
   }
+}
+
+function formatInstitutionName(name: string): string {
+  return name.replace(/_/g, ' ').toUpperCase();
 }
 
 const styles = StyleSheet.create({
