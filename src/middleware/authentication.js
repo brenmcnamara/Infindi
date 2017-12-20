@@ -17,6 +17,8 @@ import type {
   UserMetrics,
 } from 'common/src/types/db';
 
+type EmitterSubscription = { remove: () => void };
+
 const Auth = Firebase.auth();
 const Database = Firebase.firestore();
 
@@ -36,6 +38,8 @@ type ChangeStatus = (authStatus: AuthStatus) => *;
 // -----------------------------------------------------------------------------
 
 export default (store: Store) => (next: Function) => {
+  let userMetricsSubscription: ?EmitterSubscription = null;
+
   // Convenience function.
   const changeStatus = (status: AuthStatus) => {
     return next({ type: 'AUTH_STATUS_CHANGE', status });
@@ -47,10 +51,19 @@ export default (store: Store) => (next: Function) => {
     const loginPayload: ?LoginPayload = await genLoginPayload();
 
     if (canLogin(authStatus) && loginPayload) {
+      if (userMetricsSubscription) {
+        userMetricsSubscription.remove();
+        userMetricsSubscription = null;
+      }
+      userMetricsSubscription = listenForUserMetrics(loginPayload, next);
       initializeBackend(loginPayload);
       changeStatus({ loginPayload, type: 'LOGGED_IN' });
     } else if (canLogout(authStatus) && !loginPayload) {
       changeStatus({ type: 'LOGGED_OUT' });
+      if (userMetricsSubscription) {
+        userMetricsSubscription.remove();
+        userMetricsSubscription = null;
+      }
     }
   });
 
@@ -147,6 +160,32 @@ async function genLoginPayload(): Promise<?LoginPayload> {
     firebaseUser.getIdToken(),
   ]);
   return { firebaseUser, idToken, userInfo, userMetrics };
+}
+
+// TODO: May want to separate user metrics from login payload. This is
+// semantically confusing.
+function listenForUserMetrics(
+  loginPayload: LoginPayload,
+  next: Next,
+): EmitterSubscription {
+  const userID = loginPayload.firebaseUser.uid;
+  const remove = Firebase.firestore()
+    .collection('UserMetrics')
+    .doc(userID)
+    .onSnapshot(document => {
+      if (!document.exists) {
+        return;
+      }
+      const userMetrics = document.data();
+      next({
+        status: {
+          loginPayload: { ...loginPayload, userMetrics },
+          type: 'LOGGED_IN',
+        },
+        type: 'AUTH_STATUS_CHANGE',
+      });
+    });
+  return { remove };
 }
 
 function getLoginPayload(authStatus: AuthStatus): ?LoginPayload {

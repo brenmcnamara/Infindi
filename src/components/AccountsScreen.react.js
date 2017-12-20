@@ -105,10 +105,15 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderNullState() {
-    const { isDownloading, loaderCollection } = this.props;
+    const { hasDownloadRequests, isDownloading, loaderCollection } = this.props;
     return (
       <If predicate={!isDownloading && isObjectEmpty(loaderCollection)}>
         <Content>
+          <Banner
+            show={hasDownloadRequests}
+            type="INFO"
+            text="You have accounts updating..."
+          />
           <View style={styles.nullContainer}>
             <Image
               resizeMode="contain"

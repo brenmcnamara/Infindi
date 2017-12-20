@@ -1,12 +1,22 @@
 /* @flow */
 
+import Firebase from 'react-native-firebase';
+
 import invariant from 'invariant';
 
+import { getLoginPayload } from './store/state-utils';
+
 import type { ID, ModelStub } from 'common/src/types/core';
-import type { PureAction, Reducer } from './typesDEPRECATED/redux';
+import type { PureAction, Reducer, Store } from './typesDEPRECATED/redux';
 
 // TODO: Port this from Infindi-Backend
 type InfindiError = { errorCode: string, errorMessage: string };
+
+// -----------------------------------------------------------------------------
+//
+// REDUCER GENERATOR
+//
+// -----------------------------------------------------------------------------
 
 export type ModelLoader<TName: string, TModel: ModelStub<TName>> =
   | {|
@@ -133,6 +143,34 @@ export function createModelCollectionReducer<
 
 // -----------------------------------------------------------------------------
 //
+// MIDDLEWARE GENERATOR
+//
+// -----------------------------------------------------------------------------
+
+/*
+export const createDatastorenMiddleware = <
+  TCollectionName: string,
+  TModelName: string,
+  TModel: ModelStub<TModelName>,
+>(
+  collectionName: TCollectionName,
+  modelName: TModelName,
+) => (store: Store) => (next: Next) => {
+  const Database = Firebase.firestore();
+
+  function startListening() {
+    const loginPayload = getLoginPayload(store.getState());
+    Database.collection(collectionName).where('userRef.refID', '==', loginPayload.userInfo.id);
+  }
+
+  function stopListening() {}
+
+  return (action: PureAction) => {};
+};
+*/
+
+// -----------------------------------------------------------------------------
+//
 // UTILITIES
 //
 // -----------------------------------------------------------------------------
@@ -142,12 +180,12 @@ function mergeCollectionWithState<TName: string, TModel: ModelStub<TName>>(
   state: ModelLoaderState<TName, TModel>,
   collection: ModelCollection<TName, TModel>,
 ): ModelLoaderState<TName, TModel> {
-  invariant(
-    state.type === 'DOWNLOADING',
-    '%s collection state cannot merge a collection from state: %s',
-    modelName,
-    state.type,
-  );
+  // TODO: For now, this erases the previous state and replaces it with the
+  // current state. There is going to need to be more complicated logic here.
+  // (1) For things like transactions, we want people to fetch more and
+  // continue growing the list.
+  // (2) For things like accounts, we want to always replace the current state
+  // with the new, existing state.
   return {
     loaderCollection: collectionToLoaderMap(collection),
     type: 'STEADY',
@@ -161,7 +199,7 @@ function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(
 ): ModelLoaderState<TName, TModel> {
   invariant(
     state.type === 'DOWNLOADING',
-    '%s collection state cannot merge with a download error %s with state %s',
+    '[%s Collection State]: Cannot merge with a download error %s with state %s',
     modelName,
     error.errorCode,
     state.type,

@@ -21,13 +21,14 @@ export default class NetWorth extends Component<Props> {
     return (
       <View style={styles.root}>
         <Text style={[TextDesign.header3, styles.header]}>NET WORTH</Text>
-        <If predicate={this.props.netWorth}>
+        <If predicate={typeof this.props.netWorth === 'number'}>
+          {/* GUARD AGAINST NaN Errors */}
           <MoneyText
-            dollars={nullthrows(this.props.netWorth)}
+            dollars={this.props.netWorth || '0'}
             textStyle={[TextDesign.header2, styles.netWorth]}
           />
         </If>
-        <If predicate={!this.props.netWorth}>
+        <If predicate={typeof this.props.netWorth !== 'number'}>
           <Text style={[TextDesign.header2, styles.netWorth]}>--</Text>
         </If>
       </View>

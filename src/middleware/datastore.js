@@ -25,10 +25,14 @@ import type { Account, LoginPayload } from 'common/src/types/db';
 import type { ModelCollection } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
 
+type EmitterSubscription = { remove: () => void };
+
 const Database = Firebase.firestore();
 
 export default (store: Store) => (next: Next) => {
   let currentMode = getLatestMode(store.getState());
+
+  let accountSubscription: ?EmitterSubscription = null;
 
   return (action: PureAction) => {
     next(action);
@@ -40,7 +44,6 @@ export default (store: Store) => (next: Next) => {
           return;
         }
         const modeTransition = `${currentMode} -> ${newMode}`;
-        console.log('handling mode transition in datastore');
         switch (modeTransition) {
           case 'LOADING -> MAIN':
           case 'AUTH -> MAIN': {
@@ -49,11 +52,19 @@ export default (store: Store) => (next: Next) => {
               loginPayload,
               'Trying to download user data without a login payload',
             );
-            downloadInitialUserData(loginPayload, next);
+            if (accountSubscription) {
+              accountSubscription.remove();
+              accountSubscription = null;
+            }
+            accountSubscription = listenForAccounts(loginPayload, next);
             break;
           }
 
           case 'MAIN -> AUTH': {
+            if (accountSubscription) {
+              accountSubscription.remove();
+              accountSubscription = null;
+            }
             clearUserData(next);
             break;
           }
@@ -70,44 +81,31 @@ export default (store: Store) => (next: Next) => {
   };
 };
 
-async function downloadInitialUserData(loginPayload: LoginPayload, next: Next) {
-  // TODO: Add limit to download.
+function listenForAccounts(
+  loginPayload: LoginPayload,
+  next: Next,
+): EmitterSubscription {
   next({ modelName: 'Account', type: 'COLLECTION_DOWNLOAD_START' });
-  let snapshot;
-  try {
-    snapshot = await Database.collection('Accounts')
-      .where('userRef.refID', '==', loginPayload.firebaseUser.uid)
-      .get();
-  } catch (firebaseError /* Firebase Error */) {
-    const errorCode = firebaseError.code;
-    const errorMessage = firebaseError.message;
-    const error = { errorCode, errorMessage };
-    next({ error, modelName: 'Account', type: 'COLLECTION_DOWNLOAD_FAILURE' });
-    return;
-  }
-
-  const allDocsExist = snapshot.docs.every(doc => doc.exists);
-  if (!allDocsExist) {
-    // TODO: Document this error code.
-    const error = {
-      errorCode: 'infindi/bad-data',
-      errorMessage: 'Expect all Account docs to exist',
-    };
-    next({ error, modelName: 'Account', type: 'COLLECTION_DOWNLOAD_FAILURE' });
-    return;
-  }
-
-  const collection: ModelCollection<'Account', Account> = {};
-  snapshot.docs.forEach(document => {
-    const account: Account = document.data();
-    collection[account.id] = account;
-  });
-  // $FlowFixMe - Will fix this later.
-  next({
-    collection,
-    modelName: 'Account',
-    type: 'COLLECTION_DOWNLOAD_FINISHED',
-  });
+  const userID = loginPayload.firebaseUser.uid;
+  const remove = Database.collection('Accounts')
+    .where('userRef.refID', '==', userID)
+    .onSnapshot(snapshot => {
+      const collection: ModelCollection<*, Account> = {};
+      snapshot.docs.forEach(doc => {
+        if (!doc.exists) {
+          return;
+        }
+        const account: Account = doc.data();
+        collection[account.id] = account;
+      });
+      next({
+        collection,
+        modelName: 'Account',
+        type: 'COLLECTION_DOWNLOAD_FINISHED',
+      });
+    });
+  console.log('REMOVE', remove);
+  return { remove };
 }
 
 function clearUserData(next: Next): void {
