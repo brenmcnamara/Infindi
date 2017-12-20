@@ -8,12 +8,11 @@
 
 @interface Environment : NSObject
 
+@property (nonatomic, readonly) NSString *hostname;
+@property (nonatomic, readonly) BOOL allowPlaidLink;
+
 + (Environment *)sharedInstance;
 
 - (NSDictionary *)variables;
-
-- (BOOL)allowPlaidLink;
-
-- (NSString *)hostname;
 
 @end

@@ -52,7 +52,7 @@ export default (store: Store) => (next: Next) => {
       // TODO: In the future, we may want to just check for the current and
       // next mode of the state, and not only do that under certain actions.
       case 'AUTH_STATUS_CHANGE':
-      case 'ENV_STATUE_CHANGE': {
+      case 'ENV_STATUS_CHANGE': {
         const currentMode = currentControlsPayload.mode;
         const nextMode = getMode(store.getState());
         if (currentMode === nextMode) {

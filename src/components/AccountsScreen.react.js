@@ -225,9 +225,9 @@ function mapReduxStateToProps(state: ReduxState) {
     hasDownloadRequests: state.plaid.hasDownloadRequests,
     isDownloading: accounts.type === 'DOWNLOADING',
     isPlaidLinkAvailable: state.plaid.isLinkAvailable,
-    netWorth: loginPayload.userMetrics.netWorth,
     loaderCollection:
       accounts.type === 'STEADY' ? accounts.loaderCollection : {},
+    netWorth: loginPayload.userMetrics.netWorth,
   };
 }
 

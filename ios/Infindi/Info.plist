@@ -4,6 +4,8 @@
 <dict>
 	<key>PLKPlaidLinkConfiguration</key>
 	<dict>
+		<key>webhook</key>
+		<string>https://infindi-20cf1.appspot.com/plaid/webhook</string>
 		<key>clientName</key>
 		<string>Infindi</string>
 		<key>key</key>

@@ -40,6 +40,7 @@ export default (store: Store) => (next: Next) => {
           return;
         }
         const modeTransition = `${currentMode} -> ${newMode}`;
+        console.log('handling mode transition in datastore');
         switch (modeTransition) {
           case 'LOADING -> MAIN':
           case 'AUTH -> MAIN': {

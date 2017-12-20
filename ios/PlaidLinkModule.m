@@ -12,26 +12,28 @@
 RCT_EXPORT_MODULE(PlaidLink);
 
 RCT_EXPORT_METHOD(show: (RCTResponseSenderBlock) callback) {
-  [[PlaidLinkManager sharedInstance] showPlaidLink:^(NSError *error, NSString *publicToken, NSDictionary<NSString *,id> *metadata) {
-    NSDictionary *payload = nil;
-    if (error) {
-      payload = @{
-        @"type": @"LINK_FAILED",
-        @"error": [error localizedDescription],
-      };
-    } else if (!error && publicToken) {
-      payload = @{
-        @"type": @"LINK_SUCCESS",
-        @"publicToken": publicToken,
-        @"metadata": metadata
-      };
-    } else {
-      payload = @{
-        @"type": @"LINK_QUIT"
-      };
-    }
-    callback(@[payload]);
-  }];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[PlaidLinkManager sharedInstance] showPlaidLink:^(NSError *error, NSString *publicToken, NSDictionary<NSString *,id> *metadata) {
+      NSDictionary *payload = nil;
+      if (error) {
+        payload = @{
+                    @"type": @"LINK_FAILED",
+                    @"error": [error localizedDescription],
+                    };
+      } else if (!error && publicToken) {
+        payload = @{
+                    @"type": @"LINK_SUCCESS",
+                    @"publicToken": publicToken,
+                    @"metadata": metadata
+                    };
+      } else {
+        payload = @{
+                    @"type": @"LINK_QUIT"
+                    };
+      }
+      callback(@[payload]);
+    }];
+  });
 }
 
 RCT_EXPORT_METHOD(hide) {
@@ -39,9 +41,11 @@ RCT_EXPORT_METHOD(hide) {
 }
 
 RCT_EXPORT_METHOD(checkAvailability: (RCTResponseSenderBlock) callback) {
-  [[PlaidLinkManager sharedInstance] checkLinkAvailability:^(BOOL isLinkAvailable) {
-    callback(@[[NSNumber numberWithBool: isLinkAvailable]]);
-  }];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[PlaidLinkManager sharedInstance] checkLinkAvailability:^(BOOL isLinkAvailable) {
+      callback(@[[NSNumber numberWithBool: isLinkAvailable]]);
+    }];
+  });
 }
 
 @end

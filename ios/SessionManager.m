@@ -79,6 +79,7 @@
 }
 
 - (void)endSession {
+  NSLog(@"ENDING SESSION");
   NSAssert(self.sessionID != nil, @"endSession cannot be called with nil sessionID");
   NSString *urlPath = [[[Environment sharedInstance] hostname] stringByAppendingFormat: @"/session/end/%@", self.sessionID];
   NSURL *url = [[NSURL alloc] initWithString: urlPath];
@@ -98,6 +99,8 @@
     [self.heartbeatTimer invalidate];
     self.heartbeatTimer = nil;
   }
+  self.idToken = nil;
+  self.sessionID = nil;
 }
 
 - (void)endSessionIfExists {
