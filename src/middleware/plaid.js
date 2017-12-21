@@ -34,7 +34,10 @@ export type Action$PlaidLinkStatus = {|
   +type: 'PLAID_LINK_STATUS',
 |};
 
+type EmitterSubscription = { remove: () => void };
+
 export default (store: Store) => (next: Next) => {
+  let downloadStatusSubscription: ?EmitterSubscription = null;
   let isLinkShowing: bool = false;
 
   PlaidLink.genIsAvailable().then(isAvailable => {
@@ -49,7 +52,16 @@ export default (store: Store) => (next: Next) => {
     switch (action.type) {
       case 'AUTH_STATUS_CHANGE': {
         if (action.status.type === 'LOGGED_IN') {
-          genOnUserLoggedIn(next);
+          if (downloadStatusSubscription) {
+            downloadStatusSubscription.remove();
+            downloadStatusSubscription = null;
+          }
+          downloadStatusSubscription = listenToDownloadStatus(store, next);
+        } else if (action.status.type === 'LOGGED_OUT') {
+          if (downloadStatusSubscription) {
+            downloadStatusSubscription.remove();
+            downloadStatusSubscription = null;
+          }
         }
         break;
       }
@@ -74,36 +86,15 @@ export default (store: Store) => (next: Next) => {
   };
 };
 
-async function genOnUserLoggedIn(next: Next) {
-  // TODO: May want to poll for this data at some point. Not worried about
-  // doing this now, since it is unlikely that someone would have multiple
-  // clients they are using.
-  const statusList = await genPlaidDownloadStatus();
-  // "some" operation from obj-utils.
-  const hasDownloadRequests = Common.ObjUtils.reduceObject(
-    statusList,
-    (memo, status) => memo || status.type !== 'COMPLETE',
-    false,
-  );
-  console.log(statusList, hasDownloadRequests);
-  next({
-    hasDownloadRequests,
-    type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
-  });
-}
-
 async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
   PlaidLink.hide();
   switch (payload.type) {
     case 'LINK_QUIT': {
-      console.log('QUIT!');
       break;
     }
 
     case 'LINK_FAILURE': {
-      // TODO: What should we do during failure? Do we tell the user? Do we
-      // just pretend everything went okay?
-      console.log('FAILURE');
+      // TODO: Need to show banner that plaid has failed with linking account.
       break;
     }
 
@@ -122,9 +113,39 @@ async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
         hasDownloadRequests: true,
         type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
       });
-      console.log('SUCCESSFULLY GENERATED CREDENTIALS', credentialsRef);
       genCreatePlaidDownloadRequest(credentialsRef.refID);
       break;
     }
+  }
+}
+
+function listenToDownloadStatus(store: Store, next: Next): EmitterSubscription {
+  const interval = setInterval(() => {
+    genUpdateDownloadStatus(store, next);
+    // TODO: Should be able to get pushed updates from backend.
+  }, 2000);
+
+  return {
+    remove: () => clearInterval(interval),
+  };
+}
+
+async function genUpdateDownloadStatus(
+  store: Store,
+  next: Next,
+): Promise<void> {
+  const statusList = await genPlaidDownloadStatus();
+  // TODO: "some" operation from obj-utils.
+  const prevHasDownloadRequests = store.getState().plaid.hasDownloadRequests;
+  const hasDownloadRequests = Common.ObjUtils.reduceObject(
+    statusList,
+    (memo, status) => memo || status.type !== 'COMPLETE',
+    false,
+  );
+  if (hasDownloadRequests !== prevHasDownloadRequests) {
+    next({
+      hasDownloadRequests,
+      type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
+    });
   }
 }
