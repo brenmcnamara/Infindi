@@ -113,7 +113,7 @@ async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
         hasDownloadRequests: true,
         type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
       });
-      genCreatePlaidDownloadRequest(credentialsRef.refID);
+      await genCreatePlaidDownloadRequest(credentialsRef.refID);
       break;
     }
   }

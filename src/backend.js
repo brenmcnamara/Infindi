@@ -85,6 +85,7 @@ function getLoginPayload(): LoginPayload {
   return loginPayload;
 }
 
+// TODO: If it is a failing status, need to throw error.
 async function genPostRequest<T: Object>(
   uri: string,
   body: Object,
@@ -102,6 +103,7 @@ async function genPostRequest<T: Object>(
   return await response.json();
 }
 
+// TODO: If it is a failing status, need to throw an error.
 async function genGetRequest<T: Object>(uri: string): Promise<T> {
   const { idToken } = getLoginPayload();
   const response = await fetch(uri, {
