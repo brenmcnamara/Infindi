@@ -2,6 +2,7 @@
 
 import authentication from '../middleware/authentication';
 import datastore from '../middleware/datastore';
+import modal from '../middleware/modal';
 import navigation from '../middleware/navigation';
 import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
@@ -20,6 +21,7 @@ if (__DEV__) {
     datastore,
     navigation,
     plaid,
+    modal,
     reduxLogger,
   );
 } else {
@@ -29,6 +31,7 @@ if (__DEV__) {
     datastore,
     navigation,
     plaid,
+    modal,
   );
 }
 

@@ -104,7 +104,6 @@ function listenForAccounts(
         type: 'COLLECTION_DOWNLOAD_FINISHED',
       });
     });
-  console.log('REMOVE', remove);
   return { remove };
 }
 

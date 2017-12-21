@@ -72,14 +72,25 @@ export default (store: Store) => (next: Next) => {
           'Cannot try to link account PlaidLink is showing',
         );
         isLinkShowing = true;
-        PlaidLink.show(async (payload: PlaidLinkPayload) => {
-          invariant(
-            isLinkShowing,
-            'Completed PlaidLink but link is marked as not showing',
-          );
-          await onLinkComplete(next, payload);
-          isLinkShowing = false;
+        next({
+          modal: {
+            hide: () => PlaidLink.hide(),
+            id: 'PLAID_LINK',
+            modalType: 'NATIVE',
+            priority: 'USER_REQUESTED',
+            show: () =>
+              PlaidLink.show(async (payload: PlaidLinkPayload) => {
+                invariant(
+                  isLinkShowing,
+                  'Completed PlaidLink but link is marked as not showing',
+                );
+                await onLinkComplete(next, payload);
+                isLinkShowing = false;
+              }),
+          },
+          type: 'REQUEST_MODAL',
         });
+
         break;
       }
     }
@@ -87,7 +98,10 @@ export default (store: Store) => (next: Next) => {
 };
 
 async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
-  PlaidLink.hide();
+  next({
+    modalID: 'PLAID_LINK',
+    type: 'DISMISS_MODAL',
+  });
   switch (payload.type) {
     case 'LINK_QUIT': {
       break;

@@ -5,6 +5,8 @@ import type { Action as Action$Auth } from '../actions/authentication';
 import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
 import type { Action as Action$Datastore } from '../datastore';
 import type { Action as Action$EnvStatus } from '../actions/env';
+import type { Action as Action$Modal } from '../actions/modal';
+import type { Action as Action$ModalMiddleware } from '../middleware/modal';
 import type { Action as Action$Nav } from '../actions/navigation';
 import type { Action as Action$NavMiddleware } from '../middleware/navigation';
 import type { Action as Action$Plaid } from '../actions/plaid';
@@ -20,6 +22,8 @@ export type PureAction =
   | Action$AuthMiddleware
   | Action$Datastore<'Account', Account>
   | Action$EnvStatus
+  | Action$Modal
+  | Action$ModalMiddleware
   | Action$Nav
   | Action$NavMiddleware
   | Action$Plaid
@@ -32,6 +36,8 @@ export type Action = PureAction | ThunkAction;
 export type ChangeStoreCallback = () => void;
 
 export type StoreSubscription = () => void;
+
+export type ReduxState = State;
 
 export type Store = {|
   +dispatch: Dispatch,

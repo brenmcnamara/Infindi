@@ -3,6 +3,7 @@
 import Environment from '../../modules/Environment';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
+import ModalManager from '../ModalManager.react';
 import React, { Component } from 'react';
 import Tabs from './Tabs.react';
 
@@ -11,6 +12,7 @@ import invariant from 'invariant';
 import { connect } from 'react-redux';
 import { envDoneLoading, envFailedLoading } from '../../actions/env';
 import { setModeControls } from '../../actions/navigation';
+import { View } from 'react-native';
 
 import type { Mode } from '../../controls';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
@@ -51,18 +53,33 @@ class App extends Component<Props, State> {
   }
 
   render() {
+    let mainContent = null;
     switch (this.state.currentMode) {
       case 'AUTH': {
-        return <LoginScreen />;
+        mainContent = <LoginScreen />;
+        break;
       }
+
       case 'LOADING': {
-        return <LoadingScreen />;
+        mainContent = <LoadingScreen />;
+        break;
       }
+
       case 'MAIN': {
-        return <Tabs />;
+        mainContent = <Tabs />;
+        break;
       }
+
+      default:
+        invariant(false, 'Unrecognized app mode %s', this.state.currentMode);
     }
-    invariant(false, 'Unrecognized app mode %s', this.state.currentMode);
+
+    return (
+      <View style={{ flex: 1 }}>
+        <ModalManager />
+        {mainContent}
+      </View>
+    );
   }
 
   _renderAuth() {
