@@ -4,20 +4,24 @@ import type { ID } from 'common/src/types/core';
 
 export type ModalPriority = 'SYSTEM_CRITICAL' | 'USER_REQUESTED';
 
-export type Modal =
-  | {|
-      +hide: () => any,
-      +id: ID,
-      +modalType: 'NATIVE',
-      +priority: ModalPriority,
-      +show: () => any,
-    |}
-  | {|
-      +id: ID,
-      +modalType: 'REACT',
-      +priority: ModalPriority,
-      +render: () => React$Component<*>,
-    |};
+export type Modal = Modal$Native | Modal$React;
+
+export type Model$React = {|
+  +id: ID,
+  +modalType: 'REACT',
+  +priority: ModalPriority,
+  +render: () => React$Component<*>,
+  +renderTransitionOut?: () => React$Component<*>,
+  +transitionOutMillis?: number,
+|};
+
+export type Modal$Native = {|
+  +hide: () => any,
+  +id: ID,
+  +modalType: 'NATIVE',
+  +priority: ModalPriority,
+  +show: () => any,
+|};
 
 export type State = {|
   +modalQueue: Array<Modal>,
