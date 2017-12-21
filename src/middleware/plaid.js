@@ -134,7 +134,15 @@ async function genUpdateDownloadStatus(
   store: Store,
   next: Next,
 ): Promise<void> {
-  const statusList = await genPlaidDownloadStatus();
+  let statusList;
+  try {
+    statusList = await genPlaidDownloadStatus();
+  } catch (error) {
+    // If we hit an error, just quit. The download status is not so critical
+    // that we need to alert the user or terminate the app over it failing.
+    // TODO: Should log this failure in DEV mode.
+    return;
+  }
   // TODO: "some" operation from obj-utils.
   const prevHasDownloadRequests = store.getState().plaid.hasDownloadRequests;
   const hasDownloadRequests = Common.ObjUtils.reduceObject(
