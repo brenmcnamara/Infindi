@@ -19,7 +19,7 @@ export type DefaultProps = {
   theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
-const NAV_BAR_HEIGHT = 64;
+const NAV_BAR_HEIGHT = 44;
 const TAB_BAR_HEIGHT = 50;
 
 export default class Screen extends Component<Props> {
