@@ -4,7 +4,10 @@
  * This module controls the presentation of all modal views.
  */
 
-import InfoModal from '../components/shared/InfoModal.react';
+import InfoModal, {
+  TransitionInMillis,
+  TransitionOutMillis,
+} from '../components/shared/InfoModal.react';
 import React from 'react';
 
 import type { ID } from 'common/src/types/core';
@@ -49,8 +52,8 @@ export function requestInfoModal(payload: InfoModalPayload) {
           {payload.render()}
         </InfoModal>
       ),
-      transitionInMillis: 400,
-      transitionOutMillis: 400,
+      transitionInMillis: TransitionInMillis,
+      transitionOutMillis: TransitionOutMillis,
     },
     type: 'REQUEST_MODAL',
   };

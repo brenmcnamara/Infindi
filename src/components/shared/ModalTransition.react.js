@@ -9,10 +9,10 @@ export type Props = {
   show: bool,
 };
 
-export const TransitionInMillis = 400;
-export const TransitionOutMillis = 400;
+export const TransitionInMillis = 300;
+export const TransitionOutMillis = 300;
 
-const VERTICAL_OFFSET = 80;
+const VERTICAL_OFFSET = 30;
 
 /**
  * A simple abstraction over some of the styling, events and animations for

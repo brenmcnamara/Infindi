@@ -1,7 +1,10 @@
 /* @flow */
 
 import Colors from '../../design/colors';
-import ModalTransition from './ModalTransition.react';
+import ModalTransition, {
+  TransitionInMillis as ModalTransitionInMillis,
+  TransitionOutMillis as ModalTransitionOutMillis,
+} from './ModalTransition.react';
 import React, { Component } from 'react';
 import TextButton from './TextButton.react';
 import TextDesign from '../../design/text';
@@ -17,6 +20,9 @@ export type Props = ReduxProps & {
   show: bool,
   title: string,
 };
+
+export const TransitionInMillis = ModalTransitionInMillis;
+export const TransitionOutMillis = ModalTransitionOutMillis;
 
 /**
  * Modal view designed for an info element.
