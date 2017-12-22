@@ -31,9 +31,11 @@ export default (store: Store) => (next: Next) => {
         const index = modalQueue.findIndex(
           modal => modal.id === action.modalID,
         );
-        if (index < 0) {
-          break;
-        }
+        invariant(
+          index >= 0,
+          'Trying to dismiss modal that does not exist: %s',
+          action.modalID,
+        );
 
         const newQueue = modalQueue.slice();
         newQueue.splice(index, 1);
@@ -47,6 +49,14 @@ export default (store: Store) => (next: Next) => {
       }
 
       case 'REQUEST_MODAL': {
+        const index = modalQueue.findIndex(
+          modal => modal.id === action.modal.id,
+        );
+        invariant(
+          index < 0,
+          'Trying to add multiple modals with the id: %s',
+          action.modal.id,
+        );
         const newQueue = addModalToPriorityQueue(action.modal, modalQueue);
         modalQueue = newQueue;
         next({
