@@ -22,6 +22,7 @@ export type Props = {
   accounts: AccountLoaderCollection,
   groupType: 'AVAILABLE_CASH',
   onPressGroupInfo: () => any,
+  onSelectAccount: (account: AccountLoader) => any,
 };
 
 // TODO: Rename to AccountsGroup
@@ -63,7 +64,7 @@ export default class AccountGroup extends Component<Props> {
     const account = loader.model;
     return (
       <View key={account.id} style={[styles.accountLoaderRoot, topBorder]}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => this.props.onSelectAccount(loader)}>
           <View style={styles.accountLoaderTop}>
             <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
               {account.name}

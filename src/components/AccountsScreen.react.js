@@ -15,8 +15,10 @@ import TextDesign from '../design/text';
 
 import invariant from 'invariant';
 
-import { AccountGroupInfo as AccountGroupInfoContent } from '../../content';
-import { AccountNullState } from '../../content';
+import {
+  AccountGroupInfo as AccountGroupInfoContent,
+  AccountNullState as AccountNullStateContent,
+} from '../../content';
 import {
   ActivityIndicator,
   FlatList,
@@ -33,9 +35,12 @@ import {
 } from '../common/db-utils';
 import { getLoginPayload } from '../store/state-utils';
 import { plaidLinkAccount } from '../actions/plaid';
-import { dismissModal, requestInfoModal } from '../actions/modal';
+import { requestInfoModal, requestUnimplementedModal } from '../actions/modal';
 
-import type { AccountLoaderCollection } from '../reducers/accounts';
+import type {
+  AccountLoader,
+  AccountLoaderCollection,
+} from '../reducers/accounts';
 import type { Dollars } from 'common/src/types/core';
 import type { GroupType } from '../common/db-utils';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
@@ -137,7 +142,7 @@ class AccountsScreen extends Component<Props> {
                 You Have No Accounts
               </Text>
               <Text style={[TextDesign.normal, styles.textCenter]}>
-                {AccountNullState}
+                {AccountNullStateContent}
               </Text>
             </View>
           </View>
@@ -174,6 +179,7 @@ class AccountsScreen extends Component<Props> {
             accounts={item.accounts}
             groupType={item.groupType}
             onPressGroupInfo={() => this._onPressGroupInfo(item.groupType)}
+            onSelectAccount={this._onSelectAccount}
           />
         );
     }
@@ -195,6 +201,10 @@ class AccountsScreen extends Component<Props> {
         title: formatGroupType(groupType),
       }),
     );
+  };
+
+  _onSelectAccount = (account: AccountLoader): void => {
+    this.props.dispatch(requestUnimplementedModal('View Account Transactions'));
   };
 
   _getData() {
