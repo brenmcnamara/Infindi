@@ -2,10 +2,18 @@
 
 import React, { Component } from 'react';
 
-import { Animated, Dimensions, Easing, StyleSheet, View } from 'react-native';
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 export type Props = {
   children?: ?any,
+  onPressBackground: () => any,
   show: bool,
 };
 
@@ -61,20 +69,25 @@ export default class ModalTransition extends Component<Props> {
         >
           {this.props.children}
         </Animated.View>
-        {/* TODO: GET RID OF THIS VIEW */}
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              height,
-              opacity: this._transitionProgress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 0.4],
-              }),
-              width,
-            },
-          ]}
-        />
+        {/*
+          * TODO: Subtle UI improvement: Would like if someone presses then
+          * drags there finger onto the modal to not call this press event.
+          */}
+        <TouchableWithoutFeedback onPress={this.props.onPressBackground}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                height,
+                opacity: this._transitionProgress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.4],
+                }),
+                width,
+              },
+            ]}
+          />
+        </TouchableWithoutFeedback>
       </View>
     );
   }

@@ -42,6 +42,9 @@
   }
 
   [PLKPlaidLink setupWithSharedConfiguration:^(BOOL success, NSError * _Nullable error) {
+    if (!success || error != nil) {
+      NSLog(@"??");
+    }
     self.availability = success && error == nil
       ? PlaidLinkAvailabilityYes
       : PlaidLinkAvailabilityNo;

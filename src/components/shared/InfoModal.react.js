@@ -30,7 +30,10 @@ export const TransitionOutMillis = ModalTransitionOutMillis;
 class InfoModal extends Component<Props> {
   render() {
     return (
-      <ModalTransition show={this.props.show}>
+      <ModalTransition
+        onPressBackground={this._onPressBackground}
+        show={this.props.show}
+      >
         <View style={styles.root}>
           <View style={styles.header}>
             <Text style={TextDesign.normalWithEmphasis}>
@@ -51,6 +54,10 @@ class InfoModal extends Component<Props> {
       </ModalTransition>
     );
   }
+
+  _onPressBackground = (): void => {
+    this.props.dispatch(dismissModal(this.props.modalID));
+  };
 
   _onPressDismiss = (): void => {
     this.props.dispatch(dismissModal(this.props.modalID));
