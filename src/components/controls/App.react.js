@@ -1,5 +1,6 @@
 /* @flow */
 
+import Colors from '../../design/colors';
 import Environment from '../../modules/Environment';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
@@ -12,7 +13,7 @@ import invariant from 'invariant';
 import { connect } from 'react-redux';
 import { envDoneLoading, envFailedLoading } from '../../actions/config';
 import { setModeControls } from '../../actions/navigation';
-import { View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 
 import type { Mode } from '../../controls';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
@@ -53,8 +54,9 @@ class App extends Component<Props, State> {
   }
 
   render() {
+    const { currentMode } = this.state;
     let mainContent = null;
-    switch (this.state.currentMode) {
+    switch (currentMode) {
       case 'AUTH': {
         mainContent = <LoginScreen />;
         break;
@@ -73,12 +75,21 @@ class App extends Component<Props, State> {
       default:
         invariant(false, 'Unrecognized app mode %s', this.state.currentMode);
     }
-
+    const bottomAreaStyles = [
+      styles.bottomArea,
+      {
+        backgroundColor:
+          currentMode === 'MAIN' ? Colors.TAB_BAR : Colors.BACKGROUND,
+      },
+    ];
     return (
-      <View style={{ flex: 1 }}>
-        <ModalManager />
-        {mainContent}
-      </View>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.main}>
+          <ModalManager />
+          {mainContent}
+        </View>
+        <View style={bottomAreaStyles} />
+      </SafeAreaView>
     );
   }
 
@@ -102,6 +113,26 @@ class App extends Component<Props, State> {
     });
   };
 }
+
+const styles = StyleSheet.create({
+  bottomArea: {
+    bottom: 0,
+    height: 40,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+
+  main: {
+    flex: 1,
+    zIndex: 1,
+  },
+
+  safeArea: {
+    backgroundColor: Colors.BACKGROUND,
+    flex: 1,
+  },
+});
 
 function mapReduxStateToProps(state: ReduxState) {
   const { navState } = state;
