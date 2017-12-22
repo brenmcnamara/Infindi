@@ -1,15 +1,16 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import React, { Component } from 'react';
 
-import { Animated, Dimensions, StyleSheet, View } from 'react-native';
+import { Animated, Dimensions, Easing, StyleSheet, View } from 'react-native';
 
 export type Props = {
   children?: ?any,
-  onPressBackground: () => any,
   show: bool,
 };
+
+export const TransitionInMillis = 400;
+export const TransitionOutMillis = 400;
 
 const VERTICAL_OFFSET = 80;
 
@@ -19,24 +20,21 @@ const VERTICAL_OFFSET = 80;
  * that takes up the entire screen.
  */
 export default class ModalTransition extends Component<Props> {
-  _transitionProgress = new Animated.Value(0);
+  _transitionProgress: Animated.Value;
 
-  componentDidMount(): void {
-    if (this.props.show) {
-      Animated.timing(this._transitionProgress, {
-        duration: 400,
-        toValue: 1,
-        useNativeProps: true,
-      }).start();
-    }
+  componentWillMount(): void {
+    this._transitionProgress = new Animated.Value(this.props.show ? 1 : 0);
   }
 
   componentWillReceiveProps(nextProps: Props): void {
     if (this.props.show !== nextProps.show) {
       Animated.timing(this._transitionProgress, {
-        duration: 400,
+        duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
+        easing: Easing.out(Easing.cubic),
         toValue: nextProps.show ? 1 : 0,
-        useNativeProps: true,
+        // TODO: This is causing some wierd animation flash when the component
+        // is unmounted. Need to look further into this.
+        // useNativeDriver: true,
       }).start();
     }
   }
@@ -63,8 +61,8 @@ export default class ModalTransition extends Component<Props> {
         >
           {this.props.children}
         </Animated.View>
+        {/* TODO: GET RID OF THIS VIEW */}
         <Animated.View
-          onPress={this.props.onPressBackground}
           style={[
             styles.background,
             {
@@ -89,12 +87,11 @@ const styles = StyleSheet.create({
   },
 
   modal: {
-    backgroundColor: Colors.BACKGROUND,
     zIndex: 1,
   },
 
   root: {
-    alignItems: 'center',
+    alignItems: 'stretch',
     flex: 1,
     justifyContent: 'center',
   },

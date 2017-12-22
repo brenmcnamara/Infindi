@@ -7,8 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "common":
-      "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git",
+    "common": "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git",
     "invariant": "^2.2.2",
     "nullthrows": "^1.0.0",
     "react": "16.0.0",

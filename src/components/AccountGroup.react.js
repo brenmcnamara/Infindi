@@ -21,8 +21,10 @@ import type { Dollars } from 'common/src/types/core';
 export type Props = {
   accounts: AccountLoaderCollection,
   groupType: 'AVAILABLE_CASH',
+  onPressGroupInfo: () => any,
 };
 
+// TODO: Rename to AccountsGroup
 export default class AccountGroup extends Component<Props> {
   render() {
     return (
@@ -43,7 +45,7 @@ export default class AccountGroup extends Component<Props> {
         <Text style={[TextDesign.smallWithEmphasis, styles.groupType]}>
           {this._getFormattedGroupType()}
         </Text>
-        <InfoButton onPress={() => this._onInfoGroupType('AVAILABLE_CASH')} />
+        <InfoButton onPress={this.props.onPressGroupInfo} />
         <MoneyText
           dollars={this._getGroupBalance()}
           textStyle={[TextDesign.normalWithEmphasis, styles.groupBalance]}
@@ -83,11 +85,6 @@ export default class AccountGroup extends Component<Props> {
       </View>
     );
   }
-
-  // TODO: Add proper group types.
-  _onInfoGroupType = (groupType: 'AVAILABLE_CASH') => {
-    console.log('show group type for available cash');
-  };
 
   _getGroupBalance(): Dollars {
     return reduceObject(

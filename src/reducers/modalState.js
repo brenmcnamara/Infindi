@@ -4,15 +4,17 @@ import type { ID } from 'common/src/types/core';
 
 export type ModalPriority = 'SYSTEM_CRITICAL' | 'USER_REQUESTED';
 
-export type Modal = Modal$Native | Modal$React;
+export type Modal = Modal$Native | Modal$ReactWithTransition;
 
-export type Model$React = {|
+export type Modal$ReactWithTransition = {|
   +id: ID,
-  +modalType: 'REACT',
+  +modalType: 'REACT_WITH_TRANSITION',
   +priority: ModalPriority,
-  +render: () => React$Component<*>,
-  +renderTransitionOut?: () => React$Component<*>,
-  +transitionOutMillis?: number,
+  +renderIn: () => React$Component<*>,
+  +renderInitial: () => React$Component<*>,
+  +renderTransitionOut: () => React$Component<*>,
+  +transitionInMillis: number,
+  +transitionOutMillis: number,
 |};
 
 export type Modal$Native = {|

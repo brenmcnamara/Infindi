@@ -10,7 +10,7 @@ import Tabs from './Tabs.react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import { envDoneLoading, envFailedLoading } from '../../actions/env';
+import { envDoneLoading, envFailedLoading } from '../../actions/config';
 import { setModeControls } from '../../actions/navigation';
 import { View } from 'react-native';
 

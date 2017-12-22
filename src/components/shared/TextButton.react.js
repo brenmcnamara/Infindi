@@ -10,7 +10,7 @@ export type ButtonSize = 'SMALL' | 'MEDIUM' | 'LARGE';
 
 export type Props = {
   // TODO: Proper typing for this.
-  onPress: Function,
+  onPress: () => any,
   shouldFillParent: bool,
   size: 'LARGE' | 'MEDIUM' | 'SMALL',
   text: string,

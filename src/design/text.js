@@ -14,6 +14,7 @@ const header3 = {
   fontSize: 18,
 };
 
+// TODO: Rename to medium
 const normal = {
   color: Colors.TEXT_NORMAL,
   fontFamily: 'Lato-Light',
@@ -21,6 +22,7 @@ const normal = {
   lineHeight: 22,
 };
 
+// TODO: Rename to mediumWithEmphasis.
 const normalWithEmphasis = {
   ...normal,
   fontFamily: 'Lato-Regular',

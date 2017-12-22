@@ -30,6 +30,16 @@ export function getGroupTypeForAccount(account: Account): GroupType {
   }
 }
 
+export function formatGroupType(groupType: GroupType): string {
+  return (
+    groupType
+      .split('_')
+      // Capitalize first letter only.
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+  );
+}
+
 export function getFormattedAccountType(account: Account): string {
   invariant(
     account.sourceOfTruth.type === 'PLAID',

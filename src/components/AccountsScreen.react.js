@@ -15,6 +15,7 @@ import TextDesign from '../design/text';
 
 import invariant from 'invariant';
 
+import { AccountGroupInfo as AccountGroupInfoContent } from '../../content';
 import { AccountNullState } from '../../content';
 import {
   ActivityIndicator,
@@ -26,12 +27,17 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { filterObject, isObjectEmpty } from '../common/obj-utils';
-import { getGroupTypeForAccountLoader } from '../common/db-utils';
+import {
+  formatGroupType,
+  getGroupTypeForAccountLoader,
+} from '../common/db-utils';
 import { getLoginPayload } from '../store/state-utils';
 import { plaidLinkAccount } from '../actions/plaid';
+import { dismissModal, requestInfoModal } from '../actions/modal';
 
 import type { AccountLoaderCollection } from '../reducers/accounts';
 import type { Dollars } from 'common/src/types/core';
+import type { GroupType } from '../common/db-utils';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
 
@@ -164,7 +170,11 @@ class AccountsScreen extends Component<Props> {
         return <NetWorth netWorth={item.netWorth} />;
       case 'ACCOUNTS':
         return (
-          <AccountGroup groupType={item.groupType} accounts={item.accounts} />
+          <AccountGroup
+            accounts={item.accounts}
+            groupType={item.groupType}
+            onPressGroupInfo={() => this._onPressGroupInfo(item.groupType)}
+          />
         );
     }
     invariant(false, 'Unrecognized item type: %s', item.rowType);
@@ -172,6 +182,19 @@ class AccountsScreen extends Component<Props> {
 
   _onPressAddAccount = (): void => {
     this.props.dispatch(plaidLinkAccount());
+  };
+
+  _onPressGroupInfo = (groupType: GroupType): void => {
+    const content = AccountGroupInfoContent[groupType];
+    invariant(content, 'No info exists for group type: %s.', groupType);
+    this.props.dispatch(
+      requestInfoModal({
+        id: `GROUP_INFO_${groupType}`,
+        priority: 'USER_REQUESTED',
+        render: () => <Text style={TextDesign.normal}>{content}</Text>,
+        title: formatGroupType(groupType),
+      }),
+    );
   };
 
   _getData() {

@@ -1,14 +1,13 @@
 /* @flow */
 
-import If from './shared/If.react';
 import React, { Component } from 'react';
 
 import invariant from 'invariant';
-import nullthrows from 'nullthrows';
 
 import { connect } from 'react-redux';
-import { Modal, Modal$React } from 'react-native';
+import { Modal as ModalView } from 'react-native';
 
+import type { Modal, Modal$ReactWithTransition } from '../reducers/modalState';
 import type { ReduxState } from '../typesDEPRECATED/redux';
 
 /**
@@ -21,34 +20,42 @@ export type Props = ReduxProps & {
   mostImportantModal: Modal | null,
 };
 
+// Manages transitioning in and out react modals.
+type TransitionState = {|
+  +modal: Modal$ReactWithTransition,
+  +type: 'IN' | 'TRANSITION_IN' | 'TRANSITION_OUT',
+|} | null;
+
 type State = {
-  incomingReactModal: Modal$React | null,
-  outgoingReactModal: Modal$React | null,
-  shoulTransitionOut: bool,
+  transitionState: TransitionState,
 };
 
 class ModalManager extends Component<Props, State> {
-  _transitionTimeout: ?number = null;
+  _timeoutIDs: Array<number> = [];
 
-  state: State = {
-    incomingReactModal: null,
-    outgoingReactModal: null,
-    transitionState: 'NO_TRANSITION',
-  };
-
-  componentWillMount(): void {
-    const { mostImportantModal } = this.props;
-    if (mostImportantModal && mostImportantModal.modalType === 'REACT') {
-      this.setState({
-        incomingReactModal: mostImportantModal,
-        shouldTransitionOut: false,
-      });
+  constructor(props: Props) {
+    super(props);
+    const { mostImportantModal } = props;
+    if (
+      mostImportantModal &&
+      mostImportantModal.modalType === 'REACT_WITH_TRANSITION'
+    ) {
+      this.state = {
+        transitionState: {
+          render: mostImportantModal.renderIn,
+          type: 'IN',
+        },
+      };
+    } else {
+      this.state = { transitionState: null };
     }
   }
 
   componentWillUnmount(): void {
-    clearTimeout(this._transitionTimeout);
-    this._transitionTimeout = null;
+    this._timeoutIDs.forEach(id => {
+      clearTimeout(id);
+    });
+    this._timeoutIDs = [];
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -66,86 +73,106 @@ class ModalManager extends Component<Props, State> {
         newMostImportantModal.show();
       }
 
-      // Need to handle the cases where we are either adding or removing a
-      // react modal.
-      let incomingReactModal: ?ModalReact = null;
-      let outgoingReactModal: ?Modal$React = null;
-      let transitionState = 'NO_TRANSITION';
-      let willChangeState = false;
-
-      if (isReactModalThatCanTransitionOut(mostImportantModal)) {
-        transitionState = 'TRANSITION_OUT';
-      }
-      if (isReactModal(mostImportantModal)) {
-        outgoingReactModal = castToReactModal(mostImportantModal);
-        willChangeState = true;
-      }
-      if (isReactModal(newMostImportantModal)) {
-        incomingReactModal = castToReactModal(newMostImportantModal);
-        willChangeState = true;
-      }
-
-      if (willChangeState) {
-        this.setState({
-          incomingReactModal,
-          outgoingReactModal,
-          transitionState,
-        });
-
-        if (transitionState === 'TRANSITION_OUT') {
-          // After we are done transitioning out, we need to remove the outgoing
-          // modal view.
-          invariant(
-            outgoingReactModal && outgoingReactModal.transitionOutMillis,
-            'Error with modal %s: A react modal with a renderTransitionOut() ' +
-              'property defined must also define transitionOutMillis',
-          );
-          this._transitionTimeout = setTimeout(() => {
-            this.setState({
-              outgoingReactModal: null,
-              transitionState: 'NO_TRANSITION',
-            });
-          }, outgoingReactModal.transitionOutMillis);
-        }
+      if (
+        !isReactWithTransitionModal(mostImportantModal) &&
+        isReactWithTransitionModal(newMostImportantModal)
+      ) {
+        const modal = castToReactWithTransitionModal(newMostImportantModal);
+        this._transitionInModal(modal);
+      } else if (
+        isReactWithTransitionModal(mostImportantModal) &&
+        !isReactWithTransitionModal(newMostImportantModal)
+      ) {
+        const modal = castToReactWithTransitionModal(mostImportantModal);
+        this._transitionOutModal(modal);
+      } else if (
+        isReactWithTransitionModal(mostImportantModal) &&
+        isReactWithTransitionModal(newMostImportantModal)
+      ) {
+        const inModal = castToReactWithTransitionModal(newMostImportantModal);
+        const outModal = castToReactWithTransitionModal(mostImportantModal);
+        this._transitionOutModal(outModal, false).then(() =>
+          this._transitionInModal(inModal),
+        );
       }
     }
   }
 
   render() {
+    const { transitionState } = this.state;
+    if (!transitionState) {
+      return null;
+    }
+
+    let content = null;
+    switch (transitionState.type) {
+      case 'IN':
+        content = transitionState.modal.renderIn();
+        break;
+
+      case 'TRANSITION_IN':
+        content = transitionState.modal.renderInitial();
+        break;
+
+      case 'TRANSITION_OUT':
+        content = transitionState.modal.renderTransitionOut();
+        break;
+
+      default:
+        invariant(
+          false,
+          'Unrecognized transition state: %s',
+          transitionState.type,
+        );
+    }
     return (
-      <Modal animationType="none" show={true} transparent={true}>
-        {this._renderTransitionIn()}
-        {this._renderTransitionOut()}
-      </Modal>
+      <ModalView animationType="none" show={transitionState} transparent={true}>
+        <AddKey key={transitionState.modal.id}>{content}</AddKey>
+      </ModalView>
     );
   }
 
-  _renderTransitionIn() {
-    const { incomingReactModal } = this.state;
-    if (!incomingReactModal) {
-      return null;
-    }
-    return (
-      <AddKey key={incomingReactModal.id}>{incomingReactModal.render()}</AddKey>
-    );
+  _transitionInModal(modal: Modal$ReactWithTransition): void {
+    return new Promise(resolve => {
+      this.setState(
+        { transitionState: { modal, type: 'TRANSITION_IN' } },
+        () => {
+          this.setState({ transitionState: { modal, type: 'IN' } }, resolve);
+        },
+      );
+    });
   }
 
-  _renderTransitionOut() {
-    const { outgoingReactModal, shouldTransitionOut } = this.state;
-    if (!outgoingReactModal || !shouldTransitionOut) {
-      return null;
-    }
-    invariant(
-      outgoingReactModal.renderTransitionOut,
-      'Internal error for modal manager',
-    );
-    return (
-      <AddKey key={outgoingReactModal.id}>
-        {outgoingReactModal.renderTransitionOut()}
-      </AddKey>
-    );
+  _transitionOutModal(
+    modal: Modal$ReactWithTransition,
+    shouldTransitionToNull: bool = true,
+  ): Promise<void> {
+    return new Promise(resolve => {
+      this.setState({
+        transitionState: { modal, type: 'TRANSITION_OUT' },
+      });
+      const timeoutID = setTimeout(() => {
+        const index = this._timeoutIDs.indexOf(timeoutID);
+        if (index >= 0) {
+          this._timeoutIDs.splice(index, 1);
+        }
+
+        if (shouldTransitionToNull) {
+          this.setState({ transitionState: null }, resolve);
+        } else {
+          resolve();
+        }
+      }, modal.transitionOutMillis);
+      this._timeoutIDs.push(timeoutID);
+    });
   }
 }
+
+// -----------------------------------------------------------------------------
+//
+// REDUX CONNECTION
+//
+// -----------------------------------------------------------------------------
 
 function mapReduxStateToProps(state: ReduxState) {
   return {
@@ -153,33 +180,32 @@ function mapReduxStateToProps(state: ReduxState) {
   };
 }
 
+export default connect(mapReduxStateToProps)(ModalManager);
+
+// -----------------------------------------------------------------------------
+//
+// UTILITIES
+//
+// -----------------------------------------------------------------------------
+
 function isNativeModal(modal: ?Modal): bool {
   return Boolean(modal && modal.modalType === 'NATIVE');
 }
 
-function isReactModal(modal: ?Modal): bool {
-  return Boolean(modal && modal.modalType === 'REACT');
+function isReactWithTransitionModal(modal: ?Modal): bool {
+  return Boolean(modal && modal.modalType === 'REACT_WITH_TRANSITION');
 }
 
-function isReactModalThatCanTransitionOut(modal: ?Modal): bool {
-  return Boolean(
-    modal && modal.modalType === 'REACT' && modal.renderTransitionOut,
-  );
-}
-
-function castToReactModal(modal: ?Modal): Modal$React {
+function castToReactWithTransitionModal(
+  modal: ?Modal,
+): Modal$ReactWithTransition {
   invariant(
-    modal && modal.modalType === 'REACT',
-    'Expected modal to be a react modal',
+    modal && modal.modalType === 'REACT_WITH_TRANSITION',
+    'Failed to cast modal to REACT_WITH_TRANSITION modal',
   );
   return modal;
 }
 
-class AddKey extends Component<{ children?: ?any }> {
-  render() {
-    const child = React.Children.only(this.props.children);
-    return child;
-  }
-}
-
-export default connect(mapReduxStateToProps)(ModalManager);
+const AddKey = (props: { children?: ?any }) => {
+  return React.Children.only(props.children);
+};

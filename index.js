@@ -33,28 +33,50 @@ if (__DEV__) {
   };
 
   global.showModal = (id: ID) => {
+    const content = (
+      <View
+        style={{
+          alignItems: 'center',
+          height: 100,
+          justifyContent: 'center',
+          width: 100,
+        }}
+      >
+        <Text>{id}</Text>
+      </View>
+    );
+
     Store.dispatch({
       modal: {
         id,
-        modalType: 'REACT',
+        modalType: 'REACT_WITH_TRANSITION',
         priority: 'USER_REQUESTED',
-        render: () => (
+        renderInitial: () => (
+          <ModalTransition
+            onPressBackground={() => global.hideModal(id)}
+            show={false}
+          >
+            {content}
+          </ModalTransition>
+        ),
+        renderIn: () => (
           <ModalTransition
             onPressBackground={() => global.hideModal(id)}
             show={true}
           >
-            <View
-              style={{
-                alignItems: 'center',
-                height: 100,
-                justifyContent: 'center',
-                width: 100,
-              }}
-            >
-              <Text>{id}</Text>
-            </View>
+            {content}
           </ModalTransition>
         ),
+        renderTransitionOut: () => (
+          <ModalTransition
+            onPressBackground={() => global.hideModal(id)}
+            show={false}
+          >
+            {content}
+          </ModalTransition>
+        ),
+        transitionInMillis: 400,
+        transitionOutMillis: 400,
       },
       type: 'REQUEST_MODAL',
     });

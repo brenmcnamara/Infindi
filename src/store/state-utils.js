@@ -40,9 +40,11 @@ export function getUserFirstName(state: State): ?string {
 }
 
 export function getMode(state: State): Mode {
-  if (state.envStatus.status === 'ENV_LOADING') {
+  const { configState } = state;
+  if (configState.envStatus === 'ENV_LOADING') {
     return 'LOADING';
   }
+
   return getModeForAuthStatus(state.authStatus);
 }
 

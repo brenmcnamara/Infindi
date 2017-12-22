@@ -2,7 +2,6 @@
 
 import invariant from 'invariant';
 
-import type { ID } from 'common/src/types/core';
 import type { Modal } from '../reducers/modalState';
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 
@@ -50,7 +49,6 @@ export default (store: Store) => (next: Next) => {
       case 'REQUEST_MODAL': {
         const newQueue = addModalToPriorityQueue(action.modal, modalQueue);
         modalQueue = newQueue;
-
         next({
           modalQueue,
           type: 'UPDATE_MODAL_QUEUE',
@@ -99,10 +97,4 @@ function addModalToPriorityQueue(
   const newQueue = queue.slice();
   newQueue.push(modal);
   return newQueue;
-}
-
-function getDisplayedNativeModalID(queue: Array<Modal>): ?ID {
-  return queue.length > 0 && queue[0].modalType === 'NATIVE'
-    ? queue[0].id
-    : null;
 }
