@@ -5,9 +5,13 @@
  */
 
 import InfoModal, {
-  TransitionInMillis,
-  TransitionOutMillis,
+  TransitionInMillis as InfoModalTransitionInMillis,
+  TransitionOutMillis as InfoModalTransitionOutMillis,
 } from '../components/shared/InfoModal.react';
+import LeftPaneScreen, {
+  TransitionInMillis as LeftPaneTransitionInMillis,
+  TransitionOutMillis as LeftPaneTransitionOutMillis,
+} from '../components/LeftPaneScreen.react';
 import React from 'react';
 import TextDesign from '../design/text';
 
@@ -55,8 +59,24 @@ export function requestInfoModal(payload: InfoModalPayload) {
           {payload.render()}
         </InfoModal>
       ),
-      transitionInMillis: TransitionInMillis,
-      transitionOutMillis: TransitionOutMillis,
+      transitionInMillis: InfoModalTransitionInMillis,
+      transitionOutMillis: InfoModalTransitionOutMillis,
+    },
+    type: 'REQUEST_MODAL',
+  };
+}
+
+export function requestLeftPane() {
+  return {
+    modal: {
+      id: 'LEFT_PANE',
+      modalType: 'REACT_WITH_TRANSITION',
+      priority: 'USER_REQUESTED',
+      renderIn: () => <LeftPaneScreen show={true} />,
+      renderInitial: () => <LeftPaneScreen show={false} />,
+      renderTransitionOut: () => <LeftPaneScreen show={false} />,
+      transitionInMillis: LeftPaneTransitionInMillis,
+      transitionOutMillis: LeftPaneTransitionOutMillis,
     },
     type: 'REQUEST_MODAL',
   };

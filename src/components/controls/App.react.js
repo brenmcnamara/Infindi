@@ -2,6 +2,7 @@
 
 import Colors from '../../design/colors';
 import Environment from '../../modules/Environment';
+import If from '../shared/If.react';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
 import ModalManager from '../ModalManager.react';
@@ -85,7 +86,9 @@ class App extends Component<Props, State> {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.main}>
-          <ModalManager />
+          <If predicate={currentMode === 'MAIN'}>
+            <ModalManager />
+          </If>
           {mainContent}
         </View>
         <View style={bottomAreaStyles} />

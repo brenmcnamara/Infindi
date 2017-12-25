@@ -4,9 +4,9 @@ import Colors from '../../design/colors';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
 
-import { NavigatorIOS } from 'react-native';
-
 import { connect } from 'react-redux';
+import { NavigatorIOS } from 'react-native';
+import { requestLeftPane } from '../../actions/modal';
 
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
 
@@ -33,6 +33,7 @@ class Navigator extends Component<Props> {
           barTintColor: Colors.BACKGROUND,
           component: Component,
           leftButtonIcon: Icons.List,
+          onLeftButtonPress: this._onPressLeftButton,
           shadowHidden: !payload.couldBeScrollable,
           tintColor: Colors.NAV_BAR_BUTTON,
           title: '',
@@ -41,6 +42,10 @@ class Navigator extends Component<Props> {
       />
     );
   }
+
+  _onPressLeftButton = (): void => {
+    this.props.dispatch(requestLeftPane());
+  };
 }
 
 function mapReduxStateToProps() {

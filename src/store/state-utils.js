@@ -18,10 +18,10 @@ export function isAuthenticated(state: State): bool {
 }
 
 export function getLoginPayload(state: State): ?LoginPayload {
-  if (state.authStatus.type !== 'LOGGED_IN') {
-    return null;
+  if (state.authStatus.type === 'LOGGED_IN') {
+    return state.authStatus.loginPayload;
   }
-  return state.authStatus.loginPayload;
+  return null;
 }
 
 export function getLatestMode(state: State): Mode {
@@ -37,6 +37,15 @@ export function getUserFirstName(state: State): ?string {
     return null;
   }
   return loginPayload.userInfo.firstName;
+}
+
+export function getUserFullName(state: State): ?string {
+  const loginPayload = getLoginPayload(state);
+  if (!loginPayload) {
+    return null;
+  }
+  const { userInfo } = loginPayload;
+  return `${userInfo.firstName} ${userInfo.lastName}`;
 }
 
 export function getMode(state: State): Mode {
