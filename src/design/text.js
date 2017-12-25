@@ -40,6 +40,13 @@ const smallWithEmphasis = {
   fontFamily: 'Lato-Regular',
 };
 
+const primary = {
+  color: Colors.TEXT_PRIMARY,
+  fontFamily: 'Lato-Regular',
+  fontSize: 12,
+  lineHeight: 22,
+};
+
 const error = {
   fontFamily: 'Lato-Regular',
   fontSize: 16,
@@ -78,6 +85,7 @@ export default {
   normalWithEmphasis,
   small,
   smallWithEmphasis,
+  primary,
   error,
 
   normalButton,

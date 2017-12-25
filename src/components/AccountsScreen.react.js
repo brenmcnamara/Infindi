@@ -70,7 +70,7 @@ type RowItem =
 class AccountsScreen extends Component<Props> {
   render() {
     return (
-      <Screen avoidNavBar={true} avoidTabbar={true}>
+      <Screen avoidNavBar={true} avoidTabBar={true}>
         {/* CONTENT */}
         {this._renderAccounts()}
         {this._renderAccountsLoading()}
