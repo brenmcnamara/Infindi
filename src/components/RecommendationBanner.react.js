@@ -79,13 +79,28 @@ export default class RecommendationBanner extends Component<Props> {
           </View>
         </View>
         <View style={styles.footer}>
-          <TextButton size="NORMAL" text="No Thanks" />
+          <TextButton
+            isDisabled={!this.props.isFocused}
+            onPress={this._onPressNoThanks}
+            size="NORMAL"
+            text="No Thanks"
+          />
           <View style={styles.buttonSpacer} />
-          <TextButton size="NORMAL" text="See Details" type="PRIMARY" />
+          <TextButton
+            isDisabled={!this.props.isFocused}
+            onPress={this._onPressSeeDetails}
+            size="NORMAL"
+            text="See Details"
+            type="PRIMARY"
+          />
         </View>
       </Animated.View>
     );
   }
+
+  _onPressNoThanks = (): void => {};
+
+  _onPressSeeDetails = (): void => {};
 }
 
 const styles = StyleSheet.create({

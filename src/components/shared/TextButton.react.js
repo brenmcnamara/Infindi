@@ -10,6 +10,7 @@ export type ButtonSize = 'SMALL' | 'MEDIUM' | 'LARGE';
 
 export type Props = {
   // TODO: Proper typing for this.
+  isDisabled: bool,
   onPress: () => any,
   shouldFillParent: bool,
   size: 'LARGE' | 'MEDIUM' | 'SMALL',
@@ -18,6 +19,7 @@ export type Props = {
 };
 
 export type DefaultProps = {
+  isDisabled: bool,
   size: ButtonSize,
   shouldFillParent: bool,
   type: ButtonType,
@@ -25,13 +27,14 @@ export type DefaultProps = {
 
 export default class TextButton extends Component<Props> {
   static defaultProps: DefaultProps = {
+    isDisabled: false,
     size: 'MEDIUM',
     shouldFillParent: false,
     type: 'NORMAL',
   };
 
   render() {
-    const { onPress, size, text, type } = this.props;
+    const { size, text, type } = this.props;
     const buttonStyles = [
       styles.text,
       {
@@ -59,11 +62,21 @@ export default class TextButton extends Component<Props> {
         : null,
     ];
     return (
-      <TouchableOpacity onPress={onPress} style={rootStyles}>
+      <TouchableOpacity
+        activeOpacity={this.props.isDisabled ? 1.0 : 0.2}
+        onPress={this._onPress}
+        style={rootStyles}
+      >
         <Text style={buttonStyles}>{text}</Text>
       </TouchableOpacity>
     );
   }
+
+  _onPress = (): void => {
+    if (!this.props.isDisabled) {
+      this.props.onPress();
+    }
+  };
 }
 
 const styles = StyleSheet.create({
