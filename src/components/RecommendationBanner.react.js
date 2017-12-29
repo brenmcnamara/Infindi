@@ -84,14 +84,14 @@ export default class RecommendationBanner extends Component<Props> {
           <TextButton
             isDisabled={!this.props.isFocused}
             onPress={this.props.onNoThanks}
-            size="NORMAL"
+            size="MEDIUM"
             text="No Thanks"
           />
           <View style={styles.buttonSpacer} />
           <TextButton
             isDisabled={!this.props.isFocused}
             onPress={this.props.onSeeDetails}
-            size="NORMAL"
+            size="MEDIUM"
             text="See Details"
             type="PRIMARY"
           />

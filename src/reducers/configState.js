@@ -2,13 +2,14 @@
 
 import type { PureAction } from '../typesDEPRECATED/redux';
 
-export type State = {|
-  +envStatus: 'ENV_LOADING' | 'ENV_READY' | 'ENV_FAILURE',
-|};
+export type EnvStatus = 'ENV_LOADING' | 'ENV_READY' | 'ENV_FAILURE';
 
-const DEFAULT_STATE = {
+export type State = {
+  +envStatus: EnvStatus,
+};
+
+const DEFAULT_STATE: State = {
   envStatus: 'ENV_LOADING',
-  safeAreaInsets: 'LOADING',
 };
 
 export default function configStatus(

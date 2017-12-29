@@ -17,10 +17,11 @@ import type {
   AccountLoaderCollection,
 } from '../reducers/accounts';
 import type { Dollars } from 'common/src/types/core';
+import type { GroupType } from '../common/db-utils';
 
 export type Props = {
   accounts: AccountLoaderCollection,
-  groupType: 'AVAILABLE_CASH',
+  groupType: GroupType,
   onPressGroupInfo: () => any,
   onSelectAccount: (account: AccountLoader) => any,
 };

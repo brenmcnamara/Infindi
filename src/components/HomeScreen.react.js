@@ -12,17 +12,7 @@ import { type ReduxProps } from 'redux';
 
 export type Props = ReduxProps;
 
-type State = {
-  deletedRecommendationPage: ?number,
-  selectedRecommendationPage: number,
-};
-
-class HomeScreen extends Component<Props, State> {
-  state: State = {
-    delectedRecommendationPage: null,
-    selectedRecommendationPage: 0,
-  };
-
+class HomeScreen extends Component<Props> {
   render() {
     return (
       <Screen avoidNavBar={true} avoidTabBar={true}>

@@ -6,8 +6,6 @@ import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
 
-import nullthrows from 'nullthrows';
-
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Dollars } from 'common/src/types/core';
@@ -24,7 +22,7 @@ export default class NetWorth extends Component<Props> {
         <If predicate={typeof this.props.netWorth === 'number'}>
           {/* GUARD AGAINST NaN Errors */}
           <MoneyText
-            dollars={this.props.netWorth || '0'}
+            dollars={this.props.netWorth || 0}
             textStyle={[TextDesign.header2, styles.netWorth]}
           />
         </If>

@@ -14,6 +14,7 @@ import TextButton from './shared/TextButton.react';
 import TextDesign from '../design/text';
 
 import invariant from 'invariant';
+import nullthrows from 'nullthrows';
 
 import {
   AccountGroupInfo as AccountGroupInfoContent,
@@ -50,6 +51,7 @@ export type Props = ReduxProps & {
   hasDownloadRequests: bool,
   isDownloading: bool,
   isLinkAvailable: bool,
+  isPlaidLinkAvailable: bool,
   loaderCollection: AccountLoaderCollection,
   netWorth: Dollars | null,
 };
@@ -62,7 +64,7 @@ type RowItem =
     |}
   | {|
       +accounts: AccountLoaderCollection,
-      +accountType: 'AVAILABLE_CASH',
+      +groupType: GroupType,
       +key: string,
       +rowType: 'ACCOUNTS',
     |};
@@ -108,7 +110,7 @@ class AccountsScreen extends Component<Props> {
           <FlatList
             automaticallyAdjustContentInsets={false}
             data={this._getData()}
-            renderItem={({ item }) => this._renderRowItem(item)}
+            renderItem={({ item }) => this._renderRowItem(nullthrows(item))}
           />
         </Content>
       </If>
@@ -171,17 +173,20 @@ class AccountsScreen extends Component<Props> {
 
   _renderRowItem = (item: RowItem) => {
     switch (item.rowType) {
-      case 'NET_WORTH':
+      case 'NET_WORTH': {
         return <NetWorth netWorth={item.netWorth} />;
-      case 'ACCOUNTS':
+      }
+      case 'ACCOUNTS': {
+        const { accounts, groupType } = item;
         return (
           <AccountGroup
-            accounts={item.accounts}
-            groupType={item.groupType}
-            onPressGroupInfo={() => this._onPressGroupInfo(item.groupType)}
+            accounts={accounts}
+            groupType={groupType}
+            onPressGroupInfo={() => this._onPressGroupInfo(groupType)}
             onSelectAccount={this._onSelectAccount}
           />
         );
+      }
     }
     invariant(false, 'Unrecognized item type: %s', item.rowType);
   };

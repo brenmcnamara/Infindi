@@ -2,10 +2,10 @@
 
 import type { PureAction } from '../typesDEPRECATED/redux';
 
-export type State = {|
-  +isLinkAvailable: bool,
+export type State = {
   +hasDownloadRequests: bool,
-|};
+  +isLinkAvailable: bool,
+};
 
 const DEFAULT_STATE: State = {
   hasDownloadRequests: false,

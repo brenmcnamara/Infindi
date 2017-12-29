@@ -94,6 +94,7 @@ export function reduceObject<T, K: string, V>(
  */
 export function getValues<V>(obj: Obj<*, V>): Array<V> {
   if (Object.values) {
+    // $FlowFixMe - This is fine.
     return Object.values(obj);
   }
   let values = [];

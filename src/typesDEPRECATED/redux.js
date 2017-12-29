@@ -3,8 +3,8 @@
 import type { Account } from 'common/src/types/db';
 import type { Action as Action$Auth } from '../actions/authentication';
 import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
+import type { Action as Action$Config } from '../actions/config';
 import type { Action as Action$Datastore } from '../datastore';
-import type { Action as Action$EnvStatus } from '../actions/env';
 import type { Action as Action$Modal } from '../actions/modal';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
 import type { Action as Action$Nav } from '../actions/navigation';
@@ -20,8 +20,8 @@ export type ReduxProps = {
 export type PureAction =
   | Action$Auth
   | Action$AuthMiddleware
+  | Action$Config
   | Action$Datastore<'Account', Account>
-  | Action$EnvStatus
   | Action$Modal
   | Action$ModalMiddleware
   | Action$Nav

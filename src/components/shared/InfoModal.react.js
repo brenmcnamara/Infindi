@@ -14,8 +14,10 @@ import { dismissModal } from '../../actions/modal';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { ID } from 'common/src/types/core';
+import type { ReduxProps } from '../../typesDEPRECATED/redux';
 
 export type Props = ReduxProps & {
+  children?: ?any,
   modalID: ID,
   show: bool,
   title: string,

@@ -22,6 +22,10 @@
 ; React Native Firebase
 .*/node_modules/react-native-firebase/lib/.*
 
+; Ignore Facebook stuff
+
+
+
 [include]
 
 [libs]

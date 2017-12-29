@@ -6,7 +6,11 @@ import invariant from 'invariant';
 
 import { initialize as initializeBackend } from '../backend';
 
-import type { Action as AllActions, Store } from '../typesDEPRECATED/redux';
+import type {
+  Action as AllActions,
+  Next,
+  Store,
+} from '../typesDEPRECATED/redux';
 import type { AuthStatus } from '../reducers/authStatus';
 import type { Firebase$User } from 'common/src/types/firebase';
 import type { ID } from 'common/src/types/core';

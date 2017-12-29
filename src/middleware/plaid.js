@@ -17,7 +17,7 @@ import type { PlaidLinkPayload } from '../modules/PlaidLink';
 export type Action =
   | Action$PlaidHasDownloadRequests
   | Action$PlaidLinkAvailability
-  | Action$PlaidLinkSuccess;
+  | Action$PlaidLinkStatus;
 
 export type Action$PlaidHasDownloadRequests = {|
   +hasDownloadRequests: bool,

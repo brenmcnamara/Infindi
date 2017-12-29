@@ -9,7 +9,6 @@ import { Animated, StyleSheet } from 'react-native';
 export type BannerType = 'INFO';
 
 export type Props = {
-  shouldTransitionIn: bool,
   show: bool,
   text: string,
   type: BannerType,

@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { ID } from 'common/src/types/core';
+import type { PureAction } from '../typesDEPRECATED/redux';
 
 export type ModalPriority = 'SYSTEM_CRITICAL' | 'USER_REQUESTED';
 
@@ -10,9 +11,9 @@ export type Modal$ReactWithTransition = {|
   +id: ID,
   +modalType: 'REACT_WITH_TRANSITION',
   +priority: ModalPriority,
-  +renderIn: () => React$Component<*>,
-  +renderInitial: () => React$Component<*>,
-  +renderTransitionOut: () => React$Component<*>,
+  +renderIn: () => React$Element<*>,
+  +renderInitial: () => React$Element<*>,
+  +renderTransitionOut: () => React$Element<*>,
   +transitionInMillis: number,
   +transitionOutMillis: number,
 |};
@@ -25,9 +26,9 @@ export type Modal$Native = {|
   +show: () => any,
 |};
 
-export type State = {|
+export type State = {
   +modalQueue: Array<Modal>,
-|};
+};
 
 const DEFAULT_STATE: State = {
   modalQueue: [],

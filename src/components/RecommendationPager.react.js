@@ -17,6 +17,8 @@ import {
 
 import { connect } from 'react-redux';
 
+import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
+
 type Recommendation = string; // TODO: THIS IS A TEMPORARY TYPE
 
 export type Props = ReduxProps & {
@@ -42,8 +44,8 @@ type State = {
   selectedPage: ?number,
 };
 
-export const DELETE_FADE_TRANSITION_MILLIS = 1000;
-export const DELETE_SHIFT_TRANSITION_MILLIS = 3000;
+export const DELETE_FADE_TRANSITION_MILLIS = 100;
+export const DELETE_SHIFT_TRANSITION_MILLIS = 2000;
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SPACE_BETWEEN_PAGES = 4;
@@ -186,6 +188,7 @@ class RecommendationPager extends Component<Props, State> {
 
   _genPerformFadeOut = (): Promise<void> => {
     return new Promise(resolve => {
+      // $FlowFixMe - wierd flow error.
       Animated.timing(this._deleteFadeTransition, {
         duration: DELETE_FADE_TRANSITION_MILLIS,
         easing: Easing.out(Easing.cubic),
@@ -212,6 +215,7 @@ class RecommendationPager extends Component<Props, State> {
         resolve();
         return;
       }
+      // $FlowFixMe - Wierd flow error.
       Animated.timing(this._deleteShiftTransition, {
         duration: DELETE_SHIFT_TRANSITION_MILLIS,
         easing: Easing.out(Easing.cubic),
@@ -262,8 +266,10 @@ function mapReduxStateToProps(state: ReduxState) {
 export default connect(mapReduxStateToProps)(RecommendationPager);
 
 type PageProps = {
-  children?: ?any,
-  isLast?: bool,
+  children: ?any,
+  isFirst: bool,
+  isOnly: bool,
+  style: any,
 };
 
 const Page = (props: PageProps) => {

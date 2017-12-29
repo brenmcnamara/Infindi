@@ -15,7 +15,7 @@ export type Props = {
 export type DefaultProps = {
   avoidKeyboard: bool,
   avoidNavbar: bool,
-  avoidTabbar: bool,
+  avoidTabBar: bool,
   theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 

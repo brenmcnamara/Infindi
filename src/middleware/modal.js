@@ -28,9 +28,8 @@ export default (store: Store) => (next: Next) => {
 
     switch (action.type) {
       case 'DISMISS_MODAL': {
-        const index = modalQueue.findIndex(
-          modal => modal.id === action.modalID,
-        );
+        const { modalID } = action;
+        const index = modalQueue.findIndex(modal => modal.id === modalID);
         invariant(
           index >= 0,
           'Trying to dismiss modal that does not exist: %s',
@@ -49,9 +48,8 @@ export default (store: Store) => (next: Next) => {
       }
 
       case 'REQUEST_MODAL': {
-        const index = modalQueue.findIndex(
-          modal => modal.id === action.modal.id,
-        );
+        const { modal } = action;
+        const index = modalQueue.findIndex(_modal => _modal.id === modal.id);
         invariant(
           index < 0,
           'Trying to add multiple modals with the id: %s',

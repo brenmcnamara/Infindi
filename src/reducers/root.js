@@ -19,7 +19,7 @@ import type { State as State$PlaidState } from './plaid';
 export type State = {|
   +accounts: State$Accounts,
   +authStatus: State$AuthStatus,
-  +envStatus: State$ConfigState,
+  +configState: State$ConfigState,
   +modalState: State$ModalState,
   +navState: State$NavState,
   +plaid: State$PlaidState,

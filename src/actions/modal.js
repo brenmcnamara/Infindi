@@ -20,11 +20,11 @@ import { Text } from 'react-native';
 import type { ID } from 'common/src/types/core';
 import type { Modal } from '../reducers/modalState';
 
-export type Action = Action$HideModal | Action$ShowModal;
+export type Action = Action$DismissModal | Action$RequestModal;
 
 export type Action$DismissModal = {|
   +modalID: ID,
-  +type: 'HIDE_MODAL',
+  +type: 'DISMISS_MODAL',
 |};
 
 export type Action$RequestModal = {|
@@ -38,7 +38,9 @@ export type InfoModalPayload = {
   title: string,
 };
 
-export function requestInfoModal(payload: InfoModalPayload) {
+export function requestInfoModal(
+  payload: InfoModalPayload,
+): Action$RequestModal {
   return {
     modal: {
       id: payload.id,
@@ -66,7 +68,7 @@ export function requestInfoModal(payload: InfoModalPayload) {
   };
 }
 
-export function requestLeftPane() {
+export function requestLeftPane(): Action$RequestModal {
   return {
     modal: {
       id: 'LEFT_PANE',
@@ -82,7 +84,9 @@ export function requestLeftPane() {
   };
 }
 
-export function requestUnimplementedModal(featureName: string) {
+export function requestUnimplementedModal(
+  featureName: string,
+): Action$RequestModal {
   return requestInfoModal({
     id: `IMPLEMENT_ME(${featureName})`,
     render: () => (
@@ -95,7 +99,7 @@ export function requestUnimplementedModal(featureName: string) {
   });
 }
 
-export function dismissModal(modalID: ID) {
+export function dismissModal(modalID: ID): Action$DismissModal {
   return {
     modalID,
     type: 'DISMISS_MODAL',
