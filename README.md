@@ -74,14 +74,14 @@ ios/Infindi/Info.plist
   - If it asks for credentials, you can get them from the Google Drive Infindi folder
   - Make sure checkboxes for "Include bitcode for iOS content" and
     "Upload your App's symbols to receive symbolicated reports from Apple" are both selected, hit "Next"
-  - Select the correct provisioning profile and certificate: "iOS Distribution" and "App Store Findi Provisioning"
+  - Select the correct provisioning profile and certificate: "iOS Distribution" and "App Store Provisioning"
   - Select "Upload"
 
 #### 8. Save the build
   - We keep copies of all our builds in the GDrive folder
   - In the organizer, select "export"
   - This will put you through the same flow as in step 8 when uploading to the App Store. Answer the questions the same
-  - Name the ipa file that is exported using the following convention: "com.findi.main-<version number>"
+  - Name the ipa file that is exported using the following convention: "com.findi.main-(version number)"
   - Put it in the "IPA Files" folder of the GDrive
 
 #### 9. You will receive an email notifying if the build was successful or not
