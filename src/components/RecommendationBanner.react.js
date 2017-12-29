@@ -14,6 +14,8 @@ export const FOCUS_TRANSITION_TIMEOUT_MILLIS = 500;
 
 export type Props = {
   isFocused: bool,
+  onNoThanks: () => any,
+  onSeeDetails: () => any,
 };
 
 /**
@@ -81,14 +83,14 @@ export default class RecommendationBanner extends Component<Props> {
         <View style={styles.footer}>
           <TextButton
             isDisabled={!this.props.isFocused}
-            onPress={this._onPressNoThanks}
+            onPress={this.props.onNoThanks}
             size="NORMAL"
             text="No Thanks"
           />
           <View style={styles.buttonSpacer} />
           <TextButton
             isDisabled={!this.props.isFocused}
-            onPress={this._onPressSeeDetails}
+            onPress={this.props.onSeeDetails}
             size="NORMAL"
             text="See Details"
             type="PRIMARY"
@@ -97,10 +99,6 @@ export default class RecommendationBanner extends Component<Props> {
       </Animated.View>
     );
   }
-
-  _onPressNoThanks = (): void => {};
-
-  _onPressSeeDetails = (): void => {};
 }
 
 const styles = StyleSheet.create({
