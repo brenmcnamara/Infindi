@@ -2,22 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>PLKPlaidLinkConfiguration</key>
-	<dict>
-		<key>webhook</key>
-		<string>https://infindi-20cf1.appspot.com/plaid/webhook</string>
-		<key>clientName</key>
-		<string>Infindi</string>
-		<key>key</key>
-		<string>9ef581824905d24a16c3fa522b949d</string>
-		<key>env</key>
-		<string>Sandbox</string>
-		<key>product</key>
-		<array>
-			<string>auth</string>
-			<string>transactions</string>
-		</array>
-	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -33,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.1.1</string>
+	<string>0.1.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>6</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -53,6 +37,22 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>PLKPlaidLinkConfiguration</key>
+	<dict>
+		<key>clientName</key>
+		<string>Infindi</string>
+		<key>env</key>
+		<string>Sandbox</string>
+		<key>key</key>
+		<string>9ef581824905d24a16c3fa522b949d</string>
+		<key>product</key>
+		<array>
+			<string>auth</string>
+			<string>transactions</string>
+		</array>
+		<key>webhook</key>
+		<string>https://infindi-20cf1.appspot.com/plaid/webhook</string>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Lato-Black.ttf</string>
