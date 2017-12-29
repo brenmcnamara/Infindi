@@ -14,7 +14,12 @@ import invariant from 'invariant';
 import { connect } from 'react-redux';
 import { envDoneLoading, envFailedLoading } from '../../actions/config';
 import { setModeControls } from '../../actions/navigation';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import type { Mode } from '../../controls';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
@@ -83,16 +88,21 @@ class App extends Component<Props, State> {
           currentMode === 'MAIN' ? Colors.TAB_BAR : Colors.BACKGROUND,
       },
     ];
+    // NOTE: The safe area view and keyboard avoiding view do not play well
+    // together. Keyboard avoiding view should always be the parent of the
+    // safe area view.
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.main}>
-          <If predicate={currentMode === 'MAIN'}>
-            <ModalManager />
-          </If>
-          {mainContent}
-        </View>
-        <View style={bottomAreaStyles} />
-      </SafeAreaView>
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.main}>
+            <If predicate={currentMode === 'MAIN'}>
+              <ModalManager />
+            </If>
+            {mainContent}
+          </View>
+          <View style={bottomAreaStyles} />
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   }
 

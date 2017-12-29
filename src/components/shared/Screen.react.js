@@ -3,7 +3,7 @@
 import Colors from '../../design/colors';
 import React, { Component } from 'react';
 
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export type Props = {
   avoidKeyboard: bool,
@@ -31,10 +31,6 @@ export default class Screen extends Component<Props> {
   };
 
   render() {
-    const Component = this.props.avoidKeyboard ? KeyboardAvoidingView : View;
-    const keyboardProps = this.props.avoidKeyboard
-      ? { behavior: 'padding' }
-      : {};
     const rootStyles = [
       styles.root,
       this.props.avoidNavBar ? { paddingTop: NAV_BAR_HEIGHT } : null,
@@ -46,17 +42,12 @@ export default class Screen extends Component<Props> {
             : Colors.BACKGROUND_LIGHT,
       },
     ];
-    return (
-      <Component {...keyboardProps} style={rootStyles}>
-        {this.props.children}
-      </Component>
-    );
+    return <View style={rootStyles}>{this.props.children}</View>;
   }
 }
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: Colors.BACKGROUND,
     flex: 1,
   },
 });
