@@ -45,11 +45,13 @@ type State = {
 };
 
 export const DELETE_FADE_TRANSITION_MILLIS = 100;
-export const DELETE_SHIFT_TRANSITION_MILLIS = 2000;
+export const DELETE_SHIFT_TRANSITION_MILLIS = 300;
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SPACE_BETWEEN_PAGES = 4;
 const HALF_SPACE_BETWEEN_PAGES = SPACE_BETWEEN_PAGES / 2;
+const SPACE_TO_CENTER =
+  (SCREEN_WIDTH - RECOMMENDATION_BANNER_WIDTH - SPACE_BETWEEN_PAGES) / 2.0;
 
 const PAGER_INSET = {
   bottom: 0,
@@ -238,12 +240,25 @@ class RecommendationPager extends Component<Props, State> {
       }
 
       case 'SHIFT_PAGES_OVER': {
+        // NOTE: When deleting a recommendation such that there is only 1
+        // left, we need to transition that last recommendation so it is
+        // centered within the view, instead of being off to the side.
+
+        // NOTE: The first page gets a padding left of non-zero, and every other
+        // page has a zero left padding. As a result, when transitioning the
+        // second-to-last page to the first slot after deleting the first page,
+        // we need to apply that padding left to the second element during
+        // the transition.
+        const initialPadding =
+          this.state.recommendations.length === 2
+            ? SPACE_TO_CENTER
+            : deleteStage.pageIndex === 0 ? SPACE_BETWEEN_PAGES : 0;
         return deleteStage.pageIndex + 1 === index
           ? {
               paddingLeft: this._deleteShiftTransition.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
-                  0,
+                  initialPadding,
                   RECOMMENDATION_BANNER_WIDTH + HALF_SPACE_BETWEEN_PAGES,
                 ],
               }),
@@ -278,9 +293,7 @@ const Page = (props: PageProps) => {
     props.style,
     props.isOnly
       ? {
-          marginLeft:
-            (SCREEN_WIDTH - RECOMMENDATION_BANNER_WIDTH - SPACE_BETWEEN_PAGES) /
-            2.0,
+          marginLeft: SPACE_TO_CENTER,
         }
       : props.isFirst ? { marginLeft: SPACE_BETWEEN_PAGES } : null,
   ];
