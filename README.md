@@ -46,8 +46,9 @@ yarn
   - Under the "General" tab and "Identity" section, increment *both* the version number and build number
 
 #### 6. Clean and Archive the project
-  - In Xcode, cmd + shift + k
-  - Then, in the Xcode top menu, select "Product" -> "Archive"
+  - In Xcode, `cmd + shift + k`. This will clean your project.
+  - Make sure a device is plugged into your computer. Select that device from the device dropdown.
+  - In the Xcode top menu, select "Product" -> "Archive"
   - NOTE: This will take a very long time. Compiling code for production is a long process
   - While this is hapenning, it is a good idea to run `git diff` in the git repo to make sure you did not
     accidentally introduce any unintended changes
