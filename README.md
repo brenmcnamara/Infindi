@@ -7,7 +7,7 @@ your machine.
 
 ***NOTE: Unless your name is Brendan McNamara, you should probably not be doing this.***
 
-1. Clone and setup the repo
+#### 1. Clone and setup the repo
   - You should be doing this even if you have a local copy of the repo. We want to make sure that
     the build on master works out-of-the-box and that you don't have any local state that is not
     being saved.
@@ -18,7 +18,7 @@ cd Infindi
 yarn
 ```
 
-2. Build the project on an actual device
+#### 2. Build the project on an actual device
   - We want to make sure the project is working in debug mode before trying production mode.
   - Plug in your device into your computer
   - Open xcode
@@ -26,13 +26,13 @@ yarn
   - Build and Run (cmd + R)
   - play around with the app for a moment to make sure everything is working
 
-4. Switch the scheme to "Release"
+#### 3. Switch the scheme to "Release"
   - In Xcode, on the top menu bar, Product -> Scheme -> Edit Scheme...
   - In the left pane, select run
   - Under build configuration, select "Release"
   - Hit "close"
   
-5. Disable HTTP non-secure requests
+#### 4. Disable HTTP non-secure requests
   - HTTP communication is allowed in debug for "localhost" so that we can package the JS and send
     it to the device for hot reloading on devices. We don't want plain HTTP communication in
     production due to security (and apple will not allow us to submit apps that use plain HTTP)
@@ -40,12 +40,12 @@ yarn
   - In the plist, open "App Transport Security Settings" -> "Exception Domains" -> "localhost"
   - Change "NSExceptionAllowsInsecureHTTPLoads" to "NO"
 
-6. Increment the version number
+#### 5. Increment the version number
   - In Xcode, under the project tree on the left pane, click on the Project
   - Under the list of targets, select "Infindi"
   - Under the "General" tab and "Identity" section, increment *both* the version number and build number
 
-7. Clean and Archive the project
+#### 6. Clean and Archive the project
   - In Xcode, cmd + shift + k
   - Then, in the Xcode top menu, select "Product" -> "Archive"
   - NOTE: This will take a very long time. Compiling code for production is a long process
@@ -63,7 +63,7 @@ ios/Infindi.xcodeproj/xcshareddata/xcschemes/Infindi.xcscheme
 ios/Infindi/Info.plist
 ```
 
-8. Send the archive to the apple store
+#### 7. Send the archive to the apple store
   - NOTE: If you are deploying only to test flight, you should still do this step. Don't worry, it won't
     actually put the app on the app store
   - Once archiving is done, it should automatically open the organizer. If it doesn't, you can get to it
@@ -76,22 +76,23 @@ ios/Infindi/Info.plist
   - Select the correct provisioning profile and certificate: "iOS Distribution" and "App Store Findi Provisioning"
   - Select "Upload"
 
-9. Save the build
+#### 8. Save the build
   - We keep copies of all our builds in the GDrive folder
   - In the organizer, select "export"
   - This will put you through the same flow as in step 8 when uploading to the App Store. Answer the questions the same
   - Name the ipa file that is exported using the following convention: "com.findi.main-<version number>"
   - Put it in the "IPA Files" folder of the GDrive
 
-10. You will receive an email notifying if the build was successful or not
+#### 9. You will receive an email notifying if the build was successful or not
   - If not, please make the necessary fixes or reach out to someone if you do not know how to fix the issue
+  - Note that it may take a while for test flight to review and accept the beta. This email could take a while to show
 
-11. In Test Flight, under the new build, go through the compliance steps
+#### 10. In Test Flight, under the new build, go through the compliance steps
   - We do not use encryption
 
-12. Undo steps 4 and 5
+#### 11. Undo steps 4 and 5
   - We want our local repo to be configured for debug, not release
 
-13. Commit and push the new version and build number
+#### 12. Commit and push the new version and build number
 
-14. Happy Dance!
+#### 13. Happy Dance!
