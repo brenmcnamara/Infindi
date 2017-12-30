@@ -1,7 +1,7 @@
 /* @flow */
 
 import AccountGroup from './AccountGroup.react';
-import Banner from './shared/Banner.react';
+import BannerManager from './shared/BannerManager.react';
 import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
@@ -48,7 +48,6 @@ import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
 
 export type Props = ReduxProps & {
-  hasDownloadRequests: bool,
   isDownloading: bool,
   isLinkAvailable: bool,
   isPlaidLinkAvailable: bool,
@@ -88,6 +87,10 @@ class AccountsScreen extends Component<Props> {
     return (
       <If predicate={isDownloading}>
         <Content>
+          <BannerManager
+            channels={['CORE', 'ACCOUNTS']}
+            managerKey="ACCOUNTS"
+          />
           <View style={styles.loadingContainer}>
             <ActivityIndicator />
           </View>
@@ -97,15 +100,14 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderAccounts() {
-    const { isDownloading, hasDownloadRequests, loaderCollection } = this.props;
+    const { isDownloading, loaderCollection } = this.props;
 
     return (
       <If predicate={!isDownloading && !isObjectEmpty(loaderCollection)}>
         <Content>
-          <Banner
-            show={hasDownloadRequests}
-            type="INFO"
-            text="You have accounts updating..."
+          <BannerManager
+            channels={['CORE', 'ACCOUNTS']}
+            managerKey="ACCOUNTS"
           />
           <FlatList
             automaticallyAdjustContentInsets={false}
@@ -118,14 +120,13 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderNullState() {
-    const { hasDownloadRequests, isDownloading, loaderCollection } = this.props;
+    const { isDownloading, loaderCollection } = this.props;
     return (
       <If predicate={!isDownloading && isObjectEmpty(loaderCollection)}>
         <Content>
-          <Banner
-            show={hasDownloadRequests}
-            type="INFO"
-            text="You have accounts updating..."
+          <BannerManager
+            channels={['CORE', 'ACCOUNTS']}
+            managerKey="ACCOUNTS"
           />
           <View style={styles.nullContainer}>
             <Image
@@ -265,7 +266,6 @@ function mapReduxStateToProps(state: ReduxState) {
     'Trying to render account data when no user is logged in',
   );
   return {
-    hasDownloadRequests: state.plaid.hasDownloadRequests,
     isDownloading: accounts.type === 'DOWNLOADING',
     isPlaidLinkAvailable: state.plaid.isLinkAvailable,
     loaderCollection:

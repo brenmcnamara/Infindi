@@ -1,5 +1,6 @@
 /* @flow */
 
+import BannerManager from './shared/BannerManager.react';
 import Content from './shared/Content.react';
 import RecommendationPager from './RecommendationPager.react';
 import React, { Component } from 'react';
@@ -17,6 +18,7 @@ class HomeScreen extends Component<Props> {
     return (
       <Screen avoidNavBar={true} avoidTabBar={true}>
         <Content>
+          <BannerManager channels={['CORE']} managerKey="HOME" />
           <View style={styles.placeholder} />
           <View style={styles.recommendationContainer}>
             <RecommendationPager />

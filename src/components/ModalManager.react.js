@@ -30,8 +30,10 @@ type TransitionState = {|
   +type: 'IN' | 'TRANSITION_IN' | 'TRANSITION_OUT',
 |} | null;
 
+// TODO: Instead of nullable transition state, add support for transition state
+// that has empty transition. Look at BannerManager for example.
 type State = {
-  transitionState: TransitionState,
+  transitionState: TransitionState | null,
 };
 
 class ModalManager extends Component<Props, State> {

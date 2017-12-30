@@ -8,6 +8,7 @@ import network from '../middleware/network';
 import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
+import toast from '../middleware/toast';
 
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
@@ -23,6 +24,7 @@ if (__DEV__) {
     navigation,
     plaid,
     modal,
+    toast,
     network,
     reduxLogger,
   );
@@ -33,6 +35,7 @@ if (__DEV__) {
     datastore,
     navigation,
     plaid,
+    toast,
     modal,
     network,
   );

@@ -5,6 +5,7 @@ import PlaidLink from '../modules/PlaidLink';
 
 import invariant from 'invariant';
 
+import { dismissToast, requestToast } from '../actions/toast';
 import {
   genCreatePlaidCredentials,
   genCreatePlaidDownloadRequest,
@@ -15,15 +16,7 @@ import { handleNetworkRequest } from '../common/middleware-utils';
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 import type { PlaidLinkPayload } from '../modules/PlaidLink';
 
-export type Action =
-  | Action$PlaidHasDownloadRequests
-  | Action$PlaidLinkAvailability
-  | Action$PlaidLinkStatus;
-
-export type Action$PlaidHasDownloadRequests = {|
-  +hasDownloadRequests: bool,
-  +type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
-|};
+export type Action = Action$PlaidLinkAvailability | Action$PlaidLinkStatus;
 
 export type Action$PlaidLinkAvailability = {|
   +isAvailable: bool,
@@ -130,10 +123,16 @@ async function onLinkComplete(
         () => genCreatePlaidCredentials(publicToken, metadata),
       );
 
-      next({
-        hasDownloadRequests: true,
-        type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
-      });
+      next(
+        requestToast({
+          bannerChannel: 'ACCOUNTS',
+          bannerType: 'INFO',
+          id: 'ACCOUNTS_UPDATING',
+          priority: 'NORMAL',
+          text: 'You have updating accounts...',
+          toastType: 'BANNER',
+        }),
+      );
       await handleNetworkRequest(
         store,
         next,
@@ -146,11 +145,16 @@ async function onLinkComplete(
 }
 
 function listenToDownloadStatus(store: Store, next: Next): EmitterSubscription {
-  const interval = setInterval(() => {
+  let hasDownloadRequests = false;
+  const interval = setInterval(async () => {
     // TODO: Should be able to get pushed updates from backend. Make sure pushed
     // updates automatically activate and de-activate when internet connection
     // goes in and out.
-    genUpdateDownloadStatus(store, next);
+    hasDownloadRequests = await genUpdateDownloadStatus(
+      hasDownloadRequests,
+      store,
+      next,
+    );
   }, 2000);
 
   return {
@@ -159,9 +163,10 @@ function listenToDownloadStatus(store: Store, next: Next): EmitterSubscription {
 }
 
 async function genUpdateDownloadStatus(
+  prevHasDownloadRequests: bool,
   store: Store,
   next: Next,
-): Promise<void> {
+): Promise<bool> {
   let statusList;
   try {
     statusList = await handleNetworkRequest(
@@ -173,20 +178,30 @@ async function genUpdateDownloadStatus(
   } catch (error) {
     // If we hit an error, just quit. The download status is not so critical
     // that we need to alert the user or terminate the app over it failing.
-    // TODO: Should log this failure in DEV mode.
-    return;
+    return false;
   }
   // TODO: "some" operation from obj-utils.
-  const prevHasDownloadRequests = store.getState().plaid.hasDownloadRequests;
   const hasDownloadRequests = Common.ObjUtils.reduceObject(
     statusList,
     (memo, status) => memo || status.type !== 'COMPLETE',
     false,
   );
-  if (hasDownloadRequests !== prevHasDownloadRequests) {
-    next({
-      hasDownloadRequests,
-      type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
-    });
+  if (hasDownloadRequests === prevHasDownloadRequests) {
+    return hasDownloadRequests;
   }
+  if (hasDownloadRequests) {
+    next(
+      requestToast({
+        bannerChannel: 'ACCOUNTS',
+        bannerType: 'INFO',
+        id: 'ACCOUNTS_UPDATING',
+        priority: 'NORMAL',
+        text: 'You have updating accounts...',
+        toastType: 'BANNER',
+      }),
+    );
+  } else {
+    next(dismissToast('ACCOUNTS_UPDATING'));
+  }
+  return hasDownloadRequests;
 }
