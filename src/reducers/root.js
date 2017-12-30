@@ -5,6 +5,7 @@ import authStatus from './authStatus';
 import configState from './configState';
 import modalState from './modalState';
 import navState from './navState';
+import network from './network';
 import plaid from './plaid';
 
 import { combineReducers } from 'redux';
@@ -14,6 +15,7 @@ import type { State as State$AuthStatus } from './authStatus';
 import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
 import type { State as State$NavState } from './navState';
+import type { State as State$Network } from './network';
 import type { State as State$PlaidState } from './plaid';
 
 export type State = {|
@@ -22,6 +24,7 @@ export type State = {|
   +configState: State$ConfigState,
   +modalState: State$ModalState,
   +navState: State$NavState,
+  +network: State$Network,
   +plaid: State$PlaidState,
 |};
 
@@ -32,5 +35,6 @@ export default combineReducers({
   configState,
   modalState,
   navState,
+  network,
   plaid,
 });

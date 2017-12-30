@@ -10,6 +10,7 @@ import {
   genCreatePlaidDownloadRequest,
   genPlaidDownloadStatus,
 } from '../backend';
+import { handleNetworkRequest } from '../common/middleware-utils';
 
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
 import type { PlaidLinkPayload } from '../modules/PlaidLink';
@@ -84,7 +85,7 @@ export default (store: Store) => (next: Next) => {
                   isLinkShowing,
                   'Completed PlaidLink but link is marked as not showing',
                 );
-                await onLinkComplete(next, payload);
+                await onLinkComplete(store, next, payload);
                 isLinkShowing = false;
               }),
           },
@@ -97,7 +98,11 @@ export default (store: Store) => (next: Next) => {
   };
 };
 
-async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
+async function onLinkComplete(
+  store: Store,
+  next: Next,
+  payload: PlaidLinkPayload,
+) {
   next({
     modalID: 'PLAID_LINK',
     type: 'DISMISS_MODAL',
@@ -118,16 +123,23 @@ async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
       // NOTE: We are not awaiting here because there are commands below we
       // do not want to block.
 
-      const credentialsRef = await genCreatePlaidCredentials(
-        publicToken,
-        metadata,
+      const credentialsRef = await handleNetworkRequest(
+        store,
+        next,
+        'plaid.credentials.create',
+        () => genCreatePlaidCredentials(publicToken, metadata),
       );
 
       next({
         hasDownloadRequests: true,
         type: 'PLAID_HAS_DOWNLOAD_REQUESTS',
       });
-      await genCreatePlaidDownloadRequest(credentialsRef.refID);
+      await handleNetworkRequest(
+        store,
+        next,
+        'plaid.downloadRequest.create',
+        () => genCreatePlaidDownloadRequest(credentialsRef.refID),
+      );
       break;
     }
   }
@@ -135,8 +147,10 @@ async function onLinkComplete(next: Next, payload: PlaidLinkPayload) {
 
 function listenToDownloadStatus(store: Store, next: Next): EmitterSubscription {
   const interval = setInterval(() => {
+    // TODO: Should be able to get pushed updates from backend. Make sure pushed
+    // updates automatically activate and de-activate when internet connection
+    // goes in and out.
     genUpdateDownloadStatus(store, next);
-    // TODO: Should be able to get pushed updates from backend.
   }, 2000);
 
   return {
@@ -150,7 +164,12 @@ async function genUpdateDownloadStatus(
 ): Promise<void> {
   let statusList;
   try {
-    statusList = await genPlaidDownloadStatus();
+    statusList = await handleNetworkRequest(
+      store,
+      next,
+      'plaid.downloadStatus.get',
+      () => genPlaidDownloadStatus(),
+    );
   } catch (error) {
     // If we hit an error, just quit. The download status is not so critical
     // that we need to alert the user or terminate the app over it failing.

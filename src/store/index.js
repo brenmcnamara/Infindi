@@ -4,6 +4,7 @@ import authentication from '../middleware/authentication';
 import datastore from '../middleware/datastore';
 import modal from '../middleware/modal';
 import navigation from '../middleware/navigation';
+import network from '../middleware/network';
 import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
@@ -22,6 +23,7 @@ if (__DEV__) {
     navigation,
     plaid,
     modal,
+    network,
     reduxLogger,
   );
 } else {
@@ -32,6 +34,7 @@ if (__DEV__) {
     navigation,
     plaid,
     modal,
+    network,
   );
 }
 

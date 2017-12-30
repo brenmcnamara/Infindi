@@ -4,6 +4,7 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
+import { handleNetworkRequest } from '../common/middleware-utils';
 import { initialize as initializeBackend } from '../backend';
 
 import type {
@@ -80,7 +81,10 @@ export default (store: Store) => (next: Function) => {
     switch (action.type) {
       case 'LOGIN_REQUEST': {
         const { loginCredentials } = action;
-        return performLogin(loginCredentials, changeStatus);
+        handleNetworkRequest(store, next, 'firebase.auth.login', () =>
+          genPerformLogin(loginCredentials, changeStatus),
+        );
+        break;
       }
 
       case 'LOGOUT_REQUEST': {
@@ -90,7 +94,10 @@ export default (store: Store) => (next: Function) => {
           loginPayload,
           'Requesting logout of a user that is not logged in',
         );
-        return performLogout(loginPayload, changeStatus);
+        handleNetworkRequest(store, next, 'firebase.auth.logout', () =>
+          genPerformLogout(loginPayload, changeStatus),
+        );
+        break;
       }
     }
   };
@@ -102,26 +109,43 @@ export default (store: Store) => (next: Function) => {
 //
 // -----------------------------------------------------------------------------
 
-function performLogin(
+function genPerformLogin(
   loginCredentials: LoginCredentials,
   changeStatus: ChangeStatus,
 ) {
-  const { email, password } = loginCredentials;
-  // NOTE: Login auth state will automatically be detected in
-  // "onAuthStateChanged" from above.
-  Auth.signInWithEmailAndPassword(email, password).catch(error => {
-    changeStatus({ errorCode: error.code, type: 'LOGIN_FAILURE' });
+  const promise = new Promise(resolve => {
+    changeStatus({ loginCredentials, type: 'LOGIN_INITIALIZE' });
+    resolve();
   });
-  return changeStatus({ loginCredentials, type: 'LOGIN_INITIALIZE' });
+  return promise
+    .then(() => {
+      const { email, password } = loginCredentials;
+      return Auth.signInWithEmailAndPassword(email, password);
+    })
+    .catch(error => {
+      // TODO: Error could be of different format. Need to perform error transform.
+      changeStatus({ errorCode: error.code, type: 'LOGIN_FAILURE' });
+    });
 }
 
-function performLogout(loginPayload: LoginPayload, changeStatus: ChangeStatus) {
+function genPerformLogout(
+  loginPayload: LoginPayload,
+  changeStatus: ChangeStatus,
+): Promise<void> {
   // NOTE: Login auth state will automatically be detected in
   // "onAuthStateChanged" from above.
-  Auth.signOut().catch(error => {
-    changeStatus({ errorCode: error.code, type: 'LOGOUT_FAILURE' });
+  const promise = new Promise(resolve => {
+    changeStatus({ type: 'LOGOUT_INITIALIZE' });
+    resolve();
   });
-  return changeStatus({ type: 'LOGOUT_INITIALIZE' });
+  return promise
+    .then(() => {
+      return Auth.signOut();
+    })
+    .catch(error => {
+      // TODO: Error could be of different format. Need to perform error transform.
+      changeStatus({ errorCode: error.code, type: 'LOGOUT_FAILURE' });
+    });
 }
 
 // -----------------------------------------------------------------------------

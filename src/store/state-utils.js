@@ -57,6 +57,11 @@ export function getMode(state: State): Mode {
   return getModeForAuthStatus(state.authStatus);
 }
 
+export function hasNetworkConnection(state: State): bool {
+  const { networkStatus } = state.network;
+  return networkStatus === 'wifi' || networkStatus === 'cellular';
+}
+
 // -----------------------------------------------------------------------------
 //
 // UTILITIES
