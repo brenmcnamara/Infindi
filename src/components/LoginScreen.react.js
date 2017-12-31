@@ -125,6 +125,7 @@ class LoginScreen extends Component<Props, State> {
             <TextButton
               onPress={this._onPressLogin}
               size="LARGE"
+              shouldFillParent={true}
               text="LOGIN"
               type="PRIMARY"
             />
