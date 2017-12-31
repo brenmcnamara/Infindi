@@ -36,6 +36,15 @@ export const AccountGroupInfo = {
   `),
 };
 
+/**
+ * Shows when a user is not connected to the internet and is required to connect
+ * before they can do anything in the app.
+ */
+export const NoInternet = cleanupWhitespace(`
+  You have no internet connection. You must connect before continuing in the
+  app.
+`);
+
 // -----------------------------------------------------------------------------
 //
 // UTILITIES

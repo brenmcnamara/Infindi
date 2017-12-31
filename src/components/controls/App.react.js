@@ -6,6 +6,7 @@ import If from '../shared/If.react';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
 import ModalManager from '../ModalManager.react';
+import NoInternetScreen from '../NoInternetScreen.react';
 import React, { Component } from 'react';
 import Tabs from './Tabs.react';
 
@@ -56,6 +57,11 @@ class App extends Component<Props> {
 
       case 'MAIN': {
         mainContent = <Tabs />;
+        break;
+      }
+
+      case 'NO_INTERNET': {
+        mainContent = <NoInternetScreen />;
         break;
       }
 

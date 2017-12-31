@@ -12,6 +12,7 @@ const header3 = {
   color: Colors.TEXT_NORMAL,
   fontFamily: 'Lato-Regular',
   fontSize: 18,
+  lineHeight: 24,
 };
 
 // TODO: Rename to medium
