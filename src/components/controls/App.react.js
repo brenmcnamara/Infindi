@@ -13,7 +13,8 @@ import invariant from 'invariant';
 
 import { connect } from 'react-redux';
 import { envDoneLoading, envFailedLoading } from '../../actions/config';
-import { setModeControls } from '../../actions/navigation';
+import { getRoot } from '../../common/route-utils';
+import { getRoute } from '../../store/state-utils';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -21,26 +22,15 @@ import {
   View,
 } from 'react-native';
 
-import type { Mode } from '../../controls';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { RootType } from '../../common/route-utils';
 import type { State as ReduxState } from '../../reducers/root';
 
 export type Props = ReduxProps & {
-  initialMode: Mode,
+  root: RootType,
 };
 
-type State = {
-  currentMode: Mode,
-};
-
-class App extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      currentMode: this.props.initialMode,
-    };
-  }
-
+class App extends Component<Props> {
   componentWillMount(): void {
     const { dispatch } = this.props;
     // TODO: For now we are doing this here, but may want to move this into
@@ -50,19 +40,10 @@ class App extends Component<Props, State> {
       .catch(() => dispatch(envFailedLoading()));
   }
 
-  componentDidMount(): void {
-    const { dispatch } = this.props;
-    dispatch(
-      setModeControls({
-        setMode: this._setMode,
-      }),
-    );
-  }
-
   render() {
-    const { currentMode } = this.state;
+    const { root } = this.props;
     let mainContent = null;
-    switch (currentMode) {
+    switch (root) {
       case 'AUTH': {
         mainContent = <LoginScreen />;
         break;
@@ -79,13 +60,12 @@ class App extends Component<Props, State> {
       }
 
       default:
-        invariant(false, 'Unrecognized app mode %s', this.state.currentMode);
+        invariant(false, 'Unrecognized app root %s', root);
     }
     const bottomAreaStyles = [
       styles.bottomArea,
       {
-        backgroundColor:
-          currentMode === 'MAIN' ? Colors.TAB_BAR : Colors.BACKGROUND,
+        backgroundColor: root === 'MAIN' ? Colors.TAB_BAR : Colors.BACKGROUND,
       },
     ];
     // NOTE: The safe area view and keyboard avoiding view do not play well
@@ -95,7 +75,7 @@ class App extends Component<Props, State> {
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.main}>
-            <If predicate={currentMode === 'MAIN'}>
+            <If predicate={root === 'MAIN'}>
               <ModalManager />
             </If>
             {mainContent}
@@ -117,14 +97,6 @@ class App extends Component<Props, State> {
   _renderMain() {
     return <Tabs />;
   }
-
-  _setMode = (mode: Mode): Promise<Mode> => {
-    return new Promise(resolve => {
-      this.setState({ currentMode: mode }, () => {
-        resolve(this.state.currentMode);
-      });
-    });
-  };
 }
 
 const styles = StyleSheet.create({
@@ -148,13 +120,9 @@ const styles = StyleSheet.create({
 });
 
 function mapReduxStateToProps(state: ReduxState) {
-  const { navState } = state;
-  return {
-    initialMode:
-      navState.transitionStatus === 'COMPLETE'
-        ? navState.controlsPayload.mode
-        : navState.previousControlsPayload.mode,
-  };
+  const route = getRoute(state);
+  const root = getRoot(route);
+  return { root };
 }
 
 export default connect(mapReduxStateToProps)(App);

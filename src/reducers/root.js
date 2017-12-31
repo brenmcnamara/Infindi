@@ -4,9 +4,9 @@ import accounts from './accounts';
 import authStatus from './authStatus';
 import configState from './configState';
 import modalState from './modalState';
-import navState from './navState';
 import network from './network';
 import plaid from './plaid';
+import routeState from './routeState';
 import toast from './toast';
 
 import { combineReducers } from 'redux';
@@ -15,9 +15,9 @@ import type { State as State$Accounts } from './accounts';
 import type { State as State$AuthStatus } from './authStatus';
 import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
-import type { State as State$NavState } from './navState';
 import type { State as State$Network } from './network';
 import type { State as State$PlaidState } from './plaid';
+import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
 
 export type State = {|
@@ -25,9 +25,9 @@ export type State = {|
   +authStatus: State$AuthStatus,
   +configState: State$ConfigState,
   +modalState: State$ModalState,
-  +navState: State$NavState,
   +network: State$Network,
   +plaid: State$PlaidState,
+  +routeState: State$RouteState,
   +toast: State$Toast,
 |};
 
@@ -37,8 +37,8 @@ export default combineReducers({
   authStatus,
   configState,
   modalState,
-  navState,
   network,
   plaid,
+  routeState,
   toast,
 });

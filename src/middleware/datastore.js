@@ -19,8 +19,6 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
-import { getLatestMode, getLoginPayload, getMode } from '../store/state-utils';
-
 import type { Account, LoginPayload } from 'common/src/types/db';
 import type { ModelCollection } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
@@ -30,8 +28,6 @@ type EmitterSubscription = { remove: () => void };
 const Database = Firebase.firestore();
 
 export default (store: Store) => (next: Next) => {
-  let currentMode = getLatestMode(store.getState());
-
   let accountSubscription: ?EmitterSubscription = null;
 
   return (action: PureAction) => {
@@ -39,15 +35,10 @@ export default (store: Store) => (next: Next) => {
 
     switch (action.type) {
       case 'AUTH_STATUS_CHANGE': {
-        const newMode = getMode(store.getState());
-        if (currentMode === newMode) {
-          return;
-        }
-        const modeTransition = `${currentMode} -> ${newMode}`;
-        switch (modeTransition) {
-          case 'LOADING -> MAIN':
-          case 'AUTH -> MAIN': {
-            const loginPayload = getLoginPayload(store.getState());
+        const { status } = action;
+        switch (status.type) {
+          case 'LOGGED_IN': {
+            const { loginPayload } = status;
             invariant(
               loginPayload,
               'Trying to download user data without a login payload',
@@ -60,19 +51,12 @@ export default (store: Store) => (next: Next) => {
             break;
           }
 
-          case 'MAIN -> AUTH': {
+          case 'LOGOUT_INITIALIZE': {
             if (accountSubscription) {
               accountSubscription.remove();
               accountSubscription = null;
             }
             clearUserData(next);
-            break;
-          }
-
-          // Here are the transition we don't care about.
-          case 'AUTH -> LOADING':
-          case 'MAIN -> LOADING':
-          case 'LOADING -> AUTH': {
             break;
           }
         }

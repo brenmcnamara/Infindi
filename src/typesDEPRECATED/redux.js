@@ -7,12 +7,11 @@ import type { Action as Action$Config } from '../actions/config';
 import type { Action as Action$Datastore } from '../datastore';
 import type { Action as Action$Modal } from '../actions/modal';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
-import type { Action as Action$Nav } from '../actions/navigation';
-import type { Action as Action$NavMiddleware } from '../middleware/navigation';
 import type { Action as Action$Network } from '../actions/network';
 import type { Action as Action$NetworkMiddleware } from '../middleware/network';
 import type { Action as Action$Plaid } from '../actions/plaid';
 import type { Action as Action$PlaidMiddleware } from '../middleware/plaid';
+import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
 import type { State } from '../reducers/root';
@@ -28,12 +27,11 @@ export type PureAction =
   | Action$Datastore<'Account', Account>
   | Action$Modal
   | Action$ModalMiddleware
-  | Action$Nav
-  | Action$NavMiddleware
   | Action$Network
   | Action$NetworkMiddleware
   | Action$Plaid
   | Action$PlaidMiddleware
+  | Action$Router
   | Action$Toast
   | Action$ToastMiddleware;
 

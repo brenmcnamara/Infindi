@@ -205,6 +205,7 @@ const styles = StyleSheet.create({
 });
 
 function mapReduxStateToProps(state: ReduxState) {
+  console.log('RE-RENDERING LEFT PANE SCREEN', state.authStatus.type);
   const userName = getUserFullName(state);
   invariant(userName, 'User must have login payload for left pane to show');
   return {

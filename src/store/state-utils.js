@@ -2,9 +2,8 @@
 
 import invariant from 'invariant';
 
-import type { AuthStatus } from '../reducers/authStatus';
 import type { LoginPayload } from 'common/src/types/db';
-import type { Mode } from '../controls';
+import type { RootType, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
 
 // -----------------------------------------------------------------------------
@@ -24,13 +23,6 @@ export function getLoginPayload(state: State): ?LoginPayload {
   return null;
 }
 
-export function getLatestMode(state: State): Mode {
-  const { navState } = state;
-  return navState.transitionStatus === 'COMPLETE'
-    ? navState.controlsPayload.mode
-    : navState.incomingControlsPayload.mode;
-}
-
 export function getUserFirstName(state: State): ?string {
   const loginPayload = getLoginPayload(state);
   if (!loginPayload) {
@@ -48,18 +40,19 @@ export function getUserFullName(state: State): ?string {
   return `${userInfo.firstName} ${userInfo.lastName}`;
 }
 
-export function getMode(state: State): Mode {
-  const { configState } = state;
-  if (configState.envStatus === 'ENV_LOADING') {
-    return 'LOADING';
-  }
-
-  return getModeForAuthStatus(state.authStatus);
-}
-
 export function hasNetworkConnection(state: State): bool {
   const { networkStatus } = state.network;
-  return networkStatus === 'wifi' || networkStatus === 'cellular';
+  return networkStatus !== 'none';
+}
+
+export function getRoute(state: State): Route {
+  const root = calculateRoot(state);
+  if (root !== 'MAIN') {
+    return { name: root, next: null };
+  }
+  // Need to calculate the tab that is showing.
+  const tab = state.routeState.requestedTab || 'HOME';
+  return { name: root, next: { name: tab, next: null } };
 }
 
 // -----------------------------------------------------------------------------
@@ -68,18 +61,25 @@ export function hasNetworkConnection(state: State): bool {
 //
 // -----------------------------------------------------------------------------
 
-function getModeForAuthStatus(authStatus: AuthStatus): Mode {
+function calculateRoot(state: State): RootType {
+  const { authStatus, configState, network } = state;
+  if (configState.envStatus === 'ENV_LOADING') {
+    return 'LOADING';
+  }
+
   switch (authStatus.type) {
     case 'LOGIN_INITIALIZE':
     case 'LOGIN_FAILURE':
     case 'LOGOUT_INITIALIZE':
     case 'LOGOUT_FAILURE':
     case 'LOGGED_OUT':
-      return 'AUTH';
+      // The user can only see the login page if they have internet.
+      return network.networkStatus === 'none' ? 'NO_INTERNET' : 'AUTH';
     case 'LOGGED_IN':
       return 'MAIN';
     case 'NOT_INITIALIZED':
       return 'LOADING';
+    default:
+      invariant(false, 'Unrecognized auth status: %s', authStatus.type);
   }
-  invariant(false, 'Unrecognized auth status: %s', authStatus.type);
 }

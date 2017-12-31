@@ -98,6 +98,7 @@ export default function authStatus(
   action: PureAction,
 ) {
   if (action.type === 'AUTH_STATUS_CHANGE') {
+    console.log('UPDATING REDUX STATE');
     return action.status;
   }
   return state;

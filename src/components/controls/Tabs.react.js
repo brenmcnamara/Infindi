@@ -9,56 +9,36 @@ import React, { Component } from 'react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import {
-  navigateToAccounts,
-  navigateToHome,
-  setTabControls,
-} from '../../actions/navigation';
+import { getRoute } from '../../store/state-utils';
+import { getTab } from '../../common/route-utils';
+import { requestTab } from '../../actions/router';
 import { TabBarIOS } from 'react-native';
 
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../../reducers/root';
-import type { Tab } from '../../controls';
+import type { TabType } from '../../common/route-utils';
 
 export type Props = ReduxProps & {
-  initialTab: Tab,
+  tab: TabType,
 };
 
 export type TabControls = {
-  setTab: (tab: Tab) => void,
+  setTab: (tab: TabType) => void,
 };
 
-type State = {
-  currentTab: Tab,
-};
-
-class Tabs extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      currentTab: props.initialTab,
-    };
-  }
-
-  componentDidMount(): void {
-    this.props.dispatch(
-      setTabControls({
-        setTab: this._setTab,
-      }),
-    );
-  }
-
+class Tabs extends Component<Props> {
   render() {
+    const { tab } = this.props;
     return (
       <TabBarIOS>
         <TabBarIOS.Item
           icon={Icons.Home}
           onPress={() => {
-            if (this.state.currentTab !== 'HOME') {
-              this.props.dispatch(navigateToHome());
+            if (tab !== 'HOME') {
+              this.props.dispatch(requestTab('HOME'));
             }
           }}
-          selected={this.state.currentTab === 'HOME'}
+          selected={tab === 'HOME'}
           title="Home"
         >
           <Navigator payload={{ component: HomeScreen }} />
@@ -66,11 +46,11 @@ class Tabs extends Component<Props, State> {
         <TabBarIOS.Item
           icon={Icons.Bank}
           onPress={() => {
-            if (this.state.currentTab !== 'ACCOUNTS') {
-              this.props.dispatch(navigateToAccounts());
+            if (tab !== 'ACCOUNTS') {
+              this.props.dispatch(requestTab('ACCOUNTS'));
             }
           }}
-          selected={this.state.currentTab === 'ACCOUNTS'}
+          selected={tab === 'ACCOUNTS'}
           title="Accounts"
         >
           <Navigator
@@ -80,38 +60,13 @@ class Tabs extends Component<Props, State> {
       </TabBarIOS>
     );
   }
-
-  _setTab = (tab: Tab): Promise<Tab> => {
-    return new Promise(resolve => {
-      this.setState({ currentTab: tab }, () => {
-        resolve(this.state.currentTab);
-      });
-    });
-  };
 }
 
 function mapReduxStateToProps(state: ReduxState) {
-  const { navState } = state;
-  // NOTE: We could be transition in or out of the tab controls. We should
-  // prefer rendering the currently set controls, but if the current controls
-  // don't have tabs, then we need to render the IN_PROGRESS controls.
-  let tab: Tab;
-  if (navState.transitionStatus === 'COMPLETE') {
-    invariant(
-      navState.controlsPayload.tab,
-      'Cannot render Tabs.react on a complete transition without a tab',
-    );
-    tab = navState.controlsPayload.tab;
-  } else if (navState.previousControlsPayload.tab) {
-    tab = navState.previousControlsPayload.tab;
-  } else {
-    invariant(
-      navState.incomingControlsPayload.tab,
-      'Either previous controls or incoming controls must have tab for Tabs.react to render',
-    );
-    tab = navState.incomingControlsPayload.tab;
-  }
-  return { initialTab: tab };
+  const route = getRoute(state);
+  const tab = getTab(route);
+  invariant(tab, 'Expecting tab to be set in route');
+  return { tab };
 }
 
 export default connect(mapReduxStateToProps)(Tabs);

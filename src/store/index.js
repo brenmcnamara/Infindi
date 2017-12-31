@@ -3,7 +3,6 @@
 import authentication from '../middleware/authentication';
 import datastore from '../middleware/datastore';
 import modal from '../middleware/modal';
-import navigation from '../middleware/navigation';
 import network from '../middleware/network';
 import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
@@ -26,10 +25,9 @@ if (__DEV__) {
     plaid,
     // Then comes network middleware.
     network,
-    // Then comes app controls middleware.
+    // Then comes ui-managing middleware.
     modal,
     toast,
-    navigation,
     // Logging is last.
     reduxLogger,
   );
@@ -43,10 +41,9 @@ if (__DEV__) {
     plaid,
     // Then comes network middleware.
     network,
-    // Then comes app controls middleware.
+    // Then comes ui-managing middleware.
     modal,
     toast,
-    navigation,
     // Logging is last.
   );
 }
