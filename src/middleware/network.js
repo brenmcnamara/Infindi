@@ -1,5 +1,6 @@
 /* @flow */
 
+import { dismissToast, requestToast } from '../actions/toast';
 import { NetInfo } from 'react-native';
 
 import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
@@ -31,6 +32,20 @@ export default (store: Store) => (next: Next) => {
         status: networkStatus,
         type: 'NETWORK_STATUS_CHANGE',
       });
+      if (newNetworkStatus === 'none') {
+        next(
+          requestToast({
+            bannerChannel: 'CORE',
+            bannerType: 'ERROR',
+            id: 'NO_INTERNET',
+            priority: 'LOW',
+            text: 'You are not connected to the internet',
+            toastType: 'BANNER',
+          }),
+        );
+      } else if (networkStatus === 'none') {
+        next(dismissToast('NO_INTERNET'));
+      }
     }
   }
 

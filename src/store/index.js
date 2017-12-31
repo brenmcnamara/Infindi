@@ -18,26 +18,36 @@ let middleware;
 if (__DEV__) {
   const reduxLogger = createLogger({ collapsed: true });
   middleware = applyMiddleware(
+    // Thunk comes first.
     thunk,
+    // Then comes middleware that need network access.
     authentication,
     datastore,
-    navigation,
     plaid,
+    // Then comes network middleware.
+    network,
+    // Then comes app controls middleware.
     modal,
     toast,
-    network,
+    navigation,
+    // Logging is last.
     reduxLogger,
   );
 } else {
   middleware = applyMiddleware(
+    // Thunk comes first.
     thunk,
+    // Then comes middleware that need network access.
     authentication,
     datastore,
-    navigation,
     plaid,
-    toast,
-    modal,
+    // Then comes network middleware.
     network,
+    // Then comes app controls middleware.
+    modal,
+    toast,
+    navigation,
+    // Logging is last.
   );
 }
 
