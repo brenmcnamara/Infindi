@@ -1,7 +1,6 @@
 /* @flow */
 
 import Colors from '../design/colors';
-import Icons from '../design/icons';
 import TextButton from '../components/shared/TextButton.react';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
@@ -14,12 +13,16 @@ import type { RecommendationCardProps, RecommendationTemplate } from '.';
 export const FOCUS_TRANSITION_TIMEOUT_MILLIS = 500;
 
 export type Props = RecommendationCardProps & {
+  +icon: number,
   +template: RecommendationTemplate,
 };
 
-export default function createCard(template: RecommendationTemplate) {
+export default function createCard(
+  template: RecommendationTemplate,
+  icon: number,
+) {
   return (props: RecommendationCardProps) => (
-    <Card {...props} template={template} />
+    <Card {...props} icon={icon} template={template} />
   );
 }
 
@@ -46,7 +49,7 @@ class Card extends Component<Props> {
   }
 
   render() {
-    const { isFocused, onNoThanks, onSeeDetails, template } = this.props;
+    const { icon, isFocused, onNoThanks, onSeeDetails, template } = this.props;
     const rootStyles = [
       {
         backgroundColor: this._focusTransition.interpolate({
@@ -72,11 +75,7 @@ class Card extends Component<Props> {
         </View>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Image
-              resizeMode="contain"
-              source={Icons.PiggyBank}
-              style={styles.icon}
-            />
+            <Image resizeMode="contain" source={icon} style={styles.icon} />
           </View>
           <View style={styles.recommendationSubtitleContainer}>
             <Text style={[TextDesign.normal, styles.recommendationSubtitle]}>
