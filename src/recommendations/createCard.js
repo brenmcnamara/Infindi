@@ -2,27 +2,32 @@
 
 import Colors from '../design/colors';
 import Icons from '../design/icons';
-import TextButton from './shared/TextButton.react';
+import TextButton from '../components/shared/TextButton.react';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
 
 import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
+import { RecommendationCardSize } from '../design/layout';
 
-export const HEIGHT = 270;
-export const WIDTH = 335;
+import type { RecommendationCardProps, RecommendationTemplate } from '.';
+
 export const FOCUS_TRANSITION_TIMEOUT_MILLIS = 500;
 
-export type Props = {
-  isFocused: bool,
-  onNoThanks: () => any,
-  onSeeDetails: () => any,
+export type Props = RecommendationCardProps & {
+  +template: RecommendationTemplate,
 };
+
+export default function createCard(template: RecommendationTemplate) {
+  return (props: RecommendationCardProps) => (
+    <Card {...props} template={template} />
+  );
+}
 
 /**
  * The banner for a recommendation with some minimal information about the
  * recommendation.
  */
-export default class RecommendationBanner extends Component<Props> {
+class Card extends Component<Props> {
   _focusTransition: Animated.Value;
 
   constructor(props: Props) {
@@ -41,6 +46,7 @@ export default class RecommendationBanner extends Component<Props> {
   }
 
   render() {
+    const { isFocused, onNoThanks, onSeeDetails, template } = this.props;
     const rootStyles = [
       {
         backgroundColor: this._focusTransition.interpolate({
@@ -57,9 +63,7 @@ export default class RecommendationBanner extends Component<Props> {
     return (
       <Animated.View style={rootStyles}>
         <View style={styles.header}>
-          <Text style={[TextDesign.normalWithEmphasis]}>
-            Open a Health Savings Account
-          </Text>
+          <Text style={[TextDesign.normalWithEmphasis]}>{template.title}</Text>
         </View>
         <View style={styles.subHeader}>
           <Text style={[TextDesign.primary]}>
@@ -76,21 +80,21 @@ export default class RecommendationBanner extends Component<Props> {
           </View>
           <View style={styles.recommendationSubtitleContainer}>
             <Text style={[TextDesign.normal, styles.recommendationSubtitle]}>
-              Cut Your Taxes while Saving for your Health
+              {template.subTitle}
             </Text>
           </View>
         </View>
         <View style={styles.footer}>
           <TextButton
             isDisabled={!this.props.isFocused}
-            onPress={this.props.onNoThanks}
+            onPress={onNoThanks}
             size="MEDIUM"
             text="No Thanks"
           />
           <View style={styles.buttonSpacer} />
           <TextButton
-            isDisabled={!this.props.isFocused}
-            onPress={this.props.onSeeDetails}
+            isDisabled={!isFocused}
+            onPress={onSeeDetails}
             size="MEDIUM"
             text="See Details"
             type="PRIMARY"
@@ -146,8 +150,8 @@ const styles = StyleSheet.create({
   root: {
     borderColor: Colors.BORDER,
     borderWidth: 1,
-    height: HEIGHT,
-    width: WIDTH,
+    height: RecommendationCardSize.height,
+    width: RecommendationCardSize.width,
   },
 
   subHeader: {

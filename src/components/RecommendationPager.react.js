@@ -1,8 +1,5 @@
 /* @flow */
 
-import RecommendationBanner, {
-  WIDTH as RECOMMENDATION_BANNER_WIDTH,
-} from './RecommendationBanner.react';
 import React, { Component } from 'react';
 
 import invariant from 'invariant';
@@ -14,15 +11,18 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-
+import { Cards as RecommendationCards } from '../recommendations';
 import { connect } from 'react-redux';
+import {
+  RecommendationCardSize,
+  RecommendationCardSpacing,
+} from '../design/layout';
 
+import type { ID } from 'common/src/types/core';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
-type Recommendation = string; // TODO: THIS IS A TEMPORARY TYPE
-
 export type Props = ReduxProps & {
-  recommendations: Array<Recommendation>,
+  recommendationIDs: Array<ID>,
 };
 
 type DeleteTransitionStage =
@@ -40,7 +40,7 @@ type DeleteTransitionStage =
 
 type State = {
   deleteStage: DeleteTransitionStage,
-  recommendations: Array<Recommendation>,
+  recommendationIDs: Array<ID>,
   selectedPage: ?number,
 };
 
@@ -48,10 +48,11 @@ export const DELETE_FADE_TRANSITION_MILLIS = 100;
 export const DELETE_SHIFT_TRANSITION_MILLIS = 300;
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SPACE_BETWEEN_PAGES = 4;
-const HALF_SPACE_BETWEEN_PAGES = SPACE_BETWEEN_PAGES / 2;
+
+const HalfRecommendationCardSpacing = RecommendationCardSpacing / 2;
 const SPACE_TO_CENTER =
-  (SCREEN_WIDTH - RECOMMENDATION_BANNER_WIDTH - SPACE_BETWEEN_PAGES) / 2.0;
+  (SCREEN_WIDTH - RecommendationCardSize.width - RecommendationCardSpacing) /
+  2.0;
 
 const PAGER_INSET = {
   bottom: 0,
@@ -68,7 +69,7 @@ class RecommendationPager extends Component<Props, State> {
 
     this.state = {
       deleteStage: { type: 'NO_DELETE' },
-      recommendations: props.recommendations,
+      recommendationIDs: props.recommendationIDs,
       selectedPage: 0,
     };
   }
@@ -91,27 +92,35 @@ class RecommendationPager extends Component<Props, State> {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         snapToAlignment="center"
-        snapToInterval={RECOMMENDATION_BANNER_WIDTH + SPACE_BETWEEN_PAGES}
+        snapToInterval={
+          RecommendationCardSize.width + RecommendationCardSpacing
+        }
         style={styles.root}
       >
-        {this.state.recommendations.map((r, i) => {
+        {this.state.recommendationIDs.map((id, index) => {
           if (
             deleteStage.type === 'SHIFT_PAGES_OVER' &&
-            deleteStage.pageIndex === i
+            deleteStage.pageIndex === index
           ) {
             return null;
           }
+          const RecommendationCard = RecommendationCards[id];
+          invariant(
+            RecommendationCard,
+            'No Recommendation Card for id: %s',
+            id,
+          );
           return (
             <Page
-              isFirst={i === 0}
-              isOnly={this.state.recommendations.length === 1}
-              key={r}
-              style={this._getPageStyle(r, i)}
+              isFirst={index === 0}
+              isOnly={this.state.recommendationIDs.length === 1}
+              key={id}
+              style={this._getPageStyle(id, index)}
             >
-              <RecommendationBanner
-                isFocused={this.state.selectedPage === i}
-                onNoThanks={() => this._onNoThanks(r, i)}
-                onSeeDetails={() => this._onSeeDetails(r, i)}
+              <RecommendationCard
+                isFocused={this.state.selectedPage === index}
+                onNoThanks={() => this._onNoThanks(id, index)}
+                onSeeDetails={() => this._onSeeDetails(id, index)}
               />
             </Page>
           );
@@ -125,27 +134,29 @@ class RecommendationPager extends Component<Props, State> {
     const page = clamp(
       0,
       3,
-      Math.round(offset / (RECOMMENDATION_BANNER_WIDTH + SPACE_BETWEEN_PAGES)),
+      Math.round(
+        offset / (RecommendationCardSize.width + RecommendationCardSpacing),
+      ),
     );
     if (page !== this.state.page) {
       this.setState({ selectedPage: page });
     }
   };
 
-  _onNoThanks = (recommendation: Recommendation, index: number): void => {
+  _onNoThanks = (recommendationID: ID, index: number): void => {
     this._genPerformDelete(index);
   };
 
-  _onSeeDetails = (recommendation: Recommendation, index: number): void => {};
+  _onSeeDetails = (recommendationID: ID, index: number): void => {};
 
   _genPerformDelete = async (index: number): Promise<void> => {
-    const { deleteStage, recommendations } = this.state;
+    const { deleteStage, recommendationIDs } = this.state;
     invariant(
       deleteStage.type === 'NO_DELETE',
       'Cannot delete more than one recommendation at a time',
     );
     invariant(
-      recommendations[index],
+      recommendationIDs[index],
       'No recommendation at index %s to delete',
       index,
     );
@@ -157,17 +168,17 @@ class RecommendationPager extends Component<Props, State> {
     await this._genPerformShift(index);
 
     const newIndex =
-      recommendations.length === 1
+      recommendationIDs.length === 1
         ? null
-        : recommendations.length - 1 === index ? index - 1 : index;
+        : recommendationIDs.length - 1 === index ? index - 1 : index;
 
     // Delete page and clean up the state.
-    const newRecommendations = this.state.recommendations.slice();
-    newRecommendations.splice(index, 1);
+    const newRecommendationIDs = this.state.recommendationIDs.slice();
+    newRecommendationIDs.splice(index, 1);
 
     this.setState({
       deleteStage: { type: 'NO_DELETE' },
-      recommendations: newRecommendations,
+      recommendationIDs: newRecommendationIDs,
       selectedPage: newIndex,
     });
   };
@@ -213,7 +224,7 @@ class RecommendationPager extends Component<Props, State> {
     return new Promise(resolve => {
       // NOTE: If we are deleting the last recommendation in the list, we
       // do not need to perform this animation.
-      if (this.state.recommendations.length - 1 === pageIndex) {
+      if (this.state.recommendationIDs.length - 1 === pageIndex) {
         resolve();
         return;
       }
@@ -226,7 +237,7 @@ class RecommendationPager extends Component<Props, State> {
     });
   };
 
-  _getPageStyle(recommendation: Recommendation, index: number) {
+  _getPageStyle(recommendationID: ID, index: number) {
     const { deleteStage } = this.state;
     switch (deleteStage.type) {
       case 'NO_DELETE': {
@@ -250,16 +261,16 @@ class RecommendationPager extends Component<Props, State> {
         // we need to apply that padding left to the second element during
         // the transition.
         const initialPadding =
-          this.state.recommendations.length === 2
+          this.state.recommendationIDs.length === 2
             ? SPACE_TO_CENTER
-            : deleteStage.pageIndex === 0 ? SPACE_BETWEEN_PAGES : 0;
+            : deleteStage.pageIndex === 0 ? HalfRecommendationCardSpacing : 0;
         return deleteStage.pageIndex + 1 === index
           ? {
               paddingLeft: this._deleteShiftTransition.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
                   initialPadding,
-                  RECOMMENDATION_BANNER_WIDTH + HALF_SPACE_BETWEEN_PAGES,
+                  RecommendationCardSize.width + HalfRecommendationCardSpacing,
                 ],
               }),
             }
@@ -274,7 +285,7 @@ class RecommendationPager extends Component<Props, State> {
 
 function mapReduxStateToProps(state: ReduxState) {
   return {
-    recommendations: ['a', 'b', 'c', 'd'],
+    recommendationIDs: ['OPEN_HSA_ACCOUNT', 'OPEN_ROTH_ACCOUNT'],
   };
 }
 
@@ -295,14 +306,14 @@ const Page = (props: PageProps) => {
       ? {
           marginLeft: SPACE_TO_CENTER,
         }
-      : props.isFirst ? { marginLeft: SPACE_BETWEEN_PAGES } : null,
+      : props.isFirst ? { marginLeft: RecommendationCardSpacing } : null,
   ];
   return <Animated.View style={style}>{props.children}</Animated.View>;
 };
 
 const styles = StyleSheet.create({
   page: {
-    marginRight: SPACE_BETWEEN_PAGES,
+    marginRight: RecommendationCardSpacing,
   },
 
   root: {
