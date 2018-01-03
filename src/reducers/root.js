@@ -6,6 +6,7 @@ import configState from './configState';
 import modalState from './modalState';
 import network from './network';
 import plaid from './plaid';
+import recommendations from './recommendations';
 import routeState from './routeState';
 import toast from './toast';
 
@@ -17,6 +18,7 @@ import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
 import type { State as State$Network } from './network';
 import type { State as State$PlaidState } from './plaid';
+import type { State as State$Recommendations } from './recommendations';
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
 
@@ -27,6 +29,7 @@ export type State = {|
   +modalState: State$ModalState,
   +network: State$Network,
   +plaid: State$PlaidState,
+  +recommendations: State$Recommendations,
   +routeState: State$RouteState,
   +toast: State$Toast,
 |};
@@ -39,6 +42,7 @@ export default combineReducers({
   modalState,
   network,
   plaid,
+  recommendations,
   routeState,
   toast,
 });

@@ -21,6 +21,7 @@ export const Templates = {
 };
 
 export type RecommendationCardProps = {
+  +enableUserInteraction: bool,
   +isFocused: bool,
   +onNoThanks: () => any,
   +onSeeDetails: () => any,

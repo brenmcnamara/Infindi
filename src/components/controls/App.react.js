@@ -13,10 +13,15 @@ import Tabs from './Tabs.react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import { envDoneLoading, envFailedLoading } from '../../actions/config';
+import {
+  appInsetChange,
+  envDoneLoading,
+  envFailedLoading,
+} from '../../actions/config';
 import { getRoot } from '../../common/route-utils';
 import { getRoute } from '../../store/state-utils';
 import {
+  Dimensions,
   KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
@@ -30,6 +35,8 @@ import type { State as ReduxState } from '../../reducers/root';
 export type Props = ReduxProps & {
   root: RootType,
 };
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 class App extends Component<Props> {
   componentWillMount(): void {
@@ -80,7 +87,7 @@ class App extends Component<Props> {
     return (
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <SafeAreaView style={styles.safeArea}>
-          <View style={styles.main}>
+          <View style={styles.main} onLayout={this._onLayoutSafeAreaSubview}>
             <If predicate={root === 'MAIN'}>
               <ModalManager />
             </If>
@@ -103,6 +110,20 @@ class App extends Component<Props> {
   _renderMain() {
     return <Tabs />;
   }
+
+  // TODO: Proper typing.
+  // TODO: Make sure this is accurate when the keyboard is showing / hiding.
+  _onLayoutSafeAreaSubview = (event: *): void => {
+    const { layout } = event.nativeEvent;
+    this.props.dispatch(
+      appInsetChange({
+        bottom: SCREEN_HEIGHT - layout.y - layout.height,
+        left: layout.x,
+        right: SCREEN_WIDTH - layout.x - layout.width,
+        top: layout.y,
+      }),
+    );
+  };
 }
 
 const styles = StyleSheet.create({

@@ -9,7 +9,7 @@ export type ButtonType = 'PRIMARY' | 'NORMAL' | 'SPECIAL';
 export type ButtonSize = 'SMALL' | 'MEDIUM' | 'LARGE';
 
 export type Props = {
-  // TODO: Proper typing for this.
+  // TODO: Change this to "isEnabled"
   isDisabled: bool,
   onPress: () => any,
   shouldFillParent: bool,

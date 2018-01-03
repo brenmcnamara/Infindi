@@ -1,5 +1,9 @@
 /* @flow */
 
+import HomeToRecommendationTransitionModal, {
+  TransitionInMillis as ModalTransitionInMillis,
+  TransitionOutMillis as ModalTransitionOutMillis,
+} from './HomeToRecommendationTransitionModal.react';
 import React, { Component } from 'react';
 
 import invariant from 'invariant';
@@ -14,6 +18,10 @@ import {
 import { Cards as RecommendationCards } from '../recommendations';
 import { connect } from 'react-redux';
 import {
+  deleteRecommendation,
+  focusedRecommendationChange,
+} from '../actions/recommendations';
+import {
   RecommendationCardSize,
   RecommendationCardSpacing,
 } from '../design/layout';
@@ -21,9 +29,12 @@ import {
 import type { ID } from 'common/src/types/core';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
-export type Props = ReduxProps & {
-  recommendationIDs: Array<ID>,
+type ComputedProps = {
+  +focusedRecommendationID: ID | 'EMPTY',
+  +recommendationIDs: Array<ID>,
 };
+
+export type Props = ReduxProps & ComputedProps;
 
 type DeleteTransitionStage =
   | {|
@@ -40,8 +51,8 @@ type DeleteTransitionStage =
 
 type State = {
   deleteStage: DeleteTransitionStage,
+  isScrolling: bool,
   recommendationIDs: Array<ID>,
-  selectedPage: ?number,
 };
 
 export const DELETE_FADE_TRANSITION_MILLIS = 100;
@@ -60,22 +71,67 @@ const PAGER_INSET = {
   right: 0,
   top: 0,
 };
+
 class RecommendationPager extends Component<Props, State> {
+  _canHandleScrolling: bool = false;
+  _cards: { [id: ID]: any } = {}; // TODO: Better typing.
   _deleteFadeTransition = new Animated.Value(0);
   _deleteShiftTransition = new Animated.Value(0);
+  _initialXOffset: number;
 
   constructor(props: Props) {
     super(props);
 
     this.state = {
       deleteStage: { type: 'NO_DELETE' },
+      isScrolling: false,
       recommendationIDs: props.recommendationIDs,
       selectedPage: 0,
     };
   }
 
+  componentWillMount(): void {
+    const { focusedRecommendationID, recommendationIDs } = this.props;
+    const focusedIndex =
+      focusedRecommendationID === 'EMPTY'
+        ? 'EMPTY'
+        : recommendationIDs.indexOf(focusedRecommendationID);
+
+    invariant(
+      focusedIndex === 'EMPTY' || focusedIndex >= 0,
+      'Cannot find recommendation: %s',
+      focusedRecommendationID,
+    );
+
+    const fullWidth = RecommendationCardSize.width + RecommendationCardSpacing;
+    if (focusedIndex === 'EMPTY') {
+      this._initialXOffset = 0;
+    } else if (focusedIndex === recommendationIDs.length - 1) {
+      // Last element in the list is an edge case.
+      this._initialXOffset =
+        -PAGER_INSET.left +
+        recommendationIDs.length * fullWidth -
+        SCREEN_WIDTH +
+        RecommendationCardSpacing;
+    } else if (focusedIndex === 0) {
+      this._initialXOffset = -PAGER_INSET.left;
+    } else {
+      this._initialXOffset =
+        -PAGER_INSET.left +
+        focusedIndex * fullWidth +
+        RecommendationCardSpacing -
+        SPACE_TO_CENTER;
+    }
+  }
+
+  componentDidMount(): void {
+    setTimeout(() => {
+      this._canHandleScrolling = true;
+    }, 400);
+  }
+
   render() {
-    const { deleteStage } = this.state;
+    const { deleteStage, isScrolling } = this.state;
     return (
       <ScrollView
         ref={'scrollView'}
@@ -83,12 +139,13 @@ class RecommendationPager extends Component<Props, State> {
         alwaysBounceVertical={false}
         automaticallyAdjustContentInsets={false}
         contentInset={PAGER_INSET}
-        contentOffset={{ x: -PAGER_INSET.left, y: -PAGER_INSET.top }}
+        contentOffset={{ x: this._initialXOffset, y: -PAGER_INSET.top }}
         decelerationRate="fast"
         horizontal={true}
-        onScroll={this._onScrollRecommendationPager}
+        onMomentumScrollEnd={this._onScrollEnd}
+        onScroll={this._onScroll}
         pagingEnabled={false}
-        scrollEventThrottle={11}
+        scrollEventThrottle={4}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         snapToAlignment="center"
@@ -118,7 +175,8 @@ class RecommendationPager extends Component<Props, State> {
               style={this._getPageStyle(id, index)}
             >
               <RecommendationCard
-                isFocused={this.state.selectedPage === index}
+                enableUserInteraction={!isScrolling}
+                isFocused={this.props.focusedRecommendationID === id}
                 onNoThanks={() => this._onNoThanks(id, index)}
                 onSeeDetails={() => this._onSeeDetails(id, index)}
               />
@@ -129,37 +187,95 @@ class RecommendationPager extends Component<Props, State> {
     );
   }
 
-  _onScrollRecommendationPager = (event: Object): void => {
+  _onScroll = (event: Object): void => {
+    // NOTE: I hate this can handle scrolling, it is very hacky, but for
+    // some annoying reason, react native is calling on scroll when the
+    // scroll view has a content offset that it is initialized with. This is
+    // resulting in a number of rendering bugs. Need to block the on scroll
+    // event until the component has mounted and settled.
+    if (!this._canHandleScrolling) {
+      return;
+    }
+    const { dispatch, recommendationIDs } = this.props;
     const offset = event.nativeEvent.contentOffset.x;
-    const page = clamp(
+    const index = clamp(
       0,
-      3,
+      recommendationIDs.length - 1,
       Math.round(
         offset / (RecommendationCardSize.width + RecommendationCardSpacing),
       ),
     );
-    if (page !== this.state.page) {
-      this.setState({ selectedPage: page });
+
+    const focusedID = recommendationIDs[index];
+    if (focusedID !== this.props.focusedRecommendationID) {
+      dispatch(focusedRecommendationChange(focusedID));
     }
+  };
+
+  _onScrollStart = (): void => {
+    this.setState({ isScrolling: true });
+  };
+
+  _onScrollEnd = (): void => {
+    this.setState({ isScrolling: false });
   };
 
   _onNoThanks = (recommendationID: ID, index: number): void => {
     this._genPerformDelete(index);
   };
 
-  _onSeeDetails = (recommendationID: ID, index: number): void => {};
+  _onSeeDetails = (recommendationID: ID, index: number): void => {
+    const { dispatch } = this.props;
+
+    // TODO: Guestimate the location of the scroll view element on screen.
+    // Make sure it works with different types of phones (includes iphone x)
+    dispatch({
+      modal: {
+        id: 'HOME_TO_RECOMMENDATION_TRANSITION',
+        modalType: 'REACT_WITH_TRANSITION',
+        priority: 'SYSTEM_CRITICAL',
+        renderIn: () => (
+          <HomeToRecommendationTransitionModal
+            dismissAfterTransitioningOut={true}
+            recommendationID={recommendationID}
+            show={true}
+            transitionType="HOME_TO_RECOMMENDATION"
+          />
+        ),
+        renderInitial: () => (
+          <HomeToRecommendationTransitionModal
+            dismissAfterTransitioningOut={true}
+            recommendationID={recommendationID}
+            show={false}
+            transitionType="HOME_TO_RECOMMENDATION"
+          />
+        ),
+        renderTransitionOut: () => (
+          <HomeToRecommendationTransitionModal
+            dismissAfterTransitioningOut={true}
+            recommendationID={recommendationID}
+            show={false}
+            transitionType="HOME_TO_RECOMMENDATION"
+          />
+        ),
+        transitionInMillis: ModalTransitionInMillis,
+        transitionOutMillis: ModalTransitionOutMillis,
+      },
+      type: 'REQUEST_MODAL',
+    });
+  };
 
   _genPerformDelete = async (index: number): Promise<void> => {
     const { deleteStage, recommendationIDs } = this.state;
+    const { dispatch } = this.props;
+
+    const deleteID = recommendationIDs[index];
+
     invariant(
       deleteStage.type === 'NO_DELETE',
       'Cannot delete more than one recommendation at a time',
     );
-    invariant(
-      recommendationIDs[index],
-      'No recommendation at index %s to delete',
-      index,
-    );
+    invariant(deleteID, 'No recommendation at index %s to delete', index);
 
     // Perform the transition.
     await this._genSetFadeOutState(index);
@@ -176,10 +292,18 @@ class RecommendationPager extends Component<Props, State> {
     const newRecommendationIDs = this.state.recommendationIDs.slice();
     newRecommendationIDs.splice(index, 1);
 
+    dispatch(deleteRecommendation(deleteID));
+
+    const newRecommendationID = newIndex
+      ? newRecommendationIDs[newIndex]
+      : null;
+    if (newRecommendationID) {
+      dispatch(focusedRecommendationChange(newRecommendationID));
+    }
+
     this.setState({
       deleteStage: { type: 'NO_DELETE' },
       recommendationIDs: newRecommendationIDs,
-      selectedPage: newIndex,
     });
   };
 
@@ -283,9 +407,14 @@ class RecommendationPager extends Component<Props, State> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState) {
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
+  const { recommendations } = state;
+  const { focusedIndex, ordering } = recommendations;
+
   return {
-    recommendationIDs: ['OPEN_HSA_ACCOUNT', 'OPEN_ROTH_ACCOUNT'],
+    focusedRecommendationID:
+      focusedIndex === 'EMPTY' ? 'EMPTY' : ordering[focusedIndex],
+    recommendationIDs: ordering,
   };
 }
 

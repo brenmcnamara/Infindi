@@ -17,7 +17,7 @@ export default class OpenHSAAccount extends Component<
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: Colors.BACKGROUND,
+    backgroundColor: 'blue', // Colors.BACKGROUND,
     flex: 1,
   },
 });

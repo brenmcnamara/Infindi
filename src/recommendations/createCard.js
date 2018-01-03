@@ -49,7 +49,14 @@ class Card extends Component<Props> {
   }
 
   render() {
-    const { icon, isFocused, onNoThanks, onSeeDetails, template } = this.props;
+    const {
+      enableUserInteraction,
+      icon,
+      isFocused,
+      onNoThanks,
+      onSeeDetails,
+      template,
+    } = this.props;
     const rootStyles = [
       {
         backgroundColor: this._focusTransition.interpolate({
@@ -85,14 +92,14 @@ class Card extends Component<Props> {
         </View>
         <View style={styles.footer}>
           <TextButton
-            isDisabled={!this.props.isFocused}
+            isDisabled={!isFocused || !enableUserInteraction}
             onPress={onNoThanks}
             size="MEDIUM"
             text="No Thanks"
           />
           <View style={styles.buttonSpacer} />
           <TextButton
-            isDisabled={!isFocused}
+            isDisabled={!isFocused || !enableUserInteraction}
             onPress={onSeeDetails}
             size="MEDIUM"
             text="See Details"
