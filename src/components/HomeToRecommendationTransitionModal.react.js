@@ -8,6 +8,7 @@ import invariant from 'invariant';
 import { Animated, Dimensions, Easing } from 'react-native';
 import { connect } from 'react-redux';
 import {
+  NavBarHeight,
   RecommendationCardSize,
   RecommendationCardSpacing,
   RecommendationPagerTopOffset,
@@ -53,8 +54,8 @@ type State = {
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const FadeInTransitionMillis = 100;
-const TransformTransitionMillis = 300;
-const FadeOutTransitionMillis = 300;
+const TransformTransitionMillis = 250;
+const FadeOutTransitionMillis = 100;
 
 export const TransitionInMillis =
   FadeInTransitionMillis + TransformTransitionMillis;
@@ -62,7 +63,7 @@ export const TransitionOutMillis = FadeOutTransitionMillis;
 
 class HomeToRecommendationTransitionModal extends Component<Props, State> {
   _fadeTransition: Animated.Value;
-  _growTransition: Animated.Value;
+  _resizeTransition: Animated.Value;
   _subscriptions: Array<{ remove: () => void }> = [];
 
   state: State;
@@ -70,13 +71,19 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this._fadeTransition = new Animated.Value(props.show ? 1.0 : 0.0);
-    this._growTransition = new Animated.Value(props.show ? 1.0 : 0.0);
+    this._resizeTransition = new Animated.Value(props.show ? 1.0 : 0.0);
 
     this.state = {
       recommendationFrame: calculateRecommendationFrame(props),
       transitionStage: props.show ? 'HIDDEN' : 'SHOWING',
     };
   }
+
+  // ---------------------------------------------------------------------------
+  //
+  // LIFECYCLE
+  //
+  // ---------------------------------------------------------------------------
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.show === this.props.show) {
@@ -86,11 +93,13 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
     if (nextProps.show) {
       const afterTransitioning = invokable(() => {
         this.setState({ transitionStage: 'SHOWING' });
-        // Change the screen underneath this modal.
-        nextProps.dispatch({
-          recommendationID: nextProps.recommendationID,
-          type: 'SELECT_RECOMMENDATION',
-        });
+        // Changing the selection will change the screen underneath this modal.
+        if (nextProps.transitionType === 'HOME_TO_RECOMMENDATION') {
+          nextProps.dispatch({
+            recommendationID: nextProps.recommendationID,
+            type: 'SELECT_RECOMMENDATION',
+          });
+        }
         // Dismiss the modal.
         nextProps.dispatch({
           modalID: 'HOME_TO_RECOMMENDATION_TRANSITION',
@@ -98,15 +107,26 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
         });
       });
       this._subscriptions.push(afterTransitioning);
-      this._genTransitionIn().then(afterTransitioning.invoke);
+
+      this._genSetTransitionStage('TRANSITION_IN')
+        .then(this._genFadeIn)
+        .then(() => {
+          if (nextProps.transitionType === 'RECOMMENDATION_TO_HOME') {
+            nextProps.dispatch({ type: 'UNSELECT_CURRENT_RECOMMENDATION' });
+          }
+        })
+        .then(this._genResize)
+        .then(afterTransitioning.invoke);
     } else {
       const afterTransitioning = invokable(() => {
         this.setState({ transitionStage: 'HIDDEN' }, () => {
-          this._growTransition = new Animated.Value(0.0);
+          this._resizeTransition = new Animated.Value(0.0);
         });
       });
       this._subscriptions.push(afterTransitioning);
-      this._genTransitionOut().then(afterTransitioning.invoke);
+      this._genSetTransitionStage('TRANSITION_OUT')
+        .then(this._genFadeOut)
+        .then(afterTransitioning.invoke);
     }
   }
 
@@ -115,77 +135,115 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
     this._subscriptions = [];
   }
 
+  // ---------------------------------------------------------------------------
+  //
+  // RENDER
+  //
+  // ---------------------------------------------------------------------------
+
   render() {
-    const { pageInset } = this.props;
+    const { pageInset, transitionType } = this.props;
     const { recommendationFrame } = this.state;
+    const isHomeToRecommendationTransition =
+      transitionType === 'HOME_TO_RECOMMENDATION';
     const rootStyles = {
-      backgroundColor: this._growTransition.interpolate({
+      backgroundColor: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: [Colors.BACKGROUND_LIGHT, Colors.BACKGROUND],
+        outputRange: isHomeToRecommendationTransition
+          ? [Colors.BACKGROUND_LIGHT, Colors.BACKGROUND]
+          : [Colors.BACKGROUND, Colors.BACKGROUND_LIGHT],
       }),
-      height: this._growTransition.interpolate({
+      height: this._resizeTransition.interpolate({
         inputRange: [0, 1],
         // NOTE: We are ignoring the bottom inset on purpose. Would like to fill
         // bottom inset as well.
-        outputRange: [
-          recommendationFrame.height,
-          SCREEN_HEIGHT - pageInset.top,
-        ],
+        outputRange: isHomeToRecommendationTransition
+          ? [recommendationFrame.height, SCREEN_HEIGHT - pageInset.top]
+          : [SCREEN_HEIGHT - pageInset.top, recommendationFrame.height],
       }),
-      left: this._growTransition.interpolate({
+      left: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: [
-          pageInset.left + recommendationFrame.left,
-          pageInset.left,
-        ],
+        outputRange: isHomeToRecommendationTransition
+          ? [pageInset.left + recommendationFrame.left, pageInset.left]
+          : [pageInset.left, pageInset.left + recommendationFrame.left],
       }),
       opacity: this._fadeTransition,
       position: 'absolute',
-      top: this._growTransition.interpolate({
+      top: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: [pageInset.top + recommendationFrame.top, pageInset.top],
+        outputRange: isHomeToRecommendationTransition
+          ? [
+              pageInset.top + NavBarHeight + recommendationFrame.top,
+              pageInset.top,
+            ]
+          : [
+              pageInset.top,
+              pageInset.top + NavBarHeight + recommendationFrame.top,
+            ],
       }),
-      width: this._growTransition.interpolate({
+      width: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: [
-          recommendationFrame.width,
-          SCREEN_WIDTH - pageInset.left - pageInset.right,
-        ],
+        outputRange: isHomeToRecommendationTransition
+          ? [
+              recommendationFrame.width,
+              SCREEN_WIDTH - pageInset.left - pageInset.right,
+            ]
+          : [
+              SCREEN_WIDTH - pageInset.left - pageInset.right,
+              recommendationFrame.width,
+            ],
       }),
     };
     return <Animated.View style={rootStyles} />;
   }
 
-  _genTransitionIn = (): Promise<void> => {
+  // ---------------------------------------------------------------------------
+  //
+  // TRANSITION UTILITIES
+  //
+  // ---------------------------------------------------------------------------
+
+  _genFadeIn = (): Promise<void> => {
     return new Promise(resolve => {
-      this.setState({ transitionStage: 'TRANSITION_IN' }, () => {
-        // $FlowFixMe - Why is this wrong?
-        Animated.sequence([
-          Animated.timing(this._fadeTransition, {
-            duration: FadeInTransitionMillis,
-            easing: Easing.cubic,
-            toValue: 1.0,
-          }),
-          Animated.timing(this._growTransition, {
-            duration: TransformTransitionMillis,
-            easing: Easing.out(Easing.cubic),
-            toValue: 1.0,
-          }),
-        ]).start(resolve);
-      });
+      // $FlowFixMe - Why is this wrong?
+      Animated.timing(this._fadeTransition, {
+        duration: FadeInTransitionMillis,
+        easing: Easing.cubic,
+        toValue: 1.0,
+      }).start(resolve);
     });
   };
 
-  _genTransitionOut = (): Promise<void> => {
+  _genResize = (): Promise<void> => {
     return new Promise(resolve => {
-      this.setState({ transitionStage: 'TRANSITION_OUT' }, () => {
-        // $FlowFixMe - Why is this wrong?
-        Animated.timing(this._fadeTransition, {
-          duration: FadeOutTransitionMillis,
-          easing: Easing.out(Easing.cubic),
-          toValue: 0.0,
-        }).start(resolve);
-      });
+      // $FlowFixMe - Why is this wrong?
+      Animated.timing(this._resizeTransition, {
+        duration: TransformTransitionMillis,
+        easing:
+          this.props.transitionType === 'HOME_TO_RECOMMENDATION'
+            ? Easing.out(Easing.cubic)
+            : Easing.out(Easing.quad),
+        toValue: 1.0,
+      }).start(resolve);
+    });
+  };
+
+  _genFadeOut = (): Promise<void> => {
+    return new Promise(resolve => {
+      // $FlowFixMe - Why is this wrong?
+      Animated.timing(this._fadeTransition, {
+        duration: FadeOutTransitionMillis,
+        easing: Easing.out(Easing.cubic),
+        toValue: 0.0,
+      }).start(resolve);
+    });
+  };
+
+  _genSetTransitionStage = (
+    transitionStage: TransitionStage,
+  ): Promise<void> => {
+    return new Promise(resolve => {
+      this.setState({ transitionStage }, resolve);
     });
   };
 }

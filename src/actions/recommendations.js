@@ -6,6 +6,8 @@ import HomeToRecommendationTransitionModal, {
 } from '../components/HomeToRecommendationTransitionModal.react';
 import React from 'react';
 
+import invariant from 'invariant';
+
 import type { ID } from 'common/src/types/core';
 import type { Dispatch, ReduxState } from '../typesDEPRECATED/redux';
 
@@ -95,7 +97,45 @@ export type Action$UnselectCurrentRecommendation = {|
 |};
 
 export function unselectCurrentRecommendation() {
-  return {
-    type: 'UNSELECT_CURRENT_RECOMMENDATION',
+  return (dispatch: Dispatch, getState: () => ReduxState) => {
+    const id = getState().recommendations.selectedID;
+    invariant(id, 'Trying to unselect recommendation when none is selected');
+    // NOTE: The transition modal does the work of dispatching the unselect
+    // recommendation action once it is presented. The modal also dismisses
+    // itself.
+    dispatch({
+      modal: {
+        id: 'HOME_TO_RECOMMENDATION_TRANSITION',
+        modalType: 'REACT_WITH_TRANSITION',
+        priority: 'SYSTEM_CRITICAL',
+        renderIn: () => (
+          <HomeToRecommendationTransitionModal
+            dismissAfterTransitioningOut={true}
+            recommendationID={id}
+            show={true}
+            transitionType="RECOMMENDATION_TO_HOME"
+          />
+        ),
+        renderInitial: () => (
+          <HomeToRecommendationTransitionModal
+            dismissAfterTransitioningOut={true}
+            recommendationID={id}
+            show={false}
+            transitionType="RECOMMENDATION_TO_HOME"
+          />
+        ),
+        renderTransitionOut: () => (
+          <HomeToRecommendationTransitionModal
+            dismissAfterTransitioningOut={true}
+            recommendationID={id}
+            show={false}
+            transitionType="RECOMMENDATION_TO_HOME"
+          />
+        ),
+        transitionInMillis: ModalTransitionInMillis,
+        transitionOutMillis: ModalTransitionOutMillis,
+      },
+      type: 'REQUEST_MODAL',
+    });
   };
 }
