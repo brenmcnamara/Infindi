@@ -2,7 +2,12 @@
 
 export type Route = RootNode;
 
-export type RootType = 'MAIN' | 'NO_INTERNET' | 'AUTH' | 'LOADING';
+export type RootType =
+  | 'MAIN'
+  | 'NO_INTERNET'
+  | 'AUTH'
+  | 'LOADING'
+  | 'RECOMMENDATION';
 
 export type RootNode =
   | {|
@@ -10,7 +15,7 @@ export type RootNode =
       +next: TabNode,
     |}
   | {|
-      +name: 'NO_INTERNET' | 'AUTH' | 'LOADING',
+      +name: 'NO_INTERNET' | 'AUTH' | 'LOADING' | 'RECOMMENDATION',
       +next: null,
     |};
 

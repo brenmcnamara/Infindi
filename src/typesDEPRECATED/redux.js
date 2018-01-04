@@ -37,7 +37,10 @@ export type PureAction =
   | Action$Toast
   | Action$ToastMiddleware;
 
-export type ThunkAction = (dispatch: Dispatch) => void;
+export type ThunkAction = (
+  dispatch: Dispatch,
+  getState: () => ReduxState,
+) => any;
 
 export type Action = PureAction | ThunkAction;
 

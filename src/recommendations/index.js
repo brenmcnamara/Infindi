@@ -1,11 +1,12 @@
 /* @flow */
 
 import OpenHSAAccountCard from './open-hsa-account/Card.react';
-import OpenHSAAccountTemplate from './open-hsa-account/Template';
 import OpenHSAAccountComponent from './open-hsa-account/Component.react';
 import OpenRothAccountCard from './open-roth-account/Card.react';
 import OpenRothAccountComponent from './open-roth-account/Component.react';
 import OpenRothAccountTemplate from './open-roth-account/Template';
+
+import { Template as OpenHSAAccountTemplate } from './open-hsa-account/Metadata';
 
 import type { ID } from 'common/src/types/core';
 
@@ -32,7 +33,9 @@ export const Cards = {
   [OpenRothAccountTemplate.id]: OpenRothAccountCard,
 };
 
-export type RecommendationComponentProps = {};
+export type RecommendationComponentProps = {
+  +onNoThanks: () => any,
+};
 
 export const Components = {
   [OpenHSAAccountTemplate.id]: OpenHSAAccountComponent,

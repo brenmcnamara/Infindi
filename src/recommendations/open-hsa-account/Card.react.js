@@ -1,7 +1,8 @@
 /* @flow */
 
 import Icons from '../../design/icons';
-import Template from './Template';
+
+import { Template } from './Metadata';
 
 import createCard from '../createCard';
 

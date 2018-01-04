@@ -8,7 +8,6 @@ import invariant from 'invariant';
 import { Animated, Dimensions, Easing } from 'react-native';
 import { connect } from 'react-redux';
 import {
-  NavBarHeight,
   RecommendationCardSize,
   RecommendationCardSpacing,
   RecommendationPagerTopOffset,
@@ -55,7 +54,7 @@ const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const FadeInTransitionMillis = 100;
 const TransformTransitionMillis = 300;
-const FadeOutTransitionMillis = 100;
+const FadeOutTransitionMillis = 300;
 
 export const TransitionInMillis =
   FadeInTransitionMillis + TransformTransitionMillis;
@@ -64,6 +63,7 @@ export const TransitionOutMillis = FadeOutTransitionMillis;
 class HomeToRecommendationTransitionModal extends Component<Props, State> {
   _fadeTransition: Animated.Value;
   _growTransition: Animated.Value;
+  _subscriptions: Array<{ remove: () => void }> = [];
 
   state: State;
 
@@ -84,41 +84,35 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
     }
 
     if (nextProps.show) {
-      this.setState({ transitionStage: 'TRANSITION_IN' }, () => {
-        Animated.sequence([
-          Animated.timing(this._fadeTransition, {
-            duration: FadeInTransitionMillis,
-            easing: Easing.cubic,
-            toValue: 1.0,
-          }),
-          Animated.timing(this._growTransition, {
-            duration: TransformTransitionMillis,
-            easing: Easing.out(Easing.cubic),
-            toValue: 1.0,
-          }),
-        ]).start(() => {
-          this.setState({ transitionStage: 'SHOWING' });
-          if (nextProps.dismissAfterTransitioningOut) {
-            nextProps.dispatch({
-              modalID: 'HOME_TO_RECOMMENDATION_TRANSITION',
-              type: 'DISMISS_MODAL',
-            });
-          }
+      const afterTransitioning = invokable(() => {
+        this.setState({ transitionStage: 'SHOWING' });
+        // Change the screen underneath this modal.
+        nextProps.dispatch({
+          recommendationID: nextProps.recommendationID,
+          type: 'SELECT_RECOMMENDATION',
+        });
+        // Dismiss the modal.
+        nextProps.dispatch({
+          modalID: 'HOME_TO_RECOMMENDATION_TRANSITION',
+          type: 'DISMISS_MODAL',
         });
       });
+      this._subscriptions.push(afterTransitioning);
+      this._genTransitionIn().then(afterTransitioning.invoke);
     } else {
-      this.setState({ transitionStage: 'TRANSITION_OUT' }, () => {
-        Animated.timing(this._fadeTransition, {
-          duration: FadeOutTransitionMillis,
-          easing: Easing.out(Easing.cubic),
-          toValue: 0.0,
-        }).start(() => {
-          this.setState({ transitionStage: 'HIDDEN' }, () => {
-            this._growTransition = new Animated.Value(0.0);
-          });
+      const afterTransitioning = invokable(() => {
+        this.setState({ transitionStage: 'HIDDEN' }, () => {
+          this._growTransition = new Animated.Value(0.0);
         });
       });
+      this._subscriptions.push(afterTransitioning);
+      this._genTransitionOut().then(afterTransitioning.invoke);
     }
+  }
+
+  componentWillUnmount(): void {
+    this._subscriptions.forEach(s => s.remove());
+    this._subscriptions = [];
   }
 
   render() {
@@ -161,6 +155,51 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
     };
     return <Animated.View style={rootStyles} />;
   }
+
+  _genTransitionIn = (): Promise<void> => {
+    return new Promise(resolve => {
+      this.setState({ transitionStage: 'TRANSITION_IN' }, () => {
+        // $FlowFixMe - Why is this wrong?
+        Animated.sequence([
+          Animated.timing(this._fadeTransition, {
+            duration: FadeInTransitionMillis,
+            easing: Easing.cubic,
+            toValue: 1.0,
+          }),
+          Animated.timing(this._growTransition, {
+            duration: TransformTransitionMillis,
+            easing: Easing.out(Easing.cubic),
+            toValue: 1.0,
+          }),
+        ]).start(resolve);
+      });
+    });
+  };
+
+  _genTransitionOut = (): Promise<void> => {
+    return new Promise(resolve => {
+      this.setState({ transitionStage: 'TRANSITION_OUT' }, () => {
+        // $FlowFixMe - Why is this wrong?
+        Animated.timing(this._fadeTransition, {
+          duration: FadeOutTransitionMillis,
+          easing: Easing.out(Easing.cubic),
+          toValue: 0.0,
+        }).start(resolve);
+      });
+    });
+  };
+}
+
+function invokable(cb: () => any): { remove: () => void, invoke: () => void } {
+  let isRemoved = false;
+  return {
+    remove: () => {
+      isRemoved = true;
+    },
+    invoke: () => {
+      !isRemoved && cb();
+    },
+  };
 }
 
 function calculateRecommendationFrame(props: Props): Frame {
@@ -193,7 +232,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
       bottom: appInset.bottom,
       left: appInset.left,
       right: appInset.right,
-      top: appInset.top + NavBarHeight,
+      top: appInset.top,
     },
     recommendationIDs: state.recommendations.ordering,
   };

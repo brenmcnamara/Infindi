@@ -1,9 +1,5 @@
 /* @flow */
 
-import HomeToRecommendationTransitionModal, {
-  TransitionInMillis as ModalTransitionInMillis,
-  TransitionOutMillis as ModalTransitionOutMillis,
-} from './HomeToRecommendationTransitionModal.react';
 import React, { Component } from 'react';
 
 import invariant from 'invariant';
@@ -20,6 +16,7 @@ import { connect } from 'react-redux';
 import {
   deleteRecommendation,
   focusedRecommendationChange,
+  selectRecommendation,
 } from '../actions/recommendations';
 import {
   RecommendationCardSize,
@@ -225,44 +222,7 @@ class RecommendationPager extends Component<Props, State> {
   };
 
   _onSeeDetails = (recommendationID: ID, index: number): void => {
-    const { dispatch } = this.props;
-
-    // TODO: Guestimate the location of the scroll view element on screen.
-    // Make sure it works with different types of phones (includes iphone x)
-    dispatch({
-      modal: {
-        id: 'HOME_TO_RECOMMENDATION_TRANSITION',
-        modalType: 'REACT_WITH_TRANSITION',
-        priority: 'SYSTEM_CRITICAL',
-        renderIn: () => (
-          <HomeToRecommendationTransitionModal
-            dismissAfterTransitioningOut={true}
-            recommendationID={recommendationID}
-            show={true}
-            transitionType="HOME_TO_RECOMMENDATION"
-          />
-        ),
-        renderInitial: () => (
-          <HomeToRecommendationTransitionModal
-            dismissAfterTransitioningOut={true}
-            recommendationID={recommendationID}
-            show={false}
-            transitionType="HOME_TO_RECOMMENDATION"
-          />
-        ),
-        renderTransitionOut: () => (
-          <HomeToRecommendationTransitionModal
-            dismissAfterTransitioningOut={true}
-            recommendationID={recommendationID}
-            show={false}
-            transitionType="HOME_TO_RECOMMENDATION"
-          />
-        ),
-        transitionInMillis: ModalTransitionInMillis,
-        transitionOutMillis: ModalTransitionOutMillis,
-      },
-      type: 'REQUEST_MODAL',
-    });
+    this.props.dispatch(selectRecommendation(recommendationID));
   };
 
   _genPerformDelete = async (index: number): Promise<void> => {

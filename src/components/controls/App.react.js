@@ -2,12 +2,12 @@
 
 import Colors from '../../design/colors';
 import Environment from '../../modules/Environment';
-import If from '../shared/If.react';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
 import ModalManager from '../ModalManager.react';
 import NoInternetScreen from '../NoInternetScreen.react';
 import React, { Component } from 'react';
+import RecommendationScreen from '../RecommendationScreen.react';
 import Tabs from './Tabs.react';
 
 import invariant from 'invariant';
@@ -72,6 +72,11 @@ class App extends Component<Props> {
         break;
       }
 
+      case 'RECOMMENDATION': {
+        mainContent = <RecommendationScreen />;
+        break;
+      }
+
       default:
         invariant(false, 'Unrecognized app root %s', root);
     }
@@ -88,9 +93,7 @@ class App extends Component<Props> {
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.main} onLayout={this._onLayoutSafeAreaSubview}>
-            <If predicate={root === 'MAIN'}>
-              <ModalManager />
-            </If>
+            <ModalManager />
             {mainContent}
           </View>
           <View style={bottomAreaStyles} />

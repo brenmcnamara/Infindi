@@ -49,24 +49,31 @@ const primary = {
 };
 
 const error = {
+  color: Colors.ERROR,
   fontFamily: 'Lato-Regular',
   fontSize: 16,
-  color: Colors.ERROR,
+};
+
+const bullet = {
+  color: Colors.TEXT_NORMAL,
+  fontFamily: 'Lato-Regular',
+  fontSize: 40,
+  lineHeight: 22,
 };
 
 const primaryButton = {
-  fontFamily: 'Lato-Regular',
   color: Colors.TEXT_PRIMARY,
+  fontFamily: 'Lato-Regular',
 };
 
 const specialButton = {
-  fontFamily: 'Lato-Regular',
   color: Colors.TEXT_SPECIAL,
+  fontFamily: 'Lato-Regular',
 };
 
 const normalButton = {
-  fontFamily: 'Lato-Light',
   color: Colors.TEXT_FAINT,
+  fontFamily: 'Lato-Light',
 };
 
 const largeFontSize = 18;
@@ -88,6 +95,7 @@ export default {
   smallWithEmphasis,
   primary,
   error,
+  bullet,
 
   normalButton,
   primaryButton,

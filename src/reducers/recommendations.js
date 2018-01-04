@@ -8,11 +8,13 @@ import type { PureAction } from '../typesDEPRECATED/redux';
 export type State = {
   +focusedIndex: number | 'EMPTY',
   +ordering: Array<ID>,
+  +selectedID: ID | null,
 };
 
 const DEFAULT_STATE = {
   focusedIndex: 0,
   ordering: ['OPEN_HSA_ACCOUNT', 'OPEN_ROTH_ACCOUNT'],
+  selectedID: null,
 };
 
 export default function recommendations(
@@ -39,6 +41,24 @@ export default function recommendations(
         recommendationID,
       );
       return { ...state, focusedIndex };
+    }
+
+    case 'SELECT_RECOMMENDATION': {
+      return {
+        ...state,
+        selectedID: action.recommendationID,
+      };
+    }
+
+    case 'UNSELECT_CURRENT_RECOMMENDATION': {
+      invariant(
+        state.selectedID,
+        'Expected there to be a selected recommendation',
+      );
+      return {
+        ...state,
+        selectedID: null,
+      };
     }
   }
   return state;
