@@ -10,9 +10,7 @@ import { StyleSheet, Text, View } from 'react-native';
 const BULLET_SIZE = 6;
 
 export type Props = {
-  onContribute: () => any,
   onLearnMoreAboutHSAs: () => any,
-  onNoThanks: () => any,
 };
 
 export default class InitialScreen extends Component<Props> {
@@ -65,21 +63,6 @@ export default class InitialScreen extends Component<Props> {
             type="SPECIAL"
           />
         </View>
-        <View style={styles.footer}>
-          <TextButton
-            onPress={this.props.onNoThanks}
-            size="LARGE"
-            text="NO THANKS"
-            type="NORMAL"
-          />
-          <View style={styles.buttonSpacer} />
-          <TextButton
-            onPress={this.props.onContribute}
-            size="LARGE"
-            text="CONTRIBUTE"
-            type="PRIMARY"
-          />
-        </View>
       </View>
     );
   }
@@ -120,10 +103,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 
-  buttonSpacer: {
-    flex: 1,
-  },
-
   finAnalysis: {
     alignItems: 'center',
     marginHorizontal: 24,
@@ -133,15 +112,6 @@ const styles = StyleSheet.create({
   finAnalysisText: {
     color: Colors.TEXT_PRIMARY,
     textAlign: 'center',
-  },
-
-  footer: {
-    alignItems: 'center',
-    borderColor: Colors.BORDER,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    height: 60,
-    paddingHorizontal: 8,
   },
 
   menu: {

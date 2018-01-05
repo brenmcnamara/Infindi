@@ -1,7 +1,7 @@
 /* @flow */
 
-import Colors from '../design/colors';
-import Icons from '../design/icons';
+import Colors from '../../design/colors';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
 
 import { Image, StyleSheet, Text, View } from 'react-native';

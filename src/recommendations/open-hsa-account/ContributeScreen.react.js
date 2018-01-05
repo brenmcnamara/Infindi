@@ -5,7 +5,7 @@ import Unimplemented from '../../components/shared/Unimplemented.react';
 
 export type Props = {};
 
-export default class LearnMoreAboutHSAsScreen extends Component<Props> {
+export default class ContributeScreen extends Component<Props> {
   render() {
     return <Unimplemented />;
   }

@@ -1,5 +1,7 @@
 /* @flow */
 
+import ContributeScreen from './ContributeScreen.react';
+import Footer from '../Footer.react';
 import Header from '../Header.react';
 import InitialScreen from './InitialScreen.react';
 import LearnMoreAboutHSAsScreen from './LearnMoreAboutHSAsScreen.react';
@@ -18,6 +20,9 @@ type State = {
 
 export type Props = RecommendationComponentProps;
 
+// TODO: Clicking on the back button twice quickly will break navigation. Need
+// to fix this. May want to set some instance variable to indicate animation
+// is happenning.
 class OpenHSAAccount extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -27,9 +32,7 @@ class OpenHSAAccount extends Component<Props, State> {
           component: InitialScreen,
           navigationBarHidden: true,
           passProps: {
-            onContribute: this._onContribute,
             onLearnMoreAboutHSAs: this._onLearnMoreAboutHSAs,
-            onNoThanks: this.props.onNoThanks,
           },
           title: Template.title,
         },
@@ -74,6 +77,7 @@ class OpenHSAAccount extends Component<Props, State> {
 
   render() {
     const { navStack } = this.state;
+    const top = navStack[navStack.length - 1];
     return (
       <View style={styles.root}>
         <Header
@@ -82,11 +86,24 @@ class OpenHSAAccount extends Component<Props, State> {
           title={Template.title}
         />
         <NavigatorIOS initialRoute={navStack[0]} ref="nav" style={styles.nav} />
+        <Footer
+          callToActionText="CONTRIBUTE"
+          onCallToAction={this._onContribute}
+          onDismiss={this.props.onNoThanks}
+          shouldShowCallToAction={top.component !== ContributeScreen}
+        />
       </View>
     );
   }
 
-  _onContribute = (): void => {};
+  _onContribute = (): void => {
+    const navStack = this.state.navStack.slice();
+    navStack.push({
+      component: ContributeScreen,
+      navigationBarHidden: true,
+    });
+    this.setState({ navStack });
+  };
 
   _onLearnMoreAboutHSAs = (): void => {
     const navStack = this.state.navStack.slice();
