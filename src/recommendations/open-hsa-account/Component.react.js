@@ -20,10 +20,17 @@ type State = {
 
 export type Props = RecommendationComponentProps;
 
+// NOTE: This is a guess, need to keep this updated. If there is a way to
+// programatically get this value, that would be much better :)
+const NAVIGATOR_TRANSITION_MILLIS = 500;
+
 // TODO: Clicking on the back button twice quickly will break navigation. Need
 // to fix this. May want to set some instance variable to indicate animation
 // is happenning.
 class OpenHSAAccount extends Component<Props, State> {
+  _navigatorTransitionTimeout: number | null = null;
+  _isNavigatorTransitioning: bool = false;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -75,6 +82,11 @@ class OpenHSAAccount extends Component<Props, State> {
     }
   }
 
+  componentWIllUnmount(): void {
+    clearTimeout(this._navigatorTransitionTimeout);
+    this._navigatorTransitionTimeout = null;
+  }
+
   render() {
     const { navStack } = this.state;
     const top = navStack[navStack.length - 1];
@@ -97,6 +109,10 @@ class OpenHSAAccount extends Component<Props, State> {
   }
 
   _onContribute = (): void => {
+    if (this._isNavigatorTransitioning) {
+      return;
+    }
+    this._startNavigatorTransition();
     const navStack = this.state.navStack.slice();
     navStack.push({
       component: ContributeScreen,
@@ -106,6 +122,10 @@ class OpenHSAAccount extends Component<Props, State> {
   };
 
   _onLearnMoreAboutHSAs = (): void => {
+    if (this._isNavigatorTransitioning) {
+      return;
+    }
+    this._startNavigatorTransition();
     const navStack = this.state.navStack.slice();
     navStack.push({
       component: LearnMoreAboutHSAsScreen,
@@ -116,10 +136,25 @@ class OpenHSAAccount extends Component<Props, State> {
   };
 
   _onPressBack = (): void => {
+    if (this._isNavigatorTransitioning) {
+      return;
+    }
+    this._startNavigatorTransition();
     const navStack = this.state.navStack.slice();
     navStack.pop();
     this.setState({ navStack });
   };
+
+  // NOTE: The purpose of this is to avoid a bug where a double click on a
+  // navigation back button resulting in the state to go back twice but the
+  // ios navigator to only go back once.
+  _startNavigatorTransition(): void {
+    clearTimeout(this._navigatorTransitionTimeout);
+    this._isNavigatorTransitioning = true;
+    this._navigatorTransitionTimeout = setTimeout(() => {
+      this._isNavigatorTransitioning = false;
+    }, NAVIGATOR_TRANSITION_MILLIS);
+  }
 }
 
 export default OpenHSAAccount;
