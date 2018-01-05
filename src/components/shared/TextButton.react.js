@@ -59,11 +59,13 @@ export default class TextButton extends Component<Props> {
             flex: 1,
             justifyContent: 'center',
           }
-        : null,
+        : {
+            alignSelf: 'center',
+          },
     ];
     return (
       <TouchableOpacity
-        activeOpacity={this.props.isDisabled ? 1.0 : 0.2}
+        disabled={this.props.isDisabled}
         onPress={this._onPress}
         style={rootStyles}
       >
