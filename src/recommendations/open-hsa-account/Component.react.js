@@ -24,9 +24,6 @@ export type Props = RecommendationComponentProps;
 // programatically get this value, that would be much better :)
 const NAVIGATOR_TRANSITION_MILLIS = 500;
 
-// TODO: Clicking on the back button twice quickly will break navigation. Need
-// to fix this. May want to set some instance variable to indicate animation
-// is happenning.
 class OpenHSAAccount extends Component<Props, State> {
   _navigatorTransitionTimeout: number | null = null;
   _isNavigatorTransitioning: bool = false;
@@ -82,7 +79,7 @@ class OpenHSAAccount extends Component<Props, State> {
     }
   }
 
-  componentWIllUnmount(): void {
+  componentWillUnmount(): void {
     clearTimeout(this._navigatorTransitionTimeout);
     this._navigatorTransitionTimeout = null;
   }

@@ -1,8 +1,8 @@
 /* @flow */
 
 import Icons from '../../design/icons';
-import Template from './Template';
 
 import createCard from '../createCard';
+import { Template } from './Metadata';
 
 export default createCard(Template, Icons.InvestmentPlant);
