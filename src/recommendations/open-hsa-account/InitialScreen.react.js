@@ -1,13 +1,12 @@
 /* @flow */
 
+import BulletPoint from '../BulletPoint.react';
 import Colors from '../../design/colors';
 import React, { Component } from 'react';
 import TextButton from '../../components/shared/TextButton.react';
 import TextDesign from '../../design/text';
 
 import { StyleSheet, Text, View } from 'react-native';
-
-const BULLET_SIZE = 6;
 
 export type Props = {
   onLearnMoreAboutHSAs: () => any,
@@ -29,32 +28,32 @@ export default class InitialScreen extends Component<Props> {
           </Text>
         </View>
         <View style={styles.bullets}>
-          <Bullet>
+          <BulletPoint>
             <Text style={TextDesign.normal}>
               Contributions are tax deductible
             </Text>
-          </Bullet>
-          <Bullet>
+          </BulletPoint>
+          <BulletPoint>
             <Text style={TextDesign.normal}>
               Gains and withdrawals are tax free
             </Text>
-          </Bullet>
-          <Bullet>
+          </BulletPoint>
+          <BulletPoint>
             <Text style={TextDesign.normal}>
               Applies to medical expenses for yourself, your spouse, and your
               children
             </Text>
-          </Bullet>
-          <Bullet>
+          </BulletPoint>
+          <BulletPoint>
             <Text style={TextDesign.normal}>
               Grow your investment over time
             </Text>
-          </Bullet>
-          <Bullet>
+          </BulletPoint>
+          <BulletPoint>
             <Text style={TextDesign.normal}>
               Only applies to high-deductible health plans (HDHPs)
             </Text>
-          </Bullet>
+          </BulletPoint>
         </View>
         <View style={styles.menu}>
           <TextButton
@@ -68,36 +67,7 @@ export default class InitialScreen extends Component<Props> {
   }
 }
 
-const Bullet = (props: { children?: ?any }) => (
-  <View style={styles.bullet}>
-    <View style={styles.bulletPointContainer}>
-      <View style={styles.bulletPoint} />
-    </View>
-    {props.children}
-  </View>
-);
-
 const styles = StyleSheet.create({
-  bullet: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    marginBottom: 12,
-    marginHorizontal: 24,
-  },
-
-  bulletPoint: {
-    backgroundColor: Colors.TEXT_NORMAL,
-    borderRadius: BULLET_SIZE / 2,
-    height: BULLET_SIZE,
-    width: BULLET_SIZE,
-  },
-
-  bulletPointContainer: {
-    height: 22, // Line height of text
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-
   bullets: {
     flex: 1,
     marginTop: 16,
