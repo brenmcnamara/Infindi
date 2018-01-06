@@ -36,7 +36,10 @@ export default class OpenHSAAccount extends Component<Props, State> {
         {
           component: InitialScreen,
           navigationBarHidden: true,
-          passProps: {},
+          passProps: {
+            onLearnMoreAbout401k: this._onLearnMoreAbout401k,
+            onWhySaveForRetirement: this._onWhySaveForRetirement,
+          },
           title: Template.title,
         },
       ],
@@ -125,6 +128,14 @@ export default class OpenHSAAccount extends Component<Props, State> {
     const navStack = this.state.navStack.slice();
     navStack.pop();
     this.setState({ navStack });
+  };
+
+  _onLearnMoreAbout401k = (): void => {
+    // TODO: IMPLEMENT ME!
+  };
+
+  _onWhySaveForRetirement = (): void => {
+    // TODO: IMPLEMENT ME!
   };
 
   // NOTE: The purpose of this is to avoid a bug where a double click on a
