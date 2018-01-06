@@ -101,7 +101,8 @@ class RecommendationPager extends Component<Props, State> {
     );
 
     const fullWidth = RecommendationCardSize.width + RecommendationCardSpacing;
-    if (focusedIndex === 'EMPTY') {
+    const isOnlyRecommendation = recommendationIDs.length === 1;
+    if (focusedIndex === 'EMPTY' || isOnlyRecommendation) {
       this._initialXOffset = 0;
     } else if (focusedIndex === recommendationIDs.length - 1) {
       // Last element in the list is an edge case.
