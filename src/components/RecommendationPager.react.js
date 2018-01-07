@@ -1,15 +1,21 @@
 /* @flow */
 
+import Icons from '../design/icons';
 import React, { Component } from 'react';
+import TextDesign from '../design/text';
 
 import invariant from 'invariant';
 
+import { ActionItemPagerNullState } from '../../content';
 import {
   Animated,
   Dimensions,
   Easing,
+  Image,
   ScrollView,
   StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { Cards as RecommendationCards } from '../recommendations';
 import { connect } from 'react-redux';
@@ -129,6 +135,29 @@ class RecommendationPager extends Component<Props, State> {
   }
 
   render() {
+    return this.state.recommendationIDs.length > 0
+      ? this._renderPager()
+      : this._renderNullState();
+  }
+
+  _renderNullState() {
+    return (
+      <View style={styles.root}>
+        <View style={styles.null}>
+          <Image
+            resizeMode="contain"
+            source={Icons.Null}
+            style={styles.nullIcon}
+          />
+          <Text style={[TextDesign.normalWithEmphasis, styles.nullText]}>
+            {ActionItemPagerNullState}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  _renderPager() {
     const { deleteStage, isScrolling } = this.state;
     return (
       <ScrollView
@@ -402,6 +431,22 @@ const Page = (props: PageProps) => {
 };
 
 const styles = StyleSheet.create({
+  null: {
+    alignItems: 'center',
+    height: RecommendationCardSize.height,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+
+  nullIcon: {
+    height: 75,
+    marginBottom: 32,
+  },
+
+  nullText: {
+    textAlign: 'center',
+  },
+
   page: {
     marginRight: RecommendationCardSpacing,
   },

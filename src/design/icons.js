@@ -10,6 +10,7 @@ import Info from '../../assets/icons/Info-20x20.png';
 import InvestmentPlant from '../../assets/icons/InvestmentPlant-147x114.png';
 import LeftArrow from '../../assets/icons/LeftArrow-18x15.png';
 import List from '../../assets/icons/List-20x11.png';
+import Null from '../../assets/icons/Null-113x133.png';
 import Power from '../../assets/icons/Power-28x29.png';
 import PiggyBank from '../../assets/icons/PiggyBank-112x101.png';
 import UserFemale from '../../assets/icons/UserFemale-22x22.png';
@@ -27,6 +28,7 @@ export default {
   InvestmentPlant,
   LeftArrow,
   List,
+  Null,
   PiggyBank,
   Power,
   UserFemale,

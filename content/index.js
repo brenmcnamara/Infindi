@@ -45,6 +45,14 @@ export const NoInternet = cleanupWhitespace(`
   app.
 `);
 
+/**
+ * Message that shows when the user has no action items on the home page.
+ */
+export const ActionItemPagerNullState = cleanupWhitespace(`
+  Only one sentence explaining that the user has no action items at the
+  moment.
+`);
+
 // -----------------------------------------------------------------------------
 //
 // UTILITIES
