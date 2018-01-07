@@ -9,6 +9,7 @@ import TextDesign from '../../design/text';
 import { StyleSheet, Text, View } from 'react-native';
 
 export type Props = {
+  onLearnAboutHDHPs: () => any,
   onLearnMoreAboutHSAs: () => any,
 };
 
@@ -50,9 +51,13 @@ export default class InitialScreen extends Component<Props> {
             </Text>
           </BulletPoint>
           <BulletPoint>
-            <Text style={TextDesign.normal}>
-              Only applies to high-deductible health plans (HDHPs)
-            </Text>
+            <TextButton
+              layoutType="INLINE_BLOCK"
+              onPress={this.props.onLearnAboutHDHPs}
+              size="MEDIUM"
+              type="SPECIAL"
+              text="Only applies to high-deductible health plans (HDHPs)"
+            />
           </BulletPoint>
         </View>
         <View style={styles.menu}>

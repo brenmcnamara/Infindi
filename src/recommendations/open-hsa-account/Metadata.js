@@ -9,3 +9,9 @@ export const Template: RecommendationTemplate = {
 };
 
 export const CallToActionText = 'SIGN ME UP';
+
+export const LearnMoreAboutHSAsURI =
+  'https://en.wikipedia.org/wiki/Health_savings_account';
+
+export const LearnAboutHPHPDsURI =
+  'https://en.wikipedia.org/wiki/High-deductible_health_plan';

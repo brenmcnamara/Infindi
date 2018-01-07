@@ -1,5 +1,6 @@
 /* @flow */
 
+import Colors from '../design/colors';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
@@ -18,7 +19,12 @@ import { NavBarHeight } from '../design/layout';
 export type Props = {
   canNavigateBack: bool,
   onPressBack: () => any,
+  showHairline: bool,
   title: string,
+};
+
+type DefaultProps = {
+  showHairline: bool,
 };
 
 const BackButtonWidth = 18;
@@ -27,6 +33,10 @@ const BackButtonShift = 30;
 const TransitionMillis = 400;
 
 export default class Header extends Component<Props> {
+  static defaultProps: DefaultProps = {
+    showHairline: false,
+  };
+
   _transitionValue: Animated.Value;
 
   constructor(props: Props) {
@@ -75,8 +85,15 @@ export default class Header extends Component<Props> {
       },
     ];
 
+    const rootStyles = [
+      styles.root,
+      this.props.showHairline
+        ? { borderBottomWidth: 1, borderColor: Colors.BORDER }
+        : null,
+    ];
+
     return (
-      <View style={styles.root}>
+      <View style={rootStyles}>
         <Animated.View style={contentStyles}>
           <Animated.View style={titleContainerStyles}>
             <Text style={TextDesign.normalWithEmphasis}>

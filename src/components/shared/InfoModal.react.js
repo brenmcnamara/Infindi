@@ -45,9 +45,9 @@ class InfoModal extends Component<Props> {
           <View style={styles.content}>{this.props.children}</View>
           <View style={styles.buttonContainer}>
             <TextButton
+              layoutType="FILL_PARENT"
               onPress={this._onPressDismiss}
               size="SMALL"
-              shouldFillParent={true}
               text="Got it!"
               type="PRIMARY"
             />

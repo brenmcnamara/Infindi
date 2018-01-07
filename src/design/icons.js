@@ -13,6 +13,7 @@ import List from '../../assets/icons/List-20x11.png';
 import Null from '../../assets/icons/Null-113x133.png';
 import Power from '../../assets/icons/Power-28x29.png';
 import PiggyBank from '../../assets/icons/PiggyBank-112x101.png';
+import Question from '../../assets/icons/Question-20x20.png';
 import UserFemale from '../../assets/icons/UserFemale-22x22.png';
 import UserMale from '../../assets/icons/UserMale-22x22.png';
 import Wifi from '../../assets/icons/Wifi-133x100.png';
@@ -31,6 +32,7 @@ export default {
   Null,
   PiggyBank,
   Power,
+  Question,
   UserFemale,
   UserMale,
   Wifi,

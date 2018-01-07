@@ -46,16 +46,20 @@ export default class InitialScreen extends Component<Props> {
           </BulletPoint>
         </View>
         <View style={styles.menu}>
-          <TextButton
-            onPress={this.props.onLearnMoreAbout401k}
-            text="Learn more about 401k"
-            type="SPECIAL"
-          />
-          <TextButton
-            onPress={this.props.onWhySaveForRetirement}
-            text="Why should I save for retirement?"
-            type="SPECIAL"
-          />
+          <View style={styles.menuItem}>
+            <TextButton
+              onPress={this.props.onLearnMoreAbout401k}
+              text="Learn more about 401k"
+              type="SPECIAL"
+            />
+          </View>
+          <View style={styles.menuItem}>
+            <TextButton
+              onPress={this.props.onWhySaveForRetirement}
+              text="Why should I save for retirement?"
+              type="SPECIAL"
+            />
+          </View>
         </View>
       </View>
     );
@@ -81,6 +85,10 @@ const styles = StyleSheet.create({
 
   menu: {
     marginVertical: 16,
+  },
+
+  menuItem: {
+    marginTop: 16,
   },
 
   root: {

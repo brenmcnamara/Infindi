@@ -64,16 +64,19 @@ const bullet = {
 const primaryButton = {
   color: Colors.TEXT_PRIMARY,
   fontFamily: 'Lato-Regular',
+  lineHeight: 22,
 };
 
 const specialButton = {
   color: Colors.TEXT_SPECIAL,
   fontFamily: 'Lato-Regular',
+  lineHeight: 22,
 };
 
 const normalButton = {
   color: Colors.TEXT_FAINT,
   fontFamily: 'Lato-Light',
+  lineHeight: 22,
 };
 
 const largeFontSize = 18;

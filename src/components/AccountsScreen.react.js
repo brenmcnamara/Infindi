@@ -161,8 +161,8 @@ class AccountsScreen extends Component<Props> {
       >
         <Footer style={styles.footer}>
           <TextButton
+            layoutType="FILL_PARENT"
             onPress={this._onPressAddAccount}
-            shouldFillParent={true}
             size="LARGE"
             text="ADD ACCOUNT"
             type="PRIMARY"

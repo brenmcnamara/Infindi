@@ -1,12 +1,14 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import Unimplemented from '../../components/shared/Unimplemented.react';
+
+import { LearnMoreAboutHSAsURI } from './Metadata';
+import { WebView } from 'react-native';
 
 export type Props = {};
 
 export default class LearnMoreAboutHSAsScreen extends Component<Props> {
   render() {
-    return <Unimplemented />;
+    return <WebView source={{ uri: LearnMoreAboutHSAsURI }} />;
   }
 }

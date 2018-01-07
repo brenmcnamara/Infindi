@@ -119,6 +119,7 @@ export default class Footer extends Component<Props, State> {
     return (
       <Animated.View style={containerStyles}>
         <TextButton
+          layoutType="FILL_PARENT"
           onPress={props.onDismiss}
           size="LARGE"
           text="NO THANKS"
@@ -144,6 +145,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.BORDER,
     borderTopWidth: 1,
     height: 60,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
   },
 });

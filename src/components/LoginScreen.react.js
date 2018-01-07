@@ -123,9 +123,9 @@ class LoginScreen extends Component<Props, State> {
             <ActivityIndicator size="small" />
           ) : (
             <TextButton
+              layoutType="FILL_PARENT"
               onPress={this._onPressLogin}
               size="LARGE"
-              shouldFillParent={true}
               text="LOGIN"
               type="PRIMARY"
             />

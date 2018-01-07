@@ -108,26 +108,14 @@ export default class OpenHSAAccount extends Component<Props, State> {
   }
 
   _onContribute = (): void => {
-    if (this._isNavigatorTransitioning) {
-      return;
-    }
-    this._startNavigatorTransition();
-    const navStack = this.state.navStack.slice();
-    navStack.push({
+    this._requestPush({
       component: ContributeScreen,
       navigationBarHidden: true,
     });
-    this.setState({ navStack });
   };
 
   _onPressBack = (): void => {
-    if (this._isNavigatorTransitioning) {
-      return;
-    }
-    this._startNavigatorTransition();
-    const navStack = this.state.navStack.slice();
-    navStack.pop();
-    this.setState({ navStack });
+    this._requestPop();
   };
 
   _onLearnMoreAbout401k = (): void => {
@@ -137,6 +125,34 @@ export default class OpenHSAAccount extends Component<Props, State> {
   _onWhySaveForRetirement = (): void => {
     // TODO: IMPLEMENT ME!
   };
+
+  // ---------------------------------------------------------------------------
+  //
+  // NAVIGATION UTILS
+  //
+  // ---------------------------------------------------------------------------
+
+  _requestPush(payload: *): bool {
+    if (this._isNavigatorTransitioning) {
+      return false;
+    }
+    this._startNavigatorTransition();
+    const navStack = this.state.navStack.slice();
+    navStack.push(payload);
+    this.setState({ navStack });
+    return true;
+  }
+
+  _requestPop(): bool {
+    if (this._isNavigatorTransitioning) {
+      return false;
+    }
+    this._startNavigatorTransition();
+    const navStack = this.state.navStack.slice();
+    navStack.pop();
+    this.setState({ navStack });
+    return true;
+  }
 
   // NOTE: The purpose of this is to avoid a bug where a double click on a
   // navigation back button resulting in the state to go back twice but the

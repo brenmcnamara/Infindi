@@ -3,16 +3,21 @@
 import React, { Component } from 'react';
 import TextDesign from '../../design/text';
 
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 export type ButtonType = 'PRIMARY' | 'NORMAL' | 'SPECIAL';
 export type ButtonSize = 'SMALL' | 'MEDIUM' | 'LARGE';
+export type LayoutType =
+  | 'FILL_PARENT'
+  | 'INLINE'
+  | 'INLINE_BLOCK'
+  | 'INLINE_BLOCK_CENTERED';
 
 export type Props = {
   // TODO: Change this to "isEnabled"
   isDisabled: bool,
+  layoutType: LayoutType,
   onPress: () => any,
-  shouldFillParent: bool,
   size: 'LARGE' | 'MEDIUM' | 'SMALL',
   text: string,
   type: 'PRIMARY' | 'NORMAL' | 'SPECIAL',
@@ -20,23 +25,25 @@ export type Props = {
 
 export type DefaultProps = {
   isDisabled: bool,
+  layoutType: LayoutType,
   size: ButtonSize,
-  shouldFillParent: bool,
   type: ButtonType,
 };
 
 export default class TextButton extends Component<Props> {
   static defaultProps: DefaultProps = {
     isDisabled: false,
+    layoutType: 'INLINE_BLOCK_CENTERED',
     size: 'MEDIUM',
-    shouldFillParent: false,
     type: 'NORMAL',
   };
 
   render() {
-    const { size, text, type } = this.props;
+    const { layoutType, size, text, type } = this.props;
     const buttonStyles = [
-      styles.text,
+      layoutType === 'INLINE_BLOCK_CENTERED' || layoutType === 'FILL_PARENT'
+        ? { textAlign: 'center' }
+        : null,
       {
         fontSize:
           size === 'LARGE'
@@ -51,9 +58,8 @@ export default class TextButton extends Component<Props> {
           ? TextDesign.specialButton
           : TextDesign.normalButton,
     ];
-    const rootStyles = [
-      styles.root,
-      this.props.shouldFillParent
+    const rootStyles =
+      layoutType === 'FILL_PARENT'
         ? {
             alignSelf: 'stretch',
             flex: 1,
@@ -61,9 +67,17 @@ export default class TextButton extends Component<Props> {
           }
         : {
             alignSelf: 'center',
-          },
-    ];
-    return (
+          };
+
+    // TODO: Inline text button is not really usable without the touchable
+    // opacity. Need to figure out how to add a touchable opacity without a
+    // view. Need to register on press down and press up events of text
+    // element, which the current api does not allow us to do.
+    return layoutType === 'INLINE' ? (
+      <Text onPress={this._onPress} style={buttonStyles}>
+        {text}
+      </Text>
+    ) : (
       <TouchableOpacity
         disabled={this.props.isDisabled}
         onPress={this._onPress}
@@ -80,12 +94,3 @@ export default class TextButton extends Component<Props> {
     }
   };
 }
-
-const styles = StyleSheet.create({
-  root: {},
-
-  text: {
-    textAlign: 'center',
-    padding: 8,
-  },
-});
