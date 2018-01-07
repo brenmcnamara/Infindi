@@ -8,8 +8,8 @@ import React, { Component } from 'react';
 
 import invariant from 'invariant';
 
+import { CallToActionText, Template } from './Metadata';
 import { NavigatorIOS, StyleSheet, View } from 'react-native';
-import { Template } from './Metadata';
 
 import type { RecommendationComponentProps } from '..';
 
@@ -98,7 +98,7 @@ export default class OpenHSAAccount extends Component<Props, State> {
         />
         <NavigatorIOS initialRoute={navStack[0]} ref="nav" style={styles.nav} />
         <Footer
-          callToActionText="CONTRIBUTE"
+          callToActionText={CallToActionText}
           onCallToAction={this._onContribute}
           onDismiss={this.props.onNoThanks}
           shouldShowCallToAction={top.component !== ContributeScreen}

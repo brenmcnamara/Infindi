@@ -7,3 +7,5 @@ export const Template: RecommendationTemplate = {
   subTitle: 'Cut your taxes while saving for your health',
   title: 'Open a Health Savings Account',
 };
+
+export const CallToActionText = 'SIGN ME UP';

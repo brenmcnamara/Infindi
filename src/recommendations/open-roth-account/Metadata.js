@@ -7,3 +7,5 @@ export const Template: RecommendationTemplate = {
   subTitle: 'The first step towards smart, tax-efficient savings',
   title: 'Contribute to Roth 401k Account',
 };
+
+export const CallToActionText = ' CONTRIBUTE';
