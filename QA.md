@@ -3,6 +3,8 @@
 **We need to maintain a high quality of usability for this app. This document outlines
 manual testing steps to make sure everything is working as expected.**
 
+## Home Page
+
 #### "No Thanks" on the First Action Item
 
 *NOTE: Please make sure there is at least 3 action items on the home page for this test*
@@ -14,7 +16,7 @@ manual testing steps to make sure everything is working as expected.**
   - The new first action item should be white and should be in the exact same position as the
     action item that was removed
 
-### "No Thanks" on the Last Action Item
+#### "No Thanks" on the Last Action Item
 
 *NOTE: Please make sure there is at least 3 action items on the home page for this test*
 
@@ -25,7 +27,7 @@ manual testing steps to make sure everything is working as expected.**
   - The new last action item should be white and should be in the exact same position as the
     action item that was removed
   
-### "No Thanks" on an Action Item that is Neither First nor Last
+#### "No Thanks" on an Action Item that is Neither First nor Last
 
 *NOTE: Please make sure there are at least 3 action items on the home page for this test*
 
@@ -35,6 +37,8 @@ manual testing steps to make sure everything is working as expected.**
   - Action items should shift into place (make sure animation is present)
   - The new action item in the middle should be white and should be in the exact same position
     as the action item that was removed
+
+## Offline Mode
 
 #### No Internet Connection While Logged Out
 
