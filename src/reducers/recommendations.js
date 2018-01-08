@@ -13,7 +13,7 @@ export type State = {
 
 const DEFAULT_STATE = {
   focusedIndex: 0,
-  ordering: ['OPEN_HSA_ACCOUNT', 'OPEN_ROTH_ACCOUNT'],
+  ordering: ['OPEN_HSA_ACCOUNT', 'REVERT_OVERDRAFT_FEE', 'OPEN_ROTH_ACCOUNT'],
   selectedID: null,
 };
 

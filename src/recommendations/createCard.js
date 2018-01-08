@@ -76,9 +76,7 @@ class Card extends Component<Props> {
           <Text style={[TextDesign.normalWithEmphasis]}>{template.title}</Text>
         </View>
         <View style={styles.subHeader}>
-          <Text style={[TextDesign.primary]}>
-            X months closer to financial freedom
-          </Text>
+          <Text style={[TextDesign.primary]}>{template.savingsStatement}</Text>
         </View>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
@@ -139,6 +137,7 @@ const styles = StyleSheet.create({
   },
 
   iconContainer: {
+    justifyContent: 'center',
     marginTop: 16,
   },
 
@@ -150,7 +149,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginHorizontal: 4,
-    marginTop: 16,
   },
 
   root: {

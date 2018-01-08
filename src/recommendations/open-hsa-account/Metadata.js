@@ -4,6 +4,7 @@ import type { RecommendationTemplate } from '..';
 
 export const Template: RecommendationTemplate = {
   id: 'OPEN_HSA_ACCOUNT',
+  savingsStatement: 'X months closer to financial freedom',
   subTitle: 'Cut your taxes while saving for your health',
   title: 'Open a Health Savings Account',
 };

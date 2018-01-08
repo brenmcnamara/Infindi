@@ -29,6 +29,13 @@ const normalWithEmphasis = {
   fontFamily: 'Lato-Regular',
 };
 
+// TODO: Rename to mediumWithCriticalEmphasis
+const normalWithCriticalEmphasis = {
+  ...normal,
+  color: Colors.ERROR,
+  fontFamily: 'Lato-Regular',
+};
+
 const small = {
   color: Colors.TEXT_FAINT,
   fontFamily: 'Lato-Light',
@@ -94,6 +101,7 @@ export default {
   header3,
   normal,
   normalWithEmphasis,
+  normalWithCriticalEmphasis,
   small,
   smallWithEmphasis,
   primary,

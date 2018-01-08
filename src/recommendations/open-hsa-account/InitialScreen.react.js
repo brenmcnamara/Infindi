@@ -7,6 +7,7 @@ import TextButton from '../../components/shared/TextButton.react';
 import TextDesign from '../../design/text';
 
 import { StyleSheet, Text, View } from 'react-native';
+import { Template } from './Metadata';
 
 export type Props = {
   onLearnAboutHDHPs: () => any,
@@ -19,7 +20,7 @@ export default class InitialScreen extends Component<Props> {
       <View style={styles.root}>
         <View style={styles.finAnalysis}>
           <Text style={[TextDesign.header2, styles.finAnalysisText]}>
-            X Months Closer to Financial Freedom
+            {Template.savingsStatement}
           </Text>
         </View>
         <View style={styles.whatIsHSA}>
