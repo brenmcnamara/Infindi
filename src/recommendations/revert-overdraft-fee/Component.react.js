@@ -13,8 +13,9 @@ import { requestUnimplementedModal } from '../../actions/modal';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { RecommendationComponentProps } from '..';
+import type { ReduxProps } from '../../typesDEPRECATED/redux';
 
-export type Props = RecommendationComponentProps;
+export type Props = ReduxProps & RecommendationComponentProps;
 
 class RevertOverdraftFee extends Component<Props> {
   render() {
