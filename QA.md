@@ -38,6 +38,20 @@ manual testing steps to make sure everything is working as expected.**
   - The new action item in the middle should be white and should be in the exact same position
     as the action item that was removed
 
+#### "See Details" on an Action Item
+
+*NOTE: Please make sure there are at least 3 action items on the home page for this test*
+
+- Steps:
+  - On the home page, click "See Details" on an action item
+- Expected Result:
+  - The action item card should animate into a full action item component
+  - The animation should look as if it is expanding out from the card you clicked on
+  - *NOTE:* Please try doing this for an action item card that is first in the list, last in the
+    list and somewhere in the middle. Make sure that it appears as though the action item is
+    expanding from the card correctly
+  
+
 ## Offline Mode
 
 #### No Internet Connection While Logged Out
