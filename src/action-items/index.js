@@ -13,7 +13,7 @@ import { Template as RevertOverdraftFeeTemplate } from './revert-overdraft-fee/M
 
 import type { ID } from 'common/src/types/core';
 
-export type RecommendationTemplate = {|
+export type ActionItemTemplate = {|
   +id: ID,
   +savingsStatement: string,
   +subTitle: string,
@@ -26,7 +26,7 @@ export const Templates = {
   [RevertOverdraftFeeTemplate.id]: RevertOverdraftFeeTemplate,
 };
 
-export type RecommendationCardProps = {
+export type ActionItemCardProps = {
   +enableUserInteraction: bool,
   +isFocused: bool,
   +onNoThanks: () => any,
@@ -39,7 +39,7 @@ export const Cards = {
   [RevertOverdraftFeeTemplate.id]: RevertOverdraftFeeCard,
 };
 
-export type RecommendationComponentProps = {
+export type ActionItemComponentProps = {
   +onNoThanks: () => any,
 };
 

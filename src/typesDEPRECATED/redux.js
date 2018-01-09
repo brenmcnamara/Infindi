@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { Account } from 'common/src/types/db';
+import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../actions/authentication';
 import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
 import type { Action as Action$Config } from '../actions/config';
@@ -11,7 +12,6 @@ import type { Action as Action$Network } from '../actions/network';
 import type { Action as Action$NetworkMiddleware } from '../middleware/network';
 import type { Action as Action$Plaid } from '../actions/plaid';
 import type { Action as Action$PlaidMiddleware } from '../middleware/plaid';
-import type { Action as Action$Recommendations } from '../actions/recommendations';
 import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
@@ -22,6 +22,7 @@ export type ReduxProps = {
 };
 
 export type PureAction =
+  | Action$ActionItems
   | Action$Auth
   | Action$AuthMiddleware
   | Action$Config
@@ -32,7 +33,6 @@ export type PureAction =
   | Action$NetworkMiddleware
   | Action$Plaid
   | Action$PlaidMiddleware
-  | Action$Recommendations
   | Action$Router
   | Action$Toast
   | Action$ToastMiddleware;

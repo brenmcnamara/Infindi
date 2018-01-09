@@ -17,43 +17,39 @@ const DEFAULT_STATE = {
   selectedID: null,
 };
 
-export default function recommendations(
+export default function actionItems(
   state: State = DEFAULT_STATE,
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'DELETE_RECOMMENDATION': {
-      const { recommendationID } = action;
-      const index = state.ordering.indexOf(recommendationID);
-      invariant(index >= 0, 'Cannot find recommendation: %s', index);
+    case 'DELETE_ACTION_ITEM': {
+      const { actionItemID } = action;
+      const index = state.ordering.indexOf(actionItemID);
+      invariant(index >= 0, 'Cannot find action item: %s', index);
       const ordering = state.ordering.slice();
       ordering.splice(index, 1);
       const focusedIndex = ordering.length === 0 ? 'EMPTY' : state.focusedIndex;
       return { ...state, focusedIndex, ordering };
     }
 
-    case 'FOCUSED_RECOMMENDATION_CHANGE': {
-      const { recommendationID } = action;
-      const focusedIndex = state.ordering.indexOf(recommendationID);
-      invariant(
-        focusedIndex >= 0,
-        'Cannot find recommendation: %s',
-        recommendationID,
-      );
+    case 'FOCUSED_ACTION_ITEM_CHANGE': {
+      const { actionItemID } = action;
+      const focusedIndex = state.ordering.indexOf(actionItemID);
+      invariant(focusedIndex >= 0, 'Cannot find action item: %s', actionItemID);
       return { ...state, focusedIndex };
     }
 
-    case 'SELECT_RECOMMENDATION': {
+    case 'SELECT_ACTION_ITEM': {
       return {
         ...state,
-        selectedID: action.recommendationID,
+        selectedID: action.actionItemID,
       };
     }
 
-    case 'UNSELECT_CURRENT_RECOMMENDATION': {
+    case 'UNSELECT_CURRENT_ACTION_ITEM': {
       invariant(
         state.selectedID,
-        'Expected there to be a selected recommendation',
+        'Expected there to be a selected action item',
       );
       return {
         ...state,

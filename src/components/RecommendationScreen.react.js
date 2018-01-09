@@ -6,9 +6,9 @@ import Screen from './shared/Screen.react';
 
 import invariant from 'invariant';
 
-import { Components } from '../recommendations';
+import { Components } from '../action-items';
 import { connect } from 'react-redux';
-import { unselectCurrentRecommendation } from '../actions/recommendations';
+import { unselectCurrentActionItem } from '../actions/actionItems';
 
 import type { ComponentType } from 'react';
 import type { ID } from 'common/src/types/core';
@@ -17,46 +17,44 @@ import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 type ComponentProps = {};
 
 type ComputedProps = {
-  recommendationID: ID,
+  actionItemID: ID,
 };
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
 // TODO: Add banners here.
-class RecommendationScreen extends Component<Props> {
+class ActionItemScreen extends Component<Props> {
   render() {
-    const { recommendationID } = this.props;
-    const RecommendationComponent = Components[recommendationID];
+    const { actionItemID } = this.props;
+    const ActionItemComponent = Components[actionItemID];
     invariant(
-      RecommendationComponent,
-      'No component found for recommendation %s',
-      recommendationID,
+      ActionItemComponent,
+      'No component found for action item %s',
+      actionItemID,
     );
     return (
       <Screen>
         <Content>
-          <RecommendationComponent onNoThanks={this._onNoThanks} />
+          <ActionItemComponent onNoThanks={this._onNoThanks} />
         </Content>
       </Screen>
     );
   }
 
   _onNoThanks = (): void => {
-    this.props.dispatch(unselectCurrentRecommendation());
+    this.props.dispatch(unselectCurrentActionItem());
   };
 }
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  const recommendationID = state.recommendations.selectedID;
+  const actionItemID = state.actionItems.selectedID;
   invariant(
-    recommendationID,
-    'Trying to show recommendation screen without selected recommendation',
+    actionItemID,
+    'Trying to show action item screen without selected action item',
   );
   return {
-    recommendationID,
+    actionItemID,
   };
 }
 
-export default (connect(mapReduxStateToProps)(
-  RecommendationScreen,
-): ComponentType<ComponentProps>);
+export default (connect(mapReduxStateToProps)(ActionItemScreen): ComponentType<ComponentProps,>);

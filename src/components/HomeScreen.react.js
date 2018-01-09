@@ -1,8 +1,8 @@
 /* @flow */
 
+import ActionItemPager from './ActionItemPager.react';
 import BannerManager from './shared/BannerManager.react';
 import Content from './shared/Content.react';
-import RecommendationPager from './RecommendationPager.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 
@@ -20,8 +20,8 @@ class HomeScreen extends Component<Props> {
         <Content>
           <BannerManager channels={['CORE']} managerKey="HOME" />
           <View style={styles.placeholder} />
-          <View style={styles.recommendationContainer}>
-            <RecommendationPager />
+          <View>
+            <ActionItemPager />
           </View>
         </Content>
       </Screen>
@@ -33,8 +33,6 @@ const styles = StyleSheet.create({
   placeholder: {
     flex: 1,
   },
-
-  recommendationContainer: {},
 });
 
 export default connect()(HomeScreen);

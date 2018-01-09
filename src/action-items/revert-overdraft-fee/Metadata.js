@@ -1,8 +1,8 @@
 /* @flow */
 
-import type { RecommendationTemplate } from '..';
+import type { ActionItemTemplate } from '..';
 
-export const Template: RecommendationTemplate = {
+export const Template: ActionItemTemplate = {
   id: 'REVERT_OVERDRAFT_FEE',
   savingsStatement: '',
   subTitle: 'Call Wells Fargo now!',

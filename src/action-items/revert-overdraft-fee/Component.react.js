@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
 import { requestUnimplementedModal } from '../../actions/modal';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { RecommendationComponentProps } from '..';
+import type { ActionItemComponentProps } from '..';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
 
-export type Props = ReduxProps & RecommendationComponentProps;
+export type Props = ReduxProps & ActionItemComponentProps;
 
 class RevertOverdraftFee extends Component<Props> {
   render() {

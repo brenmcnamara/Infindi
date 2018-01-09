@@ -1,8 +1,8 @@
 /* @flow */
 
-import type { RecommendationTemplate } from '..';
+import type { ActionItemTemplate } from '..';
 
-export const Template: RecommendationTemplate = {
+export const Template: ActionItemTemplate = {
   id: 'OPEN_HSA_ACCOUNT',
   savingsStatement: 'X months closer to financial freedom',
   subTitle: 'Cut your taxes while saving for your health',

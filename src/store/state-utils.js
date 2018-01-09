@@ -62,7 +62,7 @@ export function getRoute(state: State): Route {
 // -----------------------------------------------------------------------------
 
 function calculateRoot(state: State): RootType {
-  const { authStatus, configState, network, recommendations } = state;
+  const { authStatus, configState, network, actionItems } = state;
   if (configState.envStatus === 'ENV_LOADING') {
     return 'LOADING';
   }
@@ -76,7 +76,7 @@ function calculateRoot(state: State): RootType {
       // The user can only see the login page if they have internet.
       return network.networkStatus === 'none' ? 'NO_INTERNET' : 'AUTH';
     case 'LOGGED_IN':
-      return recommendations.selectedID ? 'RECOMMENDATION' : 'MAIN';
+      return actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
     case 'NOT_INITIALIZED':
       return 'LOADING';
     default:

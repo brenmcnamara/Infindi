@@ -17,24 +17,21 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Cards as RecommendationCards } from '../recommendations';
+import { Cards as ActionItemCards } from '../action-items';
 import { connect } from 'react-redux';
 import {
-  deleteRecommendation,
-  focusedRecommendationChange,
-  selectRecommendation,
-} from '../actions/recommendations';
-import {
-  RecommendationCardSize,
-  RecommendationCardSpacing,
-} from '../design/layout';
+  deleteActionItem,
+  focusedActionItemChange,
+  selectActionItem,
+} from '../actions/actionItems';
+import { ActionItemCardSize, ActionItemCardSpacing } from '../design/layout';
 
 import type { ID } from 'common/src/types/core';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
 type ComputedProps = {
-  +focusedRecommendationID: ID | 'EMPTY',
-  +recommendationIDs: Array<ID>,
+  +focusedActionItemID: ID | 'EMPTY',
+  +actionItemIDs: Array<ID>,
 };
 
 export type Props = ReduxProps & ComputedProps;
@@ -55,7 +52,7 @@ type DeleteTransitionStage =
 type State = {
   deleteStage: DeleteTransitionStage,
   isScrolling: bool,
-  recommendationIDs: Array<ID>,
+  actionItemIDs: Array<ID>,
 };
 
 export const DELETE_FADE_TRANSITION_MILLIS = 100;
@@ -63,10 +60,9 @@ export const DELETE_SHIFT_TRANSITION_MILLIS = 300;
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const HalfRecommendationCardSpacing = RecommendationCardSpacing / 2;
+const HalfActionItemCardSpacing = ActionItemCardSpacing / 2;
 const SPACE_TO_CENTER =
-  (SCREEN_WIDTH - RecommendationCardSize.width - RecommendationCardSpacing) /
-  2.0;
+  (SCREEN_WIDTH - ActionItemCardSize.width - ActionItemCardSpacing) / 2.0;
 
 const PAGER_INSET = {
   bottom: 0,
@@ -75,7 +71,7 @@ const PAGER_INSET = {
   top: 0,
 };
 
-class RecommendationPager extends Component<Props, State> {
+class ActionItemPager extends Component<Props, State> {
   _canHandleScrolling: bool = false;
   _cards: { [id: ID]: any } = {}; // TODO: Better typing.
   _deleteFadeTransition = new Animated.Value(0);
@@ -88,42 +84,42 @@ class RecommendationPager extends Component<Props, State> {
     this.state = {
       deleteStage: { type: 'NO_DELETE' },
       isScrolling: false,
-      recommendationIDs: props.recommendationIDs,
+      actionItemIDs: props.actionItemIDs,
       selectedPage: 0,
     };
   }
 
   componentWillMount(): void {
-    const { focusedRecommendationID, recommendationIDs } = this.props;
+    const { focusedActionItemID, actionItemIDs } = this.props;
     const focusedIndex =
-      focusedRecommendationID === 'EMPTY'
+      focusedActionItemID === 'EMPTY'
         ? 'EMPTY'
-        : recommendationIDs.indexOf(focusedRecommendationID);
+        : actionItemIDs.indexOf(focusedActionItemID);
 
     invariant(
       focusedIndex === 'EMPTY' || focusedIndex >= 0,
-      'Cannot find recommendation: %s',
-      focusedRecommendationID,
+      'Cannot find action item: %s',
+      focusedActionItemID,
     );
 
-    const fullWidth = RecommendationCardSize.width + RecommendationCardSpacing;
-    const isOnlyRecommendation = recommendationIDs.length === 1;
-    if (focusedIndex === 'EMPTY' || isOnlyRecommendation) {
+    const fullWidth = ActionItemCardSize.width + ActionItemCardSpacing;
+    const isOnlyActionItem = actionItemIDs.length === 1;
+    if (focusedIndex === 'EMPTY' || isOnlyActionItem) {
       this._initialXOffset = 0;
-    } else if (focusedIndex === recommendationIDs.length - 1) {
+    } else if (focusedIndex === actionItemIDs.length - 1) {
       // Last element in the list is an edge case.
       this._initialXOffset =
         -PAGER_INSET.left +
-        recommendationIDs.length * fullWidth -
+        actionItemIDs.length * fullWidth -
         SCREEN_WIDTH +
-        RecommendationCardSpacing;
+        ActionItemCardSpacing;
     } else if (focusedIndex === 0) {
       this._initialXOffset = -PAGER_INSET.left;
     } else {
       this._initialXOffset =
         -PAGER_INSET.left +
         focusedIndex * fullWidth +
-        RecommendationCardSpacing -
+        ActionItemCardSpacing -
         SPACE_TO_CENTER;
     }
   }
@@ -135,7 +131,7 @@ class RecommendationPager extends Component<Props, State> {
   }
 
   render() {
-    return this.state.recommendationIDs.length > 0
+    return this.state.actionItemIDs.length > 0
       ? this._renderPager()
       : this._renderNullState();
   }
@@ -176,34 +172,28 @@ class RecommendationPager extends Component<Props, State> {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         snapToAlignment="center"
-        snapToInterval={
-          RecommendationCardSize.width + RecommendationCardSpacing
-        }
+        snapToInterval={ActionItemCardSize.width + ActionItemCardSpacing}
         style={styles.root}
       >
-        {this.state.recommendationIDs.map((id, index) => {
+        {this.state.actionItemIDs.map((id, index) => {
           if (
             deleteStage.type === 'SHIFT_PAGES_OVER' &&
             deleteStage.pageIndex === index
           ) {
             return null;
           }
-          const RecommendationCard = RecommendationCards[id];
-          invariant(
-            RecommendationCard,
-            'No Recommendation Card for id: %s',
-            id,
-          );
+          const ActionItemCard = ActionItemCards[id];
+          invariant(ActionItemCard, 'No ActionItem Card for id: %s', id);
           return (
             <Page
               isFirst={index === 0}
-              isOnly={this.state.recommendationIDs.length === 1}
+              isOnly={this.state.actionItemIDs.length === 1}
               key={id}
               style={this._getPageStyle(id, index)}
             >
-              <RecommendationCard
+              <ActionItemCard
                 enableUserInteraction={!isScrolling}
-                isFocused={this.props.focusedRecommendationID === id}
+                isFocused={this.props.focusedActionItemID === id}
                 onNoThanks={() => this._onNoThanks(id, index)}
                 onSeeDetails={() => this._onSeeDetails(id, index)}
               />
@@ -223,19 +213,17 @@ class RecommendationPager extends Component<Props, State> {
     if (!this._canHandleScrolling) {
       return;
     }
-    const { dispatch, recommendationIDs } = this.props;
+    const { dispatch, actionItemIDs } = this.props;
     const offset = event.nativeEvent.contentOffset.x;
     const index = clamp(
       0,
-      recommendationIDs.length - 1,
-      Math.round(
-        offset / (RecommendationCardSize.width + RecommendationCardSpacing),
-      ),
+      actionItemIDs.length - 1,
+      Math.round(offset / (ActionItemCardSize.width + ActionItemCardSpacing)),
     );
 
-    const focusedID = recommendationIDs[index];
-    if (focusedID !== this.props.focusedRecommendationID) {
-      dispatch(focusedRecommendationChange(focusedID));
+    const focusedID = actionItemIDs[index];
+    if (focusedID !== this.props.focusedActionItemID) {
+      dispatch(focusedActionItemChange(focusedID));
     }
   };
 
@@ -247,25 +235,25 @@ class RecommendationPager extends Component<Props, State> {
     this.setState({ isScrolling: false });
   };
 
-  _onNoThanks = (recommendationID: ID, index: number): void => {
+  _onNoThanks = (actionItemID: ID, index: number): void => {
     this._genPerformDelete(index);
   };
 
-  _onSeeDetails = (recommendationID: ID, index: number): void => {
-    this.props.dispatch(selectRecommendation(recommendationID));
+  _onSeeDetails = (actionItemID: ID, index: number): void => {
+    this.props.dispatch(selectActionItem(actionItemID));
   };
 
   _genPerformDelete = async (index: number): Promise<void> => {
-    const { deleteStage, recommendationIDs } = this.state;
+    const { deleteStage, actionItemIDs } = this.state;
     const { dispatch } = this.props;
 
-    const deleteID = recommendationIDs[index];
+    const deleteID = actionItemIDs[index];
 
     invariant(
       deleteStage.type === 'NO_DELETE',
-      'Cannot delete more than one recommendation at a time',
+      'Cannot delete more than one action item at a time',
     );
-    invariant(deleteID, 'No recommendation at index %s to delete', index);
+    invariant(deleteID, 'No action item at index %s to delete', index);
 
     // Perform the transition.
     await this._genSetFadeOutState(index);
@@ -274,26 +262,24 @@ class RecommendationPager extends Component<Props, State> {
     await this._genPerformShift(index);
 
     const newIndex =
-      recommendationIDs.length === 1
+      actionItemIDs.length === 1
         ? null
-        : recommendationIDs.length - 1 === index ? index - 1 : index;
+        : actionItemIDs.length - 1 === index ? index - 1 : index;
 
     // Delete page and clean up the state.
-    const newRecommendationIDs = this.state.recommendationIDs.slice();
-    newRecommendationIDs.splice(index, 1);
+    const newActionItemIDs = this.state.actionItemIDs.slice();
+    newActionItemIDs.splice(index, 1);
 
-    dispatch(deleteRecommendation(deleteID));
+    dispatch(deleteActionItem(deleteID));
 
-    const newRecommendationID = newIndex
-      ? newRecommendationIDs[newIndex]
-      : null;
-    if (newRecommendationID) {
-      dispatch(focusedRecommendationChange(newRecommendationID));
+    const newActionItemID = newIndex ? newActionItemIDs[newIndex] : null;
+    if (newActionItemID) {
+      dispatch(focusedActionItemChange(newActionItemID));
     }
 
     this.setState({
       deleteStage: { type: 'NO_DELETE' },
-      recommendationIDs: newRecommendationIDs,
+      actionItemIDs: newActionItemIDs,
     });
   };
 
@@ -336,9 +322,9 @@ class RecommendationPager extends Component<Props, State> {
 
   _genPerformShift = (pageIndex: number): Promise<void> => {
     return new Promise(resolve => {
-      // NOTE: If we are deleting the last recommendation in the list, we
+      // NOTE: If we are deleting the last action item in the list, we
       // do not need to perform this animation.
-      if (this.state.recommendationIDs.length - 1 === pageIndex) {
+      if (this.state.actionItemIDs.length - 1 === pageIndex) {
         resolve();
         return;
       }
@@ -351,7 +337,7 @@ class RecommendationPager extends Component<Props, State> {
     });
   };
 
-  _getPageStyle(recommendationID: ID, index: number) {
+  _getPageStyle(actionItemID: ID, index: number) {
     const { deleteStage } = this.state;
     switch (deleteStage.type) {
       case 'NO_DELETE': {
@@ -365,8 +351,8 @@ class RecommendationPager extends Component<Props, State> {
       }
 
       case 'SHIFT_PAGES_OVER': {
-        // NOTE: When deleting a recommendation such that there is only 1
-        // left, we need to transition that last recommendation so it is
+        // NOTE: When deleting a action item such that there is only 1
+        // left, we need to transition that last action item so it is
         // centered within the view, instead of being off to the side.
 
         // NOTE: The first page gets a padding left of non-zero, and every other
@@ -375,16 +361,16 @@ class RecommendationPager extends Component<Props, State> {
         // we need to apply that padding left to the second element during
         // the transition.
         const initialPadding =
-          this.state.recommendationIDs.length === 2
+          this.state.actionItemIDs.length === 2
             ? SPACE_TO_CENTER
-            : deleteStage.pageIndex === 0 ? HalfRecommendationCardSpacing : 0;
+            : deleteStage.pageIndex === 0 ? HalfActionItemCardSpacing : 0;
         return deleteStage.pageIndex + 1 === index
           ? {
               paddingLeft: this._deleteShiftTransition.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
                   initialPadding,
-                  RecommendationCardSize.width + HalfRecommendationCardSpacing,
+                  ActionItemCardSize.width + HalfActionItemCardSpacing,
                 ],
               }),
             }
@@ -398,17 +384,17 @@ class RecommendationPager extends Component<Props, State> {
 }
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  const { recommendations } = state;
-  const { focusedIndex, ordering } = recommendations;
+  const { actionItems } = state;
+  const { focusedIndex, ordering } = actionItems;
 
   return {
-    focusedRecommendationID:
+    focusedActionItemID:
       focusedIndex === 'EMPTY' ? 'EMPTY' : ordering[focusedIndex],
-    recommendationIDs: ordering,
+    actionItemIDs: ordering,
   };
 }
 
-export default connect(mapReduxStateToProps)(RecommendationPager);
+export default connect(mapReduxStateToProps)(ActionItemPager);
 
 type PageProps = {
   children: ?any,
@@ -425,7 +411,7 @@ const Page = (props: PageProps) => {
       ? {
           marginLeft: SPACE_TO_CENTER,
         }
-      : props.isFirst ? { marginLeft: RecommendationCardSpacing } : null,
+      : props.isFirst ? { marginLeft: ActionItemCardSpacing } : null,
   ];
   return <Animated.View style={style}>{props.children}</Animated.View>;
 };
@@ -433,7 +419,7 @@ const Page = (props: PageProps) => {
 const styles = StyleSheet.create({
   null: {
     alignItems: 'center',
-    height: RecommendationCardSize.height,
+    height: ActionItemCardSize.height,
     justifyContent: 'center',
     paddingHorizontal: 16,
   },
@@ -448,7 +434,7 @@ const styles = StyleSheet.create({
   },
 
   page: {
-    marginRight: RecommendationCardSpacing,
+    marginRight: ActionItemCardSpacing,
   },
 
   root: {

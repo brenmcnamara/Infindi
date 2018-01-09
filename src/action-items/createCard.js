@@ -5,30 +5,27 @@ import TextButton from '../components/shared/TextButton.react';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
 
+import { ActionItemCardSize } from '../design/layout';
 import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
-import { RecommendationCardSize } from '../design/layout';
 
-import type { RecommendationCardProps, RecommendationTemplate } from '.';
+import type { ActionItemCardProps, ActionItemTemplate } from '.';
 
 export const FOCUS_TRANSITION_TIMEOUT_MILLIS = 500;
 
-export type Props = RecommendationCardProps & {
+export type Props = ActionItemCardProps & {
   +icon: number,
-  +template: RecommendationTemplate,
+  +template: ActionItemTemplate,
 };
 
-export default function createCard(
-  template: RecommendationTemplate,
-  icon: number,
-) {
-  return (props: RecommendationCardProps) => (
+export default function createCard(template: ActionItemTemplate, icon: number) {
+  return (props: ActionItemCardProps) => (
     <Card {...props} icon={icon} template={template} />
   );
 }
 
 /**
- * The banner for a recommendation with some minimal information about the
- * recommendation.
+ * The banner for a actino item with some minimal information about the
+ * actino item.
  */
 class Card extends Component<Props> {
   _focusTransition: Animated.Value;
@@ -62,8 +59,8 @@ class Card extends Component<Props> {
         backgroundColor: this._focusTransition.interpolate({
           inputRange: [0, 1],
           outputRange: [
-            Colors.BACKGROUND_RECOMMENDATION_BANNER_ACTIVE,
-            Colors.BACKGROUND_RECOMMENDATION_BANNER_INACTIVE,
+            Colors.BACKGROUND_ACTION_ITEM_BANNER_ACTIVE,
+            Colors.BACKGROUND_ACTION_ITEM_BANNER_INACTIVE,
           ],
         }),
       },
@@ -82,8 +79,8 @@ class Card extends Component<Props> {
           <View style={styles.iconContainer}>
             <Image resizeMode="contain" source={icon} style={styles.icon} />
           </View>
-          <View style={styles.recommendationSubtitleContainer}>
-            <Text style={[TextDesign.normal, styles.recommendationSubtitle]}>
+          <View style={styles.actionItemSubtitleContainer}>
+            <Text style={[TextDesign.normal, styles.actionItemSubtitle]}>
               {template.subTitle}
             </Text>
           </View>
@@ -110,6 +107,16 @@ class Card extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
+  actionItemSubtitle: {
+    textAlign: 'center',
+  },
+
+  actionItemSubtitleContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    marginHorizontal: 4,
+  },
+
   buttonSpacer: {
     flex: 1,
   },
@@ -141,21 +148,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 
-  recommendationSubtitle: {
-    textAlign: 'center',
-  },
-
-  recommendationSubtitleContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    marginHorizontal: 4,
-  },
-
   root: {
     borderColor: Colors.BORDER,
     borderWidth: 1,
-    height: RecommendationCardSize.height,
-    width: RecommendationCardSize.width,
+    height: ActionItemCardSize.height,
+    width: ActionItemCardSize.width,
   },
 
   subHeader: {

@@ -8,10 +8,10 @@ import invariant from 'invariant';
 import { Animated, Dimensions, Easing } from 'react-native';
 import { connect } from 'react-redux';
 import {
+  ActionItemCardSize,
+  ActionItemCardSpacing,
+  ActionItemPagerTopOffset,
   NavBarHeight,
-  RecommendationCardSize,
-  RecommendationCardSpacing,
-  RecommendationPagerTopOffset,
 } from '../design/layout';
 
 import type { ComponentType } from 'react';
@@ -23,14 +23,14 @@ export type Props = ReduxProps & ComponentProps & ComputedProps;
 
 export type ComputedProps = {
   +pageInset: Inset,
-  +recommendationIDs: Array<ID>,
+  +actionItemIDs: Array<ID>,
 };
 
 export type ComponentProps = {
   +dismissAfterTransitioningOut: bool,
-  +recommendationID: ID,
+  +actionItemID: ID,
   +show: bool,
-  +transitionType: 'HOME_TO_RECOMMENDATION' | 'RECOMMENDATION_TO_HOME',
+  +transitionType: 'HOME_TO_ACTION_ITEM' | 'ACTION_ITEM_TO_HOME',
 };
 
 type Frame = {|
@@ -47,7 +47,7 @@ type TransitionStage =
   | 'TRANSITION_OUT';
 
 type State = {
-  recommendationFrame: Frame,
+  actionItemFrame: Frame,
   transitionStage: TransitionStage,
 };
 
@@ -61,7 +61,7 @@ export const TransitionInMillis =
   FadeInTransitionMillis + TransformTransitionMillis;
 export const TransitionOutMillis = FadeOutTransitionMillis;
 
-class HomeToRecommendationTransitionModal extends Component<Props, State> {
+class HomeToActionItemTransitionModal extends Component<Props, State> {
   _fadeTransition: Animated.Value;
   _resizeTransition: Animated.Value;
   _subscriptions: Array<{ remove: () => void }> = [];
@@ -74,7 +74,7 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
     this._resizeTransition = new Animated.Value(props.show ? 1.0 : 0.0);
 
     this.state = {
-      recommendationFrame: calculateRecommendationFrame(props),
+      actionItemFrame: calculateActionItemFrame(props),
       transitionStage: props.show ? 'HIDDEN' : 'SHOWING',
     };
   }
@@ -94,15 +94,15 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
       const afterTransitioning = invokable(() => {
         this.setState({ transitionStage: 'SHOWING' });
         // Changing the selection will change the screen underneath this modal.
-        if (nextProps.transitionType === 'HOME_TO_RECOMMENDATION') {
+        if (nextProps.transitionType === 'HOME_TO_ACTION_ITEM') {
           nextProps.dispatch({
-            recommendationID: nextProps.recommendationID,
-            type: 'SELECT_RECOMMENDATION',
+            actionItemID: nextProps.actionItemID,
+            type: 'SELECT_ACTION_ITEM',
           });
         }
         // Dismiss the modal.
         nextProps.dispatch({
-          modalID: 'HOME_TO_RECOMMENDATION_TRANSITION',
+          modalID: 'HOME_TO_ACTION_ITEM_TRANSITION',
           type: 'DISMISS_MODAL',
         });
       });
@@ -111,8 +111,8 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
       this._genSetTransitionStage('TRANSITION_IN')
         .then(this._genFadeIn)
         .then(() => {
-          if (nextProps.transitionType === 'RECOMMENDATION_TO_HOME') {
-            nextProps.dispatch({ type: 'UNSELECT_CURRENT_RECOMMENDATION' });
+          if (nextProps.transitionType === 'ACTION_ITEM_TO_HOME') {
+            nextProps.dispatch({ type: 'UNSELECT_CURRENT_ACTION_ITEM' });
           }
         })
         .then(this._genResize)
@@ -143,13 +143,13 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
 
   render() {
     const { pageInset, transitionType } = this.props;
-    const { recommendationFrame } = this.state;
-    const isHomeToRecommendationTransition =
-      transitionType === 'HOME_TO_RECOMMENDATION';
+    const { actionItemFrame } = this.state;
+    const isHomeToActionItemTransition =
+      transitionType === 'HOME_TO_ACTION_ITEM';
     const rootStyles = {
       backgroundColor: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: isHomeToRecommendationTransition
+        outputRange: isHomeToActionItemTransition
           ? [Colors.BACKGROUND_LIGHT, Colors.BACKGROUND]
           : [Colors.BACKGROUND, Colors.BACKGROUND_LIGHT],
       }),
@@ -157,40 +157,34 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
         inputRange: [0, 1],
         // NOTE: We are ignoring the bottom inset on purpose. Would like to fill
         // bottom inset as well.
-        outputRange: isHomeToRecommendationTransition
-          ? [recommendationFrame.height, SCREEN_HEIGHT - pageInset.top]
-          : [SCREEN_HEIGHT - pageInset.top, recommendationFrame.height],
+        outputRange: isHomeToActionItemTransition
+          ? [actionItemFrame.height, SCREEN_HEIGHT - pageInset.top]
+          : [SCREEN_HEIGHT - pageInset.top, actionItemFrame.height],
       }),
       left: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: isHomeToRecommendationTransition
-          ? [pageInset.left + recommendationFrame.left, pageInset.left]
-          : [pageInset.left, pageInset.left + recommendationFrame.left],
+        outputRange: isHomeToActionItemTransition
+          ? [pageInset.left + actionItemFrame.left, pageInset.left]
+          : [pageInset.left, pageInset.left + actionItemFrame.left],
       }),
       opacity: this._fadeTransition,
       position: 'absolute',
       top: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: isHomeToRecommendationTransition
-          ? [
-              pageInset.top + NavBarHeight + recommendationFrame.top,
-              pageInset.top,
-            ]
-          : [
-              pageInset.top,
-              pageInset.top + NavBarHeight + recommendationFrame.top,
-            ],
+        outputRange: isHomeToActionItemTransition
+          ? [pageInset.top + NavBarHeight + actionItemFrame.top, pageInset.top]
+          : [pageInset.top, pageInset.top + NavBarHeight + actionItemFrame.top],
       }),
       width: this._resizeTransition.interpolate({
         inputRange: [0, 1],
-        outputRange: isHomeToRecommendationTransition
+        outputRange: isHomeToActionItemTransition
           ? [
-              recommendationFrame.width,
+              actionItemFrame.width,
               SCREEN_WIDTH - pageInset.left - pageInset.right,
             ]
           : [
               SCREEN_WIDTH - pageInset.left - pageInset.right,
-              recommendationFrame.width,
+              actionItemFrame.width,
             ],
       }),
     };
@@ -220,7 +214,7 @@ class HomeToRecommendationTransitionModal extends Component<Props, State> {
       Animated.timing(this._resizeTransition, {
         duration: TransformTransitionMillis,
         easing:
-          this.props.transitionType === 'HOME_TO_RECOMMENDATION'
+          this.props.transitionType === 'HOME_TO_ACTION_ITEM'
             ? Easing.out(Easing.cubic)
             : Easing.out(Easing.quad),
         toValue: 1.0,
@@ -260,26 +254,26 @@ function invokable(cb: () => any): { remove: () => void, invoke: () => void } {
   };
 }
 
-function calculateRecommendationFrame(props: Props): Frame {
-  const { recommendationID, recommendationIDs } = props;
-  const index = recommendationIDs.indexOf(recommendationID);
-  invariant(index >= 0, 'Cannot find recommendation: %s', recommendationID);
+function calculateActionItemFrame(props: Props): Frame {
+  const { actionItemID, actionItemIDs } = props;
+  const index = actionItemIDs.indexOf(actionItemID);
+  invariant(index >= 0, 'Cannot find actionItem: %s', actionItemID);
 
-  const fullWidth = RecommendationCardSize.width + RecommendationCardSpacing;
-  // A recommendation card can be in one of 3 positions.
-  const has1Recommendation = recommendationIDs.length === 1;
+  const fullWidth = ActionItemCardSize.width + ActionItemCardSpacing;
+  // A action item card can be in one of 3 positions.
+  const has1ActionItem = actionItemIDs.length === 1;
   const left =
-    index === 0 && !has1Recommendation
-      ? RecommendationCardSpacing
-      : index === recommendationIDs.length - 1 && !has1Recommendation
+    index === 0 && !has1ActionItem
+      ? ActionItemCardSpacing
+      : index === actionItemIDs.length - 1 && !has1ActionItem
         ? SCREEN_WIDTH - fullWidth
         : (SCREEN_WIDTH - fullWidth) / 2.0;
 
   return {
-    height: RecommendationCardSize.height,
+    height: ActionItemCardSize.height,
     left,
-    width: RecommendationCardSize.width,
-    top: RecommendationPagerTopOffset,
+    width: ActionItemCardSize.width,
+    top: ActionItemPagerTopOffset,
   };
 }
 
@@ -292,10 +286,10 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
       right: appInset.right,
       top: appInset.top,
     },
-    recommendationIDs: state.recommendations.ordering,
+    actionItemIDs: state.actionItems.ordering,
   };
 }
 
 export default (connect(mapReduxStateToProps)(
-  HomeToRecommendationTransitionModal,
+  HomeToActionItemTransitionModal,
 ): ComponentType<ComponentProps>);

@@ -3,12 +3,12 @@
 export const NavBarHeight = 44;
 
 // Distance between the bottom of the navigation bar and the top of the
-// recommendation pager.
-export const RecommendationPagerTopOffset = 279;
+// action item pager.
+export const ActionItemPagerTopOffset = 279;
 
-export const RecommendationCardSize = {
+export const ActionItemCardSize = {
   height: 270,
   width: 335,
 };
 
-export const RecommendationCardSpacing = 4;
+export const ActionItemCardSpacing = 4;

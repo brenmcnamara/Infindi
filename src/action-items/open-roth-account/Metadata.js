@@ -1,8 +1,8 @@
 /* @flow */
 
-import type { RecommendationTemplate } from '..';
+import type { ActionItemTemplate } from '..';
 
-export const Template: RecommendationTemplate = {
+export const Template: ActionItemTemplate = {
   id: 'OPEN_ROTH_ACCOUNT',
   savingsStatement: 'X months closer to financial freedom',
   subTitle: 'The first step towards smart, tax-efficient savings',

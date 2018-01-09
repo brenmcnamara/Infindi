@@ -11,9 +11,9 @@ import invariant from 'invariant';
 import { CallToActionText, Template } from './Metadata';
 import { NavigatorIOS, StyleSheet, View } from 'react-native';
 
-import type { RecommendationComponentProps } from '..';
+import type { ActionItemComponentProps } from '..';
 
-export type Props = RecommendationComponentProps;
+export type Props = ActionItemComponentProps;
 
 type State = {
   navStack: Array<*>,

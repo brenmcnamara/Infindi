@@ -13,13 +13,13 @@ import invariant from 'invariant';
 import { CallToActionText, Template } from './Metadata';
 import { NavigatorIOS, StyleSheet, View } from 'react-native';
 
-import type { RecommendationComponentProps } from '..';
+import type { ActionItemComponentProps } from '..';
 
 type State = {
   navStack: Array<*>,
 };
 
-export type Props = RecommendationComponentProps;
+export type Props = ActionItemComponentProps;
 
 // NOTE: This is a guess, need to keep this updated. If there is a way to
 // programatically get this value, that would be much better :)
