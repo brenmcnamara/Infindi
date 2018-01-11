@@ -3,6 +3,7 @@
 import Colors from '../../design/colors';
 import React, { Component } from 'react';
 
+import { NavBarHeight, TabBarHeight } from '../../design/layout';
 import { StyleSheet, View } from 'react-native';
 
 export type Props = {
@@ -19,9 +20,6 @@ export type DefaultProps = {
   theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
-const NAV_BAR_HEIGHT = 44;
-const TAB_BAR_HEIGHT = 50;
-
 export default class Screen extends Component<Props> {
   static defaultProps: DefaultProps = {
     avoidNavbar: false,
@@ -33,8 +31,8 @@ export default class Screen extends Component<Props> {
   render() {
     const rootStyles = [
       styles.root,
-      this.props.avoidNavBar ? { paddingTop: NAV_BAR_HEIGHT } : null,
-      this.props.avoidTabBar ? { paddingBottom: TAB_BAR_HEIGHT } : null,
+      this.props.avoidNavBar ? { paddingTop: NavBarHeight } : null,
+      this.props.avoidTabBar ? { paddingBottom: TabBarHeight } : null,
       {
         backgroundColor:
           this.props.theme === 'NORMAL'

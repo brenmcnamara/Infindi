@@ -83,7 +83,9 @@ class App extends Component<Props> {
     const bottomAreaStyles = [
       styles.bottomArea,
       {
-        backgroundColor: root === 'MAIN' ? Colors.TAB_BAR : Colors.BACKGROUND,
+        // NOTE: Need to add this back when we add the tab bar back.
+        // backgroundColor: root === 'MAIN' ? Colors.TAB_BAR : Colors.BACKGROUND,
+        backgroundColor: Colors.BACKGROUND,
       },
     ];
     // NOTE: The safe area view and keyboard avoiding view do not play well

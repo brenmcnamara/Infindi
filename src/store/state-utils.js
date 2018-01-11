@@ -51,7 +51,7 @@ export function getRoute(state: State): Route {
     return { name: root, next: null };
   }
   // Need to calculate the tab that is showing.
-  const tab = state.routeState.requestedTab || 'HOME';
+  const tab = state.routeState.requestedTab || 'ACCOUNTS';
   return { name: root, next: { name: tab, next: null } };
 }
 
