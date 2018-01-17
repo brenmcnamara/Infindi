@@ -35,7 +35,6 @@ import {
   getGroupTypeForAccountLoader,
 } from '../common/db-utils';
 import { getLoginPayload } from '../store/state-utils';
-import { plaidLinkAccount } from '../actions/plaid';
 import { requestInfoModal, requestUnimplementedModal } from '../actions/modal';
 
 import type {
@@ -156,9 +155,7 @@ class AccountsScreen extends Component<Props> {
 
   _renderAddAccountButton() {
     return (
-      <If
-        predicate={this.props.isPlaidLinkAvailable && !this.props.isDownloading}
-      >
+      <If predicate={!this.props.isDownloading}>
         <Footer style={styles.footer}>
           <TextButton
             layoutType="FILL_PARENT"
@@ -193,7 +190,7 @@ class AccountsScreen extends Component<Props> {
   };
 
   _onPressAddAccount = (): void => {
-    this.props.dispatch(plaidLinkAccount());
+    this.props.dispatch(requestUnimplementedModal('Account Verification'));
   };
 
   _onPressGroupInfo = (groupType: GroupType): void => {
