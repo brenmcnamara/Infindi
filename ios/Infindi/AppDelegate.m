@@ -12,15 +12,6 @@
 
 #import "Environment.h"
 #import "PlaidLinkManager.h"
-#import "SessionManager.h"
-
-@interface AppDelegate()
-
-@property (nonatomic, assign) BOOL isLoggedIn;
-
-- (void)authStateDidChange:(FIRUser *)user;
-
-@end
 
 @implementation AppDelegate
 
@@ -34,11 +25,6 @@
  
   FIROptions *options = [[FIROptions alloc] initWithContentsOfFile: serviceInfoPath];
   [FIRApp configureWithOptions: options];
-
-  __weak AppDelegate *weakSelf = self;
-  [[FIRAuth auth] addAuthStateDidChangeListener:^(FIRAuth * _Nonnull auth, FIRUser * _Nullable user) {
-    [weakSelf authStateDidChange:user];
-  }];
 
   NSURL *jsCodeLocation;
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
@@ -61,26 +47,6 @@
   [self.window makeKeyAndVisible];
 
   return YES;
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-  [[SessionManager sharedInstance] endSessionIfExists];
-}
-
-- (void)authStateDidChange:(FIRUser *)user {
-  if (user != nil && !self.isLoggedIn) {
-    self.isLoggedIn = YES;
-    [user getIDTokenWithCompletion:^(NSString * _Nullable token, NSError * _Nullable error) {
-      if (error != nil) {
-        NSLog(@"FAILED TO FETCH ID TOKEN %@", [error localizedDescription]);
-      } else {
-        [[SessionManager sharedInstance] startSessionWithToken: token];
-      }
-    }];
-  } else if (user == nil && self.isLoggedIn) {
-    self.isLoggedIn = NO;
-    [[SessionManager sharedInstance] endSessionIfExists];
-  }
 }
 
 @end
