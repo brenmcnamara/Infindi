@@ -29,4 +29,8 @@
   return [[[self variables] objectForKey: @"allowPlaidLink"] boolValue];
 }
 
+- (NSString *)verificationService {
+  return [[[self variables] objectForKey: @"verificationService"] stringValue];
+}
+
 @end

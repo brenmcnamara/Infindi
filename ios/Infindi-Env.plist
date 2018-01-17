@@ -6,5 +6,7 @@
 	<true/>
 	<key>hostname</key>
 	<string>https://infindi-20cf1.appspot.com</string>
+	<key>verificationService</key>
+	<string>YODLEE</string>
 </dict>
 </plist>

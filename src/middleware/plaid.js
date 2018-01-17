@@ -43,6 +43,7 @@ export default (store: Store) => (next: Next) => {
 
   return (action: PureAction) => {
     next(action);
+
     switch (action.type) {
       case 'AUTH_STATUS_CHANGE': {
         if (action.status.type === 'LOGGED_IN') {

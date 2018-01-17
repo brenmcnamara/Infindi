@@ -4,6 +4,8 @@ import invariant from 'invariant';
 
 import { NativeModules } from 'react-native';
 
+import type { VerificationService } from '../reducers/configState';
+
 let variables: ?Object = null;
 
 export default {
@@ -21,6 +23,14 @@ export default {
 
   getHostname(): string {
     return getVariables().hostname;
+  },
+
+  getVerificationService(): VerificationService {
+    return getVariables().verificationService;
+  },
+
+  isLoaded(): bool {
+    return variables !== null;
   },
 };
 

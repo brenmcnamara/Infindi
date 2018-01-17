@@ -4,6 +4,8 @@ import type { PureAction } from '../typesDEPRECATED/redux';
 
 export type EnvStatus = 'ENV_LOADING' | 'ENV_READY' | 'ENV_FAILURE';
 
+export type VerificationService = 'PLAID' | 'YODLEE';
+
 export type Inset = {|
   +bottom: number,
   +left: number,

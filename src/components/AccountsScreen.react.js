@@ -267,7 +267,7 @@ function mapReduxStateToProps(state: ReduxState) {
   );
   return {
     isDownloading: accounts.type === 'DOWNLOADING',
-    isPlaidLinkAvailable: state.plaid.isLinkAvailable,
+    // isPlaidLinkAvailable: state.plaid.isLinkAvailable,
     loaderCollection:
       accounts.type === 'STEADY' ? accounts.loaderCollection : {},
     netWorth: loginPayload.userMetrics.netWorth,

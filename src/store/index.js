@@ -4,7 +4,7 @@ import authentication from '../middleware/authentication';
 import datastore from '../middleware/datastore';
 import modal from '../middleware/modal';
 import network from '../middleware/network';
-import plaid from '../middleware/plaid';
+// import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 import toast from '../middleware/toast';
@@ -22,7 +22,7 @@ if (__DEV__) {
     // Then comes middleware that need network access.
     authentication,
     datastore,
-    plaid,
+    // plaid,
     // Then comes network middleware.
     network,
     // Then comes ui-managing middleware.
@@ -38,7 +38,7 @@ if (__DEV__) {
     // Then comes middleware that need network access.
     authentication,
     datastore,
-    plaid,
+    // plaid,
     // Then comes network middleware.
     network,
     // Then comes ui-managing middleware.

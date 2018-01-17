@@ -10,6 +10,7 @@
 
 @property (nonatomic, readonly) NSString *hostname;
 @property (nonatomic, readonly) BOOL allowPlaidLink;
+@property (nonatomic, readonly) NSString *verificationService;
 
 + (Environment *)sharedInstance;
 
