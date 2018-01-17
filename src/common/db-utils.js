@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import type { Account } from 'common/src/types/db';
+import type { Account } from 'common/lib/models/Account';
 import type { AccountLoader } from '../reducers/accounts';
 
 export type GroupType = 'AVAILABLE_CASH' | 'SHORT_TERM_DEBT' | 'OTHER';

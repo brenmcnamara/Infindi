@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { unselectCurrentActionItem } from '../actions/actionItems';
 
 import type { ComponentType } from 'react';
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
 type ComponentProps = {};

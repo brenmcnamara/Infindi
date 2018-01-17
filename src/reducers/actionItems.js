@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { PureAction } from '../typesDEPRECATED/redux';
 
 export type State = {

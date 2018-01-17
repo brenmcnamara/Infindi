@@ -16,7 +16,7 @@ import type {
   AccountLoader,
   AccountLoaderCollection,
 } from '../reducers/accounts';
-import type { Dollars } from 'common/src/types/core';
+import type { Dollars } from 'common/types/core';
 import type { GroupType } from '../common/db-utils';
 
 export type Props = {

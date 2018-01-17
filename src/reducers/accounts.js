@@ -2,7 +2,7 @@
 
 import { createModelCollectionReducer } from '../datastore';
 
-import type { Account } from 'common/src/types/db';
+import type { Account } from 'common/lib/models/Account';
 import type {
   ModelLoader,
   ModelLoaderCollection,

@@ -13,14 +13,11 @@ import type {
   Store,
 } from '../typesDEPRECATED/redux';
 import type { AuthStatus } from '../reducers/authStatus';
-import type { Firebase$User } from 'common/src/types/firebase';
-import type { ID } from 'common/src/types/core';
-import type {
-  LoginCredentials,
-  LoginPayload,
-  UserInfo,
-  UserMetrics,
-} from 'common/src/types/db';
+import type { User as FirebaseUser } from 'common/types/firebase';
+import type { ID } from 'common/types/core';
+import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';
+import type { UserInfo } from 'common/lib/models/UserInfo';
+import type { UserMetrics } from 'common/lib/models/UserMetrics';
 
 type EmitterSubscription = { remove: () => void };
 
@@ -178,7 +175,7 @@ async function genUserMetrics(id: ID): Promise<UserMetrics> {
 }
 
 async function genLoginPayload(): Promise<?LoginPayload> {
-  const firebaseUser: Firebase$User = Auth.currentUser;
+  const firebaseUser: FirebaseUser = Auth.currentUser;
   if (!firebaseUser) {
     return null;
   }

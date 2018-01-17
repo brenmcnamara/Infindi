@@ -42,7 +42,7 @@ import type {
   AccountLoader,
   AccountLoaderCollection,
 } from '../reducers/accounts';
-import type { Dollars } from 'common/src/types/core';
+import type { Dollars } from 'common/types/core';
 import type { GroupType } from '../common/db-utils';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';

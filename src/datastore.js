@@ -1,13 +1,9 @@
 /* @flow */
 
-import Firebase from 'react-native-firebase';
-
 import invariant from 'invariant';
 
-import { getLoginPayload } from './store/state-utils';
-
-import type { ID, ModelStub } from 'common/src/types/core';
-import type { PureAction, Reducer, Store } from './typesDEPRECATED/redux';
+import type { ID, ModelStub } from 'common/types/core';
+import type { PureAction, Reducer } from './typesDEPRECATED/redux';
 
 // TODO: Port this from Infindi-Backend
 type InfindiError = { errorCode: string, errorMessage: string };

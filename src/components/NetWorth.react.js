@@ -8,7 +8,7 @@ import TextDesign from '../design/text';
 
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { Dollars } from 'common/src/types/core';
+import type { Dollars } from 'common/types/core';
 
 export type Props = {
   netWorth: Dollars | null,

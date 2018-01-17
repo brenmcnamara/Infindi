@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Account } from 'common/src/types/db';
+import type { Account } from 'common/lib/models/Account';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../actions/authentication';
 import type { Action as Action$AuthMiddleware } from '../middleware/authentication';

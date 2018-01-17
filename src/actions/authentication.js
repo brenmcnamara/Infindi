@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { LoginCredentials } from 'common/src/types/db';
+import type { LoginCredentials } from 'common/lib/models/Auth';
 
 export type Action = Action$LoginRequest | Action$LogoutRequest;
 

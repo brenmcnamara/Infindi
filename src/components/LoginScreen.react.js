@@ -24,9 +24,9 @@ import {
 import { connect } from 'react-redux';
 import { login } from '../actions/authentication';
 
-import { type LoginCredentials } from 'common/src/types/db';
-import { type ReduxProps } from '../typesDEPRECATED/redux';
-import { type State as StoreState } from '../reducers/root';
+import type { LoginCredentials } from 'common/lib/models/Auth';
+import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { State as StoreState } from '../reducers/root';
 
 export type Props = ReduxProps & {
   loginType: 'NORMAL' | 'ERROR' | 'LOADING',

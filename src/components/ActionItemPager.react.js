@@ -26,7 +26,7 @@ import {
 } from '../actions/actionItems';
 import { ActionItemCardSize, ActionItemCardSpacing } from '../design/layout';
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
 type ComputedProps = {

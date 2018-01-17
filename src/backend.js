@@ -10,8 +10,9 @@ import Environment from './modules/Environment';
 
 import invariant from 'invariant';
 
-import type { ID, Pointer } from 'common/src/types/core';
-import type { LoginPayload, PlaidDownloadStatus } from 'common/src/types/db';
+import type { ID, Pointer } from 'common/types/core';
+import type { LoginPayload } from 'common/lib/models/Auth';
+import type { PlaidDownloadStatus } from 'common/lib/models/PlaidCredentials';
 
 let loginPayload: ?LoginPayload = null;
 

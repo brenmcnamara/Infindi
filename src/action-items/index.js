@@ -11,7 +11,7 @@ import { Template as OpenHSAAccountTemplate } from './open-hsa-account/Metadata'
 import { Template as OpenRothAccountTemplate } from './open-roth-account/Metadata';
 import { Template as RevertOverdraftFeeTemplate } from './revert-overdraft-fee/Metadata';
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 
 export type ActionItemTemplate = {|
   +id: ID,

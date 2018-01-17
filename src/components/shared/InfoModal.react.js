@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { dismissModal } from '../../actions/modal';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
 
 export type Props = ReduxProps & {

@@ -8,7 +8,7 @@ import React from 'react';
 
 import invariant from 'invariant';
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { Dispatch, ReduxState } from '../typesDEPRECATED/redux';
 
 export type Action =

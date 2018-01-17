@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import type { LoginPayload } from 'common/src/types/db';
+import type { LoginPayload } from 'common/lib/models/Auth';
 import type { RootType, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
 

@@ -15,7 +15,7 @@ import {
 } from '../design/layout';
 
 import type { ComponentType } from 'react';
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { Inset } from '../reducers/configState';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 

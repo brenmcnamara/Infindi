@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { PureAction } from '../typesDEPRECATED/redux';
 
 export type ModalPriority = 'SYSTEM_CRITICAL' | 'USER_REQUESTED';

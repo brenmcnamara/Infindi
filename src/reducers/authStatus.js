@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { LoginCredentials, LoginPayload } from 'common/src/types/db';
+import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';
 import type { PureAction } from '../typesDEPRECATED/redux';
 
 // https://rnfirebase.io/docs/v3.1.*/auth/reference/auth#signInWithEmailAndPassword
@@ -98,7 +98,6 @@ export default function authStatus(
   action: PureAction,
 ) {
   if (action.type === 'AUTH_STATUS_CHANGE') {
-    console.log('UPDATING REDUX STATE');
     return action.status;
   }
   return state;

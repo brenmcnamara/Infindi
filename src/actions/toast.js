@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { Toast } from '../reducers/toast';
 
 export type Action = Action$RequestToast | Action$DismissToast;

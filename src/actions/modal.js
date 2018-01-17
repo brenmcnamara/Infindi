@@ -17,7 +17,7 @@ import TextDesign from '../design/text';
 
 import { Text } from 'react-native';
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { Modal } from '../reducers/modalState';
 
 export type Action = Action$DismissModal | Action$RequestModal;

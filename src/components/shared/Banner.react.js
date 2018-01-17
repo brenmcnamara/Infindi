@@ -8,7 +8,7 @@ import invariant from 'invariant';
 
 import { Animated, Easing, StyleSheet } from 'react-native';
 
-import type { ID } from 'common/src/types/core';
+import type { ID } from 'common/types/core';
 import type { Toast$Banner } from '../../reducers/toast';
 
 export type Props = {

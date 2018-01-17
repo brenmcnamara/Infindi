@@ -19,7 +19,8 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
-import type { Account, LoginPayload } from 'common/src/types/db';
+import type { Account } from 'common/lib/models/Account';
+import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelCollection } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
 
