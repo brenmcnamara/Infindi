@@ -34,34 +34,14 @@ export default (store: Store) => (next: Next) => {
   return (action: PureAction) => {
     next(action);
 
-    switch (action.type) {
-      case 'AUTH_STATUS_CHANGE': {
-        const { status } = action;
-        switch (status.type) {
-          case 'LOGGED_IN': {
-            const { loginPayload } = status;
-            invariant(
-              loginPayload,
-              'Trying to download user data without a login payload',
-            );
-            if (accountSubscription) {
-              accountSubscription.remove();
-              accountSubscription = null;
-            }
-            accountSubscription = listenForAccounts(loginPayload, next);
-            break;
-          }
-
-          case 'LOGOUT_INITIALIZE': {
-            if (accountSubscription) {
-              accountSubscription.remove();
-              accountSubscription = null;
-            }
-            clearUserData(next);
-            break;
-          }
-        }
-      }
+    if (didLoginUser(action)) {
+      const loginPayload = extractLoginPayload(action);
+      accountSubscription && accountSubscription.remove();
+      accountSubscription = listenForAccounts(loginPayload, next);
+    } else if (willLogoutUser(action)) {
+      accountSubscription && accountSubscription.remove();
+      accountSubscription = null;
+      clearUserData(next);
     }
   };
 };
@@ -95,4 +75,26 @@ function listenForAccounts(
 
 function clearUserData(next: Next): void {
   next({ modelName: 'Account', type: 'COLLECTION_CLEAR' });
+}
+
+function didLoginUser(action: PureAction): bool {
+  if (action.type !== 'AUTH_STATUS_CHANGE') {
+    return false;
+  }
+  return action.status.type === 'LOGGED_IN';
+}
+
+function extractLoginPayload(action: PureAction): LoginPayload {
+  invariant(
+    action.type === 'AUTH_STATUS_CHANGE' && action.status.type === 'LOGGED_IN',
+    'Expected action to be AUTH_STATUS_CHANGE with LOGGED_IN status type',
+  );
+  return action.status.loginPayload;
+}
+
+function willLogoutUser(action: PureAction): bool {
+  if (action.type !== 'AUTH_STATUS_CHANGE') {
+    return false;
+  }
+  return action.status.type === 'LOGOUT_INITIALIZE';
 }
