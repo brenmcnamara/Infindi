@@ -5,7 +5,7 @@
 	<key>allowPlaidLink</key>
 	<true/>
 	<key>hostname</key>
-	<string>https://infindi-20cf1.appspot.com</string>
+	<string>localhost:8080</string>
 	<key>verificationService</key>
 	<string>YODLEE</string>
 </dict>

@@ -35,6 +35,7 @@ import {
   getGroupTypeForAccountLoader,
 } from '../common/db-utils';
 import { getLoginPayload } from '../store/state-utils';
+import { requestAccountVerification } from '../yodlee/action';
 import { requestInfoModal, requestUnimplementedModal } from '../actions/modal';
 
 import type {
@@ -190,7 +191,7 @@ class AccountsScreen extends Component<Props> {
   };
 
   _onPressAddAccount = (): void => {
-    this.props.dispatch(requestUnimplementedModal('Account Verification'));
+    this.props.dispatch(requestAccountVerification());
   };
 
   _onPressGroupInfo = (groupType: GroupType): void => {

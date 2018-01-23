@@ -13,7 +13,7 @@ import invariant from 'invariant';
 import type { ID, Pointer } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { PlaidDownloadStatus } from 'common/lib/models/PlaidCredentials';
-
+import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 let loginPayload: ?LoginPayload = null;
 
 export type ErrorPayload = {|
@@ -23,6 +23,28 @@ export type ErrorPayload = {|
 
 export function initialize(_loginPayload: LoginPayload): void {
   loginPayload = _loginPayload;
+}
+
+// -----------------------------------------------------------------------------
+//
+// QUERY YODLEE PROVIDERS
+//
+// -----------------------------------------------------------------------------
+
+export type QueryYodleeProvidersPayload = {|
+  +data: Array<YodleeProvider>,
+|};
+
+export async function genQueryYodleeProviders(
+  query: string,
+  limit: number,
+  page: number,
+): Promise<QueryYodleeProvidersPayload> {
+  await Environment.genLazyLoad();
+  const uri = createURI(
+    `/yodlee/providers/search?query=${query}&limit=${limit}&page=${page}`,
+  );
+  return await genGetRequest(uri);
 }
 
 // -----------------------------------------------------------------------------

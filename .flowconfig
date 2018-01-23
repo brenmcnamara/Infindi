@@ -24,7 +24,8 @@
 
 ; Ignore Facebook stuff
 
-
+; Ignore Infindi stuff.
+.*/node_modules/common/src/.*
 
 [include]
 
