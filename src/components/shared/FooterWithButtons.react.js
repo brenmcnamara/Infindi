@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    borderColor: Colors.BORDER,
+    borderColor: Colors.BORDER_HAIRLINE,
     borderTopWidth: 1,
     height: 50,
     paddingHorizontal: 16,

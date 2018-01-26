@@ -29,7 +29,7 @@ if (__DEV__) {
     modal,
     toast,
     // Logging is last.
-    reduxLogger,
+    // reduxLogger,
   );
 } else {
   middleware = applyMiddleware(
