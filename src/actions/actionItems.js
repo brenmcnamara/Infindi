@@ -68,7 +68,7 @@ export function selectActionItem(id: ID) {
             transitionType="HOME_TO_ACTION_ITEM"
           />
         ),
-        renderInitial: () => (
+        renderOut: () => (
           <HomeToActionItemTransitionModal
             dismissAfterTransitioningOut={true}
             actionItemID={id}
@@ -81,6 +81,14 @@ export function selectActionItem(id: ID) {
             dismissAfterTransitioningOut={true}
             actionItemID={id}
             show={false}
+            transitionType="HOME_TO_ACTION_ITEM"
+          />
+        ),
+        renderTransitionIn: () => (
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={true}
             transitionType="HOME_TO_ACTION_ITEM"
           />
         ),
@@ -116,7 +124,7 @@ export function unselectCurrentActionItem() {
             transitionType="ACTION_ITEM_TO_HOME"
           />
         ),
-        renderInitial: () => (
+        renderOut: () => (
           <HomeToActionItemTransitionModal
             dismissAfterTransitioningOut={true}
             actionItemID={id}
@@ -129,6 +137,14 @@ export function unselectCurrentActionItem() {
             dismissAfterTransitioningOut={true}
             actionItemID={id}
             show={false}
+            transitionType="ACTION_ITEM_TO_HOME"
+          />
+        ),
+        renderTransitionIn: () => (
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={true}
             transitionType="ACTION_ITEM_TO_HOME"
           />
         ),

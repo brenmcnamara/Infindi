@@ -51,8 +51,13 @@ export function requestInfoModal(
           {payload.render()}
         </InfoModal>
       ),
-      renderInitial: () => (
+      renderOut: () => (
         <InfoModal modalID={payload.id} show={false} title={payload.title}>
+          {payload.render()}
+        </InfoModal>
+      ),
+      renderTransitionIn: () => (
+        <InfoModal modalID={payload.id} show={true} title={payload.title}>
           {payload.render()}
         </InfoModal>
       ),
@@ -75,7 +80,8 @@ export function requestLeftPane(): Action$RequestModal {
       modalType: 'REACT_WITH_TRANSITION',
       priority: 'USER_REQUESTED',
       renderIn: () => <LeftPaneScreen show={true} />,
-      renderInitial: () => <LeftPaneScreen show={false} />,
+      renderOut: () => <LeftPaneScreen show={false} />,
+      renderTransitionIn: () => <LeftPaneScreen show={true} />,
       renderTransitionOut: () => <LeftPaneScreen show={false} />,
       transitionInMillis: LeftPaneTransitionInMillis,
       transitionOutMillis: LeftPaneTransitionOutMillis,

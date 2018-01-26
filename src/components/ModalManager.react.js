@@ -11,6 +11,7 @@ import type {
   Modal,
   Modal$Native,
   Modal$ReactWithTransition,
+  TransitionStage,
 } from '../reducers/modalState';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
@@ -27,7 +28,7 @@ export type Props = ReduxProps & {
 // Manages transitioning in and out react modals.
 type TransitionState = {|
   +modal: Modal$ReactWithTransition,
-  +type: 'IN' | 'TRANSITION_IN' | 'TRANSITION_OUT',
+  +type: TransitionStage,
 |} | null;
 
 // TODO: Instead of nullable transition state, add support for transition state
@@ -116,8 +117,12 @@ class ModalManager extends Component<Props, State> {
         content = transitionState.modal.renderIn();
         break;
 
+      case 'OUT':
+        content = transitionState.modal.renderOut();
+        break;
+
       case 'TRANSITION_IN':
-        content = transitionState.modal.renderInitial();
+        content = transitionState.modal.renderTransitionIn();
         break;
 
       case 'TRANSITION_OUT':
@@ -140,12 +145,20 @@ class ModalManager extends Component<Props, State> {
 
   _transitionInModal(modal: Modal$ReactWithTransition): Promise<void> {
     return new Promise(resolve => {
-      this.setState(
-        { transitionState: { modal, type: 'TRANSITION_IN' } },
-        () => {
+      this.setState({ transitionState: { modal, type: 'OUT' } }, () => {
+        this.setState({ transitionState: { modal, type: 'TRANSITION_IN' } });
+
+        const timeoutID = setTimeout(() => {
+          const index = this._timeoutIDs.indexOf(timeoutID);
+          if (index >= 0) {
+            this._timeoutIDs.splice(index, 1);
+          }
+
           this.setState({ transitionState: { modal, type: 'IN' } }, resolve);
-        },
-      );
+        }, modal.transitionInMillis);
+
+        this._timeoutIDs.push(timeoutID);
+      });
     });
   }
 
