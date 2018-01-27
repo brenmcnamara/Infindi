@@ -23,8 +23,7 @@ export type Props = {
   isEditable: bool,
   onChangeSearch: (search: string) => any,
   onSelectProvider: (provider: YodleeProvider) => any,
-  // TODO: Provider type is not correct.
-  providers: Array<Object>,
+  providers: Array<YodleeProvider>,
   search: string,
 };
 

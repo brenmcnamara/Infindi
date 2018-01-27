@@ -37,8 +37,7 @@ export type Props = ReduxProps & ReduxStateProps & ComponentProps;
 
 type Page =
   | {|
-      // TODO: Fix typing issues.
-      +providers: Array<Object>,
+      +providers: Array<YodleeProvider>,
       +search: string,
       +type: 'SEARCH',
     |}
