@@ -110,12 +110,14 @@ class AccountVerification extends Component<Props, State> {
   }
 
   _renderContent() {
+    const { transitionStage } = this.props;
     const { page } = this.state;
+
     switch (page.type) {
       case 'SEARCH': {
         return (
           <ProviderSearch
-            isEditable={this.props.transitionStage === 'IN'}
+            isEditable={transitionStage === 'IN'}
             search={page.search}
             onChangeSearch={this._onChangeSearch}
             onSelectProvider={this._onSelectProvider}
@@ -125,7 +127,13 @@ class AccountVerification extends Component<Props, State> {
       }
 
       case 'LOGIN': {
-        return <AccountLogin onBack={this._onBack} provider={page.provider} />;
+        return (
+          <AccountLogin
+            isEditable={transitionStage === 'IN'}
+            onBack={this._onBack}
+            provider={page.provider}
+          />
+        );
       }
 
       default:

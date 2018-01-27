@@ -21,6 +21,7 @@ import { NavBarHeight } from '../design/layout';
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 
 export type Props = {
+  isEditable: bool,
   onBack: () => any,
   provider: YodleeProvider,
 };
@@ -39,7 +40,9 @@ export default class AccountLogin extends Component<Props, State> {
   };
 
   render() {
-    const { raw: rawProvider } = this.props.provider;
+    const { isEditable, provider } = this.props;
+    const { raw: rawProvider } = provider;
+
     return (
       <View style={styles.root}>
         <View style={styles.header}>
@@ -58,6 +61,7 @@ export default class AccountLogin extends Component<Props, State> {
         <View style={styles.content}>
           <TextInput
             autoFocus={true}
+            editable={isEditable}
             onChangeText={this._onChangeUserName}
             placeholder="Username"
             style={styles.userNameInput}
@@ -65,6 +69,7 @@ export default class AccountLogin extends Component<Props, State> {
           />
           <TextInput
             onChangeText={this._onChangePassword}
+            editable={isEditable}
             placeholder="Password"
             secureTextEntry={true}
             style={styles.passwordInput}
