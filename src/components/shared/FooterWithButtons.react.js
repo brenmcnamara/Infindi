@@ -99,7 +99,7 @@ export default class Footer extends Component<Props, State> {
   _renderLeftAndRightButtons(props: Props) {
     const { buttonLayout } = props;
     invariant(
-      buttonLayout.type === 'RIGHT_AND_LEFT',
+      buttonLayout.type === 'LEFT_AND_RIGHT',
       'Incorrect button layout type',
     );
 

@@ -19,10 +19,14 @@ export function requestAccountVerification(): Action$RequestModal {
       id: PROVIDER_LOGIN_ID,
       modalType: 'REACT_WITH_TRANSITION',
       priority: 'USER_REQUESTED',
-      renderIn: () => <AccountVerification show={true} />,
-      renderOut: () => <AccountVerification show={false} />,
-      renderTransitionIn: () => <AccountVerification show={true} />,
-      renderTransitionOut: () => <AccountVerification show={false} />,
+      renderIn: () => <AccountVerification transitionStage="IN" />,
+      renderOut: () => <AccountVerification transitionStage="OUT" />,
+      renderTransitionIn: () => (
+        <AccountVerification transitionStage="TRANSITION_IN" />
+      ),
+      renderTransitionOut: () => (
+        <AccountVerification transitionStage="TRANSITION_OUT" />
+      ),
       transitionInMillis: TransitionInMillis,
       transitionOutMillis: TransitionOutMillis,
     },
