@@ -7,17 +7,11 @@ import invariant from 'invariant';
 import { handleNetworkRequest } from '../common/middleware-utils';
 import { initialize as initializeBackend } from '../backend';
 
-import type {
-  Action as AllActions,
-  Next,
-  Store,
-} from '../typesDEPRECATED/redux';
+import type { Action as AllActions, Store } from '../typesDEPRECATED/redux';
 import type { AuthStatus } from '../reducers/authStatus';
 import type { User as FirebaseUser } from 'common/types/firebase';
-import type { ID } from 'common/types/core';
 import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';
 import type { UserInfo } from 'common/lib/models/UserInfo';
-import type { UserMetrics } from 'common/lib/models/UserMetrics';
 
 type EmitterSubscription = { remove: () => void };
 
@@ -40,8 +34,6 @@ type ChangeStatus = (authStatus: AuthStatus) => *;
 // -----------------------------------------------------------------------------
 
 export default (store: Store) => (next: Function) => {
-  let userMetricsSubscription: ?EmitterSubscription = null;
-
   // Convenience function.
   const changeStatus = (status: AuthStatus) => {
     return next({ type: 'AUTH_STATUS_CHANGE', status });
@@ -53,19 +45,10 @@ export default (store: Store) => (next: Function) => {
     const loginPayload: ?LoginPayload = await genLoginPayload();
 
     if (canLogin(authStatus) && loginPayload) {
-      if (userMetricsSubscription) {
-        userMetricsSubscription.remove();
-        userMetricsSubscription = null;
-      }
-      userMetricsSubscription = listenForUserMetrics(loginPayload, next);
       initializeBackend(loginPayload);
       changeStatus({ loginPayload, type: 'LOGGED_IN' });
     } else if (canLogout(authStatus) && !loginPayload) {
       changeStatus({ type: 'LOGGED_OUT' });
-      if (userMetricsSubscription) {
-        userMetricsSubscription.remove();
-        userMetricsSubscription = null;
-      }
     }
   });
 
@@ -163,54 +146,16 @@ async function genUserInfo(id: string): Promise<UserInfo> {
   return document.data();
 }
 
-async function genUserMetrics(id: ID): Promise<UserMetrics> {
-  const document = await Database.collection('UserMetrics')
-    .doc(id)
-    .get();
-  invariant(
-    document.exists,
-    'Data Error: UserMetrics is missing for logged in user',
-  );
-  return document.data();
-}
-
 async function genLoginPayload(): Promise<?LoginPayload> {
   const firebaseUser: FirebaseUser = Auth.currentUser;
   if (!firebaseUser) {
     return null;
   }
-  const [userInfo, userMetrics, idToken] = await Promise.all([
+  const [userInfo, idToken] = await Promise.all([
     genUserInfo(firebaseUser.uid),
-    genUserMetrics(firebaseUser.uid),
     firebaseUser.getIdToken(),
   ]);
-  return { firebaseUser, idToken, userInfo, userMetrics };
-}
-
-// TODO: May want to separate user metrics from login payload. This is
-// semantically confusing.
-function listenForUserMetrics(
-  loginPayload: LoginPayload,
-  next: Next,
-): EmitterSubscription {
-  const userID = loginPayload.firebaseUser.uid;
-  const remove = Firebase.firestore()
-    .collection('UserMetrics')
-    .doc(userID)
-    .onSnapshot(document => {
-      if (!document.exists) {
-        return;
-      }
-      const userMetrics = document.data();
-      next({
-        status: {
-          loginPayload: { ...loginPayload, userMetrics },
-          type: 'LOGGED_IN',
-        },
-        type: 'AUTH_STATUS_CHANGE',
-      });
-    });
-  return { remove };
+  return { firebaseUser, idToken, userInfo };
 }
 
 function getLoginPayload(authStatus: AuthStatus): ?LoginPayload {

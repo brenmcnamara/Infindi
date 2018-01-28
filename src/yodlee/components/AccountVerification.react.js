@@ -1,13 +1,13 @@
 /* @flow */
 
 import AccountLogin from './AccountLogin.react';
-import Colors from '../design/colors';
-import Content from '../components/shared/Content.react';
-import FooterWithButtons from '../components/shared/FooterWithButtons.react';
+import Colors from '../../design/colors';
+import Content from '../../components/shared/Content.react';
+import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import ProviderSearch from './ProviderSearch.react';
 import ProviderSearchManager from './ProviderSearchManager';
 import React, { Component } from 'react';
-import Screen from '../components/shared/Screen.react';
+import Screen from '../../components/shared/Screen.react';
 
 import invariant from 'invariant';
 
@@ -19,13 +19,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { dismissAccountVerification } from './action';
+import { isSupportedProvider } from '../utils';
+import { dismissAccountVerification, unsupportedProvider } from '../action';
 
 import type { ComponentType } from 'react';
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
-import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { ReduxProps } from '../../typesDEPRECATED/redux';
 import type { Subscription } from './ProviderSearchManager';
-import type { TransitionStage } from '../reducers/modalState';
+import type { TransitionStage } from '../../reducers/modalState';
 
 export type ComponentProps = {
   transitionStage: TransitionStage,
@@ -64,7 +65,9 @@ class AccountVerification extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this._transitionValue = new Animated.Value(props.show ? 1.0 : 0.0);
+    this._transitionValue = new Animated.Value(
+      props.transitionStage === 'IN' ? 1.0 : 0.0,
+    );
 
     this.state = {
       page: {
@@ -182,6 +185,12 @@ class AccountVerification extends Component<Props, State> {
   };
 
   _onSelectProvider = (provider: YodleeProvider): void => {
+    const support = isSupportedProvider(provider);
+    if (support.type === 'NO') {
+      this.props.dispatch(unsupportedProvider(support.reason));
+      return;
+    }
+
     const { page } = this.state;
     invariant(
       page.type === 'SEARCH',

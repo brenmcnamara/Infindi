@@ -1,10 +1,17 @@
 /* @flow */
 
 import AccountVerification, {
-  TransitionInMillis,
-  TransitionOutMillis,
-} from './AccountVerification.react';
+  TransitionInMillis as AccountVerificationTransitionInMillis,
+  TransitionOutMillis as AccountVerificationTransitionOutMillis,
+} from './components/AccountVerification.react';
+import InfoModal, {
+  TransitionInMillis as InfoModalTransitionInMillis,
+  TransitionOutMillis as InfoModalTransitionOutMillis,
+} from '../components/shared/InfoModal.react';
 import React from 'react';
+import TextDesign from '../design/text';
+
+import { Text } from 'react-native';
 
 import type {
   Action$DismissModal,
@@ -12,6 +19,7 @@ import type {
 } from '../actions/modal';
 
 const PROVIDER_LOGIN_ID = 'YODLEE_LOGIN';
+const UNSUPPORTED_MODAL_ID = 'UNSUPPORTED_MODAL';
 
 export function requestAccountVerification(): Action$RequestModal {
   return {
@@ -27,8 +35,8 @@ export function requestAccountVerification(): Action$RequestModal {
       renderTransitionOut: () => (
         <AccountVerification transitionStage="TRANSITION_OUT" />
       ),
-      transitionInMillis: TransitionInMillis,
-      transitionOutMillis: TransitionOutMillis,
+      transitionInMillis: AccountVerificationTransitionInMillis,
+      transitionOutMillis: AccountVerificationTransitionOutMillis,
     },
     type: 'REQUEST_MODAL',
   };
@@ -38,5 +46,39 @@ export function dismissAccountVerification(): Action$DismissModal {
   return {
     modalID: PROVIDER_LOGIN_ID,
     type: 'DISMISS_MODAL',
+  };
+}
+
+export function unsupportedProvider(reason: string): Action$RequestModal {
+  const title = 'Unsupported Provider';
+  return {
+    modal: {
+      id: UNSUPPORTED_MODAL_ID,
+      modalType: 'REACT_WITH_TRANSITION',
+      priority: 'USER_REQUESTED',
+      renderIn: () => (
+        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={true} title={title}>
+          <Text style={TextDesign.normal}>{reason}</Text>
+        </InfoModal>
+      ),
+      renderOut: () => (
+        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={false} title={title}>
+          <Text style={TextDesign.normal}>{reason}</Text>
+        </InfoModal>
+      ),
+      renderTransitionIn: () => (
+        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={true} title={title}>
+          <Text style={TextDesign.normal}>{reason}</Text>
+        </InfoModal>
+      ),
+      renderTransitionOut: () => (
+        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={false} title={title}>
+          <Text style={TextDesign.normal}>{reason}</Text>
+        </InfoModal>
+      ),
+      transitionInMillis: InfoModalTransitionInMillis,
+      transitionOutMillis: InfoModalTransitionOutMillis,
+    },
+    type: 'REQUEST_MODAL',
   };
 }

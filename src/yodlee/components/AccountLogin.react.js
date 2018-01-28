@@ -1,14 +1,13 @@
 /* @flow */
 
-import Colors from '../design/colors';
-import Icons from '../design/icons';
+import Colors from '../../design/colors';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import TextButton from '../components/shared/TextButton.react';
-import TextDesign from '../design/text';
-
-import invariant from 'invariant';
+import TextButton from '../../components/shared/TextButton.react';
+import TextDesign from '../../design/text';
 
 import {
+  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -16,8 +15,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { NavBarHeight } from '../design/layout';
+import { NavBarHeight } from '../../design/layout';
 
+import type { LoginEntry } from 'common/types/yodlee';
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 
 export type Props = {
@@ -25,6 +25,8 @@ export type Props = {
   onBack: () => any,
   provider: YodleeProvider,
 };
+
+type RowItem = LoginEntry | { type: 'forgotPassword', url: string };
 
 type State = {
   password: string,
@@ -59,46 +61,53 @@ export default class AccountLogin extends Component<Props, State> {
           <View style={styles.headerRightIcon} />
         </View>
         <View style={styles.content}>
-          <TextInput
-            autoFocus={true}
-            editable={isEditable}
-            onChangeText={this._onChangeUserName}
-            placeholder="Username"
-            style={styles.userNameInput}
-            value={this.state.userName}
+          <FlatList
+            data={this._getData()}
+            keyExtractor={(_, index) => String(index)}
+            keyboardShouldPersistTaps="always"
+            renderItem={this._renderLoginRow}
           />
-          <TextInput
-            onChangeText={this._onChangePassword}
-            editable={isEditable}
-            placeholder="Password"
-            secureTextEntry={true}
-            style={styles.passwordInput}
-            value={this.state.password}
-          />
-          {Boolean(rawProvider.forgetPasswordUrl) && (
-            <TextButton
-              onPress={this._onPressForgotCredentials}
-              size="SMALL"
-              type="SPECIAL"
-              text="Forgot username or password?"
-            />
-          )}
         </View>
       </View>
     );
   }
 
-  _onChangeUserName = (text: string): void => {
-    this.setState({ userName: text });
-  };
+  _renderLoginRow(data: { item: RowItem }) {
+    const { item } = data;
+    // $FlowFixMe - This is fine
+    switch (item.type) {
+      case 'text':
+      case 'password': {
+        return (
+          <TextInput
+            autoFocus={true}
+            editable={this.props.isEditable}
+            onChangeText={text => this._onChangeRow(item, text)}
+            placeholder={item.label}
+            style={styles.userNameInput}
+            value={this.state.userName}
+          />
+        );
+      }
 
-  _onChangePassword = (text: string): void => {
-    this.setState({ password: text });
-  };
+      case 'forgotPassword': {
+        // $FlowFixMe - This is fine.
+        const { url } = item;
+        return (
+          <TextButton
+            onPress={() => this._onPressForgotCredentials(url)}
+            size="SMALL"
+            type="SPECIAL"
+            text="Forgot username or password?"
+          />
+        );
+      }
+    }
+  }
 
-  _onPressForgotCredentials = (): void => {
-    const { forgetPasswordUrl } = this.props.provider.raw;
-    invariant(forgetPasswordUrl, 'Cannot select forget password without url');
+  _onChangeRow = (item: LoginEntry, text: string): void => {};
+
+  _onPressForgotCredentials = (url: string): void => {
     // TODO: Open safari at the url.
     // https://facebook.github.io/react-native/docs/linking.html
   };
@@ -106,6 +115,18 @@ export default class AccountLogin extends Component<Props, State> {
   _onPressHeaderLeftIcon = (): void => {
     this.props.onBack();
   };
+
+  _getData() {
+    const { loginForm } = this.props.provider.raw;
+    const rows = loginForm.row;
+    /*
+    const { forgetPasswordURL } = loginForm;
+    if (forgetPasswordURL) {
+      rows.push({ url: forgetPasswordURL, type: 'forgotPassword' });
+    }
+    return rows;
+    */
+  }
 }
 
 const styles = StyleSheet.create({

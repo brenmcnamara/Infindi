@@ -268,7 +268,7 @@ function mapReduxStateToProps(state: ReduxState) {
     // isPlaidLinkAvailable: state.plaid.isLinkAvailable,
     loaderCollection:
       accounts.type === 'STEADY' ? accounts.loaderCollection : {},
-    netWorth: loginPayload.userMetrics.netWorth,
+    netWorth: 0,
   };
 }
 

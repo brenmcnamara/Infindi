@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import { genQueryYodleeProviders } from '../backend';
+import { genQueryYodleeProviders } from '../../backend';
 
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 

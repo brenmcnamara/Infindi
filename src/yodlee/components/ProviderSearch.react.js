@@ -1,9 +1,9 @@
 /* @flow */
 
-import Colors from '../design/colors';
-import Icons from '../design/icons';
+import Colors from '../../design/colors';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import TextDesign from '../design/text';
+import TextDesign from '../../design/text';
 
 import {
   Animated,
@@ -15,7 +15,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { NavBarHeight } from '../design/layout';
+import { isSupportedProvider } from '../utils';
+import { NavBarHeight } from '../../design/layout';
 
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 
@@ -81,6 +82,14 @@ export default class ProviderSearch extends Component<Props> {
       isFirst ? { marginTop: 4 } : null,
     ];
     const nameStyles = [TextDesign.header3, styles.searchResultsItemName];
+    const support = isSupportedProvider(item);
+    const supportStyles = [
+      styles.searchResultItemSupport,
+      {
+        backgroundColor: support.type === 'YES' ? Colors.SUCCESS : Colors.ERROR,
+      },
+    ];
+
     return (
       <TouchableOpacity onPress={() => this.props.onSelectProvider(item)}>
         <View style={itemStyles}>
@@ -89,6 +98,7 @@ export default class ProviderSearch extends Component<Props> {
             {/* $FlowFixMe - YodleeType defined wrong */}
             <Text style={TextDesign.small}>{item.raw.baseUrl}</Text>
           </View>
+          <View style={supportStyles} />
         </View>
       </TouchableOpacity>
     );
@@ -134,6 +144,13 @@ const styles = StyleSheet.create({
 
   searchResultsItemName: {
     marginBottom: 2,
+  },
+
+  searchResultItemSupport: {
+    borderRadius: 5,
+    height: 10,
+    margin: 4,
+    width: 10,
   },
 
   searchTextInput: {
