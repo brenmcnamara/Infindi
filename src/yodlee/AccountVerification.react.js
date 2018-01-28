@@ -1,12 +1,11 @@
 /* @flow */
 
-import PROVIDERS_TEMP from './TEMP';
-
 import AccountLogin from './AccountLogin.react';
 import Colors from '../design/colors';
 import Content from '../components/shared/Content.react';
 import FooterWithButtons from '../components/shared/FooterWithButtons.react';
 import ProviderSearch from './ProviderSearch.react';
+import ProviderSearchManager from './ProviderSearchManager';
 import React, { Component } from 'react';
 import Screen from '../components/shared/Screen.react';
 
@@ -25,6 +24,7 @@ import { dismissAccountVerification } from './action';
 import type { ComponentType } from 'react';
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { Subscription } from './ProviderSearchManager';
 import type { TransitionStage } from '../reducers/modalState';
 
 export type ComponentProps = {
@@ -42,8 +42,9 @@ type Page =
       +type: 'SEARCH',
     |}
   | {|
-      +provider: YodleeProvider,
+      +providers: Array<YodleeProvider>,
       +search: string,
+      +selectedProvider: YodleeProvider,
       +type: 'LOGIN',
     |};
 
@@ -57,15 +58,32 @@ export const TransitionInMillis = 400;
 export const TransitionOutMillis = 400;
 
 class AccountVerification extends Component<Props, State> {
-  state: State = {
-    page: { providers: PROVIDERS_TEMP, search: '', type: 'SEARCH' },
-  };
-
+  _searchManager: ProviderSearchManager = new ProviderSearchManager();
+  _searchSubscription: Subscription | null = null;
   _transitionValue: Animated.Value;
 
   constructor(props: Props) {
     super(props);
     this._transitionValue = new Animated.Value(props.show ? 1.0 : 0.0);
+
+    this.state = {
+      page: {
+        providers: this._searchManager.getProviders(),
+        search: '',
+        type: 'SEARCH',
+      },
+    };
+  }
+
+  componentDidMount(): void {
+    this._searchSubscription = this._searchManager.listenToSearchResults(
+      this._onUpdateSearchResults,
+    );
+  }
+
+  componentWillUnmount(): void {
+    this._searchSubscription && this._searchSubscription();
+    this._searchManager.clearSearch();
   }
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -131,7 +149,7 @@ class AccountVerification extends Component<Props, State> {
           <AccountLogin
             isEditable={transitionStage === 'IN'}
             onBack={this._onBack}
-            provider={page.provider}
+            provider={page.selectedProvider}
           />
         );
       }
@@ -154,8 +172,13 @@ class AccountVerification extends Component<Props, State> {
       'Expecting page to be SEARCH when changing search',
     );
     this.setState({
-      page: { providers: PROVIDERS_TEMP, search, type: 'SEARCH' },
+      page: {
+        providers: page.providers,
+        search,
+        type: 'SEARCH',
+      },
     });
+    this._searchManager.updateSearch(search);
   };
 
   _onSelectProvider = (provider: YodleeProvider): void => {
@@ -165,7 +188,12 @@ class AccountVerification extends Component<Props, State> {
       'Expecting page to be SEARCH when provider is selected',
     );
     this.setState({
-      page: { provider, search: page.search, type: 'LOGIN' },
+      page: {
+        providers: page.providers,
+        search: page.search,
+        selectedProvider: provider,
+        type: 'LOGIN',
+      },
     });
   };
 
@@ -176,8 +204,45 @@ class AccountVerification extends Component<Props, State> {
       'Expecting page to be LOGIN when back button is pressed',
     );
     this.setState({
-      page: { providers: PROVIDERS_TEMP, search: page.search, type: 'SEARCH' },
+      page: {
+        providers: page.providers,
+        search: page.search,
+        type: 'SEARCH',
+      },
     });
+  };
+
+  _onUpdateSearchResults = (): void => {
+    const { page } = this.state;
+    const providers = this._searchManager.getProviders();
+
+    switch (page.type) {
+      case 'LOGIN': {
+        this.setState({
+          page: {
+            providers,
+            search: page.search,
+            selectedProvider: page.selectedProvider,
+            type: 'LOGIN',
+          },
+        });
+        break;
+      }
+
+      case 'SEARCH': {
+        this.setState({
+          page: {
+            providers,
+            search: page.search,
+            type: 'SEARCH',
+          },
+        });
+        break;
+      }
+
+      default:
+        invariant(false, 'Unrecognized page type %s', page.type);
+    }
   };
 
   _getFooterButtonLayout() {

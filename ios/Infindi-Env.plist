@@ -5,7 +5,7 @@
 	<key>allowPlaidLink</key>
 	<true/>
 	<key>hostname</key>
-	<string>localhost:8080</string>
+	<string>http://localhost:8080</string>
 	<key>verificationService</key>
 	<string>YODLEE</string>
 </dict>
