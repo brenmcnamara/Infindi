@@ -6,6 +6,8 @@ import React, { Component } from 'react';
 import TextButton from '../../components/shared/TextButton.react';
 import TextDesign from '../../design/text';
 
+import invariant from 'invariant';
+
 import {
   FlatList,
   Image,
@@ -26,7 +28,9 @@ export type Props = {
   provider: YodleeProvider,
 };
 
-type RowItem = LoginEntry | { type: 'forgotPassword', url: string };
+type RowItem =
+  | { type: 'LOGIN_ENTRY', loginEntry: LoginEntry }
+  | { type: 'FORGOT_PASSWORD', url: string };
 
 type State = {
   password: string,
@@ -42,7 +46,7 @@ export default class AccountLogin extends Component<Props, State> {
   };
 
   render() {
-    const { isEditable, provider } = this.props;
+    const { provider } = this.props;
     const { raw: rawProvider } = provider;
 
     return (
@@ -72,26 +76,26 @@ export default class AccountLogin extends Component<Props, State> {
     );
   }
 
-  _renderLoginRow(data: { item: RowItem }) {
+  _renderLoginRow = (data: { item: RowItem }) => {
     const { item } = data;
-    // $FlowFixMe - This is fine
+
     switch (item.type) {
-      case 'text':
-      case 'password': {
+      case 'LOGIN_ENTRY': {
+        const { loginEntry } = item;
+        const field = loginEntry.field[0];
         return (
           <TextInput
             autoFocus={true}
             editable={this.props.isEditable}
-            onChangeText={text => this._onChangeRow(item, text)}
-            placeholder={item.label}
-            style={styles.userNameInput}
-            value={this.state.userName}
+            onChangeText={text => this._onChangeRow(loginEntry, text)}
+            placeholder={loginEntry.label}
+            style={styles.loginEntryRow}
+            value={field.value}
           />
         );
       }
 
-      case 'forgotPassword': {
-        // $FlowFixMe - This is fine.
+      case 'FORGOT_PASSWORD': {
         const { url } = item;
         return (
           <TextButton
@@ -102,8 +106,11 @@ export default class AccountLogin extends Component<Props, State> {
           />
         );
       }
+
+      default:
+        invariant(false, 'Unrecognized row item: %s', item.type);
     }
-  }
+  };
 
   _onChangeRow = (item: LoginEntry, text: string): void => {};
 
@@ -118,14 +125,16 @@ export default class AccountLogin extends Component<Props, State> {
 
   _getData() {
     const { loginForm } = this.props.provider.raw;
-    const rows = loginForm.row;
-    /*
+    const rows: Array<RowItem> = loginForm.row.map(loginEntry => ({
+      loginEntry,
+      type: 'LOGIN_ENTRY',
+    }));
+
     const { forgetPasswordURL } = loginForm;
     if (forgetPasswordURL) {
-      rows.push({ url: forgetPasswordURL, type: 'forgotPassword' });
+      rows.push({ url: forgetPasswordURL, type: 'FORGOT_PASSWORD' });
     }
     return rows;
-    */
   }
 }
 
@@ -133,15 +142,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     marginTop: 32,
-  },
-
-  userNameInput: {
-    borderBottomWidth: 1,
-    borderColor: Colors.BORDER,
-    fontFamily: TextDesign.thickFont,
-    fontSize: TextDesign.largeFontSize,
-    marginHorizontal: 24,
-    paddingBottom: 4,
   },
 
   header: {
@@ -167,12 +167,13 @@ const styles = StyleSheet.create({
     width: LEFT_ARROW_WIDTH,
   },
 
-  passwordInput: {
+  loginEntryRow: {
     borderBottomWidth: 1,
     borderColor: Colors.BORDER,
     fontFamily: TextDesign.thickFont,
     fontSize: TextDesign.largeFontSize,
-    margin: 24,
+    marginBottom: 24,
+    marginHorizontal: 24,
     paddingBottom: 4,
   },
 

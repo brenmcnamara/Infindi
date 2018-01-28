@@ -28,6 +28,8 @@ export type Props = {
   search: string,
 };
 
+const SUPPORT_INDICATOR_SIZE = 6;
+
 export default class ProviderSearch extends Component<Props> {
   _transitionValue: Animated.Value;
 
@@ -147,10 +149,9 @@ const styles = StyleSheet.create({
   },
 
   searchResultItemSupport: {
-    borderRadius: 5,
-    height: 10,
-    margin: 4,
-    width: 10,
+    borderRadius: SUPPORT_INDICATOR_SIZE / 2,
+    height: SUPPORT_INDICATOR_SIZE,
+    width: SUPPORT_INDICATOR_SIZE,
   },
 
   searchTextInput: {

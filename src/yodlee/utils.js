@@ -25,11 +25,21 @@ export function isSupportedProvider(provider: YodleeProvider): SupportType {
 
   if (loginForm.row.some(entry => !entry.field || entry.field.length !== 1)) {
     return {
-      reason:
-        'Currently, provider login forms should have row.field of length 1',
+      reason: 'Provider login forms should have row.field of length 1',
       type: 'NO',
     };
   }
 
+  const VALID_FIELDS = ['text', 'password'];
+  const hasAllValidFields = loginForm.row.every(entry =>
+    VALID_FIELDS.includes(entry.field[0].type),
+  );
+
+  if (!hasAllValidFields) {
+    return {
+      reason: 'Provider login fields must be of type text or password',
+      type: 'NO',
+    };
+  }
   return { type: 'YES' };
 }
