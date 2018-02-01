@@ -20,6 +20,13 @@ export const AccountGroupInfo = {
   `),
 
   /**
+   * Explain what the 'INVESTMENTS' category is for in a few sentences.
+   */
+  INVESTMENTS: cleanupWhitespace(`
+    One to two sentences on what an account labeled under investments means.
+  `),
+
+  /**
    * Explain what the 'OTHER' category is for in a few sentences.
    */
   OTHER: cleanupWhitespace(`

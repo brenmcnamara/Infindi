@@ -30,29 +30,24 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { filterObject, isObjectEmpty } from '../common/obj-utils';
-import {
-  formatGroupType,
-  getGroupTypeForAccountLoader,
-} from '../common/db-utils';
-import { getLoginPayload } from '../store/state-utils';
+import { getGroupType } from 'common/lib/models/Account';
+import { getLoginPayload, getNetWorth } from '../store/state-utils';
 import { requestAccountVerification } from '../yodlee/action';
 import { requestInfoModal, requestUnimplementedModal } from '../actions/modal';
 
+import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type {
   AccountLoader,
   AccountLoaderCollection,
 } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
-import type { GroupType } from '../common/db-utils';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
 
 export type Props = ReduxProps & {
   isDownloading: bool,
-  isLinkAvailable: bool,
-  isPlaidLinkAvailable: bool,
   loaderCollection: AccountLoaderCollection,
-  netWorth: Dollars | null,
+  netWorth: number,
 };
 
 type RowItem =
@@ -63,7 +58,7 @@ type RowItem =
     |}
   | {|
       +accounts: AccountLoaderCollection,
-      +groupType: GroupType,
+      +groupType: AccountGroupType,
       +key: string,
       +rowType: 'ACCOUNTS',
     |};
@@ -194,7 +189,7 @@ class AccountsScreen extends Component<Props> {
     this.props.dispatch(requestAccountVerification());
   };
 
-  _onPressGroupInfo = (groupType: GroupType): void => {
+  _onPressGroupInfo = (groupType: AccountGroupType): void => {
     const content = AccountGroupInfoContent[groupType];
     invariant(content, 'No info exists for group type: %s.', groupType);
     this.props.dispatch(
@@ -202,7 +197,7 @@ class AccountsScreen extends Component<Props> {
         id: `GROUP_INFO_${groupType}`,
         priority: 'USER_REQUESTED',
         render: () => <Text style={TextDesign.normal}>{content}</Text>,
-        title: formatGroupType(groupType),
+        title: getFormattedGroupType(groupType),
       }),
     );
   };
@@ -212,44 +207,59 @@ class AccountsScreen extends Component<Props> {
   };
 
   _getData() {
-    const { loaderCollection, netWorth } = this.props;
+    const { loaderCollection } = this.props;
     const availableCashGroup = filterObject(loaderCollection, loader => {
-      return getGroupTypeForAccountLoader(loader) === 'AVAILABLE_CASH';
+      const account = getAccount(loader);
+      return getGroupType(account) === 'AVAILABLE_CASH';
     });
     const shortTermDebtGroup = filterObject(loaderCollection, loader => {
-      return getGroupTypeForAccountLoader(loader) === 'SHORT_TERM_DEBT';
+      const account = getAccount(loader);
+      return getGroupType(account) === 'SHORT_TERM_DEBT';
+    });
+    const investmentsGroup = filterObject(loaderCollection, loader => {
+      const account = getAccount(loader);
+      return getGroupType(account) === 'INVESTMENTS';
     });
     const otherGroup = filterObject(loaderCollection, loader => {
-      return getGroupTypeForAccountLoader(loader) === 'OTHER';
+      const account = getAccount(loader);
+      return getGroupType(account) === 'OTHER';
     });
     return [
       {
         key: '1',
-        netWorth,
+        netWorth: this.props.netWorth,
         rowType: 'NET_WORTH',
       },
       isObjectEmpty(availableCashGroup)
         ? null
         : {
-            key: '2',
             accounts: availableCashGroup,
             groupType: 'AVAILABLE_CASH',
+            key: 'AVAILABLE_CASH',
             rowType: 'ACCOUNTS',
           },
       isObjectEmpty(shortTermDebtGroup)
         ? null
         : {
-            key: '3',
             accounts: shortTermDebtGroup,
             groupType: 'SHORT_TERM_DEBT',
+            key: 'SHORT_TERM_DEBT',
+            rowType: 'ACCOUNTS',
+          },
+      isObjectEmpty(investmentsGroup)
+        ? null
+        : {
+            accounts: investmentsGroup,
+            groupType: 'INVESTMENTS',
+            key: 'INVESTMENTS',
             rowType: 'ACCOUNTS',
           },
       isObjectEmpty(otherGroup)
         ? null
         : {
-            key: '4',
             accounts: otherGroup,
             groupType: 'OTHER',
+            key: 'OTHER',
             rowType: 'ACCOUNTS',
           },
     ].filter(truthy => truthy);
@@ -265,10 +275,9 @@ function mapReduxStateToProps(state: ReduxState) {
   );
   return {
     isDownloading: accounts.type === 'DOWNLOADING',
-    // isPlaidLinkAvailable: state.plaid.isLinkAvailable,
     loaderCollection:
       accounts.type === 'STEADY' ? accounts.loaderCollection : {},
-    netWorth: 0,
+    netWorth: getNetWorth(state),
   };
 }
 
@@ -312,3 +321,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+function getAccount(loader: AccountLoader): Account {
+  invariant(loader.type === 'STEADY', 'Only support steady account loaders');
+  return loader.model;
+}
+
+export function getFormattedGroupType(groupType: AccountGroupType): string {
+  return (
+    groupType
+      .split('_')
+      // Capitalize first letter only.
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+  );
+}

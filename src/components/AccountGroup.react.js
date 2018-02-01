@@ -8,20 +8,25 @@ import TextDesign from '../design/text';
 
 import invariant from 'invariant';
 
-import { getFormattedAccountType } from '../common/db-utils';
+import {
+  getAccountName,
+  getAccountType,
+  getBalance,
+  getInstitution,
+} from 'common/lib/models/Account';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type {
   AccountLoader,
   AccountLoaderCollection,
 } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
-import type { GroupType } from '../common/db-utils';
 
 export type Props = {
   accounts: AccountLoaderCollection,
-  groupType: GroupType,
+  groupType: AccountGroupType,
   onPressGroupInfo: () => any,
   onSelectAccount: (account: AccountLoader) => any,
 };
@@ -68,16 +73,16 @@ export default class AccountGroup extends Component<Props> {
         <TouchableOpacity onPress={() => this.props.onSelectAccount(loader)}>
           <View style={styles.accountLoaderTop}>
             <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
-              {account.name}
+              {getAccountName(account)}
             </Text>
             <MoneyText
-              dollars={account.balance}
+              dollars={getBalance(account)}
               textStyle={[styles.accountBalance, TextDesign.normalWithEmphasis]}
             />
           </View>
           <View style={styles.accountLoaderBottom}>
             <Text style={[styles.accountBank, TextDesign.small]}>
-              {formatInstitutionName(account.institutionName)}
+              {getInstitution(account)}
             </Text>
             <Text style={[styles.accountType, TextDesign.small]}>
               {getFormattedAccountType(account)}
@@ -92,7 +97,7 @@ export default class AccountGroup extends Component<Props> {
     return reduceObject(
       this.props.accounts,
       (sum, loader) => {
-        const balance = loader.type === 'STEADY' ? loader.model.balance : 0;
+        const balance = loader.type === 'STEADY' ? getBalance(loader.model) : 0;
         return sum + balance;
       },
       0,
@@ -104,8 +109,8 @@ export default class AccountGroup extends Component<Props> {
   }
 }
 
-function formatInstitutionName(name: string): string {
-  return name.replace(/_/g, ' ').toUpperCase();
+function getFormattedAccountType(account: Account): string {
+  return getAccountType(account).replace(/_/g, ' ');
 }
 
 const styles = StyleSheet.create({

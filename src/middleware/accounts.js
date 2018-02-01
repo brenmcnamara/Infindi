@@ -53,6 +53,7 @@ function listenForAccounts(
   next({ modelName: 'Account', type: 'COLLECTION_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
   const remove = Database.collection('Accounts')
+    .where('shouldShowUser', '==', true)
     .where('sourceOfTruth.type', '==', 'YODLEE')
     .where('userRef.refID', '==', userID)
     .onSnapshot(snapshot => {

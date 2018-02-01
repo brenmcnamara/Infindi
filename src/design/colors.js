@@ -10,6 +10,7 @@ const GRAY_5 = '#4A4A4A';
 const GREEN = '#3BA68E';
 const RED = '#B54C59';
 const WHITE = '#FFFFFF';
+const LYNCH = '#6C7A89';
 
 export default {
   // TODO: Rename to BACKGROUND_NORMAL
@@ -32,6 +33,7 @@ export default {
   BORDER_HAIRLINE: '#C4C4C4',
   ERROR: RED,
   MONEY_GOOD: GREEN,
+  MONEY_NEUTRAL: LYNCH,
   NAV_BAR_BUTTON: BLACK,
   SUCCESS: GREEN,
   TAB_BAR: '#F6F6F6',

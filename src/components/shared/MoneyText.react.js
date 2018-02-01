@@ -1,5 +1,6 @@
 /* @flow */
 
+import Colors from '../../design/colors';
 import React, { Component } from 'react';
 
 import { StyleSheet, Text } from 'react-native';
@@ -14,12 +15,19 @@ export type Props = {
 
 export default class MoneyText extends Component<Props> {
   render() {
-    const style = [this.props.textStyle, styles.green];
+    const style = [
+      this.props.textStyle,
+      {
+        color:
+          this.props.dollars > 0 ? Colors.MONEY_GOOD : Colors.MONEY_NEUTRAL,
+      },
+    ];
     return <Text style={style}>{this._getDollarsFormatted()}</Text>;
   }
 
   _getDollarsFormatted(): string {
-    let roundDollarsTimes100 = Math.round(this.props.dollars * 100);
+    let roundDollarsTimes100 = Math.round(Math.abs(this.props.dollars) * 100);
+    const sign = this.props.dollars < 0 ? '-' : '';
     const digits = [];
     while (roundDollarsTimes100 > 0) {
       const nextDigit = roundDollarsTimes100 % 10;
@@ -28,14 +36,14 @@ export default class MoneyText extends Component<Props> {
     }
 
     if (digits.length === 0) {
-      return '$0';
+      return `${sign}$0`;
     }
 
     // Start with the stuff after the decimal point.
     let formatted = `.${digits[1]}${digits[0]}`;
 
     if (digits.length <= 2) {
-      return `$0${formatted}`;
+      return `${sign}$0${formatted}`;
     }
 
     let isFirstPass = true;
@@ -47,12 +55,12 @@ export default class MoneyText extends Component<Props> {
       formatted = `${d3}${d2}${d1}${comma}` + formatted;
       isFirstPass = false;
     }
-    return `$${formatted}`;
+    return `${sign}$${formatted}`;
   }
 }
 
 const styles = StyleSheet.create({
   green: {
-    color: 'green',
+    color: Colors.MONEY_GOOD,
   },
 });

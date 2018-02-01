@@ -2,6 +2,9 @@
 
 import invariant from 'invariant';
 
+import { getBalance } from 'common/lib/models/Account';
+
+import type { Dollars } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { RootType, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
@@ -53,6 +56,32 @@ export function getRoute(state: State): Route {
   // Need to calculate the tab that is showing.
   const tab = state.routeState.requestedTab || 'ACCOUNTS';
   return { name: root, next: { name: tab, next: null } };
+}
+
+export function getNetWorth(state: State): Dollars {
+  const { accounts } = state;
+  switch (accounts.type) {
+    case 'DOWNLOADING':
+    case 'DOWNLOAD_FAILED':
+    case 'EMPTY': {
+      return 0;
+    }
+
+    case 'STEADY': {
+      const { loaderCollection } = accounts;
+      let total = 0;
+      for (const id in loaderCollection) {
+        if (loaderCollection.hasOwnProperty(id)) {
+          const loader = loaderCollection[id];
+          total += loader.type === 'STEADY' ? getBalance(loader.model) : 0;
+        }
+      }
+      return total;
+    }
+
+    default:
+      return invariant(false, 'Unrecognized account type %s', accounts.type);
+  }
 }
 
 // -----------------------------------------------------------------------------

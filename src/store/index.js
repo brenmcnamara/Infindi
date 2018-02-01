@@ -1,7 +1,7 @@
 /* @flow */
 
+import accounts from '../middleware/accounts';
 import authentication from '../middleware/authentication';
-import datastore from '../middleware/datastore';
 import modal from '../middleware/modal';
 import network from '../middleware/network';
 // import plaid from '../middleware/plaid';
@@ -21,7 +21,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    datastore,
+    accounts,
     // plaid,
     // Then comes network middleware.
     network,
@@ -37,7 +37,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    datastore,
+    accounts,
     // plaid,
     // Then comes network middleware.
     network,
