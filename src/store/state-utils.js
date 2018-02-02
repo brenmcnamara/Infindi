@@ -4,7 +4,7 @@ import invariant from 'invariant';
 
 import { getBalance } from 'common/lib/models/Account';
 
-import type { Dollars } from 'common/types/core';
+import type { Dollars, ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { RootType, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
@@ -82,6 +82,10 @@ export function getNetWorth(state: State): Dollars {
     default:
       return invariant(false, 'Unrecognized account type %s', accounts.type);
   }
+}
+
+export function hasToast(state: State, toastID: ID): bool {
+  return state.toast.bannerQueue.some(banner => banner.id === toastID);
 }
 
 // -----------------------------------------------------------------------------

@@ -37,7 +37,8 @@ type State = {
 export const TRANSITION_OUT_MILLIS = 400;
 export const TRANSITION_IN_MILLIS = 300;
 
-const BANNER_HEIGHT = 22; // TEXT LINE HEIGHT
+const BANNER_TEXT_PADDING = 2;
+const BANNER_HEIGHT = 22 + 2 * BANNER_TEXT_PADDING; // TEXT LINE HEIGHT + PADDING
 
 export default class Banner extends Component<Props, State> {
   _currentTransitionID: ID = 'request-0';
@@ -163,6 +164,7 @@ export default class Banner extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   text: {
+    paddingVertical: BANNER_TEXT_PADDING,
     textAlign: 'center',
   },
 });
