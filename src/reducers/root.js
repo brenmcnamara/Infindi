@@ -9,6 +9,7 @@ import network from './network';
 // import plaid from './plaid';
 import routeState from './routeState';
 import toast from './toast';
+import yodleeRefreshInfo from './yodleeRefreshInfo';
 
 import { combineReducers } from 'redux';
 
@@ -21,6 +22,7 @@ import type { State as State$Network } from './network';
 import type { State as State$ActionItems } from './actionItems';
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
+import type { State as State$YodleeRefreshInfo } from './yodleeRefreshInfo';
 
 export type State = {|
   +accounts: State$Accounts,
@@ -32,6 +34,7 @@ export type State = {|
   +actionItems: State$ActionItems,
   +routeState: State$RouteState,
   +toast: State$Toast,
+  +yodleeRefreshInfo: State$YodleeRefreshInfo,
 |};
 
 // TODO: Can I add flow typing here?
@@ -45,4 +48,5 @@ export default combineReducers({
   // plaid,
   routeState,
   toast,
+  yodleeRefreshInfo,
 });

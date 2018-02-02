@@ -4,6 +4,7 @@ import accounts from '../middleware/accounts';
 import authentication from '../middleware/authentication';
 import modal from '../middleware/modal';
 import network from '../middleware/network';
+import refreshInfo from '../middleware/refreshInfo';
 // import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
@@ -21,6 +22,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
+    refreshInfo,
     accounts,
     // plaid,
     // Then comes network middleware.
@@ -29,7 +31,7 @@ if (__DEV__) {
     modal,
     toast,
     // Logging is last.
-    // reduxLogger,
+    reduxLogger,
   );
 } else {
   middleware = applyMiddleware(
@@ -37,6 +39,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
+    refreshInfo,
     accounts,
     // plaid,
     // Then comes network middleware.

@@ -1,71 +1,55 @@
 /* @flow */
 
-// TODO: Why won't flow cover next functions?
-
-/**
- * The purpose of this middleware is to coordinate the download and sync of all
- * data for the user. This includes:
- *
- * (1) Downloading and syncing data with firebase
- * (2) Downloading and syncing data with our own services
- * (3) Managing local data while in offline mode
- * (4) encrypting and storing data locally.
- *
- * NOTE: Some of the above functionality is reserved for future versions of this
- * middleware.
- */
-
 import invariant from 'invariant';
 
 import { didLogin, willLogout } from '../common/action-utils';
-import { getAccountsCollection } from 'common/lib/models/Account';
+import { getYodleeRefreshInfoCollection } from 'common/lib/models/YodleeRefreshInfo';
 
-import type { Account } from 'common/lib/models/Account';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelCollection } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
+import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
 
 export default (store: Store) => (next: Next) => {
-  let accountSubscription: ?EmitterSubscription = null;
+  let refreshInfoSubscription: ?EmitterSubscription = null;
 
   return (action: PureAction) => {
     next(action);
 
     if (didLogin(action)) {
       const loginPayload = extractLoginPayload(action);
-      accountSubscription && accountSubscription.remove();
-      accountSubscription = listenForAccounts(loginPayload, next);
+      refreshInfoSubscription && refreshInfoSubscription.remove();
+      refreshInfoSubscription = listenForRefreshInfo(loginPayload, next);
     } else if (willLogout(action)) {
-      accountSubscription && accountSubscription.remove();
-      accountSubscription = null;
+      refreshInfoSubscription && refreshInfoSubscription.remove();
+      refreshInfoSubscription = null;
       clearUserData(next);
     }
   };
 };
 
-function listenForAccounts(
+function listenForRefreshInfo(
   loginPayload: LoginPayload,
   next: Next,
 ): EmitterSubscription {
-  next({ modelName: 'Account', type: 'COLLECTION_DOWNLOAD_START' });
+  next({ modelName: 'YodleeRefreshInfo', type: 'COLLECTION_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
-  const remove = getAccountsCollection()
-    .where('shouldShowUser', '==', true)
-    .where('sourceOfTruth.type', '==', 'YODLEE')
+  const remove = getYodleeRefreshInfoCollection()
     .where('userRef.refID', '==', userID)
     .onSnapshot(snapshot => {
-      const collection: ModelCollection<*, Account> = {};
+      const collection: ModelCollection<'YodleeRefreshInfo',
+        YodleeRefreshInfo,> = {};
       snapshot.docs.forEach(doc => {
         if (!doc.exists) {
           return;
         }
-        const account: Account = doc.data();
-        collection[account.id] = account;
+        const refreshInfo: YodleeRefreshInfo = doc.data();
+        collection[refreshInfo.id] = refreshInfo;
       });
       next({
         collection,
-        modelName: 'Account',
+        modelName: 'YodleeRefreshInfo',
         type: 'COLLECTION_DOWNLOAD_FINISHED',
       });
     });
@@ -73,7 +57,7 @@ function listenForAccounts(
 }
 
 function clearUserData(next: Next): void {
-  next({ modelName: 'Account', type: 'COLLECTION_CLEAR' });
+  next({ modelName: 'YodleeRefreshInfo', type: 'COLLECTION_CLEAR' });
 }
 
 function extractLoginPayload(action: PureAction): LoginPayload {
