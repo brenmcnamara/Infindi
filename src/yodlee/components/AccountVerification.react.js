@@ -152,6 +152,8 @@ class AccountVerification extends Component<Props, State> {
           <AccountLogin
             isEditable={transitionStage === 'IN'}
             onBack={this._onBack}
+            onChangeProvider={this._onChangeProvider}
+            onPressForgotPassword={this._onPressForgotPassword}
             provider={page.selectedProvider}
           />
         );
@@ -217,6 +219,28 @@ class AccountVerification extends Component<Props, State> {
         providers: page.providers,
         search: page.search,
         type: 'SEARCH',
+      },
+    });
+  };
+
+  _onPressForgotPassword = (url: string): void => {
+    // TODO: Open safari at the url.
+    // https://facebook.github.io/react-native/docs/linking.html
+  };
+
+  _onChangeProvider = (provider: YodleeProvider): void => {
+    const { page } = this.state;
+    invariant(
+      page.type === 'LOGIN',
+      'Expecting page to be LOGIN while changing provider',
+    );
+    console.log(provider);
+    this.setState({
+      page: {
+        providers: page.providers,
+        search: page.search,
+        selectedProvider: provider,
+        type: 'LOGIN',
       },
     });
   };

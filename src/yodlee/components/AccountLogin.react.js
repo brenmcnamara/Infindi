@@ -25,26 +25,18 @@ import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvide
 export type Props = {
   isEditable: bool,
   onBack: () => any,
+  onChangeProvider: (provider: YodleeProvider) => any,
+  onPressForgotPassword: (url: string) => any,
   provider: YodleeProvider,
 };
 
 type RowItem =
-  | { type: 'LOGIN_ENTRY', loginEntry: LoginEntry }
+  | { entryIndex: number, loginEntry: LoginEntry, type: 'LOGIN_ENTRY' }
   | { type: 'FORGOT_PASSWORD', url: string };
-
-type State = {
-  password: string,
-  userName: string,
-};
 
 const LEFT_ARROW_WIDTH = 18;
 
-export default class AccountLogin extends Component<Props, State> {
-  state: State = {
-    password: '',
-    userName: '',
-  };
-
+export default class AccountLogin extends Component<Props> {
   render() {
     const { provider } = this.props;
     const { raw: rawProvider } = provider;
@@ -81,13 +73,15 @@ export default class AccountLogin extends Component<Props, State> {
 
     switch (item.type) {
       case 'LOGIN_ENTRY': {
-        const { loginEntry } = item;
+        const { entryIndex, loginEntry } = item;
         const field = loginEntry.field[0];
         return (
           <TextInput
             autoFocus={true}
             editable={this.props.isEditable}
-            onChangeText={text => this._onChangeRow(loginEntry, text)}
+            onChangeText={text =>
+              this._onChangeRow(loginEntry, entryIndex, text)
+            }
             placeholder={loginEntry.label}
             style={styles.loginEntryRow}
             value={field.value}
@@ -112,11 +106,28 @@ export default class AccountLogin extends Component<Props, State> {
     }
   };
 
-  _onChangeRow = (item: LoginEntry, text: string): void => {};
+  _onChangeRow = (entry: LoginEntry, index: number, text: string): void => {
+    const field = [
+      {
+        ...entry.field[0],
+        value: text,
+      },
+    ].concat(entry.field.slice(1));
+    const newEntry = {
+      ...entry,
+      field,
+    };
+
+    const { provider } = this.props;
+    const row = provider.raw.loginForm.row.slice();
+    row.splice(index, 1, newEntry);
+    const loginForm = { ...provider.raw.loginForm, row };
+    const raw = { ...provider.raw, loginForm };
+    this.props.onChangeProvider({ ...provider, raw });
+  };
 
   _onPressForgotCredentials = (url: string): void => {
-    // TODO: Open safari at the url.
-    // https://facebook.github.io/react-native/docs/linking.html
+    this.props.onPressForgotPassword(url);
   };
 
   _onPressHeaderLeftIcon = (): void => {
@@ -125,7 +136,8 @@ export default class AccountLogin extends Component<Props, State> {
 
   _getData() {
     const { loginForm } = this.props.provider.raw;
-    const rows: Array<RowItem> = loginForm.row.map(loginEntry => ({
+    const rows: Array<RowItem> = loginForm.row.map((loginEntry, index) => ({
+      entryIndex: index,
       loginEntry,
       type: 'LOGIN_ENTRY',
     }));

@@ -49,6 +49,23 @@ export async function genQueryYodleeProviders(
 
 // -----------------------------------------------------------------------------
 //
+// POST YODLEE PROVIDER LOGIN
+//
+// -----------------------------------------------------------------------------
+
+export type YodleeProviderLoginPayload = Pointer<'YodleeRefreshInfo'>;
+
+export async function genYodleeProviderLogin(
+  provider: YodleeProvider,
+): Promise<YodleeProviderLoginPayload> {
+  await Environment.genLazyLoad();
+  const uri = createURI('/providers/login');
+  const json = await genPostRequest(uri, { provider });
+  return json.data;
+}
+
+// -----------------------------------------------------------------------------
+//
 // CREATE PLAID CREDENTIALS
 //
 // -----------------------------------------------------------------------------
