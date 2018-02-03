@@ -60,6 +60,24 @@ export const ActionItemPagerNullState = cleanupWhitespace(`
   moment.
 `);
 
+/**
+ * Message to be shown at different points of the provider login process.
+ * These are displayed in banners and must be very short.
+ */
+export const ProviderLoginMessage = {
+  ERROR: cleanupWhitespace(`
+    Login attempt failed.
+  `),
+
+  IN_PROGRESS: cleanupWhitespace(`
+    Logging in. This may take a while...
+  `),
+
+  SUCCESS: cleanupWhitespace(`
+    Login was successful!
+  `),
+};
+
 // -----------------------------------------------------------------------------
 //
 // UTILITIES

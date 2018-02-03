@@ -1,38 +1,54 @@
 /* @flow */
 
 import AccountLogin from './AccountLogin.react';
+import BannerManager from '../../components/shared/BannerManager.react';
 import Colors from '../../design/colors';
 import Content from '../../components/shared/Content.react';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
+import Icons from '../../design/icons';
 import ProviderSearch from './ProviderSearch.react';
 import ProviderSearchManager from './ProviderSearchManager';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
+import TextDesign from '../../design/text';
 
 import invariant from 'invariant';
 
 import {
   Animated,
   Easing,
+  Image,
   KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { isSupportedProvider } from '../utils';
 import { dismissAccountVerification, unsupportedProvider } from '../action';
+import { getYodleeRefreshInfoCollection } from '../../store/state-utils';
+import { NavBarHeight } from '../../design/layout';
 
 import type { ComponentType } from 'react';
+import type { ID } from 'common/types/core';
+import type { ModelCollection } from '../../datastore';
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { State as ReduxState } from '../../reducers/root';
 import type { Subscription } from './ProviderSearchManager';
 import type { TransitionStage } from '../../reducers/modalState';
+import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
 
 export type ComponentProps = {
   transitionStage: TransitionStage,
 };
 
-export type ReduxStateProps = {};
+export type ReduxStateProps = {
+  refreshInfo: ModelCollection<'YodleeRefreshInfo', YodleeRefreshInfo>,
+};
 
 export type Props = ReduxProps & ReduxStateProps & ComponentProps;
 
@@ -57,6 +73,8 @@ type State = {
 // modal view to throw an error.
 export const TransitionInMillis = 400;
 export const TransitionOutMillis = 400;
+
+const LEFT_ARROW_WIDTH = 18;
 
 class AccountVerification extends Component<Props, State> {
   _searchManager: ProviderSearchManager = new ProviderSearchManager();
@@ -118,7 +136,11 @@ class AccountVerification extends Component<Props, State> {
         <Animated.View style={rootStyles}>
           <SafeAreaView style={styles.safeArea}>
             <Screen>
-              <Content>{this._renderContent()}</Content>
+              <Content>
+                {this._renderHeader()}
+                {this._renderBanner()}
+                {this._renderContent()}
+              </Content>
               <FooterWithButtons
                 buttonLayout={this._getFooterButtonLayout()}
                 onPress={this._onFooterButtonPress}
@@ -128,6 +150,61 @@ class AccountVerification extends Component<Props, State> {
         </Animated.View>
       </KeyboardAvoidingView>
     );
+  }
+
+  _renderHeader() {
+    const { page } = this.state;
+    return page.type === 'SEARCH'
+      ? this._renderSearchHeader(page.search)
+      : this._renderLoginHeader(page.selectedProvider);
+  }
+
+  _renderSearchHeader(search: string) {
+    return (
+      <View style={styles.searchHeader}>
+        <Image
+          resizeMode="contain"
+          source={Icons.Search}
+          style={styles.searchHeaderIcon}
+        />
+        <TextInput
+          editable={this.props.transitionStage === 'IN'}
+          onChangeText={this._onChangeSearch}
+          placeholder="Search for Institutions..."
+          ref="searchInput"
+          selectTextOnFocus={true}
+          spellCheck={false}
+          style={styles.searchHeaderTextInput}
+          value={search}
+        />
+      </View>
+    );
+  }
+
+  _renderLoginHeader(provider: YodleeProvider) {
+    const rawProvider = provider.raw;
+    return (
+      <View style={styles.loginHeader}>
+        <TouchableOpacity onPress={this._onPressHeaderBackIcon}>
+          <Image
+            resizeMode="contain"
+            source={Icons.LeftArrow}
+            style={styles.loginHeaderLeftIcon}
+          />
+        </TouchableOpacity>
+        <Text style={[TextDesign.header3, styles.loginHeaderTitle]}>
+          {rawProvider.name}
+        </Text>
+        <View style={styles.loginHeaderRightIcon} />
+      </View>
+    );
+  }
+
+  _renderBanner() {
+    const { page } = this.state;
+    const channels =
+      page.type === 'LOGIN' ? [`PROVIDERS/${page.selectedProvider.id}`] : [];
+    return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
   _renderContent() {
@@ -140,7 +217,6 @@ class AccountVerification extends Component<Props, State> {
           <ProviderSearch
             isEditable={transitionStage === 'IN'}
             search={page.search}
-            onChangeSearch={this._onChangeSearch}
             onSelectProvider={this._onSelectProvider}
             providers={page.providers}
           />
@@ -148,13 +224,13 @@ class AccountVerification extends Component<Props, State> {
       }
 
       case 'LOGIN': {
+        const provider = page.selectedProvider;
         return (
           <AccountLogin
             isEditable={transitionStage === 'IN'}
-            onBack={this._onBack}
             onChangeProvider={this._onChangeProvider}
             onPressForgotPassword={this._onPressForgotPassword}
-            provider={page.selectedProvider}
+            provider={provider}
           />
         );
       }
@@ -208,7 +284,7 @@ class AccountVerification extends Component<Props, State> {
     });
   };
 
-  _onBack = (): void => {
+  _onPressHeaderBackIcon = (): void => {
     const { page } = this.state;
     invariant(
       page.type === 'LOGIN',
@@ -234,7 +310,6 @@ class AccountVerification extends Component<Props, State> {
       page.type === 'LOGIN',
       'Expecting page to be LOGIN while changing provider',
     );
-    console.log(provider);
     this.setState({
       page: {
         providers: page.providers,
@@ -294,11 +369,55 @@ class AccountVerification extends Component<Props, State> {
   _isCancelButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {
     return button === 'CENTER' || button === 'LEFT';
   }
+
+  _getRefreshInfoForProvider(providerID: ID): YodleeRefreshInfo | null {
+    const { refreshInfo } = this.props;
+    for (const id in refreshInfo) {
+      if (
+        refreshInfo.hasOwnProperty(id) &&
+        refreshInfo[id].providerRef.refID === providerID
+      ) {
+        return refreshInfo[id];
+      }
+    }
+    return null;
+  }
 }
 
-export default (connect()(AccountVerification): ComponentType<ComponentProps>);
+function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
+  return {
+    refreshInfo: getYodleeRefreshInfoCollection(state),
+  };
+}
+
+export default (connect(mapReduxStateToProps)(
+  AccountVerification,
+): ComponentType<ComponentProps>);
 
 const styles = StyleSheet.create({
+  loginHeader: {
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: Colors.BORDER_HAIRLINE,
+    flexDirection: 'row',
+    height: NavBarHeight,
+  },
+
+  loginHeaderLeftIcon: {
+    marginLeft: 16,
+    width: LEFT_ARROW_WIDTH,
+  },
+
+  loginHeaderTitle: {
+    flex: 1,
+    textAlign: 'center',
+  },
+
+  loginHeaderRightIcon: {
+    marginRight: 16,
+    width: LEFT_ARROW_WIDTH,
+  },
+
   root: {
     backgroundColor: Colors.BACKGROUND,
     flex: 1,
@@ -306,5 +425,24 @@ const styles = StyleSheet.create({
 
   safeArea: {
     flex: 1,
+  },
+
+  searchHeader: {
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: Colors.BORDER_HAIRLINE,
+    flexDirection: 'row',
+    // Add 1 since hairline border is not inclusive of width in normal nav bar.
+    height: NavBarHeight + 1,
+  },
+
+  searchHeaderIcon: {
+    marginLeft: 16,
+  },
+
+  searchHeaderTextInput: {
+    fontFamily: TextDesign.thickFont,
+    fontSize: TextDesign.largeFontSize,
+    marginLeft: 16,
   },
 });

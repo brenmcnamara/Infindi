@@ -6,8 +6,11 @@ import { getBalance } from 'common/lib/models/Account';
 
 import type { Dollars, ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
+import type { ModelCollection } from '../datastore';
 import type { RootType, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
+import type { Toast } from '../reducers/toast';
+import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
 
 // -----------------------------------------------------------------------------
 //
@@ -84,8 +87,20 @@ export function getNetWorth(state: State): Dollars {
   }
 }
 
-export function hasToast(state: State, toastID: ID): bool {
-  return state.toast.bannerQueue.some(banner => banner.id === toastID);
+export function getToast(state: State, toastID: ID): Toast | null {
+  return state.toast.bannerQueue.find(banner => banner.id === toastID) || null;
+}
+
+export function getYodleeRefreshInfoCollection(
+  state: State,
+): ModelCollection<'YodleeRefreshInfo', YodleeRefreshInfo> {
+  if (state.yodleeRefreshInfo.type !== 'STEADY') {
+    return {};
+  }
+
+  const collection = {};
+
+  return collection;
 }
 
 // -----------------------------------------------------------------------------

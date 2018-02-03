@@ -1,28 +1,23 @@
 /* @flow */
 
 import Colors from '../../design/colors';
-import Icons from '../../design/icons';
 import React, { Component } from 'react';
 import TextDesign from '../../design/text';
 
 import {
   Animated,
   FlatList,
-  Image,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { isSupportedProvider } from '../utils';
-import { NavBarHeight } from '../../design/layout';
 
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 
 export type Props = {
   isEditable: bool,
-  onChangeSearch: (search: string) => any,
   onSelectProvider: (provider: YodleeProvider) => any,
   providers: Array<YodleeProvider>,
   search: string,
@@ -34,34 +29,7 @@ export default class ProviderSearch extends Component<Props> {
   _transitionValue: Animated.Value;
 
   render() {
-    return (
-      <View style={styles.root}>
-        {this._renderSearch()}
-        {this._renderSearchResults()}
-      </View>
-    );
-  }
-
-  _renderSearch() {
-    return (
-      <View style={styles.search}>
-        <Image
-          resizeMode="contain"
-          source={Icons.Search}
-          style={styles.searchIcon}
-        />
-        <TextInput
-          editable={this.props.isEditable}
-          onChangeText={this.props.onChangeSearch}
-          placeholder="Search for Institutions..."
-          ref="searchInput"
-          selectTextOnFocus={true}
-          spellCheck={false}
-          style={styles.searchTextInput}
-          value={this.props.search}
-        />
-      </View>
-    );
+    return <View style={styles.root}>{this._renderSearchResults()}</View>;
   }
 
   _renderSearchResults() {
@@ -113,19 +81,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  search: {
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: Colors.BORDER_HAIRLINE,
-    flexDirection: 'row',
-    // Add 1 since hairline border is not inclusive of width in normal nav bar.
-    height: NavBarHeight + 1,
-  },
-
-  searchIcon: {
-    marginLeft: 16,
-  },
-
   searchResults: {
     flex: 1,
   },
@@ -152,11 +107,5 @@ const styles = StyleSheet.create({
     borderRadius: SUPPORT_INDICATOR_SIZE / 2,
     height: SUPPORT_INDICATOR_SIZE,
     width: SUPPORT_INDICATOR_SIZE,
-  },
-
-  searchTextInput: {
-    fontFamily: TextDesign.thickFont,
-    fontSize: TextDesign.largeFontSize,
-    marginLeft: 16,
   },
 });
