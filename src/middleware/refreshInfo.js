@@ -10,7 +10,7 @@ import {
   getYodleeRefreshInfoCollection as getYodleeRefreshInfoFirebaseCollectionRef,
   isPending,
 } from 'common/lib/models/YodleeRefreshInfo';
-import { ProviderLoginMessage } from '../../content';
+import { AccountsDownloadingBanner, ProviderLoginBanner } from '../../content';
 
 import type { EmitterSubscription } from '../common/event-utils';
 import type { ID } from 'common/types/core';
@@ -118,7 +118,7 @@ function requestAccountsBanner() {
     bannerType: 'INFO',
     id: REFRESH_INFO_TOAST_ID,
     priority: 'LOW',
-    text: 'Your accounts data is downloading',
+    text: AccountsDownloadingBanner,
     toastType: 'BANNER',
   });
 }
@@ -144,7 +144,7 @@ function dispatchRequestProviderBanner(
       bannerType: status === 'ERROR' ? 'ERROR' : 'INFO',
       id,
       priority: 'LOW',
-      text: ProviderLoginMessage[status],
+      text: ProviderLoginBanner[status],
       toastType: 'BANNER',
     }),
   );

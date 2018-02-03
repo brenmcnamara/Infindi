@@ -61,10 +61,18 @@ export const ActionItemPagerNullState = cleanupWhitespace(`
 `);
 
 /**
+ * Displayed in a banner at the top of the accounts screen when the user's
+ * accounts are downloading.
+ */
+export const AccountsDownloadingBanner = cleanupWhitespace(`
+  Your accounts are downloading
+`);
+
+/**
  * Message to be shown at different points of the provider login process.
  * These are displayed in banners and must be very short.
  */
-export const ProviderLoginMessage = {
+export const ProviderLoginBanner = {
   ERROR: cleanupWhitespace(`
     Login attempt failed.
   `),
