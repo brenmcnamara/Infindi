@@ -1,5 +1,6 @@
 /* @flow */
 
+import AccountComponent from './Account.react';
 import Colors from '../design/colors';
 import InfoButton from './shared/InfoButton.react';
 import MoneyText from './shared/MoneyText.react';
@@ -8,16 +9,11 @@ import TextDesign from '../design/text';
 
 import invariant from 'invariant';
 
-import {
-  getAccountName,
-  getAccountType,
-  getBalance,
-  getInstitution,
-} from 'common/lib/models/Account';
+import { getBalance } from 'common/lib/models/Account';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import type { Account, AccountGroupType } from 'common/lib/models/Account';
+import type { AccountGroupType } from 'common/lib/models/Account';
 import type {
   AccountLoader,
   AccountLoaderCollection,
@@ -62,34 +58,14 @@ export default class AccountGroup extends Component<Props> {
   }
 
   _renderAccountLoader(loader: AccountLoader, isFirst: bool) {
-    invariant(
-      loader.type === 'STEADY',
-      'As of now, only STEADY account loaders can be rendered',
-    );
-    const topBorder = isFirst ? {} : { borderTopWidth: 1 };
-    const account = loader.model;
+    invariant(loader.type === 'STEADY', 'Only supports steady accounts');
     return (
-      <View key={account.id} style={[styles.accountLoaderRoot, topBorder]}>
-        <TouchableOpacity onPress={() => this.props.onSelectAccount(loader)}>
-          <View style={styles.accountLoaderTop}>
-            <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
-              {getAccountName(account)}
-            </Text>
-            <MoneyText
-              dollars={getBalance(account)}
-              textStyle={[styles.accountBalance, TextDesign.normalWithEmphasis]}
-            />
-          </View>
-          <View style={styles.accountLoaderBottom}>
-            <Text style={[styles.accountBank, TextDesign.small]}>
-              {getInstitution(account)}
-            </Text>
-            <Text style={[styles.accountType, TextDesign.small]}>
-              {getFormattedAccountType(account)}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <AccountComponent
+        key={loader.model.id}
+        loader={loader}
+        onSelect={() => this.props.onSelectAccount(loader)}
+        showTopBorder={!isFirst}
+      />
     );
   }
 
@@ -109,49 +85,11 @@ export default class AccountGroup extends Component<Props> {
   }
 }
 
-function getFormattedAccountType(account: Account): string {
-  return getAccountType(account).replace(/_/g, ' ');
-}
-
 const styles = StyleSheet.create({
-  accountLoaderRoot: {
-    backgroundColor: 'white',
-    borderColor: Colors.BORDER,
-    padding: 8,
-  },
-
-  accountBalance: {
-    textAlign: 'right',
-  },
-
-  accountBank: {
-    flex: 1,
-    textAlign: 'left',
-  },
-
-  accountLoaderBottom: {
-    flexDirection: 'row',
-    marginTop: 4,
-  },
-
   accountLoadersContainer: {
     borderColor: Colors.BORDER,
     borderWidth: 1,
     marginHorizontal: 4,
-  },
-
-  accountLoaderTop: {
-    flexDirection: 'row',
-  },
-
-  accountName: {
-    color: Colors.MONEY_GOOD,
-    flex: 1,
-    textAlign: 'left',
-  },
-
-  accountType: {
-    textAlign: 'right',
   },
 
   groupBalance: {
