@@ -10,21 +10,24 @@ import TextDesign from '../design/text';
 import invariant from 'invariant';
 
 import { getBalance } from 'common/lib/models/Account';
+import { includesAccount } from 'common/lib/models/YodleeRefreshInfo';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { AccountGroupType } from 'common/lib/models/Account';
+import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type {
   AccountLoader,
   AccountLoaderCollection,
 } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
+import type { YodleeRefreshInfoLoaderCollection } from '../reducers/yodleeRefreshInfo';
 
 export type Props = {
   accounts: AccountLoaderCollection,
   groupType: AccountGroupType,
   onPressGroupInfo: () => any,
   onSelectAccount: (account: AccountLoader) => any,
+  refreshInfoCollection: YodleeRefreshInfoLoaderCollection,
 };
 
 // TODO: Rename to AccountsGroup
@@ -58,11 +61,17 @@ export default class AccountGroup extends Component<Props> {
   }
 
   _renderAccountLoader(loader: AccountLoader, isFirst: bool) {
+    const { refreshInfoCollection } = this.props;
     invariant(loader.type === 'STEADY', 'Only supports steady accounts');
+    const account = loader.model;
     return (
       <AccountComponent
-        key={loader.model.id}
-        loader={loader}
+        account={account}
+        isDownloading={collectionIncludesAccount(
+          refreshInfoCollection,
+          account,
+        )}
+        key={account.id}
         onSelect={() => this.props.onSelectAccount(loader)}
         showTopBorder={!isFirst}
       />
@@ -83,6 +92,21 @@ export default class AccountGroup extends Component<Props> {
   _getFormattedGroupType(): string {
     return this.props.groupType.replace(/_/g, ' ');
   }
+}
+
+function collectionIncludesAccount(
+  collection: YodleeRefreshInfoLoaderCollection,
+  account: Account,
+): bool {
+  for (const refreshInfoID in collection) {
+    if (collection.hasOwnProperty(refreshInfoID)) {
+      const loader = collection[refreshInfoID];
+      if (loader.type === 'STEADY' && includesAccount(loader.model, account)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 const styles = StyleSheet.create({

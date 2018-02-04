@@ -9,9 +9,10 @@ import type {
   ModelLoaderState,
 } from '../datastore';
 
-export type AccountLoader = ModelLoader<'YodleeRefreshInfo', YodleeRefreshInfo>;
+export type YodleeRefreshInfoLoader = ModelLoader<'YodleeRefreshInfo',
+  YodleeRefreshInfo,>;
 
-export type AccountLoaderCollection = ModelLoaderCollection<'YodleeRefreshInfo',
+export type YodleeRefreshInfoLoaderCollection = ModelLoaderCollection<'YodleeRefreshInfo',
   YodleeRefreshInfo,>;
 
 export type State = ModelLoaderState<'YodleeRefreshInfo', YodleeRefreshInfo>;

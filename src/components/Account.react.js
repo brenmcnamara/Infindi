@@ -1,11 +1,12 @@
 /* @flow */
 
 import Colors from '../design/colors';
-import MoneyText from '../components/shared/MoneyText.react';
+import Downloading, {
+  WIDTH as DOWNLOADING_WIDTH,
+} from './shared/Downloading.react';
+import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
-
-import invariant from 'invariant';
 
 import {
   getAccountName,
@@ -13,48 +14,90 @@ import {
   getBalance,
   getInstitution,
 } from 'common/lib/models/Account';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import type { Account } from 'common/lib/models/Account';
-import type { AccountLoader } from '../reducers/accounts';
 
 export type Props = {
-  loader: AccountLoader,
+  account: Account,
+  isDownloading: bool,
   onSelect: () => any,
   showTopBorder: bool,
 };
 
+const DOWNLOADING_CONTAINER_WIDTH = DOWNLOADING_WIDTH + 8;
+
 export default class AccountComponent extends Component<Props> {
-  render() {
-    const { loader, showTopBorder } = this.props;
-    invariant(
-      loader.type === 'STEADY',
-      'As of now, only STEADY account loaders can be rendered',
+  _downloadingTransition: Animated.Value;
+
+  constructor(props: Props) {
+    super(props);
+    this._downloadingTransition = new Animated.Value(
+      props.isDownloading ? 1.0 : 0.0,
     );
+  }
+
+  componentWillReceiveProps(nextProps: Props): void {
+    if (this.props.isDownloading === nextProps.isDownloading) {
+      return;
+    }
+
+    Animated.timing(this._downloadingTransition, {
+      duration: 300,
+      toValue: nextProps.isDownloading ? 1.0 : 0.0,
+    }).start();
+  }
+
+  render() {
+    const { account, showTopBorder } = this.props;
     const topBorder = !showTopBorder ? {} : { borderTopWidth: 1 };
-    const account = loader.model;
+    const downloadingStyles = [
+      {
+        opacity: this._downloadingTransition,
+        width: this._downloadingTransition.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, DOWNLOADING_CONTAINER_WIDTH],
+        }),
+      },
+      styles.downloadingContainer,
+    ];
+
     return (
-      <View style={[styles.root, topBorder]}>
-        <TouchableOpacity onPress={this.props.onSelect}>
-          <View style={styles.accountLoaderTop}>
-            <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
-              {getAccountName(account)}
-            </Text>
-            <MoneyText
-              dollars={getBalance(account)}
-              textStyle={[styles.accountBalance, TextDesign.normalWithEmphasis]}
-            />
+      <TouchableOpacity onPress={this.props.onSelect}>
+        <View style={[styles.root, topBorder]}>
+          <View style={styles.mainContent}>
+            <View style={styles.accountLoaderTop}>
+              <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
+                {getAccountName(account)}
+              </Text>
+              <MoneyText
+                dollars={getBalance(account)}
+                textStyle={[
+                  styles.accountBalance,
+                  TextDesign.normalWithEmphasis,
+                ]}
+              />
+            </View>
+            <View style={styles.accountLoaderBottom}>
+              <Text style={[styles.accountBank, TextDesign.small]}>
+                {getInstitution(account)}
+              </Text>
+              <Text style={[styles.accountType, TextDesign.small]}>
+                {getFormattedAccountType(account)}
+              </Text>
+            </View>
           </View>
-          <View style={styles.accountLoaderBottom}>
-            <Text style={[styles.accountBank, TextDesign.small]}>
-              {getInstitution(account)}
-            </Text>
-            <Text style={[styles.accountType, TextDesign.small]}>
-              {getFormattedAccountType(account)}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+          <Animated.View style={downloadingStyles}>
+            <Downloading />
+          </Animated.View>
+        </View>
+      </TouchableOpacity>
     );
   }
 }
@@ -92,9 +135,21 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 
+  downloadingContainer: {
+    alignItems: 'center',
+    marginHorizontal: 4,
+  },
+
+  mainContent: {
+    flex: 1,
+  },
+
   root: {
+    alignItems: 'center',
     backgroundColor: 'white',
     borderColor: Colors.BORDER,
-    padding: 8,
+    flexDirection: 'row',
+    paddingLeft: 8,
+    paddingVertical: 8,
   },
 });

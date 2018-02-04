@@ -43,11 +43,13 @@ import type {
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
+import type { YodleeRefreshInfoLoaderCollection } from '../reducers/yodleeRefreshInfo';
 
 export type Props = ReduxProps & {
+  accountLoaderCollection: AccountLoaderCollection,
   isDownloading: bool,
-  loaderCollection: AccountLoaderCollection,
   netWorth: number,
+  refreshInfoLoaderCollection: YodleeRefreshInfoLoaderCollection,
 };
 
 type RowItem =
@@ -95,10 +97,10 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderAccounts() {
-    const { isDownloading, loaderCollection } = this.props;
+    const { isDownloading, accountLoaderCollection } = this.props;
 
     return (
-      <If predicate={!isDownloading && !isObjectEmpty(loaderCollection)}>
+      <If predicate={!isDownloading && !isObjectEmpty(accountLoaderCollection)}>
         <Content>
           <BannerManager
             channels={['CORE', 'ACCOUNTS']}
@@ -115,9 +117,9 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderNullState() {
-    const { isDownloading, loaderCollection } = this.props;
+    const { isDownloading, accountLoaderCollection } = this.props;
     return (
-      <If predicate={!isDownloading && isObjectEmpty(loaderCollection)}>
+      <If predicate={!isDownloading && isObjectEmpty(accountLoaderCollection)}>
         <Content>
           <BannerManager
             channels={['CORE', 'ACCOUNTS']}
@@ -178,6 +180,7 @@ class AccountsScreen extends Component<Props> {
             groupType={groupType}
             onPressGroupInfo={() => this._onPressGroupInfo(groupType)}
             onSelectAccount={this._onSelectAccount}
+            refreshInfoCollection={this.props.refreshInfoLoaderCollection}
           />
         );
       }
@@ -207,20 +210,20 @@ class AccountsScreen extends Component<Props> {
   };
 
   _getData() {
-    const { loaderCollection } = this.props;
-    const availableCashGroup = filterObject(loaderCollection, loader => {
+    const { accountLoaderCollection } = this.props;
+    const availableCashGroup = filterObject(accountLoaderCollection, loader => {
       const account = getAccount(loader);
       return getGroupType(account) === 'AVAILABLE_CASH';
     });
-    const shortTermDebtGroup = filterObject(loaderCollection, loader => {
+    const shortTermDebtGroup = filterObject(accountLoaderCollection, loader => {
       const account = getAccount(loader);
       return getGroupType(account) === 'SHORT_TERM_DEBT';
     });
-    const investmentsGroup = filterObject(loaderCollection, loader => {
+    const investmentsGroup = filterObject(accountLoaderCollection, loader => {
       const account = getAccount(loader);
       return getGroupType(account) === 'INVESTMENTS';
     });
-    const otherGroup = filterObject(loaderCollection, loader => {
+    const otherGroup = filterObject(accountLoaderCollection, loader => {
       const account = getAccount(loader);
       return getGroupType(account) === 'OTHER';
     });
@@ -267,17 +270,21 @@ class AccountsScreen extends Component<Props> {
 }
 
 function mapReduxStateToProps(state: ReduxState) {
-  const { accounts } = state;
+  const { accounts, yodleeRefreshInfo } = state;
   const loginPayload = getLoginPayload(state);
   invariant(
     loginPayload,
     'Trying to render account data when no user is logged in',
   );
   return {
-    isDownloading: accounts.type === 'DOWNLOADING',
-    loaderCollection:
+    accountLoaderCollection:
       accounts.type === 'STEADY' ? accounts.loaderCollection : {},
+    isDownloading: accounts.type === 'DOWNLOADING',
     netWorth: getNetWorth(state),
+    refreshInfoLoaderCollection:
+      yodleeRefreshInfo.type === 'STEADY'
+        ? yodleeRefreshInfo.loaderCollection
+        : {},
   };
 }
 
