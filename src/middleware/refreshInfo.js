@@ -141,7 +141,10 @@ function dispatchRequestProviderBanner(
   next(
     requestToast({
       bannerChannel: id,
-      bannerType: status === 'ERROR' ? 'ERROR' : 'INFO',
+      bannerType:
+        status === 'ERROR'
+          ? 'ERROR'
+          : status === 'SUCCESS' ? 'SUCCESS' : 'INFO',
       id,
       priority: 'LOW',
       text: ProviderLoginBanner[status],

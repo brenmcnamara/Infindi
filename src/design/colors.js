@@ -8,6 +8,7 @@ const GRAY_3 = '#CACACA';
 const GRAY_4 = '#9B9B9B';
 const GRAY_5 = '#4A4A4A';
 const GREEN = '#3BA68E';
+const GREEN_DARK = '#24826D';
 const RED = '#B54C59';
 const WHITE = '#FFFFFF';
 const LYNCH = '#6C7A89';
@@ -21,10 +22,12 @@ export default {
   BANNER_BACKGROUND: {
     ERROR: RED,
     INFO: BLUE,
+    SUCCESS: GREEN_DARK,
   },
   BANNER_TEXT: {
     ERROR: GRAY_1,
     INFO: GRAY_1,
+    SUCCESS: GRAY_1,
   },
   BORDER: GRAY_2,
   BORDER_DARK: GRAY_3,
@@ -32,14 +35,14 @@ export default {
   // figure out what the color actually is.
   BORDER_HAIRLINE: '#C4C4C4',
   ERROR: RED,
-  MONEY_GOOD: GREEN,
+  MONEY_GOOD: GREEN_DARK,
   MONEY_NEUTRAL: LYNCH,
   NAV_BAR_BUTTON: BLACK,
   SUCCESS: GREEN,
   TAB_BAR: '#F6F6F6',
   TEXT_FAINT: GRAY_4,
   TEXT_NORMAL: GRAY_5,
-  TEXT_PRIMARY: GREEN,
+  TEXT_PRIMARY: GREEN_DARK,
   TEXT_SPECIAL: BLUE,
   TEXT_STRONG: BLACK,
 };

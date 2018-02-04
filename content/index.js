@@ -78,11 +78,11 @@ export const ProviderLoginBanner = {
   `),
 
   IN_PROGRESS: cleanupWhitespace(`
-    Logging in. This may take a while...
+    Logging in. This may take a moment...
   `),
 
   SUCCESS: cleanupWhitespace(`
-    Login was successful!
+    You are already logged in
   `),
 };
 

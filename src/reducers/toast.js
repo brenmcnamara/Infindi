@@ -11,7 +11,7 @@ export type BannerChannel = string;
 
 export type Toast$Banner = {|
   +bannerChannel: BannerChannel,
-  +bannerType: 'INFO' | 'ERROR',
+  +bannerType: 'INFO' | 'ERROR' | 'SUCCESS',
   +id: ID,
   +priority: 'LOW' | 'NORMAL' | 'HIGH',
   +text: string,
