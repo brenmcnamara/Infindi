@@ -48,6 +48,8 @@ export default class AccountLogin extends Component<Props> {
         const field = loginEntry.field[0];
         return (
           <TextInput
+            autoCapitalize="none"
+            autoCorrect={false}
             autoFocus={true}
             editable={this.props.isEditable}
             onChangeText={text =>

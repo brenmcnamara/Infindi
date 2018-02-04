@@ -29,6 +29,7 @@ import {
 import { connect } from 'react-redux';
 import { isSupportedProvider } from '../utils';
 import { dismissAccountVerification, unsupportedProvider } from '../action';
+import { genYodleeProviderLogin } from '../../backend';
 import { getYodleeRefreshInfoCollection } from '../../store/state-utils';
 import { NavBarHeight } from '../../design/layout';
 
@@ -240,10 +241,27 @@ class AccountVerification extends Component<Props, State> {
     }
   }
 
-  _onFooterButtonPress = (button: 'LEFT' | 'RIGHT' | 'CENTER'): void => {
+  _onFooterButtonPress = async (
+    button: 'LEFT' | 'RIGHT' | 'CENTER',
+  ): Promise<void> => {
     if (this._isCancelButton(button)) {
       this.props.dispatch(dismissAccountVerification());
+      return;
     }
+    // Otherwise, it is the login button.
+    const { page } = this.state;
+    invariant(
+      page.type === 'LOGIN',
+      'Expected to be on login page when login button is pressed',
+    );
+    const { selectedProvider } = page;
+    try {
+      await genYodleeProviderLogin(selectedProvider);
+    } catch (error) {
+      console.log('LOGIN ERROR', error);
+      throw error;
+    }
+    console.log('LOGIN SUCCESS');
   };
 
   _onChangeSearch = (search: string): void => {

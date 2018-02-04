@@ -59,7 +59,7 @@ export async function genYodleeProviderLogin(
   provider: YodleeProvider,
 ): Promise<YodleeProviderLoginPayload> {
   await Environment.genLazyLoad();
-  const uri = createURI('/providers/login');
+  const uri = createURI('/yodlee/providers/login');
   const json = await genPostRequest(uri, { provider });
   return json.data;
 }
@@ -140,6 +140,12 @@ async function genPostRequest<T: Object>(
     method: 'POST',
     body: JSON.stringify(body),
   });
+  if (response.status >= 400) {
+    throw {
+      errorCode: 'infindi/service-error',
+      errorMessage: `Failed with status ${response.status}`,
+    };
+  }
   return await response.json();
 }
 
@@ -154,6 +160,12 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
     },
     method: 'GET',
   });
+  if (response.status >= 400) {
+    throw {
+      errorCode: 'infindi/service-error',
+      errorMessage: `Failed with status ${response.status}`,
+    };
+  }
   return await response.json();
 }
 
