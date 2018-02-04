@@ -108,7 +108,7 @@ export default class Banner extends Component<Props, State> {
       height: this._height,
     };
     const textStyles = [
-      styles.text,
+      styles.root,
       TextDesign.smallWithEmphasis,
       {
         color: Colors.BANNER_TEXT[banner.bannerType],
@@ -163,8 +163,8 @@ export default class Banner extends Component<Props, State> {
 }
 
 const styles = StyleSheet.create({
-  text: {
-    paddingVertical: BANNER_TEXT_PADDING,
+  root: {
+    marginTop: BANNER_TEXT_PADDING,
     textAlign: 'center',
   },
 });

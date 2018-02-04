@@ -10,7 +10,10 @@ import TextDesign from '../design/text';
 import invariant from 'invariant';
 
 import { getBalance } from 'common/lib/models/Account';
-import { includesAccount } from 'common/lib/models/YodleeRefreshInfo';
+import {
+  includesAccount,
+  isPending,
+} from 'common/lib/models/YodleeRefreshInfo';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -67,10 +70,7 @@ export default class AccountGroup extends Component<Props> {
     return (
       <AccountComponent
         account={account}
-        isDownloading={collectionIncludesAccount(
-          refreshInfoCollection,
-          account,
-        )}
+        isDownloading={isAccountDownloading(refreshInfoCollection, account)}
         key={account.id}
         onSelect={() => this.props.onSelectAccount(loader)}
         showTopBorder={!isFirst}
@@ -94,14 +94,18 @@ export default class AccountGroup extends Component<Props> {
   }
 }
 
-function collectionIncludesAccount(
+function isAccountDownloading(
   collection: YodleeRefreshInfoLoaderCollection,
   account: Account,
 ): bool {
   for (const refreshInfoID in collection) {
     if (collection.hasOwnProperty(refreshInfoID)) {
       const loader = collection[refreshInfoID];
-      if (loader.type === 'STEADY' && includesAccount(loader.model, account)) {
+      if (
+        loader.type === 'STEADY' &&
+        includesAccount(loader.model, account) &&
+        isPending(loader.model)
+      ) {
         return true;
       }
     }
