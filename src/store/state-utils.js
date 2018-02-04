@@ -71,12 +71,11 @@ export function getNetWorth(state: State): Dollars {
     }
 
     case 'STEADY': {
-      const { loaderCollection } = accounts;
+      const { collection } = accounts;
       let total = 0;
-      for (const id in loaderCollection) {
-        if (loaderCollection.hasOwnProperty(id)) {
-          const loader = loaderCollection[id];
-          total += loader.type === 'STEADY' ? getBalance(loader.model) : 0;
+      for (const id in collection) {
+        if (collection.hasOwnProperty(id)) {
+          total += getBalance(collection[id]);
         }
       }
       return total;

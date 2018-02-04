@@ -7,8 +7,6 @@ import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
 
-import invariant from 'invariant';
-
 import { getBalance } from 'common/lib/models/Account';
 import {
   includesAccount,
@@ -18,19 +16,16 @@ import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
-import type {
-  AccountLoader,
-  AccountLoaderCollection,
-} from '../reducers/accounts';
+import type { AccountCollection } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
-import type { YodleeRefreshInfoLoaderCollection } from '../reducers/yodleeRefreshInfo';
+import type { YodleeRefreshInfoCollection } from '../reducers/yodleeRefreshInfo';
 
 export type Props = {
-  accounts: AccountLoaderCollection,
+  accounts: AccountCollection,
   groupType: AccountGroupType,
   onPressGroupInfo: () => any,
-  onSelectAccount: (account: AccountLoader) => any,
-  refreshInfoCollection: YodleeRefreshInfoLoaderCollection,
+  onSelectAccount: (account: Account) => any,
+  refreshInfoCollection: YodleeRefreshInfoCollection,
 };
 
 // TODO: Rename to AccountsGroup
@@ -39,9 +34,9 @@ export default class AccountGroup extends Component<Props> {
     return (
       <View style={styles.root}>
         {this._renderHeader()}
-        <View style={styles.accountLoadersContainer}>
-          {mapObjectToArray(this.props.accounts, (accountLoader, _, i) =>
-            this._renderAccountLoader(accountLoader, i === 0),
+        <View style={styles.accountsContainer}>
+          {mapObjectToArray(this.props.accounts, (account, _, i) =>
+            this._renderAccount(account, i === 0),
           )}
         </View>
       </View>
@@ -63,16 +58,14 @@ export default class AccountGroup extends Component<Props> {
     );
   }
 
-  _renderAccountLoader(loader: AccountLoader, isFirst: bool) {
+  _renderAccount(account: Account, isFirst: bool) {
     const { refreshInfoCollection } = this.props;
-    invariant(loader.type === 'STEADY', 'Only supports steady accounts');
-    const account = loader.model;
     return (
       <AccountComponent
         account={account}
         isDownloading={isAccountDownloading(refreshInfoCollection, account)}
         key={account.id}
-        onSelect={() => this.props.onSelectAccount(loader)}
+        onSelect={() => this.props.onSelectAccount(account)}
         showTopBorder={!isFirst}
       />
     );
@@ -81,10 +74,7 @@ export default class AccountGroup extends Component<Props> {
   _getGroupBalance(): Dollars {
     return reduceObject(
       this.props.accounts,
-      (sum, loader) => {
-        const balance = loader.type === 'STEADY' ? getBalance(loader.model) : 0;
-        return sum + balance;
-      },
+      (sum, account) => sum + getBalance(account),
       0,
     );
   }
@@ -95,17 +85,13 @@ export default class AccountGroup extends Component<Props> {
 }
 
 function isAccountDownloading(
-  collection: YodleeRefreshInfoLoaderCollection,
+  collection: YodleeRefreshInfoCollection,
   account: Account,
 ): bool {
   for (const refreshInfoID in collection) {
     if (collection.hasOwnProperty(refreshInfoID)) {
-      const loader = collection[refreshInfoID];
-      if (
-        loader.type === 'STEADY' &&
-        includesAccount(loader.model, account) &&
-        isPending(loader.model)
-      ) {
+      const refreshInfo = collection[refreshInfoID];
+      if (includesAccount(refreshInfo, account) && isPending(refreshInfo)) {
         return true;
       }
     }
@@ -114,7 +100,7 @@ function isAccountDownloading(
 }
 
 const styles = StyleSheet.create({
-  accountLoadersContainer: {
+  accountsContainer: {
     borderColor: Colors.BORDER,
     borderWidth: 1,
     marginHorizontal: 4,

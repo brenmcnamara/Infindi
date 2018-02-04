@@ -14,30 +14,11 @@ type InfindiError = { errorCode: string, errorMessage: string };
 //
 // -----------------------------------------------------------------------------
 
-export type ModelLoader<TName: string, TModel: ModelStub<TName>> =
-  | {|
-      +preUpdateModel: TModel,
-      +type: 'UPDATING',
-    |}
-  | {|
-      +model: TModel,
-      +type: 'STEADY',
-    |}
-  | {|
-      +preFailureModel: TModel,
-      +model: TModel,
-      +type: 'UPDATE_FAILURE',
-    |};
-
 export type ModelCollection<TName: string, TModel: ModelStub<TName>> = {
   [id: ID]: TModel,
 };
 
-export type ModelLoaderCollection<TName: string, TModel: ModelStub<TName>> = {
-  [id: ID]: ModelLoader<TName, TModel>,
-};
-
-export type ModelLoaderState<TName: string, TModel: ModelStub<TName>> =
+export type ModelState<TName: string, TModel: ModelStub<TName>> =
   | {|
       +type: 'EMPTY',
     |}
@@ -49,7 +30,7 @@ export type ModelLoaderState<TName: string, TModel: ModelStub<TName>> =
       +type: 'DOWNLOAD_FAILED',
     |}
   | {|
-      +loaderCollection: ModelLoaderCollection<TName, TModel>,
+      +collection: ModelCollection<TName, TModel>,
       +type: 'STEADY',
     |};
 
@@ -88,9 +69,9 @@ const DEFAULT_STATE = {
 export function createModelCollectionReducer<
   TName: string,
   TModel: ModelStub<TName>,
->(modelName: TName): Reducer<ModelLoaderState<TName, TModel>> {
+>(modelName: TName): Reducer<ModelState<TName, TModel>> {
   return (
-    state: ModelLoaderState<TName, TModel> = DEFAULT_STATE,
+    state: ModelState<TName, TModel> = DEFAULT_STATE,
     action: PureAction,
   ) => {
     switch (action.type) {
@@ -173,9 +154,9 @@ export const createDatastorenMiddleware = <
 
 function mergeCollectionWithState<TName: string, TModel: ModelStub<TName>>(
   modelName: TName,
-  state: ModelLoaderState<TName, TModel>,
+  state: ModelState<TName, TModel>,
   collection: ModelCollection<TName, TModel>,
-): ModelLoaderState<TName, TModel> {
+): ModelState<TName, TModel> {
   // TODO: For now, this erases the previous state and replaces it with the
   // current state. There is going to need to be more complicated logic here.
   // (1) For things like transactions, we want people to fetch more and
@@ -183,16 +164,16 @@ function mergeCollectionWithState<TName: string, TModel: ModelStub<TName>>(
   // (2) For things like accounts, we want to always replace the current state
   // with the new, existing state.
   return {
-    loaderCollection: collectionToLoaderMap(collection),
+    collection,
     type: 'STEADY',
   };
 }
 
 function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(
   modelName: TName,
-  state: ModelLoaderState<TName, TModel>,
+  state: ModelState<TName, TModel>,
   error: InfindiError,
-): ModelLoaderState<TName, TModel> {
+): ModelState<TName, TModel> {
   invariant(
     state.type === 'DOWNLOADING',
     '[%s Collection State]: Cannot merge with a download error %s with state %s',
@@ -201,18 +182,4 @@ function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(
     state.type,
   );
   return { error, type: 'DOWNLOAD_FAILED' };
-}
-
-function collectionToLoaderMap<TName: string, TModel: ModelStub<TName>>(
-  collection: ModelCollection<TName, TModel>,
-): ModelLoaderCollection<TName, TModel> {
-  const loader = {};
-  for (let id: ID in collection) {
-    if (collection.hasOwnProperty(id)) {
-      const model: TModel = collection[id];
-      const modelLoader: ModelLoader<TName, TModel> = { model, type: 'STEADY' };
-      loader[id] = modelLoader;
-    }
-  }
-  return loader;
 }
