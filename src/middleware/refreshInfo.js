@@ -8,7 +8,8 @@ import { getYodleeRefreshInfoCollection, getToast } from '../store/state-utils';
 import {
   didFail,
   getYodleeRefreshInfoCollection as getYodleeRefreshInfoFirebaseCollectionRef,
-  isPending,
+  isInProgress,
+  isPendingStatus,
 } from 'common/lib/models/YodleeRefreshInfo';
 import { AccountsDownloadingBanner, ProviderLoginBanner } from '../../content';
 
@@ -159,7 +160,10 @@ function dismissProviderBanner(providerID: ID) {
 
 function containsPendingRefresh(collection: RefreshInfoCollection): bool {
   for (const id in collection) {
-    if (collection.hasOwnProperty(id) && isPending(collection[id])) {
+    if (
+      collection.hasOwnProperty(id) &&
+      (isPendingStatus(collection[id]) || isInProgress(collection[id]))
+    ) {
       return true;
     }
   }
@@ -200,5 +204,7 @@ function calculateProviderDelta(
 }
 
 function getBannerStatus(info: YodleeRefreshInfo): ProviderBannerStatus {
-  return isPending(info) ? 'IN_PROGRESS' : didFail(info) ? 'ERROR' : 'SUCCESS';
+  return isPendingStatus(info) || isInProgress(info)
+    ? 'IN_PROGRESS'
+    : didFail(info) ? 'ERROR' : 'SUCCESS';
 }
