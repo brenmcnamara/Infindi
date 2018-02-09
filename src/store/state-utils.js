@@ -93,13 +93,9 @@ export function getToast(state: State, toastID: ID): Toast | null {
 export function getYodleeRefreshInfoCollection(
   state: State,
 ): ModelCollection<'YodleeRefreshInfo', YodleeRefreshInfo> {
-  if (state.yodleeRefreshInfo.type !== 'STEADY') {
-    return {};
-  }
-
-  const collection = {};
-
-  return collection;
+  return state.yodleeRefreshInfo.type === 'STEADY'
+    ? state.yodleeRefreshInfo.collection
+    : {};
 }
 
 // -----------------------------------------------------------------------------

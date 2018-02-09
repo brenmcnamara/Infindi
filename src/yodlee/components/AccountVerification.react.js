@@ -27,6 +27,7 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { isPendingStatus } from 'common/lib/models/YodleeRefreshInfo';
 import { isSupportedProvider } from '../utils';
 import { dismissAccountVerification, unsupportedProvider } from '../action';
 import { genYodleeProviderLogin } from '../../backend';
@@ -109,20 +110,44 @@ class AccountVerification extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props): void {
+    // Handle animating transitions to show / hide this modal.
     const didTransition =
       this.props.transitionStage === 'TRANSITION_IN' ||
       this.props.transitionStage === 'TRANSITION_OUT';
     const willTransition =
       nextProps.transitionStage === 'TRANSITION_IN' ||
       nextProps.transitionStage === 'TRANSITION_OUT';
-    if (didTransition || !willTransition) {
+    if (!didTransition && willTransition) {
+      Animated.timing(this._transitionValue, {
+        duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
+        easing: Easing.out(Easing.cubic),
+        toValue: nextProps.transitionStage === 'TRANSITION_IN' ? 1.0 : 0.0,
+      }).start();
+    }
+
+    // Handle dismissing when we figure out the status of the refresh.
+    const { page } = this.state;
+    if (
+      page.type !== 'LOGIN' ||
+      this.props.refreshInfo === nextProps.refreshInfo
+    ) {
       return;
     }
-    Animated.timing(this._transitionValue, {
-      duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
-      easing: Easing.out(Easing.cubic),
-      toValue: nextProps.transitionStage === 'TRANSITION_IN' ? 1.0 : 0.0,
-    }).start();
+    const { selectedProvider } = page;
+    const prevRefreshInfo = getRefreshInfoForProvider(
+      this.props.refreshInfo,
+      selectedProvider.id,
+    );
+    const nextRefreshInfo = getRefreshInfoForProvider(
+      nextProps.refreshInfo,
+      selectedProvider.id,
+    );
+    const didHaveStatus = prevRefreshInfo && !isPendingStatus(prevRefreshInfo);
+    const willHaveStatus = nextRefreshInfo && !isPendingStatus(nextRefreshInfo);
+
+    if (!didHaveStatus && willHaveStatus) {
+      this.props.dispatch(dismissAccountVerification());
+    }
   }
 
   render() {
@@ -258,10 +283,8 @@ class AccountVerification extends Component<Props, State> {
     try {
       await genYodleeProviderLogin(selectedProvider);
     } catch (error) {
-      console.log('LOGIN ERROR', error);
       throw error;
     }
-    console.log('LOGIN SUCCESS');
   };
 
   _onChangeSearch = (search: string): void => {
@@ -387,25 +410,27 @@ class AccountVerification extends Component<Props, State> {
   _isCancelButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {
     return button === 'CENTER' || button === 'LEFT';
   }
-
-  _getRefreshInfoForProvider(providerID: ID): YodleeRefreshInfo | null {
-    const { refreshInfo } = this.props;
-    for (const id in refreshInfo) {
-      if (
-        refreshInfo.hasOwnProperty(id) &&
-        refreshInfo[id].providerRef.refID === providerID
-      ) {
-        return refreshInfo[id];
-      }
-    }
-    return null;
-  }
 }
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
     refreshInfo: getYodleeRefreshInfoCollection(state),
   };
+}
+
+function getRefreshInfoForProvider(
+  refreshInfoCollection: getYodleeRefreshInfoCollection,
+  providerID: ID,
+): YodleeRefreshInfo | null {
+  for (const id in refreshInfoCollection) {
+    if (
+      refreshInfoCollection.hasOwnProperty(id) &&
+      refreshInfoCollection[id].providerRef.refID === providerID
+    ) {
+      return refreshInfoCollection[id];
+    }
+  }
+  return null;
 }
 
 export default (connect(mapReduxStateToProps)(
