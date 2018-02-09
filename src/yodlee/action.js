@@ -17,6 +17,9 @@ import type {
   Action$DismissModal,
   Action$RequestModal,
 } from '../actions/modal';
+import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+
+export type Action = Action$RequestProviderLogin;
 
 const PROVIDER_LOGIN_ID = 'YODLEE_LOGIN';
 const UNSUPPORTED_MODAL_ID = 'UNSUPPORTED_MODAL';
@@ -80,5 +83,17 @@ export function unsupportedProvider(reason: string): Action$RequestModal {
       transitionOutMillis: InfoModalTransitionOutMillis,
     },
     type: 'REQUEST_MODAL',
+  };
+}
+
+export type Action$RequestProviderLogin = {|
+  +provider: YodleeProvider,
+  +type: 'REQUEST_PROVIDER_LOGIN',
+|};
+
+export function requestProviderLogin(provider: YodleeProvider) {
+  return {
+    provider,
+    type: 'REQUEST_PROVIDER_LOGIN',
   };
 }

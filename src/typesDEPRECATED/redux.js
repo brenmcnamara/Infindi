@@ -15,6 +15,8 @@ import type { Action as Action$PlaidMiddleware } from '../middleware/plaid';
 import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
+import type { Action as Action$Yodlee } from '../yodlee/action';
+
 import type { State } from '../reducers/root';
 import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
 
@@ -37,7 +39,8 @@ export type PureAction =
   | Action$PlaidMiddleware
   | Action$Router
   | Action$Toast
-  | Action$ToastMiddleware;
+  | Action$ToastMiddleware
+  | Action$Yodlee;
 
 export type ThunkAction = (
   dispatch: Dispatch,

@@ -29,7 +29,11 @@ import {
 import { connect } from 'react-redux';
 import { isPendingStatus } from 'common/lib/models/YodleeRefreshInfo';
 import { isSupportedProvider } from '../utils';
-import { dismissAccountVerification, unsupportedProvider } from '../action';
+import {
+  dismissAccountVerification,
+  requestProviderLogin,
+  unsupportedProvider,
+} from '../action';
 import { genYodleeProviderLogin } from '../../backend';
 import { getYodleeRefreshInfoCollection } from '../../store/state-utils';
 import { NavBarHeight } from '../../design/layout';
@@ -53,6 +57,9 @@ export type ReduxStateProps = {
 };
 
 export type Props = ReduxProps & ReduxStateProps & ComponentProps;
+
+type RefreshInfoCollection = ModelCollection<'YodleeRefreshInfo',
+  YodleeRefreshInfo,>;
 
 type Page =
   | {|
@@ -266,9 +273,7 @@ class AccountVerification extends Component<Props, State> {
     }
   }
 
-  _onFooterButtonPress = async (
-    button: 'LEFT' | 'RIGHT' | 'CENTER',
-  ): Promise<void> => {
+  _onFooterButtonPress = (button: 'LEFT' | 'RIGHT' | 'CENTER'): void => {
     if (this._isCancelButton(button)) {
       this.props.dispatch(dismissAccountVerification());
       return;
@@ -279,12 +284,7 @@ class AccountVerification extends Component<Props, State> {
       page.type === 'LOGIN',
       'Expected to be on login page when login button is pressed',
     );
-    const { selectedProvider } = page;
-    try {
-      await genYodleeProviderLogin(selectedProvider);
-    } catch (error) {
-      throw error;
-    }
+    this.props.dispatch(requestProviderLogin(page.selectedProvider));
   };
 
   _onChangeSearch = (search: string): void => {
@@ -419,7 +419,7 @@ function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
 }
 
 function getRefreshInfoForProvider(
-  refreshInfoCollection: getYodleeRefreshInfoCollection,
+  refreshInfoCollection: RefreshInfoCollection,
   providerID: ID,
 ): YodleeRefreshInfo | null {
   for (const id in refreshInfoCollection) {

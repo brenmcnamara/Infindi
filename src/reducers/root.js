@@ -9,19 +9,21 @@ import network from './network';
 // import plaid from './plaid';
 import routeState from './routeState';
 import toast from './toast';
+import yodleeProviders from '../yodlee/reducers/yodleeProviders';
 import yodleeRefreshInfo from './yodleeRefreshInfo';
 
 import { combineReducers } from 'redux';
 
 import type { State as State$Accounts } from './accounts';
+import type { State as State$ActionItems } from './actionItems';
 import type { State as State$AuthStatus } from './authStatus';
 import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
 import type { State as State$Network } from './network';
 // import type { State as State$PlaidState } from './plaid';
-import type { State as State$ActionItems } from './actionItems';
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
+import type { State as State$YodleeProviders } from '../yodlee/reducers/yodleeProviders';
 import type { State as State$YodleeRefreshInfo } from './yodleeRefreshInfo';
 
 export type State = {|
@@ -34,6 +36,7 @@ export type State = {|
   +actionItems: State$ActionItems,
   +routeState: State$RouteState,
   +toast: State$Toast,
+  +yodleeProviders: State$YodleeProviders,
   +yodleeRefreshInfo: State$YodleeRefreshInfo,
 |};
 
@@ -48,5 +51,6 @@ export default combineReducers({
   // plaid,
   routeState,
   toast,
+  yodleeProviders,
   yodleeRefreshInfo,
 });

@@ -4,6 +4,7 @@ import accounts from '../middleware/accounts';
 import authentication from '../middleware/authentication';
 import modal from '../middleware/modal';
 import network from '../middleware/network';
+import providerLogin from '../yodlee/middleware/providerLogin';
 import refreshInfo from '../middleware/refreshInfo';
 // import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
@@ -25,6 +26,7 @@ if (__DEV__) {
     refreshInfo,
     accounts,
     // plaid,
+    providerLogin,
     // Then comes network middleware.
     network,
     // Then comes ui-managing middleware.
@@ -42,6 +44,7 @@ if (__DEV__) {
     refreshInfo,
     accounts,
     // plaid,
+    providerLogin,
     // Then comes network middleware.
     network,
     // Then comes ui-managing middleware.
