@@ -34,7 +34,6 @@ import {
   requestProviderLogin,
   unsupportedProvider,
 } from '../action';
-import { genYodleeProviderLogin } from '../../backend';
 import { getYodleeRefreshInfoCollection } from '../../store/state-utils';
 import { NavBarHeight } from '../../design/layout';
 
@@ -53,6 +52,7 @@ export type ComponentProps = {
 };
 
 export type ReduxStateProps = {
+  providerPendingLoginID: ID | null,
   refreshInfo: ModelCollection<'YodleeRefreshInfo', YodleeRefreshInfo>,
 };
 
@@ -234,9 +234,13 @@ class AccountVerification extends Component<Props, State> {
   }
 
   _renderBanner() {
+    const { providerPendingLoginID } = this.props;
     const { page } = this.state;
     const channels =
       page.type === 'LOGIN' ? [`PROVIDERS/${page.selectedProvider.id}`] : [];
+    if (providerPendingLoginID) {
+      channels.push(`PROVIDERS/${providerPendingLoginID}`);
+    }
     return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
@@ -412,12 +416,6 @@ class AccountVerification extends Component<Props, State> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
-  return {
-    refreshInfo: getYodleeRefreshInfoCollection(state),
-  };
-}
-
 function getRefreshInfoForProvider(
   refreshInfoCollection: RefreshInfoCollection,
   providerID: ID,
@@ -431,6 +429,15 @@ function getRefreshInfoForProvider(
     }
   }
   return null;
+}
+
+function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
+  return {
+    providerPendingLoginID: state.yodleeProviders.providerPendingLogin
+      ? state.yodleeProviders.providerPendingLogin.id
+      : null,
+    refreshInfo: getYodleeRefreshInfoCollection(state),
+  };
 }
 
 export default (connect(mapReduxStateToProps)(

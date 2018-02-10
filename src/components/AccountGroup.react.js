@@ -11,7 +11,6 @@ import { getBalance } from 'common/lib/models/Account';
 import {
   includesAccount,
   isInProgress,
-  isPendingStatus,
 } from 'common/lib/models/YodleeRefreshInfo';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
@@ -92,10 +91,7 @@ function isAccountDownloading(
   for (const refreshInfoID in collection) {
     if (collection.hasOwnProperty(refreshInfoID)) {
       const refreshInfo = collection[refreshInfoID];
-      if (
-        includesAccount(refreshInfo, account) &&
-        (isPendingStatus(refreshInfo) || isInProgress(refreshInfo))
-      ) {
+      if (includesAccount(refreshInfo, account) && isInProgress(refreshInfo)) {
         return true;
       }
     }

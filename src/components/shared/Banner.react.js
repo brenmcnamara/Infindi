@@ -43,6 +43,7 @@ const BANNER_HEIGHT = 22 + 2 * BANNER_TEXT_PADDING; // TEXT LINE HEIGHT + PADDIN
 export default class Banner extends Component<Props, State> {
   _currentTransitionID: ID = 'request-0';
   _height: Animated.Value;
+  _isMounted: bool = false; // TODO: Should remove this.
   _transitionIDNumber: number = 1;
 
   constructor(props: Props) {
@@ -80,6 +81,9 @@ export default class Banner extends Component<Props, State> {
         }
       })
       .then(() => {
+        if (!this._isMounted) {
+          return;
+        }
         if (nextBanner) {
           return this._genPerformTransitionIn(nextBanner).then(() => {
             // NOTE: Enter terminal state only if there is no transition that
@@ -96,6 +100,14 @@ export default class Banner extends Component<Props, State> {
           }
         }
       });
+  }
+
+  componentDidMount(): void {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount(): void {
+    this._isMounted = false;
   }
 
   render() {
@@ -126,6 +138,9 @@ export default class Banner extends Component<Props, State> {
   _genPerformTransitionOut(banner: Toast$Banner): Promise<void> {
     return new Promise(resolve => {
       this.setState({ transition: { banner, type: 'TRANSITION_OUT' } }, () => {
+        if (!this._isMounted) {
+          return;
+        }
         // $FlowFixMe - Need to figure out why this is an error.
         Animated.timing(this._height, {
           easing: Easing.out(Easing.cubic),
@@ -138,6 +153,9 @@ export default class Banner extends Component<Props, State> {
 
   _genPerformTransitionIn(banner: Toast$Banner): Promise<void> {
     return new Promise(resolve => {
+      if (!this._isMounted) {
+        return;
+      }
       this.setState({ transition: { banner, type: 'TRANSITION_IN' } }, () => {
         // $FlowFixMe - Need to figure out why this is an error.
         Animated.timing(this._height, {

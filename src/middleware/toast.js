@@ -16,6 +16,8 @@ export default (store: Store) => (next: Next) => {
   let bannerQueue: Array<Toast$Banner> = [];
 
   return (action: PureAction) => {
+    next(action);
+
     switch (action.type) {
       case 'REQUEST_TOAST': {
         const { toast } = action;
@@ -52,7 +54,6 @@ export default (store: Store) => (next: Next) => {
         break;
       }
     }
-    next(action);
   };
 };
 

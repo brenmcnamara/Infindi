@@ -6,6 +6,7 @@ import modal from '../middleware/modal';
 import network from '../middleware/network';
 import providerLogin from '../yodlee/middleware/providerLogin';
 import refreshInfo from '../middleware/refreshInfo';
+import refreshInfoToast from '../yodlee/middleware/refreshInfoToast';
 // import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
@@ -31,6 +32,7 @@ if (__DEV__) {
     network,
     // Then comes ui-managing middleware.
     modal,
+    refreshInfoToast,
     toast,
     // Logging is last.
     reduxLogger,
@@ -49,6 +51,7 @@ if (__DEV__) {
     network,
     // Then comes ui-managing middleware.
     modal,
+    refreshInfoToast,
     toast,
     // Logging is last.
   );

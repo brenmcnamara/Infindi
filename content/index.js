@@ -73,7 +73,7 @@ export const AccountsDownloadingBanner = cleanupWhitespace(`
  * These are displayed in banners and must be very short.
  */
 export const ProviderLoginBanner = {
-  ERROR: cleanupWhitespace(`
+  FAILURE: cleanupWhitespace(`
     Login attempt failed.
   `),
 

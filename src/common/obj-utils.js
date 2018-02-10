@@ -24,6 +24,20 @@ export type ObjectReducerFn<TMemo, K: string, V> = (
   number,
 ) => TMemo;
 
+export function forEachObject<K: string, V>(
+  obj: Obj<K, V>,
+  cb: ObjectEnumeratorFn<any, K, V>,
+): void {
+  let i = 0;
+  // $FlowFixMe - Assumption of reasonable object implementation.
+  for (let key: K in obj) {
+    if (obj.hasOwnProperty(key)) {
+      cb(obj[key], key, i);
+      ++i;
+    }
+  }
+}
+
 /**
  * Enumerate the key / value pairs of an object, and map the returns value of
  * the enumeration function into an array.
