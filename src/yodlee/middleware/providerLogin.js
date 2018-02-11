@@ -1,6 +1,7 @@
 /* @flow */
 
 import { genYodleeProviderLogin } from '../../backend';
+import { requestProviderLoginFailed } from '../action';
 
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
 
@@ -10,7 +11,10 @@ export default (store: Store) => (next: Next) => {
 
     switch (action.type) {
       case 'REQUEST_PROVIDER_LOGIN': {
-        genYodleeProviderLogin(action.provider);
+        const { provider } = action;
+        genYodleeProviderLogin(provider).catch(error => {
+          next(requestProviderLoginFailed(provider, error));
+        });
       }
     }
   };

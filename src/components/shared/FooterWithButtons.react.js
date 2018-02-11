@@ -11,6 +11,8 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 type ButtonLayout = ButtonLayout$LeftAndRight | ButtonLayout$Center;
 
 type ButtonLayout$LeftAndRight = {|
+  +isLeftButtonDisabled?: bool,
+  +isRightButtonDisabled?: bool,
   +leftButtonText: string,
   +rightButtonText: string,
   +type: 'LEFT_AND_RIGHT',
@@ -18,6 +20,7 @@ type ButtonLayout$LeftAndRight = {|
 
 type ButtonLayout$Center = {|
   +centerButtonText: string,
+  +isCenterbuttonDisabled?: bool,
   +type: 'CENTER',
 |};
 
@@ -51,11 +54,12 @@ export default class Footer extends Component<Props, State> {
 
   componentWillReceiveProps(nextProps: Props): void {
     if (
-      this._isEqualButtonLayouts(
+      !this._shouldAnimateButtonLayoutChange(
         nextProps.buttonLayout,
         this.props.buttonLayout,
       )
     ) {
+      this.setState({ transitionStage: { type: 'IN', props: nextProps } });
       return;
     }
     this.setState(
@@ -110,6 +114,7 @@ export default class Footer extends Component<Props, State> {
     return (
       <Animated.View style={containerStyles}>
         <TextButton
+          isDisabled={buttonLayout.isLeftButtonDisabled || false}
           onPress={() => props.onPress('LEFT')}
           size="LARGE"
           text={buttonLayout.leftButtonText}
@@ -117,6 +122,7 @@ export default class Footer extends Component<Props, State> {
         />
         <View style={styles.buttonSpacer} />
         <TextButton
+          isDisabled={buttonLayout.isRightButtonDisabled || false}
           onPress={() => props.onPress('RIGHT')}
           size="LARGE"
           text={buttonLayout.rightButtonText}
@@ -139,6 +145,7 @@ export default class Footer extends Component<Props, State> {
     return (
       <Animated.View style={containerStyles}>
         <TextButton
+          isDisabled={buttonLayout.isCenterbuttonDisabled || false}
           layoutType="FILL_PARENT"
           onPress={() => props.onPress('CENTER')}
           size="LARGE"
@@ -149,7 +156,10 @@ export default class Footer extends Component<Props, State> {
     );
   }
 
-  _isEqualButtonLayouts(layout1: ButtonLayout, layout2: ButtonLayout): bool {
+  _shouldAnimateButtonLayoutChange(
+    layout1: ButtonLayout,
+    layout2: ButtonLayout,
+  ): bool {
     if (layout1.type !== layout2.type) {
       return false;
     }

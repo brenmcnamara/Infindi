@@ -33,6 +33,14 @@ export default function yodleeProvider(
       return { ...state, providerPendingLogin: action.provider };
     }
 
+    case 'REQUEST_PROVIDER_LOGIN_FAILED': {
+      invariant(
+        state.providerPendingLogin,
+        'Expecting pending login on provider',
+      );
+      return { ...state, providerPendingLogin: null };
+    }
+
     case 'COLLECTION_DOWNLOAD_FINISHED': {
       if (!state.providerPendingLogin) {
         return state;

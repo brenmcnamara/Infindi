@@ -77,6 +77,11 @@ const primaryButton = {
   lineHeight: 22,
 };
 
+const primaryButtonDisabled = {
+  ...primaryButton,
+  color: Colors.TEXT_PRIMARY_DISABLED,
+};
+
 const specialButton = {
   color: Colors.TEXT_SPECIAL,
   fontFamily: thickFont,
@@ -116,5 +121,6 @@ export default {
 
   normalButton,
   primaryButton,
+  primaryButtonDisabled,
   specialButton,
 };

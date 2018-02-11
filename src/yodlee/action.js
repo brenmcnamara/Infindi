@@ -19,7 +19,9 @@ import type {
 } from '../actions/modal';
 import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
 
-export type Action = Action$RequestProviderLogin;
+export type Action =
+  | Action$RequestProviderLogin
+  | Action$RequestProviderLoginFailed;
 
 const PROVIDER_LOGIN_ID = 'YODLEE_LOGIN';
 const UNSUPPORTED_MODAL_ID = 'UNSUPPORTED_MODAL';
@@ -95,5 +97,22 @@ export function requestProviderLogin(provider: YodleeProvider) {
   return {
     provider,
     type: 'REQUEST_PROVIDER_LOGIN',
+  };
+}
+
+export type Action$RequestProviderLoginFailed = {|
+  +error: Error,
+  +provider: YodleeProvider,
+  +type: 'REQUEST_PROVIDER_LOGIN_FAILED',
+|};
+
+export function requestProviderLoginFailed(
+  provider: YodleeProvider,
+  error: Error,
+) {
+  return {
+    error,
+    provider,
+    type: 'REQUEST_PROVIDER_LOGIN_FAILED',
   };
 }

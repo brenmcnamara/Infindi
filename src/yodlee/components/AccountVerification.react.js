@@ -245,7 +245,7 @@ class AccountVerification extends Component<Props, State> {
   }
 
   _renderContent() {
-    const { transitionStage } = this.props;
+    const { providerPendingLoginID, transitionStage } = this.props;
     const { page } = this.state;
 
     switch (page.type) {
@@ -264,7 +264,7 @@ class AccountVerification extends Component<Props, State> {
         const provider = page.selectedProvider;
         return (
           <AccountLogin
-            isEditable={transitionStage === 'IN'}
+            isEditable={transitionStage === 'IN' && !providerPendingLoginID}
             onChangeProvider={this._onChangeProvider}
             onPressForgotPassword={this._onPressForgotPassword}
             provider={provider}
@@ -399,12 +399,15 @@ class AccountVerification extends Component<Props, State> {
   };
 
   _getFooterButtonLayout() {
+    const { providerPendingLoginID } = this.props;
+
     return this.state.page.type === 'SEARCH'
       ? {
           centerButtonText: 'CANCEL',
           type: 'CENTER',
         }
       : {
+          isRightButtonDisabled: Boolean(providerPendingLoginID),
           leftButtonText: 'CANCEL',
           rightButtonText: 'LOGIN',
           type: 'LEFT_AND_RIGHT',

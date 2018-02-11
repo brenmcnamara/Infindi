@@ -141,10 +141,16 @@ async function genPostRequest<T: Object>(
     body: JSON.stringify(body),
   });
   if (response.status >= 400) {
-    throw {
-      errorCode: 'infindi/service-error',
-      errorMessage: `Failed with status ${response.status}`,
-    };
+    let errorJSON;
+    try {
+      errorJSON = await response.json();
+    } catch (_) {
+      throw {
+        errorCode: 'infindi/service-error',
+        errorMessage: `Failed with status ${response.status}`,
+      };
+    }
+    throw errorJSON;
   }
   return await response.json();
 }
@@ -161,10 +167,16 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
     method: 'GET',
   });
   if (response.status >= 400) {
-    throw {
-      errorCode: 'infindi/service-error',
-      errorMessage: `Failed with status ${response.status}`,
-    };
+    let errorJSON;
+    try {
+      errorJSON = await response.json();
+    } catch (_) {
+      throw {
+        errorCode: 'infindi/service-error',
+        errorMessage: `Failed with status ${response.status}`,
+      };
+    }
+    throw errorJSON;
   }
   return await response.json();
 }

@@ -39,7 +39,7 @@ export default class TextButton extends Component<Props> {
   };
 
   render() {
-    const { layoutType, size, text, type } = this.props;
+    const { isDisabled, layoutType, size, text, type } = this.props;
     const buttonStyles = [
       layoutType === 'INLINE_BLOCK_CENTERED' || layoutType === 'FILL_PARENT'
         ? { textAlign: 'center' }
@@ -53,7 +53,9 @@ export default class TextButton extends Component<Props> {
               : TextDesign.mediumFontSize,
       },
       type === 'PRIMARY'
-        ? TextDesign.primaryButton
+        ? isDisabled
+          ? TextDesign.primaryButtonDisabled
+          : TextDesign.primaryButton
         : type === 'SPECIAL'
           ? TextDesign.specialButton
           : TextDesign.normalButton,

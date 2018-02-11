@@ -19,7 +19,10 @@ import type { ModelCollection } from '../../datastore';
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
 import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
 
-type ProviderBannerStatus = 'IN_PROGRESS' | 'SUCCESS' | 'FAILURE';
+type ProviderBannerStatus =
+  | {| +type: 'IN_PROGRESS' | 'SUCCESS' |}
+  | {| +error?: Error, +type: 'FAILURE' |};
+
 type RefreshInfoCollection = ModelCollection<'YodleeRefreshInfo',
   YodleeRefreshInfo,>;
 
@@ -46,7 +49,14 @@ export default (store: Store) => (next: Next) => {
     }
 
     if (nextBannerStatus) {
-      next(requestProviderBanner(providerID, nextBannerStatus));
+      const bannerText =
+        nextBannerStatus.type === 'FAILURE' &&
+        nextBannerStatus.error &&
+        nextBannerStatus.error.errorMessage
+          ? // $FlowFixMe - Add stricter error typing
+            (nextBannerStatus.error.errorMessage: string)
+          : ProviderLoginBanner[nextBannerStatus.type];
+      next(requestProviderBanner(providerID, nextBannerStatus, bannerText));
     }
 
     if (nextBannerStatus) {
@@ -108,10 +118,18 @@ export default (store: Store) => (next: Next) => {
         // probably a very rare (1 in a million) edge case and the bug is
         // so minor that it is not writing all the round-about logic to correct
         // for this.
+
         const providerID = action.provider.id;
         updateAccountsDownloading(true);
-        updateBannerStatus(providerID, 'IN_PROGRESS');
+        updateBannerStatus(providerID, { type: 'IN_PROGRESS' });
         break;
+      }
+
+      case 'REQUEST_PROVIDER_LOGIN_FAILED': {
+        const providerID = action.provider.id;
+        const { error } = action;
+        updateAccountsDownloading(false);
+        updateBannerStatus(providerID, { error, type: 'FAILURE' });
       }
     }
   };
@@ -132,17 +150,21 @@ function dismissAccountsDownloadingBanner() {
   return dismissToast(REFRESH_INFO_TOAST_ID);
 }
 
-function requestProviderBanner(providerID: ID, status: ProviderBannerStatus) {
+function requestProviderBanner(
+  providerID: ID,
+  status: ProviderBannerStatus,
+  text: string,
+) {
   const id = `PROVIDERS/${providerID}`;
   return requestToast({
     bannerChannel: id,
     bannerType:
-      status === 'FAILURE'
+      status.type === 'FAILURE'
         ? 'ERROR'
-        : status === 'SUCCESS' ? 'SUCCESS' : 'INFO',
+        : status.type === 'SUCCESS' ? 'SUCCESS' : 'INFO',
     id,
     priority: 'LOW',
-    text: ProviderLoginBanner[status],
+    text,
     toastType: 'BANNER',
   });
 }
@@ -162,7 +184,7 @@ function getBannerStatus(info: YodleeRefreshInfo): ProviderBannerStatus | null {
     (!lastRefreshAttemptMillis ||
       nowMillis <= lastRefreshAttemptMillis + SUCCESS_BANNER_TIMEOUT_MILLIS)
   ) {
-    return 'SUCCESS';
+    return { type: 'SUCCESS' };
   }
 
   if (
@@ -170,11 +192,11 @@ function getBannerStatus(info: YodleeRefreshInfo): ProviderBannerStatus | null {
     (!lastRefreshAttemptMillis ||
       nowMillis <= lastRefreshAttemptMillis + FAILURE_BANNER_TIMEOUT_MILLIS)
   ) {
-    return 'FAILURE';
+    return { type: 'FAILURE' };
   }
 
   if (isPendingStatus(info) || isInProgress(info)) {
-    return 'IN_PROGRESS';
+    return { type: 'IN_PROGRESS' };
   }
 
   return null;

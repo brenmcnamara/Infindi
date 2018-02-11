@@ -9,6 +9,7 @@ const GRAY_4 = '#9B9B9B';
 const GRAY_5 = '#4A4A4A';
 const GREEN = '#3BA68E';
 const GREEN_DARK = '#24826D';
+const GREEN_LIGHT = '#B2CDC7';
 const RED = '#B54C59';
 const WHITE = '#FFFFFF';
 const LYNCH = '#6C7A89';
@@ -43,6 +44,7 @@ export default {
   TEXT_FAINT: GRAY_4,
   TEXT_NORMAL: GRAY_5,
   TEXT_PRIMARY: GREEN_DARK,
+  TEXT_PRIMARY_DISABLED: GREEN_LIGHT,
   TEXT_SPECIAL: BLUE,
   TEXT_STRONG: BLACK,
 };
