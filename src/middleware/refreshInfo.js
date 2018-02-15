@@ -1,19 +1,20 @@
 /* @flow */
 
+import Firebase from 'react-native-firebase';
+
 import invariant from 'invariant';
 
 import { didLogin, willLogout } from '../common/action-utils';
 // eslint-disable-next-line max-len
-import { getYodleeRefreshInfoCollection as getYodleeRefreshInfoFirebaseCollectionRef } from 'common/lib/models/YodleeRefreshInfo';
+import { getRefreshInfoCollection as getRefreshInfoFirebaseCollectionRef } from 'common/lib/models/RefreshInfo';
 
 import type { EmitterSubscription } from '../common/event-utils';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelCollection } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
-import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
+import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
-type RefreshInfoCollection = ModelCollection<'YodleeRefreshInfo',
-  YodleeRefreshInfo,>;
+type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
 
 export default (store: Store) => (next: Next) => {
   let refreshInfoSubscription: ?EmitterSubscription = null;
@@ -38,9 +39,10 @@ function listenForRefreshInfo(
   loginPayload: LoginPayload,
   next: Next,
 ): EmitterSubscription {
-  next({ modelName: 'YodleeRefreshInfo', type: 'COLLECTION_DOWNLOAD_START' });
+  next({ modelName: 'RefreshInfo', type: 'COLLECTION_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
-  const remove = getYodleeRefreshInfoFirebaseCollectionRef()
+  const remove = Firebase.firestore()
+    .collection('RefreshInfo')
     .where('userRef.refID', '==', userID)
     .onSnapshot(snapshot => {
       const nextRefreshInfo: RefreshInfoCollection = {};
@@ -48,14 +50,14 @@ function listenForRefreshInfo(
         if (!doc.exists) {
           return;
         }
-        const refreshInfo: YodleeRefreshInfo = doc.data();
+        const refreshInfo: RefreshInfo = doc.data();
         nextRefreshInfo[refreshInfo.id] = refreshInfo;
       });
 
       // Update the refresh info collection.
       next({
         collection: nextRefreshInfo,
-        modelName: 'YodleeRefreshInfo',
+        modelName: 'RefreshInfo',
         type: 'COLLECTION_DOWNLOAD_FINISHED',
       });
     });
@@ -63,7 +65,7 @@ function listenForRefreshInfo(
 }
 
 function clearUserData(next: Next): void {
-  next({ modelName: 'YodleeRefreshInfo', type: 'COLLECTION_CLEAR' });
+  next({ modelName: 'RefreshInfo', type: 'COLLECTION_CLEAR' });
 }
 
 function extractLoginPayload(action: PureAction): LoginPayload {

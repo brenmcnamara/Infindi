@@ -1,6 +1,8 @@
 /* @flow */
 
-import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+import invariant from 'invariant';
+
+import type { Provider } from 'common/lib/models/Provider';
 
 export type SupportType =
   | {|
@@ -11,13 +13,17 @@ export type SupportType =
       +type: 'NO',
     |};
 
-export function isSupportedProvider(provider: YodleeProvider): SupportType {
-  const { raw } = provider;
-  if (!raw.loginForm) {
+export function isSupportedProvider(provider: Provider): SupportType {
+  invariant(
+    provider.sourceOfTruth.type === 'YODLEE',
+    'Expecting provider to come from yodlee',
+  );
+  const yodleeProvider = provider.sourceOfTruth.value;
+  if (!yodleeProvider.loginForm) {
     return { reason: 'This provider has no login form', type: 'NO' };
   }
 
-  const { loginForm } = raw;
+  const { loginForm } = yodleeProvider;
 
   if (!loginForm.row || loginForm.row.length === 0) {
     return { reason: 'This provider has a malformed loginForm', type: 'NO' };

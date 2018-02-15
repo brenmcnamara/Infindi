@@ -16,9 +16,8 @@ import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
 import type { Action as Action$Yodlee } from '../yodlee/action';
-
 import type { State } from '../reducers/root';
-import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
+import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 export type ReduxProps = {
   +dispatch: Dispatch,
@@ -30,7 +29,7 @@ export type PureAction =
   | Action$AuthMiddleware
   | Action$Config
   | Action$Datastore<'Account', Account>
-  | Action$Datastore<'YodleeRefreshInfo', YodleeRefreshInfo>
+  | Action$Datastore<'RefreshInfo', RefreshInfo>
   | Action$Modal
   | Action$ModalMiddleware
   | Action$Network

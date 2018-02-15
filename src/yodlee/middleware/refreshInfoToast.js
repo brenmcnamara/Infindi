@@ -1,5 +1,7 @@
 /* @flow */
 
+import invariant from 'invariant';
+
 import {
   AccountsDownloadingBanner,
   ProviderLoginBanner,
@@ -10,29 +12,30 @@ import {
   isInProgress,
   isPendingStatus,
   getProviderID,
-} from 'common/lib/models/YodleeRefreshInfo';
+} from 'common/lib/models/RefreshInfo';
 import { dismissToast, requestToast } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
 
 import type { ID } from 'common/types/core';
 import type { ModelCollection } from '../../datastore';
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
-import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
+import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 type ProviderBannerStatus =
   | {| +type: 'IN_PROGRESS' | 'SUCCESS' |}
   | {| +error?: Error, +type: 'FAILURE' |};
 
-type RefreshInfoCollection = ModelCollection<'YodleeRefreshInfo',
-  YodleeRefreshInfo,>;
+type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
 
 const REFRESH_INFO_TOAST_ID = 'YODLEE_REFRESH_INFO';
 const SUCCESS_BANNER_TIMEOUT_MILLIS = 10000;
 const FAILURE_BANNER_TIMEOUT_MILLIS = 10000;
+const FAILURE_BANNER_PROVIDER_LOGIN_DURATION_MILLIS = 3000;
 
 export default (store: Store) => (next: Next) => {
   const providerBannerStatusMap: { [id: ID]: ProviderBannerStatus } = {};
   let isAccountsDownloadingBanner = false;
+  let failureBannerProviderLoginTimeoutID = null;
 
   function updateBannerStatus(
     providerID: ID,
@@ -63,6 +66,9 @@ export default (store: Store) => (next: Next) => {
       providerBannerStatusMap[providerID] = nextBannerStatus;
     } else {
       delete providerBannerStatusMap[providerID];
+    }
+    if (failureBannerProviderLoginTimeoutID) {
+      clearTimeout(failureBannerProviderLoginTimeoutID);
     }
   }
 
@@ -130,6 +136,9 @@ export default (store: Store) => (next: Next) => {
         const { error } = action;
         updateAccountsDownloading(false);
         updateBannerStatus(providerID, { error, type: 'FAILURE' });
+        failureBannerProviderLoginTimeoutID = setTimeout(() => {
+          updateBannerStatus(providerID, null);
+        }, FAILURE_BANNER_PROVIDER_LOGIN_DURATION_MILLIS);
       }
     }
   };
@@ -173,10 +182,15 @@ function dismissProviderBanner(providerID: ID) {
   return dismissToast(`PROVIDERS/${providerID}`);
 }
 
-function getBannerStatus(info: YodleeRefreshInfo): ProviderBannerStatus | null {
+function getBannerStatus(info: RefreshInfo): ProviderBannerStatus | null {
+  invariant(
+    info.sourceOfTruth.type === 'YODLEE',
+    'Expecting refresh info to come from YODLEE',
+  );
+  const yodleeRefreshInfo = info.sourceOfTruth.value;
   const nowMillis = Date.now();
-  const lastRefreshAttemptMillis = info.raw.lastRefreshAttempt
-    ? Date.parse(info.raw.lastRefreshAttempt)
+  const lastRefreshAttemptMillis = yodleeRefreshInfo.lastRefreshAttempt
+    ? Date.parse(yodleeRefreshInfo.lastRefreshAttempt)
     : null;
 
   if (

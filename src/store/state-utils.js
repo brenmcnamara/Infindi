@@ -7,10 +7,10 @@ import { getBalance } from 'common/lib/models/Account';
 import type { Dollars, ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelCollection } from '../datastore';
+import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 import type { RootType, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
-import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
 
 // -----------------------------------------------------------------------------
 //
@@ -92,9 +92,9 @@ export function getToast(state: State, toastID: ID): Toast | null {
 
 export function getYodleeRefreshInfoCollection(
   state: State,
-): ModelCollection<'YodleeRefreshInfo', YodleeRefreshInfo> {
-  return state.yodleeRefreshInfo.type === 'STEADY'
-    ? state.yodleeRefreshInfo.collection
+): ModelCollection<'RefreshInfo', RefreshInfo> {
+  return state.refreshInfo.type === 'STEADY'
+    ? state.refreshInfo.collection
     : {};
 }
 

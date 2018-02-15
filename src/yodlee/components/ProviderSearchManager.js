@@ -2,9 +2,9 @@
 
 import invariant from 'invariant';
 
-import { genQueryYodleeProviders } from '../../backend';
+import { genQueryProviders } from '../../backend';
 
-import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+import type { Provider } from 'common/lib/models/Provider';
 
 export type ResultCallback = () => any;
 export type Subscription = () => void;
@@ -16,7 +16,7 @@ export default class ProviderSearchManager {
   _currentSearch: string = '';
   _lastSuccessfulSearch: string = '';
   _nextPage: number = 0;
-  _providersByPage: Array<Array<YodleeProvider>> = [];
+  _providersByPage: Array<Array<Provider>> = [];
   _runningSearch: string = '';
 
   clearSearch(): void {
@@ -52,7 +52,7 @@ export default class ProviderSearchManager {
     };
   }
 
-  getProviders(): Array<YodleeProvider> {
+  getProviders(): Array<Provider> {
     const providers = [];
     this._providersByPage.forEach(_providers => {
       providers.push.apply(providers, _providers);
@@ -65,7 +65,7 @@ export default class ProviderSearchManager {
     return Promise.resolve()
       .then(() => {
         this._currentSearch = search;
-        return genQueryYodleeProviders(search, LIMIT, this._nextPage);
+        return genQueryProviders(search, LIMIT, this._nextPage);
       })
       .then(payload => {
         this._lastSuccessfulSearch = search;

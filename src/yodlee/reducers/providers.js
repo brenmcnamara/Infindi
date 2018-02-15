@@ -4,16 +4,15 @@ import invariant from 'invariant';
 
 import type { ID } from 'common/types/core';
 import type { ModelCollection } from '../../datastore';
-import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+import type { Provider } from 'common/lib/models/Provider';
 import type { PureAction } from '../../typesDEPRECATED/redux';
-import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
+import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 export type State = {
-  +providerPendingLogin: YodleeProvider | null,
+  +providerPendingLogin: Provider | null,
 };
 
-type RefreshInfoCollection = ModelCollection<'YodleeRefreshInfo',
-  YodleeRefreshInfo,>;
+type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
 
 const DEFAULT_STATE = {
   providerPendingLogin: null,
@@ -64,7 +63,7 @@ export default function yodleeProvider(
 function getRefreshInfoForProvider(
   refreshInfoCollection: RefreshInfoCollection,
   providerID: ID,
-): YodleeRefreshInfo | null {
+): RefreshInfo | null {
   for (const id in refreshInfoCollection) {
     if (
       refreshInfoCollection.hasOwnProperty(id) &&

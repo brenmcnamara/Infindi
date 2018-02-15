@@ -13,7 +13,8 @@ import invariant from 'invariant';
 import type { ID, Pointer } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { PlaidDownloadStatus } from 'common/lib/models/PlaidCredentials';
-import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+import type { Provider } from 'common/lib/models/Provider';
+
 let loginPayload: ?LoginPayload = null;
 
 export type ErrorPayload = {|
@@ -31,15 +32,15 @@ export function initialize(_loginPayload: LoginPayload): void {
 //
 // -----------------------------------------------------------------------------
 
-export type QueryYodleeProvidersPayload = {|
-  +data: Array<YodleeProvider>,
+export type QueryProvidersPayload = {|
+  +data: Array<Provider>,
 |};
 
-export async function genQueryYodleeProviders(
+export async function genQueryProviders(
   query: string,
   limit: number,
   page: number,
-): Promise<QueryYodleeProvidersPayload> {
+): Promise<QueryProvidersPayload> {
   await Environment.genLazyLoad();
   const uri = createURI(
     `/yodlee/providers/search?query=${query}&limit=${limit}&page=${page}`,
@@ -53,11 +54,11 @@ export async function genQueryYodleeProviders(
 //
 // -----------------------------------------------------------------------------
 
-export type YodleeProviderLoginPayload = Pointer<'YodleeRefreshInfo'>;
+export type ProviderLoginPayload = Pointer<'YodleeRefreshInfo'>;
 
 export async function genYodleeProviderLogin(
-  provider: YodleeProvider,
-): Promise<YodleeProviderLoginPayload> {
+  provider: Provider,
+): Promise<ProviderLoginPayload> {
   await Environment.genLazyLoad();
   const uri = createURI('/yodlee/providers/login');
   const json = await genPostRequest(uri, { provider });

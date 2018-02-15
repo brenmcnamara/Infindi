@@ -27,7 +27,7 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { isPendingStatus } from 'common/lib/models/YodleeRefreshInfo';
+import { isPendingStatus } from 'common/lib/models/RefreshInfo';
 import { isSupportedProvider } from '../utils';
 import {
   dismissAccountVerification,
@@ -40,12 +40,12 @@ import { NavBarHeight } from '../../design/layout';
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
 import type { ModelCollection } from '../../datastore';
-import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 import type { State as ReduxState } from '../../reducers/root';
 import type { Subscription } from './ProviderSearchManager';
 import type { TransitionStage } from '../../reducers/modalState';
-import type { YodleeRefreshInfo } from 'common/lib/models/YodleeRefreshInfo';
 
 export type ComponentProps = {
   transitionStage: TransitionStage,
@@ -53,24 +53,23 @@ export type ComponentProps = {
 
 export type ReduxStateProps = {
   providerPendingLoginID: ID | null,
-  refreshInfo: ModelCollection<'YodleeRefreshInfo', YodleeRefreshInfo>,
+  refreshInfo: ModelCollection<'RefreshInfo', RefreshInfo>,
 };
 
 export type Props = ReduxProps & ReduxStateProps & ComponentProps;
 
-type RefreshInfoCollection = ModelCollection<'YodleeRefreshInfo',
-  YodleeRefreshInfo,>;
+type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
 
 type Page =
   | {|
-      +providers: Array<YodleeProvider>,
+      +providers: Array<Provider>,
       +search: string,
       +type: 'SEARCH',
     |}
   | {|
-      +providers: Array<YodleeProvider>,
+      +providers: Array<Provider>,
       +search: string,
-      +selectedProvider: YodleeProvider,
+      +selectedProvider: Provider,
       +type: 'LOGIN',
     |};
 
@@ -214,8 +213,13 @@ class AccountVerification extends Component<Props, State> {
     );
   }
 
-  _renderLoginHeader(provider: YodleeProvider) {
-    const rawProvider = provider.raw;
+  _renderLoginHeader(provider: Provider) {
+    invariant(
+      provider.sourceOfTruth.type === 'YODLEE',
+      'Expecting provider to come from YODLEE',
+    );
+    const yodleeProvider = provider.sourceOfTruth.value;
+
     return (
       <View style={styles.loginHeader}>
         <TouchableOpacity onPress={this._onPressHeaderBackIcon}>
@@ -226,7 +230,7 @@ class AccountVerification extends Component<Props, State> {
           />
         </TouchableOpacity>
         <Text style={[TextDesign.header3, styles.loginHeaderTitle]}>
-          {rawProvider.name}
+          {yodleeProvider.name}
         </Text>
         <View style={styles.loginHeaderRightIcon} />
       </View>
@@ -234,13 +238,9 @@ class AccountVerification extends Component<Props, State> {
   }
 
   _renderBanner() {
-    const { providerPendingLoginID } = this.props;
     const { page } = this.state;
     const channels =
       page.type === 'LOGIN' ? [`PROVIDERS/${page.selectedProvider.id}`] : [];
-    if (providerPendingLoginID) {
-      channels.push(`PROVIDERS/${providerPendingLoginID}`);
-    }
     return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
@@ -307,7 +307,7 @@ class AccountVerification extends Component<Props, State> {
     this._searchManager.updateSearch(search);
   };
 
-  _onSelectProvider = (provider: YodleeProvider): void => {
+  _onSelectProvider = (provider: Provider): void => {
     const support = isSupportedProvider(provider);
     if (support.type === 'NO') {
       this.props.dispatch(unsupportedProvider(support.reason));
@@ -349,7 +349,7 @@ class AccountVerification extends Component<Props, State> {
     // https://facebook.github.io/react-native/docs/linking.html
   };
 
-  _onChangeProvider = (provider: YodleeProvider): void => {
+  _onChangeProvider = (provider: Provider): void => {
     const { page } = this.state;
     invariant(
       page.type === 'LOGIN',
@@ -422,7 +422,7 @@ class AccountVerification extends Component<Props, State> {
 function getRefreshInfoForProvider(
   refreshInfoCollection: RefreshInfoCollection,
   providerID: ID,
-): YodleeRefreshInfo | null {
+): RefreshInfo | null {
   for (const id in refreshInfoCollection) {
     if (
       refreshInfoCollection.hasOwnProperty(id) &&
@@ -436,8 +436,8 @@ function getRefreshInfoForProvider(
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    providerPendingLoginID: state.yodleeProviders.providerPendingLogin
-      ? state.yodleeProviders.providerPendingLogin.id
+    providerPendingLoginID: state.providers.providerPendingLogin
+      ? state.providers.providerPendingLogin.id
       : null,
     refreshInfo: getYodleeRefreshInfoCollection(state),
   };

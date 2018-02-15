@@ -8,24 +8,21 @@ import React, { Component } from 'react';
 import TextDesign from '../design/text';
 
 import { getBalance } from 'common/lib/models/Account';
-import {
-  includesAccount,
-  isInProgress,
-} from 'common/lib/models/YodleeRefreshInfo';
+import { includesAccount, isInProgress } from 'common/lib/models/RefreshInfo';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type { AccountCollection } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
-import type { YodleeRefreshInfoCollection } from '../reducers/yodleeRefreshInfo';
+import type { RefreshInfoCollection } from '../reducers/refreshInfo';
 
 export type Props = {
   accounts: AccountCollection,
   groupType: AccountGroupType,
   onPressGroupInfo: () => any,
   onSelectAccount: (account: Account) => any,
-  refreshInfoCollection: YodleeRefreshInfoCollection,
+  refreshInfoCollection: RefreshInfoCollection,
 };
 
 // TODO: Rename to AccountsGroup
@@ -85,7 +82,7 @@ export default class AccountGroup extends Component<Props> {
 }
 
 function isAccountDownloading(
-  collection: YodleeRefreshInfoCollection,
+  collection: RefreshInfoCollection,
   account: Account,
 ): bool {
   for (const refreshInfoID in collection) {

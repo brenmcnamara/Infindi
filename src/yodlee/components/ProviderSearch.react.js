@@ -4,6 +4,8 @@ import Colors from '../../design/colors';
 import React, { Component } from 'react';
 import TextDesign from '../../design/text';
 
+import invariant from 'invariant';
+
 import {
   Animated,
   FlatList,
@@ -14,12 +16,12 @@ import {
 } from 'react-native';
 import { isSupportedProvider } from '../utils';
 
-import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+import type { Provider } from 'common/lib/models/Provider';
 
 export type Props = {
   isEditable: bool,
-  onSelectProvider: (provider: YodleeProvider) => any,
-  providers: Array<YodleeProvider>,
+  onSelectProvider: (provider: Provider) => any,
+  providers: Array<Provider>,
   search: string,
 };
 
@@ -45,7 +47,7 @@ export default class ProviderSearch extends Component<Props> {
     );
   }
 
-  _renderProvider = ({ item }: { item: YodleeProvider }) => {
+  _renderProvider = ({ item }: { item: Provider }) => {
     const isFirst = this.props.providers[0] === item;
     const itemStyles = [
       styles.searchResultsItem,
@@ -59,14 +61,19 @@ export default class ProviderSearch extends Component<Props> {
         backgroundColor: support.type === 'YES' ? Colors.SUCCESS : Colors.ERROR,
       },
     ];
-
+    invariant(
+      item.sourceOfTruth.type === 'YODLEE',
+      'Expecting provider to come from YODLEE',
+    );
+    const yodleeProvider = item.sourceOfTruth.value;
+    const baseURL = yodleeProvider.baseUrl;
     return (
       <TouchableOpacity onPress={() => this.props.onSelectProvider(item)}>
         <View style={itemStyles}>
           <View style={styles.searchResultsItemContent}>
-            <Text style={nameStyles}>{item.raw.name}</Text>
+            <Text style={nameStyles}>{yodleeProvider.name}</Text>
             {/* $FlowFixMe - YodleeType defined wrong */}
-            <Text style={TextDesign.small}>{item.raw.baseUrl}</Text>
+            <Text style={TextDesign.small}>{baseURL}</Text>
           </View>
           <View style={supportStyles} />
         </View>

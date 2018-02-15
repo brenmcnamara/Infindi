@@ -9,14 +9,17 @@ import invariant from 'invariant';
 
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 
-import type { LoginEntry } from 'common/types/yodlee';
-import type { Provider as YodleeProvider } from 'common/lib/models/YodleeProvider';
+import type {
+  LoginEntry,
+  ProviderFull as YodleeProvider,
+} from 'common/types/yodlee';
+import type { Provider } from 'common/lib/models/Provider';
 
 export type Props = {
   isEditable: bool,
-  onChangeProvider: (provider: YodleeProvider) => any,
+  onChangeProvider: (provider: Provider) => any,
   onPressForgotPassword: (url: string) => any,
-  provider: YodleeProvider,
+  provider: Provider,
 };
 
 type RowItem =
@@ -93,11 +96,15 @@ export default class AccountLogin extends Component<Props> {
     };
 
     const { provider } = this.props;
-    const row = provider.raw.loginForm.row.slice();
+    const yodleeProvider = getYodleeProvider(provider);
+    const row = yodleeProvider.loginForm.row.slice();
     row.splice(index, 1, newEntry);
-    const loginForm = { ...provider.raw.loginForm, row };
-    const raw = { ...provider.raw, loginForm };
-    this.props.onChangeProvider({ ...provider, raw });
+    const loginForm = { ...yodleeProvider.loginForm, row };
+    const newYodleeProvider = { ...yodleeProvider, loginForm };
+    this.props.onChangeProvider({
+      ...provider,
+      sourceOfTruth: { type: 'YODLEE', value: newYodleeProvider },
+    });
   };
 
   _onPressForgotCredentials = (url: string): void => {
@@ -105,7 +112,9 @@ export default class AccountLogin extends Component<Props> {
   };
 
   _getData() {
-    const { loginForm } = this.props.provider.raw;
+    const { provider } = this.props;
+    const yodleeProvider = getYodleeProvider(provider);
+    const { loginForm } = yodleeProvider;
     const rows: Array<RowItem> = loginForm.row.map((loginEntry, index) => ({
       entryIndex: index,
       loginEntry,
@@ -118,6 +127,15 @@ export default class AccountLogin extends Component<Props> {
     }
     return rows;
   }
+}
+
+function getYodleeProvider(provider: Provider): YodleeProvider {
+  const { sourceOfTruth } = provider;
+  invariant(
+    sourceOfTruth.type === 'YODLEE',
+    'Expecting Provider to come from YODLEE',
+  );
+  return sourceOfTruth.value;
 }
 
 const styles = StyleSheet.create({

@@ -39,8 +39,8 @@ import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type { AccountCollection } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { RefreshInfoCollection } from '../reducers/refreshInfo';
 import type { State as ReduxState } from '../reducers/root';
-import type { YodleeRefreshInfoCollection } from '../reducers/yodleeRefreshInfo';
 
 export type Props = ReduxProps & ReduxStateProps;
 
@@ -48,7 +48,7 @@ type ReduxStateProps = {
   accounts: AccountCollection,
   isDownloading: bool,
   netWorth: number,
-  refreshInfoCollection: YodleeRefreshInfoCollection,
+  refreshInfoCollection: RefreshInfoCollection,
 };
 
 type RowItem =
@@ -269,7 +269,7 @@ class AccountsScreen extends Component<Props> {
 }
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
-  const { accounts, yodleeRefreshInfo } = state;
+  const { accounts, refreshInfo } = state;
   const loginPayload = getLoginPayload(state);
   invariant(
     loginPayload,
@@ -280,7 +280,7 @@ function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
     isDownloading: accounts.type === 'DOWNLOADING',
     netWorth: getNetWorth(state),
     refreshInfoCollection:
-      yodleeRefreshInfo.type === 'STEADY' ? yodleeRefreshInfo.collection : {},
+      refreshInfo.type === 'STEADY' ? refreshInfo.collection : {},
   };
 }
 
