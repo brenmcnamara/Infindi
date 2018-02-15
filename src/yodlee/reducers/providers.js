@@ -18,7 +18,7 @@ const DEFAULT_STATE = {
   providerPendingLogin: null,
 };
 
-export default function yodleeProvider(
+export default function provider(
   state: State = DEFAULT_STATE,
   action: PureAction,
 ): State {
@@ -45,7 +45,7 @@ export default function yodleeProvider(
         return state;
       }
       const providerID = state.providerPendingLogin.id;
-      if (action.modelName !== 'YodleeRefreshInfo') {
+      if (action.modelName !== 'RefreshInfo') {
         return state;
       }
       // $FlowFixMe - This is correct.

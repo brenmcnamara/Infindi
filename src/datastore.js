@@ -37,12 +37,9 @@ export type ModelState<TName: string, TModel: ModelStub<TName>> =
 export type Action<
   TName: string,
   TModel: ModelStub<TName>,
-> = Action$ModelLoaderCollection<TName, TModel>;
+> = Action$ModelCollection<TName, TModel>;
 
-export type Action$ModelLoaderCollection<
-  TName: string,
-  TModel: ModelStub<TName>,
-> =
+export type Action$ModelCollection<TName: string, TModel: ModelStub<TName>> =
   | {|
       +modelName: TName,
       +type: 'COLLECTION_DOWNLOAD_START',
@@ -57,7 +54,16 @@ export type Action$ModelLoaderCollection<
       +modelName: TName,
       +type: 'COLLECTION_DOWNLOAD_FAILURE',
     |}
-  | {| +modelName: TName, +type: 'COLLECTION_CLEAR' |};
+  | {|
+      +modelName: TName,
+      +type: 'COLLECTION_CLEAR',
+    |}
+  | {|
+      +modelID: ID,
+      +modelName: TName,
+      +shouldPersist: bool,
+      +type: 'MODEL_REMOVE',
+    |};
 
 const DEFAULT_STATE = {
   type: 'EMPTY',
@@ -112,6 +118,12 @@ export function createModelCollectionReducer<
           return { type: 'EMPTY' };
         }
         break;
+      }
+
+      case 'MODEL_REMOVE': {
+        if (action.modelName === modelName) {
+          return removeModel(action.modelID, state);
+        }
       }
     }
     return state;
@@ -182,4 +194,17 @@ function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(
     state.type,
   );
   return { error, type: 'DOWNLOAD_FAILED' };
+}
+
+function removeModel<TName: string, TModel: ModelStub<TName>>(
+  modelID: ID,
+  state: ModelState<TName, TModel>,
+): ModelState<TName, TModel> {
+  // TODO: May want to throw if trying to delete a model that does not exist.
+  if (state.type !== 'STEADY') {
+    return state;
+  }
+  const collection = { ...state.collection };
+  delete collection[modelID];
+  return { collection, type: 'STEADY' };
 }

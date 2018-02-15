@@ -22,14 +22,12 @@ import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
 import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 type ProviderBannerStatus =
-  | {| +type: 'IN_PROGRESS' | 'SUCCESS' |}
+  | {| +type: 'INITIALIZING' | 'IN_PROGRESS' | 'SUCCESS' |}
   | {| +error?: Error, +type: 'FAILURE' |};
 
 type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
 
-const REFRESH_INFO_TOAST_ID = 'YODLEE_REFRESH_INFO';
-const SUCCESS_BANNER_TIMEOUT_MILLIS = 10000;
-const FAILURE_BANNER_TIMEOUT_MILLIS = 10000;
+const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
 const FAILURE_BANNER_PROVIDER_LOGIN_DURATION_MILLIS = 3000;
 
 export default (store: Store) => (next: Next) => {
@@ -43,7 +41,9 @@ export default (store: Store) => (next: Next) => {
   ): void {
     const prevBannerStatus = providerBannerStatusMap[providerID] || null;
 
-    if (prevBannerStatus === nextBannerStatus) {
+    const prevStatusType = prevBannerStatus && prevBannerStatus.type;
+    const nextStatusType = nextBannerStatus && nextBannerStatus.type;
+    if (prevStatusType === nextStatusType) {
       return;
     }
 
@@ -95,7 +95,7 @@ export default (store: Store) => (next: Next) => {
 
     switch (action.type) {
       case 'COLLECTION_DOWNLOAD_FINISHED': {
-        if (action.modelName !== 'YodleeRefreshInfo') {
+        if (action.modelName !== 'RefreshInfo') {
           break;
         }
         // $FlowFixMe - This is correct
@@ -124,10 +124,9 @@ export default (store: Store) => (next: Next) => {
         // probably a very rare (1 in a million) edge case and the bug is
         // so minor that it is not writing all the round-about logic to correct
         // for this.
-
         const providerID = action.provider.id;
         updateAccountsDownloading(true);
-        updateBannerStatus(providerID, { type: 'IN_PROGRESS' });
+        updateBannerStatus(providerID, { type: 'INITIALIZING' });
         break;
       }
 
@@ -148,7 +147,7 @@ function requestAccountsDownloadingBanner() {
   return requestToast({
     bannerChannel: 'ACCOUNTS',
     bannerType: 'INFO',
-    id: REFRESH_INFO_TOAST_ID,
+    id: REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID,
     priority: 'LOW',
     text: AccountsDownloadingBanner,
     toastType: 'BANNER',
@@ -156,7 +155,7 @@ function requestAccountsDownloadingBanner() {
 }
 
 function dismissAccountsDownloadingBanner() {
-  return dismissToast(REFRESH_INFO_TOAST_ID);
+  return dismissToast(REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID);
 }
 
 function requestProviderBanner(
@@ -187,30 +186,21 @@ function getBannerStatus(info: RefreshInfo): ProviderBannerStatus | null {
     info.sourceOfTruth.type === 'YODLEE',
     'Expecting refresh info to come from YODLEE',
   );
-  const yodleeRefreshInfo = info.sourceOfTruth.value;
-  const nowMillis = Date.now();
-  const lastRefreshAttemptMillis = yodleeRefreshInfo.lastRefreshAttempt
-    ? Date.parse(yodleeRefreshInfo.lastRefreshAttempt)
-    : null;
 
-  if (
-    isComplete(info) &&
-    (!lastRefreshAttemptMillis ||
-      nowMillis <= lastRefreshAttemptMillis + SUCCESS_BANNER_TIMEOUT_MILLIS)
-  ) {
+  if (isPendingStatus(info)) {
+    return { type: 'INITIALIZING' };
+  }
+
+  if (isInProgress(info)) {
+    return { type: 'IN_PROGRESS' };
+  }
+
+  if (isComplete(info)) {
     return { type: 'SUCCESS' };
   }
 
-  if (
-    didFail(info) &&
-    (!lastRefreshAttemptMillis ||
-      nowMillis <= lastRefreshAttemptMillis + FAILURE_BANNER_TIMEOUT_MILLIS)
-  ) {
+  if (didFail(info)) {
     return { type: 'FAILURE' };
-  }
-
-  if (isPendingStatus(info) || isInProgress(info)) {
-    return { type: 'IN_PROGRESS' };
   }
 
   return null;

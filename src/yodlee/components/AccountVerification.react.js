@@ -34,7 +34,7 @@ import {
   requestProviderLogin,
   unsupportedProvider,
 } from '../action';
-import { getYodleeRefreshInfoCollection } from '../../store/state-utils';
+import { getRefreshInfoCollection } from '../../store/state-utils';
 import { NavBarHeight } from '../../design/layout';
 
 import type { ComponentType } from 'react';
@@ -439,7 +439,7 @@ function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
     providerPendingLoginID: state.providers.providerPendingLogin
       ? state.providers.providerPendingLogin.id
       : null,
-    refreshInfo: getYodleeRefreshInfoCollection(state),
+    refreshInfo: getRefreshInfoCollection(state),
   };
 }
 

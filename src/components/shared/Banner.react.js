@@ -86,6 +86,9 @@ export default class Banner extends Component<Props, State> {
         }
         if (nextBanner) {
           return this._genPerformTransitionIn(nextBanner).then(() => {
+            if (!this._isMounted) {
+              return;
+            }
             // NOTE: Enter terminal state only if there is no transition that
             // has started while this was finishing.
             if (this._currentTransitionID === transitionID) {

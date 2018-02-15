@@ -74,15 +74,19 @@ export const AccountsDownloadingBanner = cleanupWhitespace(`
  */
 export const ProviderLoginBanner = {
   FAILURE: cleanupWhitespace(`
-    Login attempt failed.
+    The last login attempt failed
   `),
 
   IN_PROGRESS: cleanupWhitespace(`
+    Downloading data. This may take a moment...
+  `),
+
+  INITIALIZING: cleanupWhitespace(`
     Logging in. This may take a moment...
   `),
 
   SUCCESS: cleanupWhitespace(`
-    You are already logged in
+    You are logged into this account
   `),
 };
 

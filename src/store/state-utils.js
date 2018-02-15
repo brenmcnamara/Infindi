@@ -90,7 +90,7 @@ export function getToast(state: State, toastID: ID): Toast | null {
   return state.toast.bannerQueue.find(banner => banner.id === toastID) || null;
 }
 
-export function getYodleeRefreshInfoCollection(
+export function getRefreshInfoCollection(
   state: State,
 ): ModelCollection<'RefreshInfo', RefreshInfo> {
   return state.refreshInfo.type === 'STEADY'
