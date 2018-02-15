@@ -256,6 +256,7 @@ class AccountVerification extends Component<Props, State> {
             search={page.search}
             onSelectProvider={this._onSelectProvider}
             providers={page.providers}
+            refreshInfoCollection={this.props.refreshInfo}
           />
         );
       }

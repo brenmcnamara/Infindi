@@ -1,6 +1,7 @@
 /* @flow */
 
 import Colors from '../../design/colors';
+import Downloading from '../../components/shared/Downloading.react';
 import React, { Component } from 'react';
 import TextDesign from '../../design/text';
 
@@ -14,18 +15,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { isSupportedProvider } from '../utils';
+import { isInProgress } from 'common/lib/models/RefreshInfo';
 
+import type { ModelCollection } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
+import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 export type Props = {
   isEditable: bool,
   onSelectProvider: (provider: Provider) => any,
   providers: Array<Provider>,
+  refreshInfoCollection: RefreshInfoCollection,
   search: string,
 };
 
-const SUPPORT_INDICATOR_SIZE = 6;
+type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
 
 export default class ProviderSearch extends Component<Props> {
   _transitionValue: Animated.Value;
@@ -54,32 +58,39 @@ export default class ProviderSearch extends Component<Props> {
       isFirst ? { marginTop: 4 } : null,
     ];
     const nameStyles = [TextDesign.header3, styles.searchResultsItemName];
-    const support = isSupportedProvider(item);
-    const supportStyles = [
-      styles.searchResultItemSupport,
-      {
-        backgroundColor: support.type === 'YES' ? Colors.SUCCESS : Colors.ERROR,
-      },
-    ];
     invariant(
       item.sourceOfTruth.type === 'YODLEE',
       'Expecting provider to come from YODLEE',
     );
     const yodleeProvider = item.sourceOfTruth.value;
+    const refreshInfo = this._getRefreshInfoForProvider(item);
+    const providerName = yodleeProvider.name;
     const baseURL = yodleeProvider.baseUrl;
     return (
       <TouchableOpacity onPress={() => this.props.onSelectProvider(item)}>
         <View style={itemStyles}>
           <View style={styles.searchResultsItemContent}>
-            <Text style={nameStyles}>{yodleeProvider.name}</Text>
-            {/* $FlowFixMe - YodleeType defined wrong */}
+            <Text style={nameStyles}>{providerName}</Text>
             <Text style={TextDesign.small}>{baseURL}</Text>
           </View>
-          <View style={supportStyles} />
+          {refreshInfo && isInProgress(refreshInfo) ? <Downloading /> : null}
         </View>
       </TouchableOpacity>
     );
   };
+
+  _getRefreshInfoForProvider(provider: Provider): RefreshInfo | null {
+    const collection = this.props.refreshInfoCollection;
+    for (const id in collection) {
+      if (
+        collection.hasOwnProperty(id) &&
+        collection[id].providerRef.refID === provider.id
+      ) {
+        return collection[id];
+      }
+    }
+    return null;
+  }
 }
 
 const styles = StyleSheet.create({
@@ -93,6 +104,7 @@ const styles = StyleSheet.create({
   },
 
   searchResultsItem: {
+    alignItems: 'center',
     backgroundColor: Colors.BACKGROUND_LIGHT,
     borderColor: Colors.BORDER_DARK,
     borderWidth: 1,
@@ -108,11 +120,5 @@ const styles = StyleSheet.create({
 
   searchResultsItemName: {
     marginBottom: 2,
-  },
-
-  searchResultItemSupport: {
-    borderRadius: SUPPORT_INDICATOR_SIZE / 2,
-    height: SUPPORT_INDICATOR_SIZE,
-    width: SUPPORT_INDICATOR_SIZE,
   },
 });
