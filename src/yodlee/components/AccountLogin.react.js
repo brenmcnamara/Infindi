@@ -84,12 +84,22 @@ export default class AccountLogin extends Component<Props> {
   };
 
   _onChangeRow = (entry: LoginEntry, index: number, text: string): void => {
+    // TODO: The effect of clipping the text is that the text shows for a split
+    // second then dissapears. There should be a way to prevent the text from
+    // ever showing.
+    const currentText = entry.field[0].value;
+    const maxLength = entry.field[0].maxLength
+      ? entry.field[0].maxLength
+      : Infinity;
+    const finalText = text.length > maxLength ? currentText : text;
+
     const field = [
       {
         ...entry.field[0],
-        value: text,
+        value: finalText,
       },
     ].concat(entry.field.slice(1));
+
     const newEntry = {
       ...entry,
       field,
