@@ -401,18 +401,24 @@ class AccountVerification extends Component<Props, State> {
 
   _getFooterButtonLayout() {
     const { providerPendingLoginID } = this.props;
-
-    return this.state.page.type === 'SEARCH'
-      ? {
-          centerButtonText: 'CANCEL',
-          type: 'CENTER',
-        }
-      : {
-          isRightButtonDisabled: Boolean(providerPendingLoginID),
-          leftButtonText: 'CANCEL',
-          rightButtonText: 'LOGIN',
-          type: 'LEFT_AND_RIGHT',
-        };
+    const { page } = this.state;
+    if (page.type === 'LOGIN') {
+      const { selectedProvider } = page;
+      const authValues = getAuthValues(selectedProvider);
+      const shouldDisableLoginButton =
+        Boolean(providerPendingLoginID) ||
+        authValues.some(val => !val || val.length === 0);
+      return {
+        isRightButtonDisabled: shouldDisableLoginButton,
+        leftButtonText: 'CANCEL',
+        rightButtonText: 'LOGIN',
+        type: 'LEFT_AND_RIGHT',
+      };
+    }
+    return {
+      centerButtonText: 'CANCEL',
+      type: 'CENTER',
+    };
   }
 
   _isCancelButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {
@@ -447,6 +453,16 @@ function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
 export default (connect(mapReduxStateToProps)(
   AccountVerification,
 ): ComponentType<ComponentProps>);
+
+export function getAuthValues(provider: Provider): Array<string> {
+  invariant(
+    provider.sourceOfTruth.type === 'YODLEE',
+    'Expecting provider to come from YODLEE',
+  );
+  return provider.sourceOfTruth.value.loginForm.row.map(
+    entry => entry.field[0].value,
+  );
+}
 
 const styles = StyleSheet.create({
   loginHeader: {

@@ -161,18 +161,18 @@ export default class Footer extends Component<Props, State> {
     layout2: ButtonLayout,
   ): bool {
     if (layout1.type !== layout2.type) {
-      return false;
+      return true;
     }
 
     if (layout1.type === 'CENTER') {
       // $FlowFixMe - Already verified type.
-      return layout1.centerButtonText === layout2.centerButtonText;
+      return layout1.centerButtonText !== layout2.centerButtonText;
     }
     return (
       // $FlowFixMe - Already verified type.
-      layout1.leftButtonText === layout2.leftButtonText &&
+      layout1.leftButtonText !== layout2.leftButtonText ||
       // $FlowFixMe - Already verified type.
-      layout1.rightButtonText === layout2.rightButtonText
+      layout1.rightButtonText !== layout2.rightButtonText
     );
   }
 }
