@@ -9,7 +9,7 @@ import Screen from './shared/Screen.react';
 import TextDesign from '../design/text';
 
 import { connect } from 'react-redux';
-import { getUserFirstName } from '../store/state-utils';
+import { getUserFirstName } from '../common/state-utils';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { logout } from '../actions/authentication';
 

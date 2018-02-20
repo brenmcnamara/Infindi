@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import { getRoute } from '../../store/state-utils';
+import { getRoute } from '../../common/state-utils';
 import { getTab } from '../../common/route-utils';
 
 import type { ReduxProps } from '../../typesDEPRECATED/redux';

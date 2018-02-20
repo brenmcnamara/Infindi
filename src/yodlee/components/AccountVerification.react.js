@@ -34,7 +34,7 @@ import {
   requestProviderLogin,
   unsupportedProvider,
 } from '../action';
-import { getRefreshInfoCollection } from '../../store/state-utils';
+import { getRefreshInfoCollection } from '../../common/state-utils';
 import { NavBarHeight } from '../../design/layout';
 
 import type { ComponentType } from 'react';

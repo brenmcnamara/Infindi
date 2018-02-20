@@ -1,6 +1,5 @@
 /* @flow */
 
-import { hasNetworkConnection } from '../store/state-utils';
 import {
   networkRequestFailure,
   networkRequestStart,

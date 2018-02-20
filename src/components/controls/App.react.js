@@ -19,7 +19,7 @@ import {
   envFailedLoading,
 } from '../../actions/config';
 import { getRoot } from '../../common/route-utils';
-import { getRoute } from '../../store/state-utils';
+import { getRoute } from '../../common/state-utils';
 import {
   Dimensions,
   KeyboardAvoidingView,

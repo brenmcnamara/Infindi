@@ -22,7 +22,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { dismissModal } from '../actions/modal';
-import { getUserFullName } from '../store/state-utils';
+import { getUserFullName } from '../common/state-utils';
 import { logout } from '../actions/authentication';
 
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';

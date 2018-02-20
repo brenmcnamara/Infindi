@@ -31,7 +31,7 @@ import {
 import { connect } from 'react-redux';
 import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupType } from 'common/lib/models/Account';
-import { getLoginPayload, getNetWorth } from '../store/state-utils';
+import { getLoginPayload, getNetWorth } from '../common/state-utils';
 import { requestAccountVerification } from '../yodlee/action';
 import { requestInfoModal, requestUnimplementedModal } from '../actions/modal';
 
