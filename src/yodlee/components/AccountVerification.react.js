@@ -74,6 +74,7 @@ type Page =
     |};
 
 type State = {
+  didCompleteInitialSearch: bool,
   page: Page,
 };
 
@@ -96,6 +97,7 @@ class AccountVerification extends Component<Props, State> {
     );
 
     this.state = {
+      didCompleteInitialSearch: false,
       page: {
         providers: this._searchManager.getProviders(),
         search: '',
@@ -108,6 +110,11 @@ class AccountVerification extends Component<Props, State> {
     this._searchSubscription = this._searchManager.listenToSearchResults(
       this._onUpdateSearchResults,
     );
+
+    // Start initial search.
+    const { page } = this.state;
+    const search = page.type === 'SEARCH' ? page.search : '';
+    this._searchManager.updateSearch(search);
   }
 
   componentWillUnmount(): void {
@@ -246,12 +253,13 @@ class AccountVerification extends Component<Props, State> {
 
   _renderContent() {
     const { providerPendingLoginID, transitionStage } = this.props;
-    const { page } = this.state;
+    const { didCompleteInitialSearch, page } = this.state;
 
     switch (page.type) {
       case 'SEARCH': {
         return (
           <ProviderSearch
+            didCompleteInitialSearch={didCompleteInitialSearch}
             isEditable={transitionStage === 'IN'}
             search={page.search}
             onSelectProvider={this._onSelectProvider}
@@ -373,6 +381,7 @@ class AccountVerification extends Component<Props, State> {
     switch (page.type) {
       case 'LOGIN': {
         this.setState({
+          didCompleteInitialSearch: true,
           page: {
             providers,
             search: page.search,
@@ -385,6 +394,7 @@ class AccountVerification extends Component<Props, State> {
 
       case 'SEARCH': {
         this.setState({
+          didCompleteInitialSearch: true,
           page: {
             providers,
             search: page.search,

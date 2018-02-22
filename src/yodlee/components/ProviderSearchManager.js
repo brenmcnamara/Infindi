@@ -13,18 +13,18 @@ const LIMIT = 20;
 
 export default class ProviderSearchManager {
   _callback: ResultCallback | null = null;
-  _currentSearch: string = '';
-  _lastSuccessfulSearch: string = '';
+  _currentSearch: string | null = null;
+  _lastSuccessfulSearch: string | null = null;
   _nextPage: number = 0;
   _providersByPage: Array<Array<Provider>> = [];
-  _runningSearch: string = '';
+  _runningSearch: string | null = null;
 
   clearSearch(): void {
-    this._currentSearch = '';
-    this._lastSuccessfulSearch = '';
+    this._currentSearch = null;
+    this._lastSuccessfulSearch = null;
     this._nextPage = 0;
     this._providersByPage = [];
-    this._runningSearch = '';
+    this._runningSearch = null;
 
     this._callback && this._callback();
   }
@@ -41,6 +41,10 @@ export default class ProviderSearchManager {
 
   incrementPage(): void {
     ++this._nextPage;
+    invariant(
+      this._currentSearch !== null,
+      'Cannot call incrementPage() unless first calling updateSearch()',
+    );
     this._runSearch(this._currentSearch);
   }
 

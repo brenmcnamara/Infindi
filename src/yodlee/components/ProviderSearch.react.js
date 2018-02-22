@@ -8,6 +8,7 @@ import TextDesign from '../../design/text';
 import invariant from 'invariant';
 
 import {
+  ActivityIndicator,
   Animated,
   FlatList,
   StyleSheet,
@@ -22,6 +23,7 @@ import type { Provider } from 'common/lib/models/Provider';
 import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 export type Props = {
+  didCompleteInitialSearch: bool,
   isEditable: bool,
   onSelectProvider: (provider: Provider) => any,
   providers: Array<Provider>,
@@ -35,7 +37,21 @@ export default class ProviderSearch extends Component<Props> {
   _transitionValue: Animated.Value;
 
   render() {
-    return <View style={styles.root}>{this._renderSearchResults()}</View>;
+    return (
+      <View style={styles.root}>
+        {this.props.didCompleteInitialSearch
+          ? this._renderSearchResults()
+          : this._renderLoading()}
+      </View>
+    );
+  }
+
+  _renderLoading() {
+    return (
+      <View style={styles.loadingResults}>
+        <ActivityIndicator size="small" />
+      </View>
+    );
   }
 
   _renderSearchResults() {
@@ -94,6 +110,11 @@ export default class ProviderSearch extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
+  loadingResults: {
+    alignItems: 'center',
+    marginTop: 24,
+  },
+
   root: {
     backgroundColor: Colors.BACKGROUND,
     flex: 1,
