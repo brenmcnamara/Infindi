@@ -20,6 +20,8 @@ import { Text } from 'react-native';
 import type { ID } from 'common/types/core';
 import type { Modal } from '../reducers/modalState';
 
+export const LeftPaneModalID = 'LEFT_PANE';
+
 export type Action = Action$DismissModal | Action$RequestModal;
 
 export type Action$DismissModal = {|
@@ -76,7 +78,7 @@ export function requestInfoModal(
 export function requestLeftPane(): Action$RequestModal {
   return {
     modal: {
-      id: 'LEFT_PANE',
+      id: LeftPaneModalID,
       modalType: 'REACT_WITH_TRANSITION',
       priority: 'USER_REQUESTED',
       renderIn: () => <LeftPaneScreen show={true} />,
@@ -87,6 +89,13 @@ export function requestLeftPane(): Action$RequestModal {
       transitionOutMillis: LeftPaneTransitionOutMillis,
     },
     type: 'REQUEST_MODAL',
+  };
+}
+
+export function dismissLeftPane(): Action$DismissModal {
+  return {
+    modalID: LeftPaneModalID,
+    type: 'DISMISS_MODAL',
   };
 }
 
