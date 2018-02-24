@@ -218,9 +218,17 @@ class AccountsScreen extends Component<Props> {
       accounts,
       account => getGroupType(account) === 'SHORT_TERM_DEBT',
     );
-    const investmentsGroup = filterObject(
+    const longTermDebtGroup = filterObject(
       accounts,
-      account => getGroupType(account) === 'INVESTMENTS',
+      account => getGroupType(account) === 'LONG_TERM_DEBT',
+    );
+    const shortTermInvestmentsGroup = filterObject(
+      accounts,
+      account => getGroupType(account) === 'SHORT_TERM_INVESTMENTS',
+    );
+    const longTermInvestmentsGroup = filterObject(
+      accounts,
+      account => getGroupType(account) === 'LONG_TERM_INVESTMENTS',
     );
     const otherGroup = filterObject(
       accounts,
@@ -248,12 +256,28 @@ class AccountsScreen extends Component<Props> {
             key: 'SHORT_TERM_DEBT',
             rowType: 'ACCOUNTS',
           },
-      isObjectEmpty(investmentsGroup)
+      isObjectEmpty(longTermDebtGroup)
         ? null
         : {
-            accounts: investmentsGroup,
-            groupType: 'INVESTMENTS',
-            key: 'INVESTMENTS',
+            accounts: longTermDebtGroup,
+            groupType: 'LONG_TERM_DEBT',
+            key: 'LONG_TERM_DEBT',
+            rowType: 'ACCOUNTS',
+          },
+      isObjectEmpty(shortTermInvestmentsGroup)
+        ? null
+        : {
+            accounts: shortTermInvestmentsGroup,
+            groupType: 'SHORT_TERM_INVESTMENTS',
+            key: 'SHORT_TERM_INVESTMENTS',
+            rowType: 'ACCOUNTS',
+          },
+      isObjectEmpty(longTermInvestmentsGroup)
+        ? null
+        : {
+            accounts: longTermInvestmentsGroup,
+            groupType: 'LONG_TERM_INVESTMENTS',
+            key: 'LONG_TERM_INVESTMENTS',
             rowType: 'ACCOUNTS',
           },
       isObjectEmpty(otherGroup)
