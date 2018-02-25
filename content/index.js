@@ -5,8 +5,9 @@
  * no accounts yet.
  */
 export const AccountNullState = cleanupWhitespace(`
-  One to two sentences on why it is important to add accounts. Should convey
-  that we need account info for this app to be useful.
+  Adding accounts allows us to give you the best advice possible. We use the
+  information from your accounts to track your net worth, help you budget,
+  and give you tailored recommendations.
 `);
 
 export const AccountGroupInfo = {
@@ -15,31 +16,74 @@ export const AccountGroupInfo = {
    * is. A couple of sentences, assuming very basic knowledge about finances.
    */
   AVAILABLE_CASH: cleanupWhitespace(`
-    One to two sentences on what an account labeled under available cash means.
-    Should assume only basic knowledge of finances.
+    This represents the cash you have available at any moment's notice. You can access
+    this cash right away to pay your bills and for emergencies. 
   `),
 
   /**
-   * Explain what the 'INVESTMENTS' category is for in a few sentences.
+   * Explain what the 'CHARITY' category is for in a few sentences.
    */
-  INVESTMENTS: cleanupWhitespace(`
-    One to two sentences on what an account labeled under investments means.
+  CHARITY: cleanupWhitespace(`
+    This represents any charitable accounts you have set up. This is not
+    included in your net worth. 
+  `),
+  
+  /**
+   * Explain what the 'CREDIT CARD DEBT' category is for in a few sentences.
+   */
+  CREDIT_CARD_DEBT: cleanupWhitespace(`
+    This represents the amount of debt you owe on your credit cards. Late credit
+    card payments often accrue at very high interest rates.
+  `),
+  
+  /**
+   * Basic information explaining to the user what an "DEBT" account is.
+   * A couple of sentences, assuming very basic knowledge about finances.
+   */
+  DEBT: cleanupWhitespace(` 
+    This represents the total debt you owe excluding credit card debt. Make
+    sure you have a plan to pay it off. 
   `),
 
+  /**
+   * Explain what the 'NON LIQUID INVESTMENTS' category is for in a few sentences.
+   */
+  NON_LIQUID_INVESTMENTS: cleanupWhitespace(`
+    This represents investments that take more than a few days to be converted
+    into cash. 
+  `),
+                                                                                |      
   /**
    * Explain what the 'OTHER' category is for in a few sentences.
    */
   OTHER: cleanupWhitespace(`
-    One to two sentences explaining the other category.
+    If an account does not fall into the above categories, it ends up here.
+    You can move accounts from here into another bucket. 
   `),
 
   /**
-   * Basic information explaining to the user what an "SHORT TERM DEBT" account
-   * is. A couple of sentences, assuming very basic knowledge about finances.
+   * Explain what the 'RETIREMENT' category is for in a few sentences.
    */
-  SHORT_TERM_DEBT: cleanupWhitespace(`
-     One to two sentences on what an account labeled under available cash means.
-     Should assume only basic knowledge of finances.
+  RETIREMENT: cleanupWhitespace(`
+    This represents investment accounts that you can typically access only after
+    turning 60.5 years old. There are some cases in which you can access these
+    funds earlier. Retirement accounts are usually tax-advantaged.
+  `),
+
+  /**
+   * Explain what the 'REWARDS' category is for in a few sentences.
+   */
+  REWARDS: cleanupWhitespace(`
+    This represents rewards from credit cards, airlines and other loyalty
+    programs.
+  `),
+
+  /**
+   * Explain what the 'LIQUID INVESTMENTS' category is for in a few sentences.
+   */
+  LIQUID_INVESTMENTS: cleanupWhitespace(`
+    This represents investments that take a few days or fewer to be converted
+    into cash. 
   `),
 };
 
@@ -56,8 +100,7 @@ export const NoInternet = cleanupWhitespace(`
  * Message that shows when the user has no action items on the home page.
  */
 export const ActionItemPagerNullState = cleanupWhitespace(`
-  Only one sentence explaining that the user has no action items at the
-  moment.
+  We have no news for you at the moment. 
 `);
 
 /**
@@ -65,7 +108,7 @@ export const ActionItemPagerNullState = cleanupWhitespace(`
  * accounts are downloading.
  */
 export const AccountsDownloadingBanner = cleanupWhitespace(`
-  Your accounts are downloading
+  Downloading accounts...
 `);
 
 /**
