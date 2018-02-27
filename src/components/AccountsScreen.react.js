@@ -216,19 +216,19 @@ class AccountsScreen extends Component<Props> {
     );
     const shortTermDebtGroup = filterObject(
       accounts,
-      account => getGroupType(account) === 'SHORT_TERM_DEBT',
+      account => getGroupType(account) === 'CREDIT_CARD_DEBT',
     );
     const longTermDebtGroup = filterObject(
       accounts,
-      account => getGroupType(account) === 'LONG_TERM_DEBT',
+      account => getGroupType(account) === 'DEBT',
     );
     const shortTermInvestmentsGroup = filterObject(
       accounts,
-      account => getGroupType(account) === 'SHORT_TERM_INVESTMENTS',
+      account => getGroupType(account) === 'LIQUID_INVESTMENTS',
     );
     const longTermInvestmentsGroup = filterObject(
       accounts,
-      account => getGroupType(account) === 'LONG_TERM_INVESTMENTS',
+      account => getGroupType(account) === 'NON_LIQUID_INVESTMENTS',
     );
     const otherGroup = filterObject(
       accounts,
@@ -252,32 +252,32 @@ class AccountsScreen extends Component<Props> {
         ? null
         : {
             accounts: shortTermDebtGroup,
-            groupType: 'SHORT_TERM_DEBT',
-            key: 'SHORT_TERM_DEBT',
+            groupType: 'CREDIT_CARD_DEBT',
+            key: 'CREDIT_CARD_DEBT',
             rowType: 'ACCOUNTS',
           },
       isObjectEmpty(longTermDebtGroup)
         ? null
         : {
             accounts: longTermDebtGroup,
-            groupType: 'LONG_TERM_DEBT',
-            key: 'LONG_TERM_DEBT',
+            groupType: 'DEBT',
+            key: 'DEBT',
             rowType: 'ACCOUNTS',
           },
       isObjectEmpty(shortTermInvestmentsGroup)
         ? null
         : {
             accounts: shortTermInvestmentsGroup,
-            groupType: 'SHORT_TERM_INVESTMENTS',
-            key: 'SHORT_TERM_INVESTMENTS',
+            groupType: 'LIQUID_INVESTMENTS',
+            key: 'LIQUID_INVESTMENTS',
             rowType: 'ACCOUNTS',
           },
       isObjectEmpty(longTermInvestmentsGroup)
         ? null
         : {
             accounts: longTermInvestmentsGroup,
-            groupType: 'LONG_TERM_INVESTMENTS',
-            key: 'LONG_TERM_INVESTMENTS',
+            groupType: 'NON_LIQUID_INVESTMENTS',
+            key: 'NON_LIQUID_INVESTMENTS',
             rowType: 'ACCOUNTS',
           },
       isObjectEmpty(otherGroup)
