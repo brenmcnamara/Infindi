@@ -1,6 +1,6 @@
 {
   "name": "yoga",
-  "version": "0.52.2.React",
+  "version": "0.50.3.React",
   "license": {
     "type": "BSD"
   },
@@ -11,7 +11,7 @@
   "authors": "Facebook",
   "source": {
     "git": "https://github.com/facebook/react-native.git",
-    "tag": "v0.52.2"
+    "tag": "v0.50.3"
   },
   "module_name": "yoga",
   "requires_arc": false,
@@ -20,12 +20,12 @@
     "-fexceptions",
     "-Wall",
     "-Werror",
-    "-std=c++1y",
+    "-std=c11",
     "-fPIC"
   ],
   "platforms": {
     "ios": "8.0",
     "tvos": "9.2"
   },
-  "source_files": "yoga/**/*.{cpp,h}"
+  "source_files": "yoga/**/*.{c,h}"
 }

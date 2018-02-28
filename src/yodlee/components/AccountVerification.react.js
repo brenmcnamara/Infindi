@@ -19,7 +19,6 @@ import {
   Easing,
   Image,
   KeyboardAvoidingView,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -164,16 +163,24 @@ class AccountVerification extends Component<Props, State> {
   }
 
   render() {
+    const { appInset } = this.props;
     const rootStyles = [
       styles.root,
       {
         opacity: this._transitionValue,
       },
     ];
+    const appInsetStyles = {
+      flex: 1,
+      paddingBottom: appInset.bottom,
+      paddingLeft: appInset.left,
+      paddingRight: appInset.right,
+      paddingTop: appInset.top,
+    };
     return (
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <Animated.View style={rootStyles}>
-          <SafeAreaView style={styles.safeArea}>
+          <View style={appInsetStyles}>
             <Screen>
               <Content>
                 {this._renderHeader()}
@@ -185,7 +192,7 @@ class AccountVerification extends Component<Props, State> {
                 onPress={this._onFooterButtonPress}
               />
             </Screen>
-          </SafeAreaView>
+          </View>
         </Animated.View>
       </KeyboardAvoidingView>
     );
@@ -453,6 +460,7 @@ function getRefreshInfoForProvider(
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
+    appInset: state.configState.appInset,
     providerPendingLoginID: state.providers.providerPendingLogin
       ? state.providers.providerPendingLogin.id
       : null,
@@ -475,6 +483,15 @@ export function getAuthValues(provider: Provider): Array<string> {
 }
 
 const styles = StyleSheet.create({
+  bottomArea: {
+    backgroundColor: Colors.BACKGROUND,
+    bottom: 0,
+    height: 40,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+
   loginHeader: {
     alignItems: 'center',
     borderBottomWidth: 1,
