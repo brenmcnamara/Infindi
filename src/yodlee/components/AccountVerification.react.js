@@ -38,6 +38,7 @@ import { NavBarHeight } from '../../design/layout';
 
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
+import type { Inset } from '../../reducers/configState';
 import type { ModelCollection } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
@@ -51,6 +52,7 @@ export type ComponentProps = {
 };
 
 export type ReduxStateProps = {
+  appInset: Inset,
   providerPendingLoginID: ID | null,
   refreshInfo: ModelCollection<'RefreshInfo', RefreshInfo>,
 };
@@ -130,8 +132,9 @@ class AccountVerification extends Component<Props, State> {
       nextProps.transitionStage === 'TRANSITION_IN' ||
       nextProps.transitionStage === 'TRANSITION_OUT';
     if (!didTransition && willTransition) {
+      const willShow = nextProps.transitionStage === 'TRANSITION_IN';
       Animated.timing(this._transitionValue, {
-        duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
+        duration: willShow ? TransitionInMillis : TransitionOutMillis,
         easing: Easing.out(Easing.cubic),
         toValue: nextProps.transitionStage === 'TRANSITION_IN' ? 1.0 : 0.0,
       }).start();
