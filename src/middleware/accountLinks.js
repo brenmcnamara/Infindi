@@ -1,7 +1,5 @@
 /* @flow */
 
-import Firebase from 'react-native-firebase';
-
 import invariant from 'invariant';
 
 import { didLogin, willLogout } from '../common/action-utils';
