@@ -5,7 +5,7 @@
 	<key>allowPlaidLink</key>
 	<true/>
 	<key>hostname</key>
-	<string>http://localhost:8080</string>
+	<string>https://infindi.herokuapp.com</string>
 	<key>verificationService</key>
 	<string>YODLEE</string>
 </dict>
