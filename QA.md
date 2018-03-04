@@ -71,5 +71,15 @@ manual testing steps to make sure everything is working as expected.**
 - Expected Result:
   - You should see a small banner indicating that you must connect to the internet
     before continuing in the app
+  
 
+## General
+
+#### Transition Quickly from Available Cash Information Popup Back to Account Page
+
+- Steps:
+  - Click the information icon near 'AVAILABLE CASH' 
+  - Double-click anywhere on the screen
+- Expected Result:
+  - No crash and the information popup fades away
   
