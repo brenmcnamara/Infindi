@@ -8,21 +8,21 @@ import React, { Component } from 'react';
 import TextDesign from '../design/text';
 
 import { getBalance } from 'common/lib/models/Account';
-import { includesAccount, isInProgress } from 'common/lib/models/RefreshInfo';
+import { isLinking } from 'common/lib/models/AccountLink';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
+import type { AccountLinkCollection } from '../reducers/accountLinks';
 import type { AccountCollection } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
-import type { RefreshInfoCollection } from '../reducers/refreshInfo';
 
 export type Props = {
+  accountLinkCollection: AccountLinkCollection,
   accounts: AccountCollection,
   groupType: AccountGroupType,
   onPressGroupInfo: () => any,
   onSelectAccount: (account: Account) => any,
-  refreshInfoCollection: RefreshInfoCollection,
 };
 
 // TODO: Rename to AccountsGroup
@@ -56,11 +56,11 @@ export default class AccountGroup extends Component<Props> {
   }
 
   _renderAccount(account: Account, isFirst: bool) {
-    const { refreshInfoCollection } = this.props;
+    const { accountLinkCollection } = this.props;
     return (
       <AccountComponent
         account={account}
-        isDownloading={isAccountDownloading(refreshInfoCollection, account)}
+        isDownloading={isAccountDownloading(accountLinkCollection, account)}
         key={account.id}
         onSelect={() => this.props.onSelectAccount(account)}
         showTopBorder={!isFirst}
@@ -82,13 +82,16 @@ export default class AccountGroup extends Component<Props> {
 }
 
 function isAccountDownloading(
-  collection: RefreshInfoCollection,
+  collection: AccountLinkCollection,
   account: Account,
 ): bool {
-  for (const refreshInfoID in collection) {
-    if (collection.hasOwnProperty(refreshInfoID)) {
-      const refreshInfo = collection[refreshInfoID];
-      if (includesAccount(refreshInfo, account) && isInProgress(refreshInfo)) {
+  for (const accountLinkID in collection) {
+    if (collection.hasOwnProperty(accountLinkID)) {
+      const accountLink = collection[accountLinkID];
+      if (
+        account.accountLinkRef.refID === accountLink.id &&
+        isLinking(accountLink)
+      ) {
         return true;
       }
     }

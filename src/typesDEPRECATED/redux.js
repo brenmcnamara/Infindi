@@ -1,11 +1,13 @@
 /* @flow */
 
 import type { Account } from 'common/lib/models/Account';
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../actions/authentication';
 import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
 import type { Action as Action$Config } from '../actions/config';
 import type { Action as Action$Datastore } from '../datastore';
+import type { Action as Action$Link } from '../link/action';
 import type { Action as Action$Modal } from '../actions/modal';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
 import type { Action as Action$Network } from '../actions/network';
@@ -15,9 +17,7 @@ import type { Action as Action$PlaidMiddleware } from '../middleware/plaid';
 import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
-import type { Action as Action$Yodlee } from '../yodlee/action';
 import type { State } from '../reducers/root';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 export type ReduxProps = {
   +dispatch: Dispatch,
@@ -29,7 +29,8 @@ export type PureAction =
   | Action$AuthMiddleware
   | Action$Config
   | Action$Datastore<'Account', Account>
-  | Action$Datastore<'RefreshInfo', RefreshInfo>
+  | Action$Datastore<'AccountLink', AccountLink>
+  | Action$Link
   | Action$Modal
   | Action$ModalMiddleware
   | Action$Network
@@ -38,8 +39,7 @@ export type PureAction =
   | Action$PlaidMiddleware
   | Action$Router
   | Action$Toast
-  | Action$ToastMiddleware
-  | Action$Yodlee;
+  | Action$ToastMiddleware;
 
 export type ThunkAction = (
   dispatch: Dispatch,

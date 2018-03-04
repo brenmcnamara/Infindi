@@ -4,13 +4,15 @@ import invariant from 'invariant';
 
 import { getBalance } from 'common/lib/models/Account';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelCollection } from '../datastore';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 import type { RootType, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
+
+type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
 // -----------------------------------------------------------------------------
 //
@@ -90,11 +92,9 @@ export function getToast(state: State, toastID: ID): Toast | null {
   return state.toast.bannerQueue.find(banner => banner.id === toastID) || null;
 }
 
-export function getRefreshInfoCollection(
-  state: State,
-): ModelCollection<'RefreshInfo', RefreshInfo> {
-  return state.refreshInfo.type === 'STEADY'
-    ? state.refreshInfo.collection
+export function getAccountLinkCollection(state: State): AccountLinkCollection {
+  return state.accountLinks.type === 'STEADY'
+    ? state.accountLinks.collection
     : {};
 }
 

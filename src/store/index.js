@@ -1,12 +1,12 @@
 /* @flow */
 
+import accountLinks from '../middleware/accountLinks';
+import accountLinkToast from '../link/middleware/accountLinkToast';
 import accounts from '../middleware/accounts';
 import authentication from '../middleware/authentication';
 import modal from '../middleware/modal';
 import network from '../middleware/network';
-import providerLogin from '../yodlee/middleware/providerLogin';
-import refreshInfo from '../middleware/refreshInfo';
-import refreshInfoToast from '../yodlee/middleware/refreshInfoToast';
+import providerLogin from '../link/middleware/providerLogin';
 // import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
@@ -24,7 +24,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    refreshInfo,
+    accountLinks,
     accounts,
     // plaid,
     providerLogin,
@@ -32,7 +32,7 @@ if (__DEV__) {
     network,
     // Then comes ui-managing middleware.
     modal,
-    refreshInfoToast,
+    accountLinkToast,
     toast,
     // Logging is last.
     reduxLogger,
@@ -43,7 +43,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    refreshInfo,
+    accountLinks,
     accounts,
     // plaid,
     providerLogin,
@@ -51,7 +51,7 @@ if (__DEV__) {
     network,
     // Then comes ui-managing middleware.
     modal,
-    refreshInfoToast,
+    accountLinkToast,
     toast,
     // Logging is last.
   );

@@ -2,17 +2,17 @@
 
 import invariant from 'invariant';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
 import type { ModelCollection } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { PureAction } from '../../typesDEPRECATED/redux';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 export type State = {
   +providerPendingLogin: Provider | null,
 };
 
-type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
+type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
 const DEFAULT_STATE = {
   providerPendingLogin: null,
@@ -49,8 +49,8 @@ export default function provider(
         return state;
       }
       // $FlowFixMe - This is correct.
-      const collection: RefreshInfoCollection = action.collection;
-      const refreshInfo = getRefreshInfoForProvider(collection, providerID);
+      const collection: AccountLinkCollection = action.collection;
+      const refreshInfo = getAccountLinkForProvider(collection, providerID);
       if (!refreshInfo) {
         return state;
       }
@@ -60,16 +60,16 @@ export default function provider(
   return state;
 }
 
-function getRefreshInfoForProvider(
-  refreshInfoCollection: RefreshInfoCollection,
+function getAccountLinkForProvider(
+  accountLinkCollection: AccountLinkCollection,
   providerID: ID,
-): RefreshInfo | null {
-  for (const id in refreshInfoCollection) {
+): AccountLink | null {
+  for (const id in accountLinkCollection) {
     if (
-      refreshInfoCollection.hasOwnProperty(id) &&
-      refreshInfoCollection[id].providerRef.refID === providerID
+      accountLinkCollection.hasOwnProperty(id) &&
+      accountLinkCollection[id].providerRef.refID === providerID
     ) {
-      return refreshInfoCollection[id];
+      return accountLinkCollection[id];
     }
   }
   return null;

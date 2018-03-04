@@ -16,22 +16,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { isInProgress } from 'common/lib/models/RefreshInfo';
+import { isLinking } from 'common/lib/models/AccountLink';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ModelCollection } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 export type Props = {
+  accountLinkCollection: AccountLinkCollection,
   didCompleteInitialSearch: bool,
   isEditable: bool,
   onSelectProvider: (provider: Provider) => any,
   providers: Array<Provider>,
-  refreshInfoCollection: RefreshInfoCollection,
   search: string,
 };
 
-type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
+type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
 export default class ProviderSearch extends Component<Props> {
   _transitionValue: Animated.Value;
@@ -79,7 +79,7 @@ export default class ProviderSearch extends Component<Props> {
       'Expecting provider to come from YODLEE',
     );
     const yodleeProvider = item.sourceOfTruth.value;
-    const refreshInfo = this._getRefreshInfoForProvider(item);
+    const accountLink = this._getAccountLinkForProvider(item);
     const providerName = yodleeProvider.name;
     const baseURL = yodleeProvider.baseUrl;
     return (
@@ -89,14 +89,14 @@ export default class ProviderSearch extends Component<Props> {
             <Text style={nameStyles}>{providerName}</Text>
             <Text style={TextDesign.small}>{baseURL}</Text>
           </View>
-          {refreshInfo && isInProgress(refreshInfo) ? <Downloading /> : null}
+          {accountLink && isLinking(accountLink) ? <Downloading /> : null}
         </View>
       </TouchableOpacity>
     );
   };
 
-  _getRefreshInfoForProvider(provider: Provider): RefreshInfo | null {
-    const collection = this.props.refreshInfoCollection;
+  _getAccountLinkForProvider(provider: Provider): AccountLink | null {
+    const collection = this.props.accountLinkCollection;
     for (const id in collection) {
       if (
         collection.hasOwnProperty(id) &&

@@ -6,58 +6,57 @@ import invariant from 'invariant';
 
 import { didLogin, willLogout } from '../common/action-utils';
 // eslint-disable-next-line max-len
-import { getRefreshInfoCollection as getRefreshInfoFirebaseCollectionRef } from 'common/lib/models/RefreshInfo';
+import { getAccountLinkCollection as getAccountLinkModelCollection } from 'common/lib/models/AccountLink';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelCollection } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
-type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
+type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
 export default (store: Store) => (next: Next) => {
-  let refreshInfoSubscription: ?EmitterSubscription = null;
+  let accountLinkSubscription: ?EmitterSubscription = null;
 
   return (action: PureAction) => {
     next(action);
 
     if (didLogin(action)) {
       const loginPayload = extractLoginPayload(action);
-      refreshInfoSubscription && refreshInfoSubscription.remove();
-      refreshInfoSubscription = listenForRefreshInfo(store, loginPayload, next);
+      accountLinkSubscription && accountLinkSubscription.remove();
+      accountLinkSubscription = listenForAccountLink(store, loginPayload, next);
     } else if (willLogout(action)) {
-      refreshInfoSubscription && refreshInfoSubscription.remove();
-      refreshInfoSubscription = null;
+      accountLinkSubscription && accountLinkSubscription.remove();
+      accountLinkSubscription = null;
       clearUserData(next);
     }
   };
 };
 
-function listenForRefreshInfo(
+function listenForAccountLink(
   store: Store,
   loginPayload: LoginPayload,
   next: Next,
 ): EmitterSubscription {
-  next({ modelName: 'RefreshInfo', type: 'COLLECTION_DOWNLOAD_START' });
+  next({ modelName: 'AccountLink', type: 'COLLECTION_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
-  const remove = Firebase.firestore()
-    .collection('RefreshInfo')
+  const remove = getAccountLinkModelCollection()
     .where('userRef.refID', '==', userID)
     .onSnapshot(snapshot => {
-      const nextRefreshInfo: RefreshInfoCollection = {};
+      const collection: AccountLinkCollection = {};
       snapshot.docs.forEach(doc => {
         if (!doc.exists) {
           return;
         }
-        const refreshInfo: RefreshInfo = doc.data();
-        nextRefreshInfo[refreshInfo.id] = refreshInfo;
+        const accountLink: AccountLink = doc.data();
+        collection[accountLink.id] = accountLink;
       });
 
       // Update the refresh info collection.
       next({
-        collection: nextRefreshInfo,
-        modelName: 'RefreshInfo',
+        collection,
+        modelName: 'AccountLink',
         type: 'COLLECTION_DOWNLOAD_FINISHED',
       });
     });
@@ -65,7 +64,7 @@ function listenForRefreshInfo(
 }
 
 function clearUserData(next: Next): void {
-  next({ modelName: 'RefreshInfo', type: 'COLLECTION_CLEAR' });
+  next({ modelName: 'AccountLink', type: 'COLLECTION_CLEAR' });
 }
 
 function extractLoginPayload(action: PureAction): LoginPayload {

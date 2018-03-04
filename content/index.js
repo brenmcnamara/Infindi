@@ -116,12 +116,12 @@ export const ProviderLoginBanner = {
     The last login attempt failed
   `),
 
-  IN_PROGRESS: cleanupWhitespace(`
-    Downloading data. This may take a moment...
+  INITIALIZING: cleanupWhitespace(`
+    Setting up the link
   `),
 
-  INITIALIZING: cleanupWhitespace(`
-    Logging in. This may take a moment...
+  LINKING: cleanupWhitespace(`
+    Downloading data. This may take a moment...
   `),
 
   SUCCESS: cleanupWhitespace(`

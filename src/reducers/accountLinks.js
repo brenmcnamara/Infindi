@@ -2,15 +2,15 @@
 
 import { createModelCollectionReducer } from '../datastore';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ModelCollection, ModelState } from '../datastore';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
-export type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
+export type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
-export type State = ModelState<'RefreshInfo', RefreshInfo>;
+export type State = ModelState<'AccountLink', AccountLink>;
 
 const accounts: (state: State, action: *) => * = createModelCollectionReducer(
-  'RefreshInfo',
+  'AccountLink',
 );
 
 export default accounts;

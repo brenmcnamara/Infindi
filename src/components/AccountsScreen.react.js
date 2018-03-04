@@ -32,23 +32,23 @@ import { connect } from 'react-redux';
 import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload, getNetWorth } from '../common/state-utils';
-import { requestAccountVerification } from '../yodlee/action';
+import { requestAccountVerification } from '../link/action';
 import { requestInfoModal, requestUnimplementedModal } from '../actions/modal';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type { AccountCollection } from '../reducers/accounts';
+import type { AccountLinkCollection } from '../reducers/accountLinks';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
-import type { RefreshInfoCollection } from '../reducers/refreshInfo';
 import type { State as ReduxState } from '../reducers/root';
 
 export type Props = ReduxProps & ReduxStateProps;
 
 type ReduxStateProps = {
+  accountLinkCollection: AccountLinkCollection,
   accounts: AccountCollection,
   isDownloading: bool,
   netWorth: number,
-  refreshInfoCollection: RefreshInfoCollection,
 };
 
 type RowItem =
@@ -175,11 +175,11 @@ class AccountsScreen extends Component<Props> {
         const { accounts, groupType } = item;
         return (
           <AccountGroup
+            accountLinkCollection={this.props.accountLinkCollection}
             accounts={accounts}
             groupType={groupType}
             onPressGroupInfo={() => this._onPressGroupInfo(groupType)}
             onSelectAccount={this._onSelectAccount}
-            refreshInfoCollection={this.props.refreshInfoCollection}
           />
         );
       }
@@ -293,7 +293,7 @@ class AccountsScreen extends Component<Props> {
 }
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
-  const { accounts, refreshInfo } = state;
+  const { accountLinks, accounts } = state;
   const loginPayload = getLoginPayload(state);
   invariant(
     loginPayload,
@@ -303,8 +303,8 @@ function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
     accounts: accounts.type === 'STEADY' ? accounts.collection : {},
     isDownloading: accounts.type === 'DOWNLOADING',
     netWorth: getNetWorth(state),
-    refreshInfoCollection:
-      refreshInfo.type === 'STEADY' ? refreshInfo.collection : {},
+    accountLinkCollection:
+      accountLinks.type === 'STEADY' ? accountLinks.collection : {},
   };
 }
 

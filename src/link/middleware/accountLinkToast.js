@@ -1,31 +1,27 @@
 /* @flow */
 
-import invariant from 'invariant';
-
 import {
   AccountsDownloadingBanner,
   ProviderLoginBanner,
 } from '../../../content';
-import {
-  didFail,
-  isComplete,
-  isInProgress,
-  isPendingStatus,
-  getProviderID,
-} from 'common/lib/models/RefreshInfo';
 import { dismissToast, requestToast } from '../../actions/toast';
+import {
+  isLinkFailure,
+  isLinking,
+  isLinkSuccess,
+} from 'common/lib/models/AccountLink';
 import { forEachObject } from '../../common/obj-utils';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
 import type { ModelCollection } from '../../datastore';
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 
 type ProviderBannerStatus =
-  | {| +type: 'INITIALIZING' | 'IN_PROGRESS' | 'SUCCESS' |}
+  | {| +type: 'INITIALIZING' | 'LINKING' | 'SUCCESS' |}
   | {| +error?: Error, +type: 'FAILURE' |};
 
-type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
+type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
 const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
 const FAILURE_BANNER_PROVIDER_LOGIN_DURATION_MILLIS = 3000;
@@ -95,14 +91,14 @@ export default (store: Store) => (next: Next) => {
 
     switch (action.type) {
       case 'COLLECTION_DOWNLOAD_FINISHED': {
-        if (action.modelName !== 'RefreshInfo') {
+        if (action.modelName !== 'AccountLink') {
           break;
         }
         // $FlowFixMe - This is correct
-        const collection: RefreshInfoCollection = action.collection;
-        forEachObject(collection, refreshInfo => {
-          const providerID = getProviderID(refreshInfo);
-          const nextBannerStatus = getBannerStatus(refreshInfo);
+        const collection: AccountLinkCollection = action.collection;
+        forEachObject(collection, accountLink => {
+          const providerID = accountLink.providerRef.refID;
+          const nextBannerStatus = getBannerStatus(accountLink);
           updateBannerStatus(providerID, nextBannerStatus);
         });
 
@@ -181,37 +177,27 @@ function dismissProviderBanner(providerID: ID) {
   return dismissToast(`PROVIDERS/${providerID}`);
 }
 
-function getBannerStatus(info: RefreshInfo): ProviderBannerStatus | null {
-  invariant(
-    info.sourceOfTruth.type === 'YODLEE',
-    'Expecting refresh info to come from YODLEE',
-  );
-
-  if (isPendingStatus(info)) {
-    return { type: 'INITIALIZING' };
+function getBannerStatus(
+  accountLink: AccountLink,
+): ProviderBannerStatus | null {
+  if (isLinking(accountLink)) {
+    return { type: 'LINKING' };
   }
 
-  if (isInProgress(info)) {
-    return { type: 'IN_PROGRESS' };
-  }
-
-  if (isComplete(info)) {
+  if (isLinkSuccess(accountLink)) {
     return { type: 'SUCCESS' };
   }
 
-  if (didFail(info)) {
+  if (isLinkFailure(accountLink)) {
     return { type: 'FAILURE' };
   }
 
   return null;
 }
 
-function containsPendingRefresh(collection: RefreshInfoCollection): bool {
+function containsPendingRefresh(collection: AccountLinkCollection): bool {
   for (const id in collection) {
-    if (
-      collection.hasOwnProperty(id) &&
-      (isPendingStatus(collection[id]) || isInProgress(collection[id]))
-    ) {
+    if (collection.hasOwnProperty(id) && isLinking(collection[id])) {
       return true;
     }
   }

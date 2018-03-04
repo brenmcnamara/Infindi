@@ -26,23 +26,23 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { isPendingStatus } from 'common/lib/models/RefreshInfo';
+import { isLinking } from 'common/lib/models/AccountLink';
 import { isSupportedProvider } from '../utils';
 import {
   dismissAccountVerification,
   requestProviderLogin,
   unsupportedProvider,
 } from '../action';
-import { getRefreshInfoCollection } from '../../common/state-utils';
+import { getAccountLinkCollection } from '../../common/state-utils';
 import { NavBarHeight } from '../../design/layout';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
 import type { Inset } from '../../reducers/configState';
 import type { ModelCollection } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
-import type { RefreshInfo } from 'common/lib/models/RefreshInfo';
 import type { State as ReduxState } from '../../reducers/root';
 import type { Subscription } from './ProviderSearchManager';
 import type { TransitionStage } from '../../reducers/modalState';
@@ -52,14 +52,14 @@ export type ComponentProps = {
 };
 
 export type ReduxStateProps = {
+  accountLinkCollection: AccountLinkCollection,
   appInset: Inset,
   providerPendingLoginID: ID | null,
-  refreshInfo: ModelCollection<'RefreshInfo', RefreshInfo>,
 };
 
 export type Props = ReduxProps & ReduxStateProps & ComponentProps;
 
-type RefreshInfoCollection = ModelCollection<'RefreshInfo', RefreshInfo>;
+type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
 type Page =
   | {|
@@ -144,21 +144,21 @@ class AccountVerification extends Component<Props, State> {
     const { page } = this.state;
     if (
       page.type !== 'LOGIN' ||
-      this.props.refreshInfo === nextProps.refreshInfo
+      this.props.accountLinkCollection === nextProps.accountLinkCollection
     ) {
       return;
     }
     const { selectedProvider } = page;
-    const prevRefreshInfo = getRefreshInfoForProvider(
-      this.props.refreshInfo,
+    const prevAccountLink = getAccountLinkForProvider(
+      this.props.accountLinkCollection,
       selectedProvider.id,
     );
-    const nextRefreshInfo = getRefreshInfoForProvider(
-      nextProps.refreshInfo,
+    const nextAccountLink = getAccountLinkForProvider(
+      nextProps.accountLinkCollection,
       selectedProvider.id,
     );
-    const didHaveStatus = prevRefreshInfo && !isPendingStatus(prevRefreshInfo);
-    const willHaveStatus = nextRefreshInfo && !isPendingStatus(nextRefreshInfo);
+    const didHaveStatus = prevAccountLink && !isLinking(prevAccountLink);
+    const willHaveStatus = nextAccountLink && !isLinking(nextAccountLink);
 
     if (!didHaveStatus && willHaveStatus) {
       this.props.dispatch(dismissAccountVerification());
@@ -269,12 +269,12 @@ class AccountVerification extends Component<Props, State> {
       case 'SEARCH': {
         return (
           <ProviderSearch
+            accountLinkCollection={this.props.accountLinkCollection}
             didCompleteInitialSearch={didCompleteInitialSearch}
             isEditable={transitionStage === 'IN'}
             search={page.search}
             onSelectProvider={this._onSelectProvider}
             providers={page.providers}
-            refreshInfoCollection={this.props.refreshInfo}
           />
         );
       }
@@ -446,16 +446,16 @@ class AccountVerification extends Component<Props, State> {
   }
 }
 
-function getRefreshInfoForProvider(
-  refreshInfoCollection: RefreshInfoCollection,
+function getAccountLinkForProvider(
+  accountLinkCollection: AccountLinkCollection,
   providerID: ID,
-): RefreshInfo | null {
-  for (const id in refreshInfoCollection) {
+): AccountLink | null {
+  for (const id in accountLinkCollection) {
     if (
-      refreshInfoCollection.hasOwnProperty(id) &&
-      refreshInfoCollection[id].providerRef.refID === providerID
+      accountLinkCollection.hasOwnProperty(id) &&
+      accountLinkCollection[id].providerRef.refID === providerID
     ) {
-      return refreshInfoCollection[id];
+      return accountLinkCollection[id];
     }
   }
   return null;
@@ -463,11 +463,11 @@ function getRefreshInfoForProvider(
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
+    accountLinkCollection: getAccountLinkCollection(state),
     appInset: state.configState.appInset,
     providerPendingLoginID: state.providers.providerPendingLogin
       ? state.providers.providerPendingLogin.id
       : null,
-    refreshInfo: getRefreshInfoCollection(state),
   };
 }
 
