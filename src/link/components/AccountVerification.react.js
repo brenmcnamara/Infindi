@@ -26,7 +26,6 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { isLinking } from 'common/lib/models/AccountLink';
 import { isSupportedProvider } from '../utils';
 import {
   dismissAccountVerification,
@@ -148,19 +147,10 @@ class AccountVerification extends Component<Props, State> {
     ) {
       return;
     }
-    const { selectedProvider } = page;
-    const prevAccountLink = getAccountLinkForProvider(
-      this.props.accountLinkCollection,
-      selectedProvider.id,
-    );
-    const nextAccountLink = getAccountLinkForProvider(
-      nextProps.accountLinkCollection,
-      selectedProvider.id,
-    );
-    const didHaveStatus = prevAccountLink && !isLinking(prevAccountLink);
-    const willHaveStatus = nextAccountLink && !isLinking(nextAccountLink);
+    const didHavePendingLogin = Boolean(this.props.providerPendingLoginID);
+    const willHavePendingLogin = Boolean(nextProps.providerPendingLoginID);
 
-    if (!didHaveStatus && willHaveStatus) {
+    if (didHavePendingLogin && !willHavePendingLogin) {
       this.props.dispatch(dismissAccountVerification());
     }
   }
@@ -444,21 +434,6 @@ class AccountVerification extends Component<Props, State> {
   _isCancelButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {
     return button === 'CENTER' || button === 'LEFT';
   }
-}
-
-function getAccountLinkForProvider(
-  accountLinkCollection: AccountLinkCollection,
-  providerID: ID,
-): AccountLink | null {
-  for (const id in accountLinkCollection) {
-    if (
-      accountLinkCollection.hasOwnProperty(id) &&
-      accountLinkCollection[id].providerRef.refID === providerID
-    ) {
-      return accountLinkCollection[id];
-    }
-  }
-  return null;
 }
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {

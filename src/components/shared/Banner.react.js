@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import TextDesign from '../../design/text';
 
 import invariant from 'invariant';
-import nullthrows from 'nullthrows';
 
 import { Animated, Easing, StyleSheet } from 'react-native';
 
@@ -44,7 +43,7 @@ const BANNER_HEIGHT = 22 + 2 * BANNER_TEXT_PADDING; // TEXT LINE HEIGHT + PADDIN
 export default class Banner extends Component<Props, State> {
   _currentTransitionID: ID = 'request-0';
   _height: Animated.Value;
-  _isMounted: bool = false; // TODO: Should remove this.
+  _isTransitioning: bool = false; // TODO: Should remove this.
   _transitionIDNumber: number = 1;
 
   constructor(props: Props) {
@@ -67,50 +66,7 @@ export default class Banner extends Component<Props, State> {
     const prevID = prevBanner ? prevBanner.id : null;
     const newID = nextBanner ? nextBanner.id : null;
     if (prevID === newID) {
-      const currentTransition = this.state.transition;
-      let newTransition;
-      switch (currentTransition.type) {
-        case 'TRANSITION_IN':
-          newTransition = {
-            banner: nullthrows(nextProps.banner),
-            type: 'TRANSITION_IN',
-          };
-          break;
-
-        case 'TRANSITION_OUT':
-          newTransition = {
-            banner: nullthrows(nextProps.banner),
-            type: 'TRANSITION_OUT',
-          };
-          break;
-
-        case 'IN':
-          newTransition = {
-            banner: nullthrows(nextProps.banner),
-            type: 'IN',
-          };
-          break;
-
-        case 'OUT':
-          newTransition = {
-            banner: nullthrows(nextProps.banner),
-            type: 'OUT',
-          };
-          break;
-
-        case 'EMPTY':
-          newTransition = { type: 'EMPTY' };
-          break;
-
-        default:
-          invariant(
-            false,
-            'Unknown transition type %s',
-            currentTransition.type,
-          );
-      }
-      // $FlowFixMe - This is correct.
-      this.setState({ transition: newTransition });
+      this._popBannerTransition(nextProps);
       return;
     }
 
@@ -122,37 +78,37 @@ export default class Banner extends Component<Props, State> {
     // TODO: This logic will go haywire when trying to present multiple
     // transitions simultaneously.
 
-    // eslint-disable-next-line no-unused-vars
+    this._isTransitioning = true;
     let transitionChain = Promise.resolve();
 
     if (prevBanner) {
-      transitionChain = transitionChain.then(
-        () => this._isMounted && this._genPerformTransitionOut(prevBanner),
+      transitionChain = transitionChain.then(() =>
+        this._genPerformTransitionOut(prevBanner),
       );
     }
 
     if (nextBanner) {
-      transitionChain = transitionChain.then(
-        () => this._isMounted && this._genPerformTransitionIn(nextBanner),
+      transitionChain = transitionChain.then(() =>
+        this._genPerformTransitionIn(nextBanner),
       );
     }
 
     if (!nextBanner) {
       transitionChain = transitionChain.then(
         () =>
-          this._isMounted &&
+          this._isTransitioning &&
           this._currentTrasitionID === transitionID &&
           this.setState({ transition: { type: 'EMPTY' } }),
       );
     }
-  }
 
-  componentDidMount(): void {
-    this._isMounted = true;
+    transitionChain
+      .then(() => (this._isTransitioning = false))
+      .catch(() => (this._isTransitioning = false));
   }
 
   componentWillUnmount(): void {
-    this._isMounted = false;
+    this._isTransitioning = false;
   }
 
   render() {
@@ -180,10 +136,21 @@ export default class Banner extends Component<Props, State> {
     );
   }
 
+  _popBannerTransition(nextProps: Props): void {
+    this._isTransitioning = false;
+    const nextBanner = nextProps.banner;
+
+    if (nextBanner) {
+      this.setState({ transition: { banner: nextBanner, type: 'IN' } });
+    } else {
+      this.setState({ transition: { type: 'EMPTY' } });
+    }
+  }
+
   _genPerformTransitionOut(banner: Toast$Banner): Promise<void> {
     return new Promise(resolve => {
       this.setState({ transition: { banner, type: 'TRANSITION_OUT' } }, () => {
-        if (!this._isMounted) {
+        if (!this._isTransitioning) {
           return;
         }
         // $FlowFixMe - Need to figure out why this is an error.
@@ -198,7 +165,7 @@ export default class Banner extends Component<Props, State> {
 
   _genPerformTransitionIn(banner: Toast$Banner): Promise<void> {
     return new Promise(resolve => {
-      if (!this._isMounted) {
+      if (!this._isTransitioning) {
         return;
       }
       this.setState({ transition: { banner, type: 'TRANSITION_IN' } }, () => {
