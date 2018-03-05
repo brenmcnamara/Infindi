@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import TextDesign from '../../design/text';
 
 import invariant from 'invariant';
+import nullthrows from 'nullthrows';
 
 import { Animated, Easing, StyleSheet } from 'react-native';
 
@@ -12,7 +13,7 @@ import type { ID } from 'common/types/core';
 import type { Toast$Banner } from '../../reducers/toast';
 
 export type Props = {
-  banner: ?Toast$Banner,
+  banner: Toast$Banner | null,
 };
 
 type TransitionState =
@@ -66,6 +67,50 @@ export default class Banner extends Component<Props, State> {
     const prevID = prevBanner ? prevBanner.id : null;
     const newID = nextBanner ? nextBanner.id : null;
     if (prevID === newID) {
+      const currentTransition = this.state.transition;
+      let newTransition;
+      switch (currentTransition.type) {
+        case 'TRANSITION_IN':
+          newTransition = {
+            banner: nullthrows(nextProps.banner),
+            type: 'TRANSITION_IN',
+          };
+          break;
+
+        case 'TRANSITION_OUT':
+          newTransition = {
+            banner: nullthrows(nextProps.banner),
+            type: 'TRANSITION_OUT',
+          };
+          break;
+
+        case 'IN':
+          newTransition = {
+            banner: nullthrows(nextProps.banner),
+            type: 'IN',
+          };
+          break;
+
+        case 'OUT':
+          newTransition = {
+            banner: nullthrows(nextProps.banner),
+            type: 'OUT',
+          };
+          break;
+
+        case 'EMPTY':
+          newTransition = { type: 'EMPTY' };
+          break;
+
+        default:
+          invariant(
+            false,
+            'Unknown transition type %s',
+            currentTransition.type,
+          );
+      }
+      // $FlowFixMe - This is correct.
+      this.setState({ transition: newTransition });
       return;
     }
 
@@ -74,35 +119,32 @@ export default class Banner extends Component<Props, State> {
       'Expecting either previous banner or next banner to exist',
     );
 
-    Promise.resolve()
-      .then(() => {
-        if (prevBanner) {
-          return this._genPerformTransitionOut(prevBanner);
-        }
-      })
-      .then(() => {
-        if (!this._isMounted) {
-          return;
-        }
-        if (nextBanner) {
-          return this._genPerformTransitionIn(nextBanner).then(() => {
-            if (!this._isMounted) {
-              return;
-            }
-            // NOTE: Enter terminal state only if there is no transition that
-            // has started while this was finishing.
-            if (this._currentTransitionID === transitionID) {
-              this.setState({ transition: { banner: nextBanner, type: 'IN' } });
-            }
-          });
-        } else {
-          // NOTE: Enter terminal state only if there is no transition that
-          // has started while this was finishing.
-          if (this._currentTransitionID === transitionID) {
-            this.setState({ transition: { type: 'EMPTY' } });
-          }
-        }
-      });
+    // TODO: This logic will go haywire when trying to present multiple
+    // transitions simultaneously.
+
+    // eslint-disable-next-line no-unused-vars
+    let transitionChain = Promise.resolve();
+
+    if (prevBanner) {
+      transitionChain = transitionChain.then(
+        () => this._isMounted && this._genPerformTransitionOut(prevBanner),
+      );
+    }
+
+    if (nextBanner) {
+      transitionChain = transitionChain.then(
+        () => this._isMounted && this._genPerformTransitionIn(nextBanner),
+      );
+    }
+
+    if (!nextBanner) {
+      transitionChain = transitionChain.then(
+        () =>
+          this._isMounted &&
+          this._currentTrasitionID === transitionID &&
+          this.setState({ transition: { type: 'EMPTY' } }),
+      );
+    }
   }
 
   componentDidMount(): void {

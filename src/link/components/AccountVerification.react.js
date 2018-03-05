@@ -430,13 +430,13 @@ class AccountVerification extends Component<Props, State> {
         authValues.some(val => !val || val.length === 0);
       return {
         isRightButtonDisabled: shouldDisableLoginButton,
-        leftButtonText: 'CANCEL',
+        leftButtonText: 'EXIT',
         rightButtonText: 'LOGIN',
         type: 'LEFT_AND_RIGHT',
       };
     }
     return {
-      centerButtonText: 'CANCEL',
+      centerButtonText: 'EXIT',
       type: 'CENTER',
     };
   }

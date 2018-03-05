@@ -45,13 +45,13 @@ export default function provider(
         return state;
       }
       const providerID = state.providerPendingLogin.id;
-      if (action.modelName !== 'RefreshInfo') {
+      if (action.modelName !== 'AccountLink') {
         return state;
       }
       // $FlowFixMe - This is correct.
       const collection: AccountLinkCollection = action.collection;
-      const refreshInfo = getAccountLinkForProvider(collection, providerID);
-      if (!refreshInfo) {
+      const accountLink = getAccountLinkForProvider(collection, providerID);
+      if (!accountLink) {
         return state;
       }
       return { ...state, providerPendingLogin: null };

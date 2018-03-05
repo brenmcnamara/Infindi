@@ -54,7 +54,7 @@ export async function genQueryProviders(
 //
 // -----------------------------------------------------------------------------
 
-export type ProviderLoginPayload = Pointer<'RefreshInfo'>;
+export type ProviderLoginPayload = Pointer<'AccountLink'>;
 
 export async function genYodleeProviderLogin(
   provider: Provider,
