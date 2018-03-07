@@ -129,6 +129,10 @@ export const ProviderLoginBanner = {
   `),
 };
 
+export const ProviderSearchError = cleanupWhitespace(`
+  There is an issue with our service. Please try again later.
+`);
+
 // -----------------------------------------------------------------------------
 //
 // UTILITIES

@@ -9,11 +9,16 @@ import type { Provider } from 'common/lib/models/Provider';
 export type ResultCallback = () => any;
 export type Subscription = () => void;
 
+export type ProvidersPayload =
+  | { type: 'SUCCESS', providers: Array<Provider> }
+  | { type: 'FAILURE' };
+
 const LIMIT = 20;
 
 export default class ProviderSearchManager {
   _callback: ResultCallback | null = null;
   _currentSearch: string | null = null;
+  _didFailLastRun: bool = false;
   _lastSuccessfulSearch: string | null = null;
   _nextPage: number = 0;
   _providersByPage: Array<Array<Provider>> = [];
@@ -21,11 +26,11 @@ export default class ProviderSearchManager {
 
   clearSearch(): void {
     this._currentSearch = null;
+    this._didFailLastRun = false;
     this._lastSuccessfulSearch = null;
     this._nextPage = 0;
     this._providersByPage = [];
     this._runningSearch = null;
-
     this._callback && this._callback();
   }
 
@@ -56,16 +61,19 @@ export default class ProviderSearchManager {
     };
   }
 
-  getProviders(): Array<Provider> {
+  getProvidersPayload(): ProvidersPayload {
     const providers = [];
     this._providersByPage.forEach(_providers => {
       providers.push.apply(providers, _providers);
     });
-    return providers;
+    return this._didFailLastRun
+      ? { type: 'FAILURE' }
+      : { providers, type: 'SUCCESS' };
   }
 
   _runSearch(search: string): Promise<void> {
     const currentPage = this._nextPage;
+    this._didFailLastRun = false;
     return Promise.resolve()
       .then(() => {
         this._currentSearch = search;
@@ -74,6 +82,10 @@ export default class ProviderSearchManager {
       .then(payload => {
         this._lastSuccessfulSearch = search;
         this._providersByPage[currentPage] = payload.data;
+        this._callback && this._callback();
+      })
+      .catch(error => {
+        this._didFailLastRun = true;
         this._callback && this._callback();
       });
   }

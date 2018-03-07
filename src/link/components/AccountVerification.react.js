@@ -34,6 +34,7 @@ import {
 } from '../action';
 import { getAccountLinkCollection } from '../../common/state-utils';
 import { NavBarHeight } from '../../design/layout';
+import { ProviderSearchError } from '../../../content';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ComponentType } from 'react';
@@ -61,6 +62,10 @@ export type Props = ReduxProps & ReduxStateProps & ComponentProps;
 type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
 
 type Page =
+  | {|
+      +search: string,
+      +type: 'SEARCH_ERROR',
+    |}
   | {|
       +providers: Array<Provider>,
       +search: string,
@@ -96,13 +101,22 @@ class AccountVerification extends Component<Props, State> {
       props.transitionStage === 'IN' ? 1.0 : 0.0,
     );
 
+    const payload = this._searchManager.getProvidersPayload();
+    const page =
+      payload.type === 'SUCCESS'
+        ? {
+            providers: payload.providers,
+            search: '',
+            type: 'SEARCH',
+          }
+        : {
+            search: '',
+            type: 'SEARCH_ERROR',
+          };
+
     this.state = {
       didCompleteInitialSearch: false,
-      page: {
-        providers: this._searchManager.getProviders(),
-        search: '',
-        type: 'SEARCH',
-      },
+      page,
     };
   }
 
@@ -193,9 +207,16 @@ class AccountVerification extends Component<Props, State> {
 
   _renderHeader() {
     const { page } = this.state;
-    return page.type === 'SEARCH'
-      ? this._renderSearchHeader(page.search)
-      : this._renderLoginHeader(page.selectedProvider);
+    switch (page.type) {
+      case 'SEARCH':
+        return this._renderSearchHeader(page.search);
+      case 'SEARCH_ERROR':
+        return this._renderSearchHeader(page.search);
+      case 'LOGIN':
+        return this._renderLoginHeader(page.selectedProvider);
+      default:
+        return invariant(false, 'Unknown page type %s', page.type);
+    }
   }
 
   _renderSearchHeader(search: string) {
@@ -266,6 +287,21 @@ class AccountVerification extends Component<Props, State> {
             onSelectProvider={this._onSelectProvider}
             providers={page.providers}
           />
+        );
+      }
+
+      case 'SEARCH_ERROR': {
+        return (
+          <View style={styles.searchErrorContainer}>
+            <Image
+              resizeMode="contain"
+              source={Icons.Error}
+              style={styles.searchErrorIcon}
+            />
+            <Text style={[TextDesign.error, styles.searchErrorText]}>
+              {ProviderSearchError}
+            </Text>
+          </View>
         );
       }
 
@@ -376,14 +412,15 @@ class AccountVerification extends Component<Props, State> {
 
   _onUpdateSearchResults = (): void => {
     const { page } = this.state;
-    const providers = this._searchManager.getProviders();
+    const payload = this._searchManager.getProvidersPayload();
+    console.log(payload);
 
     switch (page.type) {
       case 'LOGIN': {
         this.setState({
           didCompleteInitialSearch: true,
           page: {
-            providers,
+            providers: payload.type === 'SUCCESS' ? payload.providers : [],
             search: page.search,
             selectedProvider: page.selectedProvider,
             type: 'LOGIN',
@@ -392,14 +429,21 @@ class AccountVerification extends Component<Props, State> {
         break;
       }
 
-      case 'SEARCH': {
+      case 'SEARCH':
+      case 'SEARCH_ERROR': {
         this.setState({
           didCompleteInitialSearch: true,
-          page: {
-            providers,
-            search: page.search,
-            type: 'SEARCH',
-          },
+          page:
+            payload.type === 'SUCCESS'
+              ? {
+                  providers: payload.providers,
+                  search: page.search,
+                  type: 'SEARCH',
+                }
+              : {
+                  search: page.search,
+                  type: 'SEARCH_ERROR',
+                },
         });
         break;
       }
@@ -500,6 +544,21 @@ const styles = StyleSheet.create({
 
   safeArea: {
     flex: 1,
+  },
+
+  searchErrorContainer: {
+    alignItems: 'center',
+    marginHorizontal: 24,
+    marginTop: 16,
+  },
+
+  searchErrorIcon: {
+    marginBottom: 8,
+    width: 30,
+  },
+
+  searchErrorText: {
+    textAlign: 'center',
   },
 
   searchHeader: {
