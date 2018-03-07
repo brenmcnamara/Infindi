@@ -28,6 +28,7 @@ const VERTICAL_OFFSET = 30;
  * that takes up the entire screen.
  */
 export default class ModalTransition extends Component<Props> {
+  _isTransitioning: bool = false;
   _transitionProgress: Animated.Value;
 
   componentWillMount(): void {
@@ -36,6 +37,7 @@ export default class ModalTransition extends Component<Props> {
 
   componentWillReceiveProps(nextProps: Props): void {
     if (this.props.show !== nextProps.show) {
+      this._isTransitioning = true;
       Animated.timing(this._transitionProgress, {
         duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
         easing: Easing.out(Easing.cubic),
@@ -43,7 +45,9 @@ export default class ModalTransition extends Component<Props> {
         // TODO: This is causing some wierd animation flash when the component
         // is unmounted. Need to look further into this.
         // useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        this._isTransitioning = false;
+      });
     }
   }
 
@@ -73,7 +77,7 @@ export default class ModalTransition extends Component<Props> {
           * TODO: Subtle UI improvement: Would like if someone presses then
           * drags there finger onto the modal to not call this press event.
           */}
-        <TouchableWithoutFeedback onPress={this.props.onPressBackground}>
+        <TouchableWithoutFeedback onPress={this._onPressBackground}>
           <Animated.View
             style={[
               styles.background,
@@ -91,6 +95,10 @@ export default class ModalTransition extends Component<Props> {
       </View>
     );
   }
+
+  _onPressBackground = (): void => {
+    !this._isTransitioning && this.props.onPressBackground();
+  };
 }
 
 const styles = StyleSheet.create({

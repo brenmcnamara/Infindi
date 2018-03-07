@@ -31,7 +31,7 @@ export default (store: Store) => (next: Next) => {
         const { modalID } = action;
         const index = modalQueue.findIndex(modal => modal.id === modalID);
         invariant(
-          index >= 0,
+          index >= 0 || action.shouldIgnoreDismissingNonExistantModal,
           'Trying to dismiss modal that does not exist: %s',
           action.modalID,
         );
@@ -51,7 +51,7 @@ export default (store: Store) => (next: Next) => {
         const { modal } = action;
         const index = modalQueue.findIndex(_modal => _modal.id === modal.id);
         invariant(
-          index < 0,
+          index < 0 || action.shouldIgnoreRequestingExistingModal,
           'Trying to add multiple modals with the id: %s',
           action.modal.id,
         );

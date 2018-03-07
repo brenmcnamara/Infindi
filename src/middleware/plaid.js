@@ -83,6 +83,7 @@ export default (store: Store) => (next: Next) => {
                 isLinkShowing = false;
               }),
           },
+          shouldIgnoreRequestingExistingModal: false,
           type: 'REQUEST_MODAL',
         });
 
@@ -99,6 +100,7 @@ async function onLinkComplete(
 ) {
   next({
     modalID: 'PLAID_LINK',
+    shouldIgnoreDismissingNonExistantModal: false,
     type: 'DISMISS_MODAL',
   });
   switch (payload.type) {

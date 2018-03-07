@@ -26,11 +26,13 @@ export type Action = Action$DismissModal | Action$RequestModal;
 
 export type Action$DismissModal = {|
   +modalID: ID,
+  +shouldIgnoreDismissingNonExistantModal: bool,
   +type: 'DISMISS_MODAL',
 |};
 
 export type Action$RequestModal = {|
   +modal: Modal,
+  +shouldIgnoreRequestingExistingModal: bool,
   +type: 'REQUEST_MODAL',
 |};
 
@@ -71,6 +73,7 @@ export function requestInfoModal(
       transitionInMillis: InfoModalTransitionInMillis,
       transitionOutMillis: InfoModalTransitionOutMillis,
     },
+    shouldIgnoreRequestingExistingModal: false,
     type: 'REQUEST_MODAL',
   };
 }
@@ -88,6 +91,7 @@ export function requestLeftPane(): Action$RequestModal {
       transitionInMillis: LeftPaneTransitionInMillis,
       transitionOutMillis: LeftPaneTransitionOutMillis,
     },
+    shouldIgnoreRequestingExistingModal: false,
     type: 'REQUEST_MODAL',
   };
 }
@@ -95,6 +99,7 @@ export function requestLeftPane(): Action$RequestModal {
 export function dismissLeftPane(): Action$DismissModal {
   return {
     modalID: LeftPaneModalID,
+    shouldIgnoreDismissingNonExistantModal: false,
     type: 'DISMISS_MODAL',
   };
 }
@@ -114,9 +119,13 @@ export function requestUnimplementedModal(
   });
 }
 
-export function dismissModal(modalID: ID): Action$DismissModal {
+export function dismissModal(
+  modalID: ID,
+  shouldIgnoreDismissingNonExistantModal: bool = false,
+): Action$DismissModal {
   return {
     modalID,
+    shouldIgnoreDismissingNonExistantModal,
     type: 'DISMISS_MODAL',
   };
 }

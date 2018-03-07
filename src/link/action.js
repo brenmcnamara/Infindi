@@ -43,6 +43,7 @@ export function requestAccountVerification(): Action$RequestModal {
       transitionInMillis: AccountVerificationTransitionInMillis,
       transitionOutMillis: AccountVerificationTransitionOutMillis,
     },
+    shouldIgnoreRequestingExistingModal: true,
     type: 'REQUEST_MODAL',
   };
 }
@@ -50,6 +51,7 @@ export function requestAccountVerification(): Action$RequestModal {
 export function dismissAccountVerification(): Action$DismissModal {
   return {
     modalID: PROVIDER_LOGIN_ID,
+    shouldIgnoreDismissingNonExistantModal: true,
     type: 'DISMISS_MODAL',
   };
 }
@@ -84,6 +86,7 @@ export function unsupportedProvider(reason: string): Action$RequestModal {
       transitionInMillis: InfoModalTransitionInMillis,
       transitionOutMillis: InfoModalTransitionOutMillis,
     },
+    shouldIgnoreRequestingExistingModal: false,
     type: 'REQUEST_MODAL',
   };
 }

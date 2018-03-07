@@ -38,6 +38,7 @@ export const TransitionInMillis = 300;
 export const TransitionOutMillis = 300;
 
 class LeftPaneScreen extends Component<Props> {
+  _isTransitioning: bool = false;
   _transitionProgress: Animated.Value;
 
   constructor(props: Props) {
@@ -47,12 +48,15 @@ class LeftPaneScreen extends Component<Props> {
 
   componentWillReceiveProps(nextProps: Props): void {
     if (this.props.show !== nextProps.show) {
+      this._isTransitioning = true;
       // TODO: Standardize easing in design module.
       Animated.timing(this._transitionProgress, {
         duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
         easing: Easing.out(Easing.cubic),
         toValue: nextProps.show ? 1.0 : 0.0,
-      }).start();
+      }).start(() => {
+        this._isTransitioning = false;
+      });
     }
   }
 
@@ -129,7 +133,7 @@ class LeftPaneScreen extends Component<Props> {
   }
 
   _onPressBackground = (): void => {
-    if (this.props.show) {
+    if (!this._isTransitioning && this.props.show) {
       this.props.dispatch(dismissModal('LEFT_PANE'));
     }
   };
