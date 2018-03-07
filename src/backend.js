@@ -167,7 +167,6 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
     },
     method: 'GET',
   });
-  console.log(response.status);
   if (response.status >= 400) {
     let errorJSON;
     try {

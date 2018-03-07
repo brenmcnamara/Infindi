@@ -413,7 +413,6 @@ class AccountVerification extends Component<Props, State> {
   _onUpdateSearchResults = (): void => {
     const { page } = this.state;
     const payload = this._searchManager.getProvidersPayload();
-    console.log(payload);
 
     switch (page.type) {
       case 'LOGIN': {
