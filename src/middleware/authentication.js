@@ -4,7 +4,6 @@ import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
-import { handleNetworkRequest } from '../common/middleware-utils';
 import { initialize as initializeBackend } from '../backend';
 
 import type { Action as AllActions, Store } from '../typesDEPRECATED/redux';
@@ -12,8 +11,6 @@ import type { AuthStatus } from '../reducers/authStatus';
 import type { User as FirebaseUser } from 'common/types/firebase';
 import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';
 import type { UserInfo } from 'common/lib/models/UserInfo';
-
-type EmitterSubscription = { remove: () => void };
 
 const Auth = Firebase.auth();
 const Database = Firebase.firestore();
@@ -61,9 +58,7 @@ export default (store: Store) => (next: Function) => {
     switch (action.type) {
       case 'LOGIN_REQUEST': {
         const { loginCredentials } = action;
-        handleNetworkRequest(store, next, 'firebase.auth.login', () =>
-          genPerformLogin(loginCredentials, changeStatus),
-        );
+        genPerformLogin(loginCredentials, changeStatus);
         break;
       }
 
@@ -74,9 +69,7 @@ export default (store: Store) => (next: Function) => {
           loginPayload,
           'Requesting logout of a user that is not logged in',
         );
-        handleNetworkRequest(store, next, 'firebase.auth.logout', () =>
-          genPerformLogout(loginPayload, changeStatus),
-        );
+        genPerformLogout(loginPayload, changeStatus);
         break;
       }
     }

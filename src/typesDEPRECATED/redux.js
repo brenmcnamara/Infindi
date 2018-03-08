@@ -10,8 +10,6 @@ import type { Action as Action$Datastore } from '../datastore';
 import type { Action as Action$Link } from '../link/action';
 import type { Action as Action$Modal } from '../actions/modal';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
-import type { Action as Action$Network } from '../actions/network';
-import type { Action as Action$NetworkMiddleware } from '../middleware/network';
 import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
@@ -31,8 +29,6 @@ export type PureAction =
   | Action$Link
   | Action$Modal
   | Action$ModalMiddleware
-  | Action$Network
-  | Action$NetworkMiddleware
   | Action$Router
   | Action$Toast
   | Action$ToastMiddleware;

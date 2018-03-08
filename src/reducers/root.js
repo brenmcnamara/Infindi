@@ -6,7 +6,6 @@ import actionItems from './actionItems';
 import authStatus from './authStatus';
 import configState from './configState';
 import modalState from './modalState';
-import network from './network';
 import providers from '../link/reducers/providers';
 import routeState from './routeState';
 import toast from './toast';
@@ -19,8 +18,6 @@ import type { State as State$ActionItems } from './actionItems';
 import type { State as State$AuthStatus } from './authStatus';
 import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
-import type { State as State$Network } from './network';
-// import type { State as State$PlaidState } from './plaid';
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
 import type { State as State$Providers } from '../link/reducers/providers';
@@ -32,7 +29,6 @@ export type State = {|
   +authStatus: State$AuthStatus,
   +configState: State$ConfigState,
   +modalState: State$ModalState,
-  +network: State$Network,
   +providers: State$Providers,
   +routeState: State$RouteState,
   +toast: State$Toast,
@@ -46,7 +42,6 @@ export default combineReducers({
   authStatus,
   configState,
   modalState,
-  network,
   providers,
   routeState,
   toast,

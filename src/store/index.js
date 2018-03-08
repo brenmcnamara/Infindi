@@ -5,7 +5,6 @@ import accountLinkToast from '../link/middleware/accountLinkToast';
 import accounts from '../middleware/accounts';
 import authentication from '../middleware/authentication';
 import modal from '../middleware/modal';
-import network from '../middleware/network';
 import providerLogin from '../link/middleware/providerLogin';
 // import plaid from '../middleware/plaid';
 import rootReducer from '../reducers/root';
@@ -28,8 +27,6 @@ if (__DEV__) {
     accounts,
     // plaid,
     providerLogin,
-    // Then comes network middleware.
-    network,
     // Then comes ui-managing middleware.
     modal,
     accountLinkToast,
@@ -47,13 +44,10 @@ if (__DEV__) {
     accounts,
     // plaid,
     providerLogin,
-    // Then comes network middleware.
-    network,
     // Then comes ui-managing middleware.
     modal,
     accountLinkToast,
     toast,
-    // Logging is last.
   );
 }
 

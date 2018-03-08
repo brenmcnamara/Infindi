@@ -48,11 +48,6 @@ export function getUserFullName(state: State): ?string {
   return `${userInfo.firstName} ${userInfo.lastName}`;
 }
 
-export function hasNetworkConnection(state: State): bool {
-  const { networkStatus } = state.network;
-  return networkStatus !== 'none';
-}
-
 export function getRoute(state: State): Route {
   const root = calculateRoot(state);
   if (root !== 'MAIN') {
@@ -105,7 +100,7 @@ export function getAccountLinkCollection(state: State): AccountLinkCollection {
 // -----------------------------------------------------------------------------
 
 function calculateRoot(state: State): RootType {
-  const { authStatus, configState, network, actionItems } = state;
+  const { authStatus, configState, actionItems } = state;
   if (configState.envStatus === 'ENV_LOADING') {
     return 'LOADING';
   }
@@ -117,7 +112,7 @@ function calculateRoot(state: State): RootType {
     case 'LOGOUT_FAILURE':
     case 'LOGGED_OUT':
       // The user can only see the login page if they have internet.
-      return network.networkStatus === 'none' ? 'NO_INTERNET' : 'AUTH';
+      return 'AUTH';
     case 'LOGGED_IN':
       return actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
     case 'NOT_INITIALIZED':
