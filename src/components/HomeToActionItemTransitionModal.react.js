@@ -16,19 +16,18 @@ import {
 
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
-import type { Inset } from '../reducers/configState';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
 export type ComputedProps = {
-  +pageInset: Inset,
   +actionItemIDs: Array<ID>,
+  +pageInset: Inset,
 };
 
 export type ComponentProps = {
-  +dismissAfterTransitioningOut: bool,
   +actionItemID: ID,
+  +dismissAfterTransitioningOut: bool,
   +show: bool,
   +transitionType: 'HOME_TO_ACTION_ITEM' | 'ACTION_ITEM_TO_HOME',
 };
@@ -49,6 +48,13 @@ type TransitionStage =
 type State = {
   actionItemFrame: Frame,
   transitionStage: TransitionStage,
+};
+
+type Inset = {
+  bottom: number,
+  left: number,
+  right: number,
+  top: number,
 };
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -279,15 +285,21 @@ function calculateActionItemFrame(props: Props): Frame {
 }
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  const { appInset } = state.configState;
+  // const { appInset } = state.configState;
   return {
-    pageInset: {
-      bottom: appInset.bottom,
-      left: appInset.left,
-      right: appInset.right,
-      top: appInset.top,
-    },
+    // pageInset: {
+    //   bottom: appInset.bottom,
+    //   left: appInset.left,
+    //   right: appInset.right,
+    //   top: appInset.top,
+    // },
     actionItemIDs: state.actionItems.ordering,
+    pageInset: {
+      bottom: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+    },
   };
 }
 

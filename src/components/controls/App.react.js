@@ -13,15 +13,10 @@ import Tabs from './Tabs.react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import {
-  appInsetChange,
-  envDoneLoading,
-  envFailedLoading,
-} from '../../actions/config';
+import { envDoneLoading, envFailedLoading } from '../../actions/config';
 import { getRoot } from '../../common/route-utils';
 import { getRoute } from '../../common/state-utils';
 import {
-  Dimensions,
   KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
@@ -36,10 +31,8 @@ export type Props = ReduxProps & {
   root: RootType,
 };
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
 class App extends Component<Props> {
-  _safeAreaSize = { height: SCREEN_HEIGHT, width: SCREEN_WIDTH };
+  _safeAreaSubviewLayout: *;
 
   componentWillMount(): void {
     const { dispatch } = this.props;
@@ -95,11 +88,8 @@ class App extends Component<Props> {
     // safe area view.
     return (
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-        <SafeAreaView
-          onLayout={this._onLayoutSafeAreaView}
-          style={styles.safeArea}
-        >
-          <View style={styles.main} onLayout={this._onLayoutSafeAreaSubview}>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.main}>
             {this.props.root === 'MAIN' ? <ModalManager /> : null}
             {mainContent}
           </View>
@@ -120,29 +110,6 @@ class App extends Component<Props> {
   _renderMain() {
     return <Tabs />;
   }
-
-  // TODO: Proper typing.
-  // TODO: Make sure this is accurate when the keyboard is showing / hiding.
-  _onLayoutSafeAreaSubview = (event: *): void => {
-    const { layout } = event.nativeEvent;
-    const safeAreaSize = this._safeAreaSize;
-    this.props.dispatch(
-      appInsetChange({
-        bottom: safeAreaSize.height - layout.y - layout.height,
-        left: layout.x,
-        right: safeAreaSize.width - layout.x - layout.width,
-        top: layout.y,
-      }),
-    );
-  };
-
-  _onLayoutSafeAreaView = (event: *): void => {
-    const { layout } = event.nativeEvent;
-    this._safeAreaSize = {
-      height: layout.height,
-      width: layout.width,
-    };
-  };
 }
 
 const styles = StyleSheet.create({

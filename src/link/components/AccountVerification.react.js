@@ -16,9 +16,12 @@ import invariant from 'invariant';
 
 import {
   Animated,
+  Dimensions,
   Easing,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -39,7 +42,6 @@ import { ProviderSearchError } from '../../../content';
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
-import type { Inset } from '../../reducers/configState';
 import type { ModelCollection } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
@@ -53,13 +55,19 @@ export type ComponentProps = {
 
 export type ReduxStateProps = {
   accountLinkCollection: AccountLinkCollection,
-  appInset: Inset,
   providerPendingLoginID: ID | null,
 };
 
 export type Props = ReduxProps & ReduxStateProps & ComponentProps;
 
 type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
+
+type Inset = {|
+  +bottom: number,
+  +left: number,
+  +right: number,
+  +top: number,
+|};
 
 type Page =
   | {|
@@ -81,6 +89,7 @@ type Page =
 type State = {
   didCompleteInitialSearch: bool,
   page: Page,
+  safeAreaInset: Inset,
 };
 
 // TODO: BUG: Click on Add Account / Cancel many times really fast to get
@@ -89,6 +98,7 @@ export const TransitionInMillis = 400;
 export const TransitionOutMillis = 400;
 
 const LEFT_ARROW_WIDTH = 18;
+const INSET_DEFAULT = { bottom: 0, left: 0, right: 0, top: 20 };
 
 class AccountVerification extends Component<Props, State> {
   _searchManager: ProviderSearchManager = new ProviderSearchManager();
@@ -117,7 +127,15 @@ class AccountVerification extends Component<Props, State> {
     this.state = {
       didCompleteInitialSearch: false,
       page,
+      safeAreaInset: isIphoneX()
+        ? { bottom: 20, left: 0, right: 0, top: 44 }
+        : INSET_DEFAULT,
     };
+  }
+
+  componentWillMount(): void {
+    Keyboard.addListener('keyboardWillShow', this._onKeyboardWillShow);
+    Keyboard.addListener('keyboardWillHide', this._onKeyboardWillHide);
   }
 
   componentDidMount(): void {
@@ -134,6 +152,8 @@ class AccountVerification extends Component<Props, State> {
   componentWillUnmount(): void {
     this._searchSubscription && this._searchSubscription();
     this._searchManager.clearSearch();
+    Keyboard.removeListener('keyboardWillShow', this._onKeyboardWillShow);
+    Keyboard.removeListener('keyboardWillHide', this._onKeyboardWillHide);
   }
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -176,12 +196,13 @@ class AccountVerification extends Component<Props, State> {
         opacity: this._transitionValue,
       },
     ];
+    const { safeAreaInset } = this.state;
     const insetStyles = {
       flex: 1,
-      paddingBottom: this.props.appInset.bottom,
-      paddingLeft: this.props.appInset.left,
-      paddingRight: this.props.appInset.right,
-      paddingTop: this.props.appInset.top,
+      paddingBottom: safeAreaInset.bottom,
+      paddingLeft: safeAreaInset.left,
+      paddingRight: safeAreaInset.right,
+      paddingTop: safeAreaInset.top,
     };
     return (
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -320,6 +341,22 @@ class AccountVerification extends Component<Props, State> {
         return invariant(false, 'Unhandled page: %s', page.type);
     }
   }
+
+  _onKeyboardWillShow = (): void => {
+    this.setState({
+      safeAreaInset: isIphoneX()
+        ? { bottom: 0, left: 0, right: 0, top: 44 }
+        : INSET_DEFAULT,
+    });
+  };
+
+  _onKeyboardWillHide = (): void => {
+    this.setState({
+      safeAreaInset: isIphoneX()
+        ? { bottom: 20, left: 0, right: 0, top: 44 }
+        : INSET_DEFAULT,
+    });
+  };
 
   _onFooterButtonPress = (button: 'LEFT' | 'RIGHT' | 'CENTER'): void => {
     if (this._isCancelButton(button)) {
@@ -480,7 +517,6 @@ class AccountVerification extends Component<Props, State> {
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    appInset: state.configState.appInset,
     accountLinkCollection: getAccountLinkCollection(state),
     providerPendingLoginID: state.providers.providerPendingLogin
       ? state.providers.providerPendingLogin.id
@@ -574,3 +610,17 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
 });
+
+// TODO: This is a hack to fix the safe area bugs, since it does not work
+// well in a modal view inside a keyboard avoiding view.
+function isIphoneX() {
+  let d = Dimensions.get('window');
+  const { height, width } = d;
+
+  return (
+    // This has to be iOS duh
+    Platform.OS === 'ios' &&
+    // Accounting for the height in either orientation
+    (height === 812 || width === 812)
+  );
+}
