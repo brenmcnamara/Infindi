@@ -7,7 +7,6 @@ import authStatus from './authStatus';
 import configState from './configState';
 import modalState from './modalState';
 import network from './network';
-// import plaid from './plaid';
 import providers from '../link/reducers/providers';
 import routeState from './routeState';
 import toast from './toast';
@@ -34,7 +33,6 @@ export type State = {|
   +configState: State$ConfigState,
   +modalState: State$ModalState,
   +network: State$Network,
-  // +plaid: State$PlaidState,
   +providers: State$Providers,
   +routeState: State$RouteState,
   +toast: State$Toast,
@@ -49,7 +47,6 @@ export default combineReducers({
   configState,
   modalState,
   network,
-  // plaid,
   providers,
   routeState,
   toast,
