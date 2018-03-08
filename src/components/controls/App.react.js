@@ -39,6 +39,8 @@ export type Props = ReduxProps & {
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 class App extends Component<Props> {
+  _safeAreaSize = { height: SCREEN_HEIGHT, width: SCREEN_WIDTH };
+
   componentWillMount(): void {
     const { dispatch } = this.props;
     // TODO: For now we are doing this here, but may want to move this into
@@ -93,7 +95,10 @@ class App extends Component<Props> {
     // safe area view.
     return (
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView
+          onLayout={this._onLayoutSafeAreaView}
+          style={styles.safeArea}
+        >
           <View style={styles.main} onLayout={this._onLayoutSafeAreaSubview}>
             {this.props.root === 'MAIN' ? <ModalManager /> : null}
             {mainContent}
@@ -120,14 +125,23 @@ class App extends Component<Props> {
   // TODO: Make sure this is accurate when the keyboard is showing / hiding.
   _onLayoutSafeAreaSubview = (event: *): void => {
     const { layout } = event.nativeEvent;
+    const safeAreaSize = this._safeAreaSize;
     this.props.dispatch(
       appInsetChange({
-        bottom: SCREEN_HEIGHT - layout.y - layout.height,
+        bottom: safeAreaSize.height - layout.y - layout.height,
         left: layout.x,
-        right: SCREEN_WIDTH - layout.x - layout.width,
+        right: safeAreaSize.width - layout.x - layout.width,
         top: layout.y,
       }),
     );
+  };
+
+  _onLayoutSafeAreaView = (event: *): void => {
+    const { layout } = event.nativeEvent;
+    this._safeAreaSize = {
+      height: layout.height,
+      width: layout.width,
+    };
   };
 }
 

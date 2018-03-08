@@ -19,8 +19,8 @@ import type { ReduxProps } from '../../typesDEPRECATED/redux';
 export type Props = ReduxProps & {
   children?: ?any,
   modalID: ID,
-  show: bool,
   title: string,
+  transitionStage: 'TRANSITION_IN' | 'TRANSITION_OUT' | 'IN' | 'OUT',
 };
 
 export const TransitionInMillis = ModalTransitionInMillis;
@@ -34,7 +34,10 @@ class InfoModal extends Component<Props> {
     return (
       <ModalTransition
         onPressBackground={this._onPressBackground}
-        show={this.props.show}
+        show={
+          this.props.transitionStage === 'IN' ||
+          this.props.transitionStage === 'TRANSITION_IN'
+        }
       >
         <View style={styles.root}>
           <View style={styles.header}>
@@ -62,7 +65,8 @@ class InfoModal extends Component<Props> {
   };
 
   _onPressDismiss = (): void => {
-    this.props.dispatch(dismissModal(this.props.modalID));
+    this.props.transitionStage === 'IN' &&
+      this.props.dispatch(dismissModal(this.props.modalID));
   };
 }
 

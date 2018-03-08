@@ -170,24 +170,23 @@ class AccountVerification extends Component<Props, State> {
   }
 
   render() {
-    const { appInset } = this.props;
     const rootStyles = [
       styles.root,
       {
         opacity: this._transitionValue,
       },
     ];
-    const appInsetStyles = {
+    const insetStyles = {
       flex: 1,
-      paddingBottom: appInset.bottom,
-      paddingLeft: appInset.left,
-      paddingRight: appInset.right,
-      paddingTop: appInset.top,
+      paddingBottom: this.props.appInset.bottom,
+      paddingLeft: this.props.appInset.left,
+      paddingRight: this.props.appInset.right,
+      paddingTop: this.props.appInset.top,
     };
     return (
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <Animated.View style={rootStyles}>
-          <View style={appInsetStyles}>
+          <View style={insetStyles}>
             <Screen>
               <Content>
                 {this._renderHeader()}
@@ -481,8 +480,8 @@ class AccountVerification extends Component<Props, State> {
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    accountLinkCollection: getAccountLinkCollection(state),
     appInset: state.configState.appInset,
+    accountLinkCollection: getAccountLinkCollection(state),
     providerPendingLoginID: state.providers.providerPendingLogin
       ? state.providers.providerPendingLogin.id
       : null,
@@ -538,10 +537,6 @@ const styles = StyleSheet.create({
 
   root: {
     backgroundColor: Colors.BACKGROUND,
-    flex: 1,
-  },
-
-  safeArea: {
     flex: 1,
   },
 

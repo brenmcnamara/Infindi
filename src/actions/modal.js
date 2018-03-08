@@ -51,22 +51,38 @@ export function requestInfoModal(
       modalType: 'REACT_WITH_TRANSITION',
       priority: 'USER_REQUESTED',
       renderIn: () => (
-        <InfoModal modalID={payload.id} show={true} title={payload.title}>
+        <InfoModal
+          modalID={payload.id}
+          title={payload.title}
+          transitionStage="IN"
+        >
           {payload.render()}
         </InfoModal>
       ),
       renderOut: () => (
-        <InfoModal modalID={payload.id} show={false} title={payload.title}>
+        <InfoModal
+          modalID={payload.id}
+          title={payload.title}
+          transitionStage="OUT"
+        >
           {payload.render()}
         </InfoModal>
       ),
       renderTransitionIn: () => (
-        <InfoModal modalID={payload.id} show={true} title={payload.title}>
+        <InfoModal
+          modalID={payload.id}
+          title={payload.title}
+          transitionStage="TRANSITION_IN"
+        >
           {payload.render()}
         </InfoModal>
       ),
       renderTransitionOut: () => (
-        <InfoModal modalID={payload.id} show={false} title={payload.title}>
+        <InfoModal
+          modalID={payload.id}
+          title={payload.title}
+          transitionStage="TRANSITION_OUT"
+        >
           {payload.render()}
         </InfoModal>
       ),

@@ -1497,7 +1497,7 @@
 			baseConfigurationReference = 4A23ACBCE8C42399329B24E2 /* Pods-Infindi.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-debug";
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Brendan McNamara (9EJMGX5D85)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -1541,7 +1541,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.findi.main.debug;
 				PRODUCT_NAME = Infindi;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Infindi Development";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1551,8 +1551,8 @@
 			baseConfigurationReference = 993A6AB777D04CFF37599415 /* Pods-Infindi.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Brendan McNamara (UTHR9MM5YU)";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution: Brendan McNamara (UTHR9MM5YU)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UTHR9MM5YU;
@@ -1595,7 +1595,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.findi.main;
 				PRODUCT_NAME = Infindi;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Infindi Distribution";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
