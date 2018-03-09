@@ -29,6 +29,7 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { isLinking } from 'common/lib/models/AccountLink';
 import { isSupportedProvider } from '../utils';
 import {
   dismissAccountVerification,
@@ -183,8 +184,18 @@ class AccountVerification extends Component<Props, State> {
     }
     const didHavePendingLogin = Boolean(this.props.providerPendingLoginID);
     const willHavePendingLogin = Boolean(nextProps.providerPendingLoginID);
+    const { selectedProvider } = page;
+    const accountLink = getAccountLinkForProvider(
+      nextProps.accountLinkCollection,
+      selectedProvider,
+    );
+    const isLinkingSelectedProvider = accountLink && isLinking(accountLink);
 
-    if (didHavePendingLogin && !willHavePendingLogin) {
+    if (
+      didHavePendingLogin &&
+      !willHavePendingLogin &&
+      isLinkingSelectedProvider
+    ) {
       this.props.dispatch(dismissAccountVerification());
     }
   }
@@ -623,4 +634,19 @@ function isIphoneX() {
     // Accounting for the height in either orientation
     (height === 812 || width === 812)
   );
+}
+
+function getAccountLinkForProvider(
+  collection: AccountLinkCollection,
+  provider: Provider,
+): AccountLink | null {
+  for (const accountLinkID in collection) {
+    if (
+      collection.hasOwnProperty(accountLinkID) &&
+      collection[accountLinkID].providerRef.refID === provider.id
+    ) {
+      return collection[accountLinkID];
+    }
+  }
+  return null;
 }
