@@ -15,6 +15,11 @@ import {
   getInstitution,
 } from 'common/lib/models/Account';
 import {
+  getCreditCardNumber,
+  getCreditCardType,
+  isCreditCardAccount,
+} from '../common/credit-card-utils';
+import {
   Animated,
   StyleSheet,
   Text,
@@ -73,9 +78,7 @@ export default class AccountComponent extends Component<Props> {
         <View style={[styles.root, topBorder]}>
           <View style={styles.mainContent}>
             <View style={styles.accountLoaderTop}>
-              <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
-                {getAccountName(account)}
-              </Text>
+              {this._renderAccountName()}
               <MoneyText
                 dollars={getBalance(account)}
                 textStyle={[
@@ -98,6 +101,38 @@ export default class AccountComponent extends Component<Props> {
           </Animated.View>
         </View>
       </TouchableOpacity>
+    );
+  }
+
+  _renderAccountName() {
+    const { account } = this.props;
+    if (!isCreditCardAccount(account)) {
+      return (
+        <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
+          {getAccountName(account)}
+        </Text>
+      );
+    }
+    const creditCardType = getCreditCardType(account);
+    const creditCardNumber = getCreditCardNumber(account);
+
+    const typeFormatted =
+      creditCardType === 'OTHER'
+        ? 'Card'
+        : creditCardType
+            .split('_')
+            .map(
+              word =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+            )
+            .join(' ');
+    const numberFormatted = creditCardNumber.slice(-4);
+    return (
+      <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
+        {typeFormatted}
+        {' ending in '}
+        {numberFormatted}
+      </Text>
     );
   }
 }
