@@ -43,7 +43,7 @@ type State = {
   transition: TransitionState,
 };
 
-export const TRANSITION_OUT_MILLIS = 400;
+export const TRANSITION_OUT_MILLIS = 300;
 export const TRANSITION_IN_MILLIS = 300;
 
 const BANNER_CONTENT_PADDING = 5;
