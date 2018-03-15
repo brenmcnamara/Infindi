@@ -23,13 +23,14 @@ export type Action =
   | Action$RequestProviderLogin
   | Action$RequestProviderLoginFailed;
 
-const PROVIDER_LOGIN_ID = 'YODLEE_LOGIN';
+export const PROVIDER_LOGIN_MODAL_ID = 'YODLEE_LOGIN';
+
 const UNSUPPORTED_MODAL_ID = 'UNSUPPORTED_MODAL';
 
 export function requestAccountVerification(): Action$RequestModal {
   return {
     modal: {
-      id: PROVIDER_LOGIN_ID,
+      id: PROVIDER_LOGIN_MODAL_ID,
       modalType: 'REACT_WITH_TRANSITION',
       priority: 'USER_REQUESTED',
       renderIn: () => <AccountVerification transitionStage="IN" />,
@@ -50,7 +51,7 @@ export function requestAccountVerification(): Action$RequestModal {
 
 export function dismissAccountVerification(): Action$DismissModal {
   return {
-    modalID: PROVIDER_LOGIN_ID,
+    modalID: PROVIDER_LOGIN_MODAL_ID,
     shouldIgnoreDismissingNonExistantModal: true,
     type: 'DISMISS_MODAL',
   };

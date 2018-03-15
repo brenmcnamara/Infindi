@@ -108,24 +108,28 @@ export const AccountsDownloadingBanner = cleanupWhitespace(`
 `);
 
 /**
- * Message to be shown at different points of the provider login process.
- * These are displayed in banners and must be very short.
+ * During the account link process, banners will show indicating the phases
+ * of account login to the user.
  */
-export const ProviderLoginBanner = {
+export const AccountLinkBanner = {
   FAILURE: cleanupWhitespace(`
-    The last login attempt failed
+    Download failed. Please try again.
+  `),
+
+  IN_PROGRESS: cleanupWhitespace(`
+    Download in progress
   `),
 
   INITIALIZING: cleanupWhitespace(`
-    Setting up the link
-  `),
-
-  LINKING: cleanupWhitespace(`
-    Downloading data. This may take a moment...
+    Initializing your link
   `),
 
   SUCCESS: cleanupWhitespace(`
-    You are logged into this account
+    You are linked with this institution
+  `),
+
+  VERIFYING_CREDENTIALS: cleanupWhitespace(`
+    Verifying your credentials
   `),
 };
 

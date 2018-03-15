@@ -2,6 +2,7 @@
 
 const BLACK = '#000000';
 const BLUE = '#6290C6';
+const BLUE_DARK = '#5F86AE';
 const GRAY_1 = '#EFEFEF';
 const GRAY_2 = '#DCDBDB';
 const GRAY_3 = '#CACACA';
@@ -25,6 +26,7 @@ export default {
     INFO: BLUE,
     SUCCESS: GREEN_DARK,
   },
+  BANNER_LINE_ANIMATION: BLUE_DARK,
   BANNER_TEXT: {
     ERROR: GRAY_1,
     INFO: GRAY_1,

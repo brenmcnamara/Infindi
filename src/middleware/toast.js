@@ -62,6 +62,12 @@ function addBannerToPriorityQueue(
   queue: Array<Toast$Banner>,
 ): Array<Toast$Banner> {
   const newQueue = queue.slice();
+  // First check if there is a banner with the same id. If so, we need to
+  // remove that banner before adding this one.
+  const bannerIndex = newQueue.findIndex(_banner => banner.id === _banner.id);
+  if (bannerIndex >= 0) {
+    newQueue.splice(bannerIndex, 1);
+  }
   for (let i = 0; i < queue.length; ++i) {
     if (hasHigherPriority(banner, queue[i])) {
       newQueue.splice(i, 0, banner);

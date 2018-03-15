@@ -14,6 +14,7 @@ export type Toast$Banner = {|
   +bannerType: 'INFO' | 'ERROR' | 'SUCCESS',
   +id: ID,
   +priority: 'LOW' | 'NORMAL' | 'HIGH',
+  +showSpinner: bool,
   +text: string,
   +toastType: 'BANNER',
 |};

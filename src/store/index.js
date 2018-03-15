@@ -1,7 +1,7 @@
 /* @flow */
 
 import accountLinks from '../middleware/accountLinks';
-import accountLinkToast from '../link/middleware/accountLinkToast';
+import accountLinkFlow from '../link/middleware/accountLinkFlow';
 import accounts from '../middleware/accounts';
 import authentication from '../middleware/authentication';
 import modal from '../middleware/modal';
@@ -28,8 +28,8 @@ if (__DEV__) {
     // plaid,
     providerLogin,
     // Then comes ui-managing middleware.
+    accountLinkFlow,
     modal,
-    accountLinkToast,
     toast,
     // Logging is last.
     reduxLogger,
@@ -45,8 +45,8 @@ if (__DEV__) {
     // plaid,
     providerLogin,
     // Then comes ui-managing middleware.
+    accountLinkFlow,
     modal,
-    accountLinkToast,
     toast,
   );
 }

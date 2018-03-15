@@ -29,13 +29,12 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { isLinking } from 'common/lib/models/AccountLink';
-import { isSupportedProvider } from '../utils';
 import {
   dismissAccountVerification,
   requestProviderLogin,
   unsupportedProvider,
 } from '../action';
+import { isSupportedProvider } from '../utils';
 import { getAccountLinkCollection } from '../../common/state-utils';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content';
@@ -172,31 +171,6 @@ class AccountVerification extends Component<Props, State> {
         easing: Easing.out(Easing.cubic),
         toValue: nextProps.transitionStage === 'TRANSITION_IN' ? 1.0 : 0.0,
       }).start();
-    }
-
-    // Handle dismissing when we figure out the status of the refresh.
-    const { page } = this.state;
-    if (
-      page.type !== 'LOGIN' ||
-      this.props.accountLinkCollection === nextProps.accountLinkCollection
-    ) {
-      return;
-    }
-    const didHavePendingLogin = Boolean(this.props.providerPendingLoginID);
-    const willHavePendingLogin = Boolean(nextProps.providerPendingLoginID);
-    const { selectedProvider } = page;
-    const accountLink = getAccountLinkForProvider(
-      nextProps.accountLinkCollection,
-      selectedProvider,
-    );
-    const isLinkingSelectedProvider = accountLink && isLinking(accountLink);
-
-    if (
-      didHavePendingLogin &&
-      !willHavePendingLogin &&
-      isLinkingSelectedProvider
-    ) {
-      this.props.dispatch(dismissAccountVerification());
     }
   }
 
@@ -634,19 +608,4 @@ function isIphoneX() {
     // Accounting for the height in either orientation
     (height === 812 || width === 812)
   );
-}
-
-function getAccountLinkForProvider(
-  collection: AccountLinkCollection,
-  provider: Provider,
-): AccountLink | null {
-  for (const accountLinkID in collection) {
-    if (
-      collection.hasOwnProperty(accountLinkID) &&
-      collection[accountLinkID].providerRef.refID === provider.id
-    ) {
-      return collection[accountLinkID];
-    }
-  }
-  return null;
 }
