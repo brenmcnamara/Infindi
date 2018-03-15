@@ -112,8 +112,12 @@ export const AccountsDownloadingBanner = cleanupWhitespace(`
  * of account login to the user.
  */
 export const AccountLinkBanner = {
-  FAILURE: cleanupWhitespace(`
+  FAILURE_GENERAL: cleanupWhitespace(`
     Download failed. Please try again.
+  `),
+
+  FAILURE_LOGIN: cleanupWhitespace(`
+    Login Failed. Please check your credentials.
   `),
 
   IN_PROGRESS: cleanupWhitespace(`

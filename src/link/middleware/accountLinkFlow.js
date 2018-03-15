@@ -25,7 +25,7 @@ type AccountLinkPhase =
         | 'IN_PROGRESS'
         | 'SUCCESS',
     }
-  | { error: Object, type: 'FAILURE' };
+  | { error: Object, type: 'FAILURE_GENERAL' | 'FAILURE_LOGIN' };
 
 export default (store: Store) => (next: Next) => {
   const accountLinkPhaseMap: { [id: ID]: AccountLinkPhase } = {};
@@ -121,7 +121,7 @@ export default (store: Store) => (next: Next) => {
       case 'REQUEST_PROVIDER_LOGIN_FAILED': {
         const providerID = action.provider.id;
         const { error } = action;
-        updateAccountLinkPhase(providerID, { error, type: 'FAILURE' });
+        updateAccountLinkPhase(providerID, { error, type: 'FAILURE_GENERAL' });
       }
     }
   };
@@ -152,12 +152,15 @@ function requestAccountLinkBanner(
   return requestToast({
     bannerChannel: id,
     bannerType:
-      phase.type === 'FAILURE'
+      phase.type === 'FAILURE_GENERAL' || phase.type === 'FAILURE_LOGIN'
         ? 'ERROR'
         : phase.type === 'SUCCESS' ? 'SUCCESS' : 'INFO',
     id,
     priority: 'LOW',
-    showSpinner: phase.type !== 'FAILURE' && phase.type !== 'SUCCESS',
+    showSpinner:
+      phase.type !== 'FAILURE_GENERAL' &&
+      phase.type !== 'FAILURE_LOGIN' &&
+      phase.type !== 'SUCCESS',
     text,
     toastType: 'BANNER',
   });
@@ -191,11 +194,17 @@ function getAccountLinkPhase(accountLink: AccountLink): AccountLinkPhase {
       : { type: 'IN_PROGRESS' };
   }
   if (refreshInfo.status === 'FAILED') {
+    const isLoginFailure = refreshInfo.additionalStatus === 'LOGIN_FAILED';
     const error = {
       errorCode: 'infindi/unknown-error',
-      errorMessage: AccountLinkBanner.FAILURE,
+      errorMessage: isLoginFailure
+        ? AccountLinkBanner.FAILURE_LOGIN
+        : AccountLinkBanner.FAILURE_GENERAL,
     };
-    return { error, type: 'FAILURE' };
+    return {
+      error,
+      type: isLoginFailure ? 'FAILURE_LOGIN' : 'FAILURE_GENERAL',
+    };
   }
   return { type: 'SUCCESS' };
 }
