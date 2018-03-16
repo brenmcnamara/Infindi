@@ -20,7 +20,7 @@ type ButtonLayout$LeftAndRight = {|
 
 type ButtonLayout$Center = {|
   +centerButtonText: string,
-  +isCenterbuttonDisabled?: bool,
+  +isCenterButtonDisabled?: bool,
   +type: 'CENTER',
 |};
 
@@ -43,6 +43,7 @@ export type State = {
 };
 
 export default class Footer extends Component<Props, State> {
+  _isTransitioning: bool = false;
   _transitionValue: Animated.Value = new Animated.Value(1.0);
 
   constructor(props: Props) {
@@ -59,9 +60,13 @@ export default class Footer extends Component<Props, State> {
         this.props.buttonLayout,
       )
     ) {
+      this._isTransitioning = false;
       this.setState({ transitionStage: { type: 'IN', props: nextProps } });
       return;
     }
+
+    // TODO: Callback hell. Clean this up.
+    this._isTransitioning = true;
     this.setState(
       { transitionStage: { type: 'TRANSITION_OUT', props: this.props } },
       () => {
@@ -70,20 +75,26 @@ export default class Footer extends Component<Props, State> {
           easing: Easing.cubic,
           toValue: 0.0,
         }).start(() => {
-          this.setState(
-            { transitionStage: { type: 'TRANSITION_IN', props: nextProps } },
-            () => {
-              Animated.timing(this._transitionValue, {
-                duration: 200,
-                easing: Easing.out(Easing.cubic),
-                toValue: 1.0,
-              }).start(() => {
-                this.setState({
-                  transitionStage: { type: 'IN', props: nextProps },
-                });
-              });
-            },
-          );
+          this._isTransitioning &&
+            this.setState(
+              { transitionStage: { type: 'TRANSITION_IN', props: nextProps } },
+              () => {
+                this._isTransitioning &&
+                  Animated.timing(this._transitionValue, {
+                    duration: 200,
+                    easing: Easing.out(Easing.cubic),
+                    toValue: 1.0,
+                  }).start(() => {
+                    this._isTransitioning &&
+                      this.setState(
+                        {
+                          transitionStage: { type: 'IN', props: nextProps },
+                        },
+                        () => (this._isTransitioning = false),
+                      );
+                  });
+              },
+            );
         });
       },
     );
@@ -145,7 +156,7 @@ export default class Footer extends Component<Props, State> {
     return (
       <Animated.View style={containerStyles}>
         <TextButton
-          isDisabled={buttonLayout.isCenterbuttonDisabled || false}
+          isDisabled={buttonLayout.isCenterButtonDisabled || false}
           layoutType="FILL_PARENT"
           onPress={() => props.onPress('CENTER')}
           size="LARGE"

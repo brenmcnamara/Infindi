@@ -86,9 +86,21 @@ type Page =
       +type: 'LOGIN',
     |};
 
+type PageTransition =
+  | {|
+      +fromPage: Page,
+      +toPage: Page,
+      +type: 'TRANSITIONING',
+    |}
+  | {|
+      +page: Page,
+      +type: 'NOT_TRANSITIONING',
+    |};
+
 type State = {
+  activeTransition: 'A' | 'B',
   didCompleteInitialSearch: bool,
-  page: Page,
+  pageTransition: PageTransition,
   safeAreaInset: Inset,
 };
 
@@ -101,15 +113,17 @@ const LEFT_ARROW_WIDTH = 18;
 const INSET_DEFAULT = { bottom: 0, left: 0, right: 0, top: 20 };
 
 class AccountVerification extends Component<Props, State> {
+  _pageTransitionA: Animated.Value;
+  _pageTransitionB: Animated.Value;
   _searchManager: ProviderSearchManager = new ProviderSearchManager();
   _searchSubscription: Subscription | null = null;
-  _transitionValue: Animated.Value;
 
   constructor(props: Props) {
     super(props);
-    this._transitionValue = new Animated.Value(
+    this._pageTransitionA = new Animated.Value(
       props.transitionStage === 'IN' ? 1.0 : 0.0,
     );
+    this._pageTransitionB = new Animated.Value(0.0);
 
     const payload = this._searchManager.getProvidersPayload();
     const page =
@@ -125,8 +139,9 @@ class AccountVerification extends Component<Props, State> {
           };
 
     this.state = {
+      activeTransition: 'A',
       didCompleteInitialSearch: false,
-      page,
+      pageTransition: { page, type: 'NOT_TRANSITIONING' },
       safeAreaInset: isIphoneX()
         ? { bottom: 20, left: 0, right: 0, top: 44 }
         : INSET_DEFAULT,
@@ -144,7 +159,7 @@ class AccountVerification extends Component<Props, State> {
     );
 
     // Start initial search.
-    const { page } = this.state;
+    const page = this._getCurrentPage();
     const search = page.type === 'SEARCH' ? page.search : '';
     this._searchManager.updateSearch(search);
   }
@@ -164,67 +179,114 @@ class AccountVerification extends Component<Props, State> {
     const willTransition =
       nextProps.transitionStage === 'TRANSITION_IN' ||
       nextProps.transitionStage === 'TRANSITION_OUT';
-    if (!didTransition && willTransition) {
-      const willShow = nextProps.transitionStage === 'TRANSITION_IN';
-      Animated.timing(this._transitionValue, {
+    if (didTransition || !willTransition) {
+      return;
+    }
+
+    const willShow = nextProps.transitionStage === 'TRANSITION_IN';
+    const animations = [
+      Animated.timing(this._getActiveTransition(), {
         duration: willShow ? TransitionInMillis : TransitionOutMillis,
         easing: Easing.out(Easing.cubic),
         toValue: nextProps.transitionStage === 'TRANSITION_IN' ? 1.0 : 0.0,
-      }).start();
+      }),
+    ];
+
+    if (this.state.pageTransition.type !== 'NOT_TRANSITIONING') {
+      invariant(
+        nextProps.transitionStage === 'TRANSITION_OUT',
+        // eslint-disable-next-line max-len
+        'Page transitions should not happen when the Account Verification screen is transitioning in',
+      );
+      animations.push(
+        Animated.timing(this._getInactiveTransition(), {
+          duration: TransitionOutMillis,
+          easing: Easing.out(Easing.cubic),
+          toValue: 0.0,
+        }),
+      );
     }
+    Animated.parallel(animations).start();
   }
 
   render() {
+    const { pageTransition } = this.state;
+    switch (pageTransition.type) {
+      case 'NOT_TRANSITIONING': {
+        const { page } = pageTransition;
+        return (
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+            {this._renderScreen(page, this._getActiveTransition(), true)}
+          </KeyboardAvoidingView>
+        );
+      }
+
+      case 'TRANSITIONING': {
+        const { fromPage, toPage } = pageTransition;
+        return (
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+            {this._renderScreen(toPage, 1.0, false)}
+            {this._renderScreen(fromPage, this._getActiveTransition(), false)}
+          </KeyboardAvoidingView>
+        );
+      }
+
+      default:
+        invariant(false, 'Unknown page transition %s', pageTransition.type);
+    }
+  }
+
+  _renderScreen(
+    page: Page,
+    opacity: Animated.Value | number,
+    enableInteraction: bool,
+  ) {
+    const { safeAreaInset } = this.state;
     const rootStyles = [
       styles.root,
       {
-        opacity: this._transitionValue,
+        bottom: safeAreaInset.bottom,
+        left: safeAreaInset.left,
+        opacity,
+        position: 'absolute',
+        right: safeAreaInset.right,
+        top: safeAreaInset.top,
       },
     ];
-    const { safeAreaInset } = this.state;
-    const insetStyles = {
-      flex: 1,
-      paddingBottom: safeAreaInset.bottom,
-      paddingLeft: safeAreaInset.left,
-      paddingRight: safeAreaInset.right,
-      paddingTop: safeAreaInset.top,
-    };
     return (
-      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-        <Animated.View style={rootStyles}>
-          <View style={insetStyles}>
-            <Screen>
-              <Content>
-                {this._renderHeader()}
-                {this._renderBanner()}
-                {this._renderContent()}
-              </Content>
-              <FooterWithButtons
-                buttonLayout={this._getFooterButtonLayout()}
-                onPress={this._onFooterButtonPress}
-              />
-            </Screen>
-          </View>
-        </Animated.View>
-      </KeyboardAvoidingView>
+      <Animated.View style={rootStyles}>
+        <Screen>
+          <Content>
+            {this._renderHeader(page, enableInteraction)}
+            {this._renderBanner(page)}
+            {this._renderContent(page, enableInteraction)}
+          </Content>
+          <FooterWithButtons
+            buttonLayout={this._getFooterButtonLayout(page, enableInteraction)}
+            onPress={this._onFooterButtonPress}
+          />
+        </Screen>
+      </Animated.View>
     );
   }
 
-  _renderHeader() {
-    const { page } = this.state;
+  _renderHeader(page: Page, enableInteraction: bool) {
     switch (page.type) {
       case 'SEARCH':
-        return this._renderSearchHeader(page.search);
+        return this._renderSearchHeader(page.search, enableInteraction);
       case 'SEARCH_ERROR':
-        return this._renderSearchHeader(page.search);
+        return this._renderSearchHeader(page.search, enableInteraction);
       case 'LOGIN':
-        return this._renderLoginHeader(page.selectedProvider);
+        return this._renderLoginHeader(
+          page.selectedProvider,
+          enableInteraction,
+        );
       default:
         return invariant(false, 'Unknown page type %s', page.type);
     }
   }
 
-  _renderSearchHeader(search: string) {
+  _renderSearchHeader(search: string, enableInteraction: bool) {
     return (
       <View style={styles.searchHeader}>
         <Image
@@ -233,7 +295,7 @@ class AccountVerification extends Component<Props, State> {
           style={styles.searchHeaderIcon}
         />
         <TextInput
-          editable={this.props.transitionStage === 'IN'}
+          editable={enableInteraction && this.props.transitionStage === 'IN'}
           onChangeText={this._onChangeSearch}
           placeholder="Search for Institutions..."
           ref="searchInput"
@@ -246,7 +308,7 @@ class AccountVerification extends Component<Props, State> {
     );
   }
 
-  _renderLoginHeader(provider: Provider) {
+  _renderLoginHeader(provider: Provider, enableInteraction: bool) {
     invariant(
       provider.sourceOfTruth.type === 'YODLEE',
       'Expecting provider to come from YODLEE',
@@ -270,16 +332,15 @@ class AccountVerification extends Component<Props, State> {
     );
   }
 
-  _renderBanner() {
-    const { page } = this.state;
+  _renderBanner(page: Page) {
     const channels =
       page.type === 'LOGIN' ? [`PROVIDERS/${page.selectedProvider.id}`] : [];
     return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
-  _renderContent() {
+  _renderContent(page: Page, enableInteraction: bool) {
     const { providerPendingLoginID, transitionStage } = this.props;
-    const { didCompleteInitialSearch, page } = this.state;
+    const { didCompleteInitialSearch } = this.state;
 
     switch (page.type) {
       case 'SEARCH': {
@@ -287,10 +348,10 @@ class AccountVerification extends Component<Props, State> {
           <ProviderSearch
             accountLinkCollection={this.props.accountLinkCollection}
             didCompleteInitialSearch={didCompleteInitialSearch}
-            isEditable={transitionStage === 'IN'}
-            search={page.search}
+            enableInteraction={enableInteraction && transitionStage === 'IN'}
             onSelectProvider={this._onSelectProvider}
             providers={page.providers}
+            search={page.search}
           />
         );
       }
@@ -314,7 +375,11 @@ class AccountVerification extends Component<Props, State> {
         const provider = page.selectedProvider;
         return (
           <AccountLogin
-            isEditable={transitionStage === 'IN' && !providerPendingLoginID}
+            isEditable={
+              enableInteraction &&
+              transitionStage === 'IN' &&
+              !providerPendingLoginID
+            }
             onChangeProvider={this._onChangeProvider}
             onPressForgotPassword={this._onPressForgotPassword}
             provider={provider}
@@ -349,7 +414,7 @@ class AccountVerification extends Component<Props, State> {
       return;
     }
     // Otherwise, it is the login button.
-    const { page } = this.state;
+    const page = this._getCurrentPage();
     invariant(
       page.type === 'LOGIN',
       'Expected to be on login page when login button is pressed',
@@ -358,16 +423,19 @@ class AccountVerification extends Component<Props, State> {
   };
 
   _onChangeSearch = (search: string): void => {
-    const { page } = this.state;
+    const page = this._getCurrentPage();
     invariant(
       page.type === 'SEARCH',
       'Expecting page to be SEARCH when changing search',
     );
     this.setState({
-      page: {
-        providers: page.providers,
-        search,
-        type: 'SEARCH',
+      pageTransition: {
+        page: {
+          providers: page.providers,
+          search,
+          type: 'SEARCH',
+        },
+        type: 'NOT_TRANSITIONING',
       },
     });
     this._searchManager.updateSearch(search);
@@ -380,34 +448,32 @@ class AccountVerification extends Component<Props, State> {
       return;
     }
 
-    const { page } = this.state;
+    const fromPage = this._getCurrentPage();
     invariant(
-      page.type === 'SEARCH',
+      fromPage.type === 'SEARCH',
       'Expecting page to be SEARCH when provider is selected',
     );
-    this.setState({
-      page: {
-        providers: page.providers,
-        search: page.search,
-        selectedProvider: provider,
-        type: 'LOGIN',
-      },
-    });
+    const toPage = {
+      providers: fromPage.providers,
+      search: fromPage.search,
+      selectedProvider: provider,
+      type: 'LOGIN',
+    };
+    this._performPageTransition(fromPage, toPage);
   };
 
   _onPressHeaderBackIcon = (): void => {
-    const { page } = this.state;
+    const fromPage = this._getCurrentPage();
     invariant(
-      page.type === 'LOGIN',
+      fromPage.type === 'LOGIN',
       'Expecting page to be LOGIN when back button is pressed',
     );
-    this.setState({
-      page: {
-        providers: page.providers,
-        search: page.search,
-        type: 'SEARCH',
-      },
-    });
+    const toPage = {
+      providers: fromPage.providers,
+      search: fromPage.search,
+      type: 'SEARCH',
+    };
+    this._performPageTransition(fromPage, toPage);
   };
 
   _onPressForgotPassword = (url: string): void => {
@@ -416,34 +482,40 @@ class AccountVerification extends Component<Props, State> {
   };
 
   _onChangeProvider = (provider: Provider): void => {
-    const { page } = this.state;
+    const page = this._getCurrentPage();
     invariant(
       page.type === 'LOGIN',
       'Expecting page to be LOGIN while changing provider',
     );
     this.setState({
-      page: {
-        providers: page.providers,
-        search: page.search,
-        selectedProvider: provider,
-        type: 'LOGIN',
+      pageTransition: {
+        page: {
+          providers: page.providers,
+          search: page.search,
+          selectedProvider: provider,
+          type: 'LOGIN',
+        },
+        type: 'NOT_TRANSITIONING',
       },
     });
   };
 
   _onUpdateSearchResults = (): void => {
-    const { page } = this.state;
+    const page = this._getCurrentPage();
     const payload = this._searchManager.getProvidersPayload();
 
     switch (page.type) {
       case 'LOGIN': {
         this.setState({
           didCompleteInitialSearch: true,
-          page: {
-            providers: payload.type === 'SUCCESS' ? payload.providers : [],
-            search: page.search,
-            selectedProvider: page.selectedProvider,
-            type: 'LOGIN',
+          pageTransition: {
+            page: {
+              providers: payload.type === 'SUCCESS' ? payload.providers : [],
+              search: page.search,
+              selectedProvider: page.selectedProvider,
+              type: 'LOGIN',
+            },
+            type: 'NOT_TRANSITIONING',
           },
         });
         break;
@@ -453,17 +525,20 @@ class AccountVerification extends Component<Props, State> {
       case 'SEARCH_ERROR': {
         this.setState({
           didCompleteInitialSearch: true,
-          page:
-            payload.type === 'SUCCESS'
-              ? {
-                  providers: payload.providers,
-                  search: page.search,
-                  type: 'SEARCH',
-                }
-              : {
-                  search: page.search,
-                  type: 'SEARCH_ERROR',
-                },
+          pageTransition: {
+            page:
+              payload.type === 'SUCCESS'
+                ? {
+                    providers: payload.providers,
+                    search: page.search,
+                    type: 'SEARCH',
+                  }
+                : {
+                    search: page.search,
+                    type: 'SEARCH_ERROR',
+                  },
+            type: 'NOT_TRANSITIONING',
+          },
         });
         break;
       }
@@ -473,9 +548,36 @@ class AccountVerification extends Component<Props, State> {
     }
   };
 
-  _getFooterButtonLayout() {
+  _performPageTransition(fromPage: Page, toPage: Page): void {
+    this.setState(
+      {
+        pageTransition: {
+          fromPage,
+          toPage,
+          type: 'TRANSITIONING',
+        },
+      },
+      () => {
+        this._getInactiveTransition().setValue(1.0);
+        Animated.timing(this._getActiveTransition(), {
+          duration: 300,
+          toValue: 0.0,
+          easing: Easing.out(Easing.cubic),
+        }).start(() => {
+          this.setState({
+            activeTransition: this.state.activeTransition === 'A' ? 'B' : 'A',
+            pageTransition: {
+              page: toPage,
+              type: 'NOT_TRANSITIONING',
+            },
+          });
+        });
+      },
+    );
+  }
+
+  _getFooterButtonLayout(page: Page, enableInteraction: bool) {
     const { providerPendingLoginID } = this.props;
-    const { page } = this.state;
     if (page.type === 'LOGIN') {
       const { selectedProvider } = page;
       const authValues = getAuthValues(selectedProvider);
@@ -483,7 +585,8 @@ class AccountVerification extends Component<Props, State> {
         Boolean(providerPendingLoginID) ||
         authValues.some(val => !val || val.length === 0);
       return {
-        isRightButtonDisabled: shouldDisableLoginButton,
+        isLeftButtonDisabled: !enableInteraction,
+        isRightButtonDisabled: !enableInteraction || shouldDisableLoginButton,
         leftButtonText: 'EXIT',
         rightButtonText: 'LOGIN',
         type: 'LEFT_AND_RIGHT',
@@ -491,8 +594,27 @@ class AccountVerification extends Component<Props, State> {
     }
     return {
       centerButtonText: 'EXIT',
+      isCenterButtonDisabled: !enableInteraction,
       type: 'CENTER',
     };
+  }
+
+  _getCurrentPage(): Page {
+    return this.state.pageTransition.type === 'NOT_TRANSITIONING'
+      ? this.state.pageTransition.page
+      : this.state.pageTransition.toPage;
+  }
+
+  _getActiveTransition(): Animated.Value {
+    return this.state.activeTransition === 'A'
+      ? this._pageTransitionA
+      : this._pageTransitionB;
+  }
+
+  _getInactiveTransition(): Animated.Value {
+    return this.state.activeTransition === 'A'
+      ? this._pageTransitionB
+      : this._pageTransitionA;
   }
 
   _isCancelButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {

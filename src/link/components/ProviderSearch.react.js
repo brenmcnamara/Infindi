@@ -25,7 +25,7 @@ import type { Provider } from 'common/lib/models/Provider';
 export type Props = {
   accountLinkCollection: AccountLinkCollection,
   didCompleteInitialSearch: bool,
-  isEditable: bool,
+  enableInteraction: bool,
   onSelectProvider: (provider: Provider) => any,
   providers: Array<Provider>,
   search: string,
@@ -83,7 +83,11 @@ export default class ProviderSearch extends Component<Props> {
     const providerName = yodleeProvider.name;
     const baseURL = yodleeProvider.baseUrl;
     return (
-      <TouchableOpacity onPress={() => this.props.onSelectProvider(item)}>
+      <TouchableOpacity
+        onPress={() =>
+          this.props.enableInteraction && this.props.onSelectProvider(item)
+        }
+      >
         <View style={itemStyles}>
           <View style={styles.searchResultsItemContent}>
             <Text style={nameStyles}>{providerName}</Text>
