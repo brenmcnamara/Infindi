@@ -1,14 +1,23 @@
 /* @flow */
 
+import { DEFAULT_TAB_NAME } from '../common/route-utils';
+
+import type { ID } from 'common/types/core';
 import type { PureAction } from '../typesDEPRECATED/redux';
-import type { TabType } from '../common/route-utils';
+import type { TabName } from '../common/route-utils';
+
+export type RequestedTransactions =
+  | {| +type: 'NO' |}
+  | {| +accountID: ID, +type: 'YES' |};
 
 export type State = {
-  +requestedTab: TabType | null,
+  +requestedTabName: TabName,
+  +requestedTransactions: RequestedTransactions,
 };
 
 const DEFAULT_STATE: State = {
-  requestedTab: null,
+  requestedTabName: DEFAULT_TAB_NAME,
+  requestedTransactions: { type: 'NO' },
 };
 
 export default function routeState(
@@ -17,7 +26,12 @@ export default function routeState(
 ): State {
   switch (action.type) {
     case 'REQUEST_TAB':
-      return { ...state, requestedTab: action.tab };
+      return { ...state, requestedTabName: action.tabName };
+    case 'REQUEST_TRANSACTIONS':
+      return {
+        ...state,
+        requestedTransactions: { accountID: action.accountID, type: 'YES' },
+      };
   }
   return state;
 }

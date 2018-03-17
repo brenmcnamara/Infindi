@@ -8,7 +8,7 @@ import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelCollection } from '../datastore';
-import type { RootType, Route } from '../common/route-utils';
+import type { RootName, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
 
@@ -48,16 +48,6 @@ export function getUserFullName(state: State): ?string {
   return `${userInfo.firstName} ${userInfo.lastName}`;
 }
 
-export function getRoute(state: State): Route {
-  const root = calculateRoot(state);
-  if (root !== 'MAIN') {
-    return { name: root, next: null };
-  }
-  // Need to calculate the tab that is showing.
-  const tab = state.routeState.requestedTab || 'ACCOUNTS';
-  return { name: root, next: { name: tab, next: null } };
-}
-
 export function getNetWorth(state: State): Dollars {
   const { accounts } = state;
   switch (accounts.type) {
@@ -91,33 +81,4 @@ export function getAccountLinkCollection(state: State): AccountLinkCollection {
   return state.accountLinks.type === 'STEADY'
     ? state.accountLinks.collection
     : {};
-}
-
-// -----------------------------------------------------------------------------
-//
-// UTILITIES
-//
-// -----------------------------------------------------------------------------
-
-function calculateRoot(state: State): RootType {
-  const { authStatus, configState, actionItems } = state;
-  if (configState.envStatus === 'ENV_LOADING') {
-    return 'LOADING';
-  }
-
-  switch (authStatus.type) {
-    case 'LOGIN_INITIALIZE':
-    case 'LOGIN_FAILURE':
-    case 'LOGOUT_INITIALIZE':
-    case 'LOGOUT_FAILURE':
-    case 'LOGGED_OUT':
-      // The user can only see the login page if they have internet.
-      return 'AUTH';
-    case 'LOGGED_IN':
-      return actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
-    case 'NOT_INITIALIZED':
-      return 'LOADING';
-    default:
-      invariant(false, 'Unrecognized auth status: %s', authStatus.type);
-  }
 }

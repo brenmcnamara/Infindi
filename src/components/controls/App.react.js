@@ -13,9 +13,8 @@ import Tabs from './Tabs.react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
+import { createRoute, forceGetNextNode } from '../../common/route-utils';
 import { envDoneLoading, envFailedLoading } from '../../actions/config';
-import { getRoot } from '../../common/route-utils';
-import { getRoute } from '../../common/state-utils';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -24,11 +23,11 @@ import {
 } from 'react-native';
 
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
-import type { RootType } from '../../common/route-utils';
+import type { RouteNode } from '../../common/route-utils';
 import type { State as ReduxState } from '../../reducers/root';
 
 export type Props = ReduxProps & {
-  root: RootType,
+  root: RouteNode,
 };
 
 class App extends Component<Props> {
@@ -46,7 +45,7 @@ class App extends Component<Props> {
   render() {
     const { root } = this.props;
     let mainContent = null;
-    switch (root) {
+    switch (root.name) {
       case 'AUTH': {
         mainContent = <LoginScreen />;
         break;
@@ -58,7 +57,7 @@ class App extends Component<Props> {
       }
 
       case 'MAIN': {
-        mainContent = <Tabs />;
+        mainContent = <Tabs routeNode={forceGetNextNode(root)} />;
         break;
       }
 
@@ -90,25 +89,13 @@ class App extends Component<Props> {
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.main}>
-            {this.props.root === 'MAIN' ? <ModalManager /> : null}
+            {this.props.root.name === 'MAIN' ? <ModalManager /> : null}
             {mainContent}
           </View>
           <View style={bottomAreaStyles} />
         </SafeAreaView>
       </KeyboardAvoidingView>
     );
-  }
-
-  _renderAuth() {
-    return null;
-  }
-
-  _renderLoading() {
-    return null;
-  }
-
-  _renderMain() {
-    return <Tabs />;
   }
 }
 
@@ -133,9 +120,7 @@ const styles = StyleSheet.create({
 });
 
 function mapReduxStateToProps(state: ReduxState) {
-  const route = getRoute(state);
-  const root = getRoot(route);
-  return { root };
+  return { root: createRoute(state) };
 }
 
 export default connect(mapReduxStateToProps)(App);
