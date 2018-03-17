@@ -6,18 +6,14 @@ import type { ID } from 'common/types/core';
 import type { PureAction } from '../typesDEPRECATED/redux';
 import type { TabName } from '../common/route-utils';
 
-export type RequestedTransactions =
-  | {| +type: 'NO' |}
-  | {| +accountID: ID, +type: 'YES' |};
-
 export type State = {
-  +requestedTabName: TabName,
-  +requestedTransactions: RequestedTransactions,
+  +accountDetailsID: ID | null,
+  +tabName: TabName,
 };
 
 const DEFAULT_STATE: State = {
-  requestedTabName: DEFAULT_TAB_NAME,
-  requestedTransactions: { type: 'NO' },
+  accountDetailsID: null,
+  tabName: DEFAULT_TAB_NAME,
 };
 
 export default function routeState(
@@ -25,12 +21,19 @@ export default function routeState(
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'REQUEST_TAB':
-      return { ...state, requestedTabName: action.tabName };
-    case 'REQUEST_TRANSACTIONS':
+    case 'EXIT_ACCOUNT_DETAILS':
       return {
         ...state,
-        requestedTransactions: { accountID: action.accountID, type: 'YES' },
+        accountDetailsID: null,
+      };
+
+    case 'VIEW_TAB':
+      return { ...state, tabName: action.tabName };
+
+    case 'VIEW_ACCOUNT_DETAILS':
+      return {
+        ...state,
+        accountDetailsID: action.accountID,
       };
   }
   return state;

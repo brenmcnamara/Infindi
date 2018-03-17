@@ -33,7 +33,8 @@ import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload, getNetWorth } from '../common/state-utils';
 import { requestAccountVerification } from '../link/action';
-import { requestInfoModal, requestUnimplementedModal } from '../actions/modal';
+import { requestInfoModal } from '../actions/modal';
+import { viewAccountDetails } from '../actions/router';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type { AccountCollection } from '../reducers/accounts';
@@ -205,7 +206,7 @@ class AccountsScreen extends Component<Props> {
   };
 
   _onSelectAccount = (account: Account): void => {
-    this.props.dispatch(requestUnimplementedModal('View Account Transactions'));
+    this.props.dispatch(viewAccountDetails(account.id));
   };
 
   _getData() {

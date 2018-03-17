@@ -9,6 +9,13 @@ import React, { Component } from 'react';
 import TextDesign from '../design/text';
 
 import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {
   getAccountName,
   getAccountType,
   getBalance,
@@ -19,13 +26,6 @@ import {
   getCreditCardType,
   isCreditCardAccount,
 } from '../common/credit-card-utils';
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 
 import type { Account } from 'common/lib/models/Account';
 

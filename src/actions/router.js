@@ -3,21 +3,38 @@
 import type { ID } from 'common/types/core';
 import type { TabName } from '../common/route-utils';
 
-export type Action = Action$RequestTab | Action$RequestTransactions;
+export type Action = Action$ViewTab | Action$ViewAccountDetails;
 
-export type Action$RequestTab = {|
+export type Action$ViewTab = {|
   +tabName: TabName,
-  +type: 'REQUEST_TAB',
+  +type: 'VIEW_TAB',
 |};
 
-export type Action$RequestTransactions = {|
+export type Action$ViewAccountDetails = {|
   +accountID: ID,
-  +type: 'REQUEST_TRANSACTIONS',
+  +type: 'VIEW_ACCOUNT_DETAILS',
 |};
 
-export function requestTab(tabName: TabName) {
+export type Action$ExitAccountDetails = {|
+  +type: 'EXIT_ACCOUNT_DETAILS',
+|};
+
+export function viewTab(tabName: TabName) {
   return {
     tabName,
-    type: 'REQUEST_TAB',
+    type: 'VIEW_TAB',
   };
+}
+
+export function viewAccountDetails(accountID: ID) {
+  return {
+    accountID,
+    type: 'VIEW_ACCOUNT_DETAILS',
+  };
+}
+
+export function exitAccountDetails() {
+  return {
+    type: 'EXIT_ACCOUNT_DETAILS',
+  }
 }

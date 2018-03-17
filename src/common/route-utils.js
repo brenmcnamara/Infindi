@@ -46,29 +46,25 @@ export function createRoute(state: ReduxState): Route {
 
 function createAccounts(state: ReduxState): RouteNode {
   invariant(
-    state.routeState.requestedTabName === 'ACCOUNTS',
+    state.routeState.tabName === 'ACCOUNTS',
     'Expecting ACCOUNTS to be active tab: %s',
-    state.routeState.requestedTabName,
+    state.routeState.tabName,
   );
-  const isRequestingTransactions =
-    state.routeState.requestedTransactions.type === 'YES';
+  const isRequestingAccountDetails = state.routeState.accountDetailsID !== null;
 
   return {
     name: 'ACCOUNTS',
-    next: isRequestingTransactions ? createTransactions(state) : null,
+    next: isRequestingAccountDetails ? createAccountDetails(state) : null,
   };
 }
 
-function createTransactions(state: ReduxState): RouteNode {
-  const { requestedTransactions } = state.routeState;
-  invariant(
-    requestedTransactions.type === 'YES',
-    'Expecting transactions to be requested',
-  );
+function createAccountDetails(state: ReduxState): RouteNode {
+  const { accountDetailsID } = state.routeState;
+  invariant(accountDetailsID, 'Expecting account details to be requested');
   return {
-    name: 'TRANSACTIONS',
+    name: 'ACCOUNT_DETAILS',
     next: null,
-    payload: { accountID: requestedTransactions.accountID },
+    payload: { accountID: accountDetailsID },
   };
 }
 
