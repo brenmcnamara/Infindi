@@ -7,12 +7,12 @@ import { getBalance } from 'common/lib/models/Account';
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
-import type { ModelCollection } from '../datastore';
+import type { ModelContainer } from '../datastore';
 import type { RootName, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
 
-type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
+type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 // -----------------------------------------------------------------------------
 //
@@ -58,11 +58,11 @@ export function getNetWorth(state: State): Dollars {
     }
 
     case 'STEADY': {
-      const { collection } = accounts;
+      const { container } = accounts;
       let total = 0;
-      for (const id in collection) {
-        if (collection.hasOwnProperty(id)) {
-          total += getBalance(collection[id]);
+      for (const id in container) {
+        if (container.hasOwnProperty(id)) {
+          total += getBalance(container[id]);
         }
       }
       return total;
@@ -77,8 +77,8 @@ export function getToast(state: State, toastID: ID): Toast | null {
   return state.toast.bannerQueue.find(banner => banner.id === toastID) || null;
 }
 
-export function getAccountLinkCollection(state: State): AccountLinkCollection {
+export function getAccountLinkContainer(state: State): AccountLinkContainer {
   return state.accountLinks.type === 'STEADY'
-    ? state.accountLinks.collection
+    ? state.accountLinks.container
     : {};
 }

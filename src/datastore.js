@@ -14,7 +14,7 @@ type InfindiError = { errorCode: string, errorMessage: string };
 //
 // -----------------------------------------------------------------------------
 
-export type ModelCollection<TName: string, TModel: ModelStub<TName>> = {
+export type ModelContainer<TName: string, TModel: ModelStub<TName>> = {
   [id: ID]: TModel,
 };
 
@@ -30,33 +30,33 @@ export type ModelState<TName: string, TModel: ModelStub<TName>> =
       +type: 'DOWNLOAD_FAILED',
     |}
   | {|
-      +collection: ModelCollection<TName, TModel>,
+      +container: ModelContainer<TName, TModel>,
       +type: 'STEADY',
     |};
 
 export type Action<
   TName: string,
   TModel: ModelStub<TName>,
-> = Action$ModelCollection<TName, TModel>;
+> = Action$ModelContainer<TName, TModel>;
 
-export type Action$ModelCollection<TName: string, TModel: ModelStub<TName>> =
+export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
   | {|
       +modelName: TName,
-      +type: 'COLLECTION_DOWNLOAD_START',
+      +type: 'CONTAINER_DOWNLOAD_START',
     |}
   | {|
-      +collection: ModelCollection<TName, TModel>,
+      +container: ModelContainer<TName, TModel>,
       +modelName: TName,
-      +type: 'COLLECTION_DOWNLOAD_FINISHED',
+      +type: 'CONTAINER_DOWNLOAD_FINISHED',
     |}
   | {|
       +error: InfindiError,
       +modelName: TName,
-      +type: 'COLLECTION_DOWNLOAD_FAILURE',
+      +type: 'CONTAINER_DOWNLOAD_FAILURE',
     |}
   | {|
       +modelName: TName,
-      +type: 'COLLECTION_CLEAR',
+      +type: 'CONTAINER_CLEAR',
     |}
   | {|
       +modelID: ID,
@@ -72,7 +72,7 @@ const DEFAULT_STATE = {
 /**
  * Generates a reducer for a model with a particular name.
  */
-export function createModelCollectionReducer<
+export function createModelContainerReducer<
   TName: string,
   TModel: ModelStub<TName>,
 >(modelName: TName): Reducer<ModelState<TName, TModel>> {
@@ -81,14 +81,14 @@ export function createModelCollectionReducer<
     action: PureAction,
   ) => {
     switch (action.type) {
-      case 'COLLECTION_DOWNLOAD_START': {
+      case 'CONTAINER_DOWNLOAD_START': {
         if (action.modelName === modelName) {
           return { type: 'DOWNLOADING' };
         }
         break;
       }
 
-      case 'COLLECTION_DOWNLOAD_FINISHED': {
+      case 'CONTAINER_DOWNLOAD_FINISHED': {
         if (action.modelName === modelName) {
           // NOTE: Flow does not know how to reconcile the model names. This is
           // because flow cannot make the assumption that these names are
@@ -100,20 +100,20 @@ export function createModelCollectionReducer<
           // that model names are always mutually exclusive, so we know better
           // than flow here.
           // $FlowFixMe - See above explanation
-          const collection: ModelCollection<TName, TModel> = action.collection;
-          return mergeCollectionWithState(modelName, state, collection);
+          const container: ModelContainer<TName, TModel> = action.container;
+          return mergeContainerWithState(modelName, state, container);
         }
         break;
       }
 
-      case 'COLLECTION_DOWNLOAD_FAILURE': {
+      case 'CONTAINER_DOWNLOAD_FAILURE': {
         if (action.modelName === modelName) {
           return mergeDownloadFailureWithState(modelName, state, action.error);
         }
         break;
       }
 
-      case 'COLLECTION_CLEAR': {
+      case 'CONTAINER_CLEAR': {
         if (action.modelName === modelName) {
           return { type: 'EMPTY' };
         }
@@ -138,18 +138,18 @@ export function createModelCollectionReducer<
 
 /*
 export const createDatastorenMiddleware = <
-  TCollectionName: string,
+  TContainerName: string,
   TModelName: string,
   TModel: ModelStub<TModelName>,
 >(
-  collectionName: TCollectionName,
+  containerName: TContainerName,
   modelName: TModelName,
 ) => (store: Store) => (next: Next) => {
   const Database = Firebase.firestore();
 
   function startListening() {
     const loginPayload = getLoginPayload(store.getState());
-    Database.collection(collectionName).where('userRef.refID', '==', loginPayload.userInfo.id);
+    Database.container(containerName).where('userRef.refID', '==', loginPayload.userInfo.id);
   }
 
   function stopListening() {}
@@ -164,10 +164,10 @@ export const createDatastorenMiddleware = <
 //
 // -----------------------------------------------------------------------------
 
-function mergeCollectionWithState<TName: string, TModel: ModelStub<TName>>(
+function mergeContainerWithState<TName: string, TModel: ModelStub<TName>>(
   modelName: TName,
   state: ModelState<TName, TModel>,
-  collection: ModelCollection<TName, TModel>,
+  container: ModelContainer<TName, TModel>,
 ): ModelState<TName, TModel> {
   // TODO: For now, this erases the previous state and replaces it with the
   // current state. There is going to need to be more complicated logic here.
@@ -176,7 +176,7 @@ function mergeCollectionWithState<TName: string, TModel: ModelStub<TName>>(
   // (2) For things like accounts, we want to always replace the current state
   // with the new, existing state.
   return {
-    collection,
+    container,
     type: 'STEADY',
   };
 }
@@ -188,7 +188,7 @@ function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(
 ): ModelState<TName, TModel> {
   invariant(
     state.type === 'DOWNLOADING',
-    '[%s Collection State]: Cannot merge with a download error %s with state %s',
+    '[%s Container State]: Cannot merge with a download error %s with state %s',
     modelName,
     error.errorCode,
     state.type,
@@ -204,7 +204,7 @@ function removeModel<TName: string, TModel: ModelStub<TName>>(
   if (state.type !== 'STEADY') {
     return state;
   }
-  const collection = { ...state.collection };
-  delete collection[modelID];
-  return { collection, type: 'STEADY' };
+  const container = { ...state.container };
+  delete container[modelID];
+  return { container, type: 'STEADY' };
 }

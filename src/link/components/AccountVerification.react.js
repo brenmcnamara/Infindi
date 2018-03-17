@@ -35,14 +35,14 @@ import {
   unsupportedProvider,
 } from '../action';
 import { isSupportedProvider } from '../utils';
-import { getAccountLinkCollection } from '../../common/state-utils';
+import { getAccountLinkContainer } from '../../common/state-utils';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
-import type { ModelCollection } from '../../datastore';
+import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../../reducers/root';
@@ -54,13 +54,13 @@ export type ComponentProps = {
 };
 
 export type ReduxStateProps = {
-  accountLinkCollection: AccountLinkCollection,
+  accountLinkContainer: AccountLinkContainer,
   providerPendingLoginID: ID | null,
 };
 
 export type Props = ReduxProps & ReduxStateProps & ComponentProps;
 
-type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
+type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 type Inset = {|
   +bottom: number,
@@ -346,7 +346,7 @@ class AccountVerification extends Component<Props, State> {
       case 'SEARCH': {
         return (
           <ProviderSearch
-            accountLinkCollection={this.props.accountLinkCollection}
+            accountLinkContainer={this.props.accountLinkContainer}
             didCompleteInitialSearch={didCompleteInitialSearch}
             enableInteraction={enableInteraction && transitionStage === 'IN'}
             onSelectProvider={this._onSelectProvider}
@@ -624,7 +624,7 @@ class AccountVerification extends Component<Props, State> {
 
 function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    accountLinkCollection: getAccountLinkCollection(state),
+    accountLinkContainer: getAccountLinkContainer(state),
     providerPendingLoginID: state.providers.providerPendingLogin
       ? state.providers.providerPendingLogin.id
       : null,

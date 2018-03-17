@@ -4,7 +4,7 @@ import invariant from 'invariant';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
-import type { ModelCollection } from '../../datastore';
+import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { PureAction } from '../../typesDEPRECATED/redux';
 
@@ -12,7 +12,7 @@ export type State = {
   +providerPendingLogin: Provider | null,
 };
 
-type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
+type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 const DEFAULT_STATE = {
   providerPendingLogin: null,
@@ -40,7 +40,7 @@ export default function provider(
       return { ...state, providerPendingLogin: null };
     }
 
-    case 'COLLECTION_DOWNLOAD_FINISHED': {
+    case 'CONTAINER_DOWNLOAD_FINISHED': {
       if (!state.providerPendingLogin) {
         return state;
       }
@@ -49,8 +49,8 @@ export default function provider(
         return state;
       }
       // $FlowFixMe - This is correct.
-      const collection: AccountLinkCollection = action.collection;
-      const accountLink = getAccountLinkForProvider(collection, providerID);
+      const container: AccountLinkContainer = action.container;
+      const accountLink = getAccountLinkForProvider(container, providerID);
       if (!accountLink) {
         return state;
       }
@@ -61,15 +61,15 @@ export default function provider(
 }
 
 function getAccountLinkForProvider(
-  accountLinkCollection: AccountLinkCollection,
+  accountLinkContainer: AccountLinkContainer,
   providerID: ID,
 ): AccountLink | null {
-  for (const id in accountLinkCollection) {
+  for (const id in accountLinkContainer) {
     if (
-      accountLinkCollection.hasOwnProperty(id) &&
-      accountLinkCollection[id].providerRef.refID === providerID
+      accountLinkContainer.hasOwnProperty(id) &&
+      accountLinkContainer[id].providerRef.refID === providerID
     ) {
-      return accountLinkCollection[id];
+      return accountLinkContainer[id];
     }
   }
   return null;

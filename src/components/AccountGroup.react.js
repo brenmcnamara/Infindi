@@ -13,13 +13,13 @@ import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
-import type { AccountLinkCollection } from '../reducers/accountLinks';
-import type { AccountCollection } from '../reducers/accounts';
+import type { AccountLinkContainer } from '../reducers/accountLinks';
+import type { AccountContainer } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
 
 export type Props = {
-  accountLinkCollection: AccountLinkCollection,
-  accounts: AccountCollection,
+  accountLinkContainer: AccountLinkContainer,
+  accounts: AccountContainer,
   groupType: AccountGroupType,
   onPressGroupInfo: () => any,
   onSelectAccount: (account: Account) => any,
@@ -56,11 +56,11 @@ export default class AccountGroup extends Component<Props> {
   }
 
   _renderAccount(account: Account, isFirst: bool) {
-    const { accountLinkCollection } = this.props;
+    const { accountLinkContainer } = this.props;
     return (
       <AccountComponent
         account={account}
-        isDownloading={isAccountDownloading(accountLinkCollection, account)}
+        isDownloading={isAccountDownloading(accountLinkContainer, account)}
         key={account.id}
         onSelect={() => this.props.onSelectAccount(account)}
         showTopBorder={!isFirst}
@@ -82,12 +82,12 @@ export default class AccountGroup extends Component<Props> {
 }
 
 function isAccountDownloading(
-  collection: AccountLinkCollection,
+  container: AccountLinkContainer,
   account: Account,
 ): bool {
-  for (const accountLinkID in collection) {
-    if (collection.hasOwnProperty(accountLinkID)) {
-      const accountLink = collection[accountLinkID];
+  for (const accountLinkID in container) {
+    if (container.hasOwnProperty(accountLinkID)) {
+      const accountLink = container[accountLinkID];
       if (
         account.accountLinkRef.refID === accountLink.id &&
         isLinking(accountLink)

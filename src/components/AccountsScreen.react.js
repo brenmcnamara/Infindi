@@ -37,8 +37,8 @@ import { requestInfoModal } from '../actions/modal';
 import { viewAccountDetails } from '../actions/router';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
-import type { AccountCollection } from '../reducers/accounts';
-import type { AccountLinkCollection } from '../reducers/accountLinks';
+import type { AccountContainer } from '../reducers/accounts';
+import type { AccountLinkContainer } from '../reducers/accountLinks';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
@@ -46,8 +46,8 @@ import type { State as ReduxState } from '../reducers/root';
 export type Props = ReduxProps & ReduxStateProps;
 
 type ReduxStateProps = {
-  accountLinkCollection: AccountLinkCollection,
-  accounts: AccountCollection,
+  accountLinkContainer: AccountLinkContainer,
+  accounts: AccountContainer,
   isDownloading: bool,
   netWorth: number,
 };
@@ -59,7 +59,7 @@ type RowItem =
       +rowType: 'NET_WORTH',
     |}
   | {|
-      +accounts: AccountCollection,
+      +accounts: AccountContainer,
       +groupType: AccountGroupType,
       +key: string,
       +rowType: 'ACCOUNTS',
@@ -176,7 +176,7 @@ class AccountsScreen extends Component<Props> {
         const { accounts, groupType } = item;
         return (
           <AccountGroup
-            accountLinkCollection={this.props.accountLinkCollection}
+            accountLinkContainer={this.props.accountLinkContainer}
             accounts={accounts}
             groupType={groupType}
             onPressGroupInfo={() => this._onPressGroupInfo(groupType)}
@@ -301,11 +301,11 @@ function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
     'Trying to render account data when no user is logged in',
   );
   return {
-    accounts: accounts.type === 'STEADY' ? accounts.collection : {},
+    accounts: accounts.type === 'STEADY' ? accounts.container : {},
     isDownloading: accounts.type === 'DOWNLOADING',
     netWorth: getNetWorth(state),
-    accountLinkCollection:
-      accountLinks.type === 'STEADY' ? accountLinks.collection : {},
+    accountLinkContainer:
+      accountLinks.type === 'STEADY' ? accountLinks.container : {},
   };
 }
 

@@ -4,15 +4,15 @@ import invariant from 'invariant';
 
 import { didLogin, willLogout } from '../common/action-utils';
 // eslint-disable-next-line max-len
-import { getAccountLinkCollection as getAccountLinkModelCollection } from 'common/lib/models/AccountLink';
+import { getAccountLinkCollection } from 'common/lib/models/AccountLink';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { LoginPayload } from 'common/lib/models/Auth';
-import type { ModelCollection } from '../datastore';
+import type { ModelContainer } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
 
-type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
+type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 export default (store: Store) => (next: Next) => {
   let accountLinkSubscription: ?EmitterSubscription = null;
@@ -37,32 +37,32 @@ function listenForAccountLink(
   loginPayload: LoginPayload,
   next: Next,
 ): EmitterSubscription {
-  next({ modelName: 'AccountLink', type: 'COLLECTION_DOWNLOAD_START' });
+  next({ modelName: 'AccountLink', type: 'CONTAINER_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
-  const remove = getAccountLinkModelCollection()
+  const remove = getAccountLinkCollection()
     .where('userRef.refID', '==', userID)
     .onSnapshot(snapshot => {
-      const collection: AccountLinkCollection = {};
+      const container: AccountLinkContainer = {};
       snapshot.docs.forEach(doc => {
         if (!doc.exists) {
           return;
         }
         const accountLink: AccountLink = doc.data();
-        collection[accountLink.id] = accountLink;
+        container[accountLink.id] = accountLink;
       });
 
-      // Update the refresh info collection.
+      // Update the refresh info container.
       next({
-        collection,
+        container,
         modelName: 'AccountLink',
-        type: 'COLLECTION_DOWNLOAD_FINISHED',
+        type: 'CONTAINER_DOWNLOAD_FINISHED',
       });
     });
   return { remove };
 }
 
 function clearUserData(next: Next): void {
-  next({ modelName: 'AccountLink', type: 'COLLECTION_CLEAR' });
+  next({ modelName: 'AccountLink', type: 'CONTAINER_CLEAR' });
 }
 
 function extractLoginPayload(action: PureAction): LoginPayload {

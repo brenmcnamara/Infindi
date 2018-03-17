@@ -23,7 +23,7 @@ import { getAccountsCollection } from 'common/lib/models/Account';
 import type { Account } from 'common/lib/models/Account';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { LoginPayload } from 'common/lib/models/Auth';
-import type { ModelCollection } from '../datastore';
+import type { ModelContainer } from '../datastore';
 import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
 
 export default (store: Store) => (next: Next) => {
@@ -48,32 +48,32 @@ function listenForAccounts(
   loginPayload: LoginPayload,
   next: Next,
 ): EmitterSubscription {
-  next({ modelName: 'Account', type: 'COLLECTION_DOWNLOAD_START' });
+  next({ modelName: 'Account', type: 'CONTAINER_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
   const remove = getAccountsCollection()
     .where('canDisplay', '==', true)
     .where('sourceOfTruth.type', '==', 'YODLEE')
     .where('userRef.refID', '==', userID)
     .onSnapshot(snapshot => {
-      const collection: ModelCollection<*, Account> = {};
+      const container: ModelContainer<*, Account> = {};
       snapshot.docs.forEach(doc => {
         if (!doc.exists) {
           return;
         }
         const account: Account = doc.data();
-        collection[account.id] = account;
+        container[account.id] = account;
       });
       next({
-        collection,
+        container,
         modelName: 'Account',
-        type: 'COLLECTION_DOWNLOAD_FINISHED',
+        type: 'CONTAINER_DOWNLOAD_FINISHED',
       });
     });
   return { remove };
 }
 
 function clearUserData(next: Next): void {
-  next({ modelName: 'Account', type: 'COLLECTION_CLEAR' });
+  next({ modelName: 'Account', type: 'CONTAINER_CLEAR' });
 }
 
 function extractLoginPayload(action: PureAction): LoginPayload {

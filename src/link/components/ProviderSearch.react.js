@@ -19,11 +19,11 @@ import {
 import { isLinking } from 'common/lib/models/AccountLink';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
-import type { ModelCollection } from '../../datastore';
+import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 
 export type Props = {
-  accountLinkCollection: AccountLinkCollection,
+  accountLinkContainer: AccountLinkContainer,
   didCompleteInitialSearch: bool,
   enableInteraction: bool,
   onSelectProvider: (provider: Provider) => any,
@@ -31,7 +31,7 @@ export type Props = {
   search: string,
 };
 
-type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
+type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 export default class ProviderSearch extends Component<Props> {
   _transitionValue: Animated.Value;
@@ -100,13 +100,13 @@ export default class ProviderSearch extends Component<Props> {
   };
 
   _getAccountLinkForProvider(provider: Provider): AccountLink | null {
-    const collection = this.props.accountLinkCollection;
-    for (const id in collection) {
+    const container = this.props.accountLinkContainer;
+    for (const id in container) {
       if (
-        collection.hasOwnProperty(id) &&
-        collection[id].providerRef.refID === provider.id
+        container.hasOwnProperty(id) &&
+        container[id].providerRef.refID === provider.id
       ) {
-        return collection[id];
+        return container[id];
       }
     }
     return null;

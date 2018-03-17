@@ -3,7 +3,10 @@
 import type { ID } from 'common/types/core';
 import type { TabName } from '../common/route-utils';
 
-export type Action = Action$ViewTab | Action$ViewAccountDetails;
+export type Action =
+  | Action$ViewTab
+  | Action$ViewAccountDetails
+  | Action$ExitAccountDetails;
 
 export type Action$ViewTab = {|
   +tabName: TabName,
@@ -36,5 +39,5 @@ export function viewAccountDetails(accountID: ID) {
 export function exitAccountDetails() {
   return {
     type: 'EXIT_ACCOUNT_DETAILS',
-  }
+  };
 }

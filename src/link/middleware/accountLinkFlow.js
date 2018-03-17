@@ -10,11 +10,11 @@ import { forEachObject } from '../../common/obj-utils';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
-import type { ModelCollection } from '../../datastore';
+import type { ModelContainer } from '../../datastore';
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../../reducers/root';
 
-type AccountLinkCollection = ModelCollection<'AccountLink', AccountLink>;
+type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
 
@@ -86,19 +86,19 @@ export default (store: Store) => (next: Next) => {
     next(action);
 
     switch (action.type) {
-      case 'COLLECTION_DOWNLOAD_FINISHED': {
+      case 'CONTAINER_DOWNLOAD_FINISHED': {
         if (action.modelName !== 'AccountLink') {
           break;
         }
         // $FlowFixMe - This is correct
-        const collection: AccountLinkCollection = action.collection;
-        forEachObject(collection, accountLink => {
+        const container: AccountLinkContainer = action.container;
+        forEachObject(container, accountLink => {
           const providerID = accountLink.providerRef.refID;
           const accountLinkPhase = getAccountLinkPhase(accountLink);
           updateAccountLinkPhase(providerID, accountLinkPhase);
         });
 
-        const shouldShowAccountsDownloadingBanner = containsLinking(collection);
+        const shouldShowAccountsDownloadingBanner = containsLinking(container);
         updateAccountsDownloading(shouldShowAccountsDownloadingBanner);
         break;
       }
@@ -170,9 +170,9 @@ function requestAccountLinkBanner(
 //   return dismissToast(`PROVIDERS/${providerID}`);
 // }
 
-function containsLinking(collection: AccountLinkCollection): bool {
-  for (const id in collection) {
-    if (collection.hasOwnProperty(id) && isLinking(collection[id])) {
+function containsLinking(container: AccountLinkContainer): bool {
+  for (const id in container) {
+    if (container.hasOwnProperty(id) && isLinking(container[id])) {
       return true;
     }
   }
