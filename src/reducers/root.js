@@ -9,6 +9,7 @@ import modalState from './modalState';
 import providers from '../link/reducers/providers';
 import routeState from './routeState';
 import toast from './toast';
+import transactionLoading from './transactionLoading';
 import transactions from './transactions';
 
 import { combineReducers } from 'redux';
@@ -22,6 +23,7 @@ import type { State as State$ModalState } from './modalState';
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Providers } from '../link/reducers/providers';
 import type { State as State$Toast } from './toast';
+import type { State as State$TransactionLoading } from './transactionLoading';
 import type { State as State$Transactions } from './transactions';
 
 export type State = {|
@@ -34,6 +36,7 @@ export type State = {|
   +providers: State$Providers,
   +routeState: State$RouteState,
   +toast: State$Toast,
+  +transactionLoading: State$TransactionLoading,
   +transactions: State$Transactions,
 |};
 
@@ -48,5 +51,6 @@ export default combineReducers({
   providers,
   routeState,
   toast,
+  transactionLoading,
   transactions,
 });

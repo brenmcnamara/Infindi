@@ -1,6 +1,7 @@
 /* @flow */
 
 import invariant from 'invariant';
+import uuid from 'uuid/v4';
 
 import { didLogin, willLogout } from '../common/action-utils';
 // eslint-disable-next-line max-len
@@ -37,7 +38,12 @@ function listenForAccountLink(
   loginPayload: LoginPayload,
   next: Next,
 ): EmitterSubscription {
-  next({ modelName: 'AccountLink', type: 'CONTAINER_DOWNLOAD_START' });
+  let operationID = uuid();
+  next({
+    modelName: 'AccountLink',
+    operationID,
+    type: 'CONTAINER_DOWNLOAD_START',
+  });
   const userID = loginPayload.firebaseUser.uid;
   const remove = getAccountLinkCollection()
     .where('userRef.refID', '==', userID)
@@ -55,15 +61,21 @@ function listenForAccountLink(
       next({
         container,
         modelName: 'AccountLink',
+        operationID,
         type: 'CONTAINER_DOWNLOAD_FINISHED',
         updateStrategy: 'REPLACE_CURRENT_CONTAINER',
       });
+      operationID = uuid();
     });
   return { remove };
 }
 
 function clearUserData(next: Next): void {
-  next({ modelName: 'AccountLink', type: 'CONTAINER_CLEAR' });
+  next({
+    modelName: 'AccountLink',
+    operationID: uuid(),
+    type: 'CONTAINER_CLEAR',
+  });
 }
 
 function extractLoginPayload(action: PureAction): LoginPayload {

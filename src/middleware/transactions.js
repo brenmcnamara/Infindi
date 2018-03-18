@@ -1,6 +1,7 @@
 /* @flow */
 
 import invariant from 'invariant';
+import uuid from 'uuid/v4';
 
 import { getTransactionCollection } from 'common/lib/models/Transaction';
 import { getTransactionsForAccount, getUserID } from '../common/state-utils';
@@ -15,9 +16,11 @@ type TransactionContainer = ModelContainer<'Transaction', Transaction>;
 export default (store: Store) => (next: Next) => {
 
   async function genFetchTransactions(accountID: ID): Promise<void> {
+    const operationID = uuid();
     next({
-      downloadInfo: { accountIDs: [accountID] },
+      downloadInfo: { accountID },
       modelName: 'Transaction',
+      operationID,
       type: 'CONTAINER_DOWNLOAD_START',
     });
 
@@ -39,6 +42,7 @@ export default (store: Store) => (next: Next) => {
       next({
         error,
         modelName: 'Transaction',
+        operationID,
         type: 'CONTAINER_DOWNLOAD_FAILURE',
       });
       return;
@@ -56,6 +60,7 @@ export default (store: Store) => (next: Next) => {
     next({
       container,
       modelName: 'Transaction',
+      operationID,
       type: 'CONTAINER_DOWNLOAD_FINISHED',
       updateStrategy: 'MERGE_WITH_CURRENT_CONTAINER',
     });

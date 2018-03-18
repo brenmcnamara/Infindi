@@ -1,6 +1,7 @@
 /* @flow */
 
 import invariant from 'invariant';
+import uuid from 'uuid/v4';
 
 import { didLogin, willLogout } from '../common/action-utils';
 import { getAccountsCollection } from 'common/lib/models/Account';
@@ -33,7 +34,8 @@ function listenForAccounts(
   loginPayload: LoginPayload,
   next: Next,
 ): EmitterSubscription {
-  next({ modelName: 'Account', type: 'CONTAINER_DOWNLOAD_START' });
+  let operationID = uuid();
+  next({ modelName: 'Account', operationID, type: 'CONTAINER_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
   const remove = getAccountsCollection()
     .where('canDisplay', '==', true)
@@ -51,6 +53,7 @@ function listenForAccounts(
       next({
         container,
         modelName: 'Account',
+        operationID,
         type: 'CONTAINER_DOWNLOAD_FINISHED',
         updateStrategy: 'REPLACE_CURRENT_CONTAINER',
       });
@@ -59,7 +62,7 @@ function listenForAccounts(
 }
 
 function clearUserData(next: Next): void {
-  next({ modelName: 'Account', type: 'CONTAINER_CLEAR' });
+  next({ modelName: 'Account', operationID: uuid(), type: 'CONTAINER_CLEAR' });
 }
 
 function extractLoginPayload(action: PureAction): LoginPayload {

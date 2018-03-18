@@ -118,15 +118,3 @@ export function getTransactionsForAccount(
   );
   return transactions;
 }
-
-export function isLoadingTransactionsForAccount(
-  state: State,
-  accountID: ID,
-): bool {
-  const { transactions } = state;
-  return (
-    transactions.type === 'CONTAINER_DOWNLOAD_START' &&
-    transactions.downloadInfo &&
-    transactions.downloadInfo.accountIDs.includes(accountID)
-  );
-}

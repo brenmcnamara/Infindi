@@ -49,26 +49,31 @@ export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
   | {|
       +downloadInfo?: any,
       +modelName: TName,
+      +operationID: ID,
       +type: 'CONTAINER_DOWNLOAD_START',
     |}
   | {|
       +container: ModelContainer<TName, TModel>,
       +modelName: TName,
+      +operationID: ID,
       +type: 'CONTAINER_DOWNLOAD_FINISHED',
       +updateStrategy: ContainerUpdateStrategy,
     |}
   | {|
       +error: InfindiError,
       +modelName: TName,
+      +operationID: ID,
       +type: 'CONTAINER_DOWNLOAD_FAILURE',
     |}
   | {|
       +modelName: TName,
+      +operationID: ID,
       +type: 'CONTAINER_CLEAR',
     |}
   | {|
       +modelID: ID,
       +modelName: TName,
+      +operationID: ID,
       +shouldPersist: bool,
       +type: 'MODEL_REMOVE',
     |};
