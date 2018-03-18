@@ -13,7 +13,6 @@ import type { Transaction } from 'common/lib/models/Transaction';
 type TransactionContainer = ModelContainer<'Transaction', Transaction>;
 
 export default (store: Store) => (next: Next) => {
-  // We will open a collection listener for each account that the user has.
 
   async function genFetchTransactions(accountID: ID): Promise<void> {
     next({
