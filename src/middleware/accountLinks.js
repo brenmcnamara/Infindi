@@ -56,6 +56,7 @@ function listenForAccountLink(
         container,
         modelName: 'AccountLink',
         type: 'CONTAINER_DOWNLOAD_FINISHED',
+        updateStrategy: 'REPLACE_CURRENT_CONTAINER',
       });
     });
   return { remove };

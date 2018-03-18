@@ -14,6 +14,7 @@ import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
 import type { State } from '../reducers/root';
+import type { Transaction } from 'common/lib/models/Transaction';
 
 export type ReduxProps = {
   +dispatch: Dispatch,
@@ -26,6 +27,7 @@ export type PureAction =
   | Action$Config
   | Action$Datastore<'Account', Account>
   | Action$Datastore<'AccountLink', AccountLink>
+  | Action$Datastore<'Transaction', Transaction>
   | Action$Link
   | Action$Modal
   | Action$ModalMiddleware

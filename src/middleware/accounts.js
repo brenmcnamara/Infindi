@@ -1,20 +1,5 @@
 /* @flow */
 
-// TODO: Why won't flow cover next functions?
-
-/**
- * The purpose of this middleware is to coordinate the download and sync of all
- * data for the user. This includes:
- *
- * (1) Downloading and syncing data with firebase
- * (2) Downloading and syncing data with our own services
- * (3) Managing local data while in offline mode
- * (4) encrypting and storing data locally.
- *
- * NOTE: Some of the above functionality is reserved for future versions of this
- * middleware.
- */
-
 import invariant from 'invariant';
 
 import { didLogin, willLogout } from '../common/action-utils';
@@ -67,6 +52,7 @@ function listenForAccounts(
         container,
         modelName: 'Account',
         type: 'CONTAINER_DOWNLOAD_FINISHED',
+        updateStrategy: 'REPLACE_CURRENT_CONTAINER',
       });
     });
   return { remove };

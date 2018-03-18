@@ -3,14 +3,15 @@
 import invariant from 'invariant';
 
 import { getBalance } from 'common/lib/models/Account';
+import { getContainer } from '../datastore';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelContainer } from '../datastore';
-import type { RootName, Route } from '../common/route-utils';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
+import type { Transaction } from 'common/lib/models/Transaction';
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
@@ -29,6 +30,14 @@ export function getLoginPayload(state: State): ?LoginPayload {
     return state.authStatus.loginPayload;
   }
   return null;
+}
+
+export function getUserID(state: State): ID | null {
+  const loginPayload = getLoginPayload(state);
+  if (!loginPayload) {
+    return null;
+  }
+  return loginPayload.userInfo.id;
 }
 
 export function getUserFirstName(state: State): ?string {
@@ -81,4 +90,43 @@ export function getAccountLinkContainer(state: State): AccountLinkContainer {
   return state.accountLinks.type === 'STEADY'
     ? state.accountLinks.container
     : {};
+}
+
+// NOTE: The order the transaction firebase query returns transactions must be
+// in sync with the ordering returned from the method getTransactionsForAccount,
+// or there will be paging issues.
+export function getTransactionsForAccount(
+  state: State,
+  accountID: ID,
+): Array<Transaction> {
+  const transactionContainer = getContainer(state.transactions);
+  if (!transactionContainer) {
+    return [];
+  }
+  const transactions = [];
+
+  for (const transactionID in transactionContainer) {
+    if (
+      transactionContainer.hasOwnProperty(transactionID) &&
+      transactionContainer[transactionID].accountRef.refID === accountID
+    ) {
+      transactions.push(transactionContainer[transactionID]);
+    }
+  }
+  transactions.sort(
+    (t1, t2) => t2.transactionDate.getTime() - t1.transactionDate.getTime(),
+  );
+  return transactions;
+}
+
+export function isLoadingTransactionsForAccount(
+  state: State,
+  accountID: ID,
+): bool {
+  const { transactions } = state;
+  return (
+    transactions.type === 'CONTAINER_DOWNLOAD_START' &&
+    transactions.downloadInfo &&
+    transactions.downloadInfo.accountIDs.includes(accountID)
+  );
 }

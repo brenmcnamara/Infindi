@@ -14,6 +14,10 @@ type InfindiError = { errorCode: string, errorMessage: string };
 //
 // -----------------------------------------------------------------------------
 
+export type ContainerUpdateStrategy =
+  | 'REPLACE_CURRENT_CONTAINER'
+  | 'MERGE_WITH_CURRENT_CONTAINER';
+
 export type ModelContainer<TName: string, TModel: ModelStub<TName>> = {
   [id: ID]: TModel,
 };
@@ -23,6 +27,8 @@ export type ModelState<TName: string, TModel: ModelStub<TName>> =
       +type: 'EMPTY',
     |}
   | {|
+      +container: ModelContainer<TName, TModel> | null,
+      +downloadInfo?: any,
       +type: 'DOWNLOADING',
     |}
   | {|
@@ -41,6 +47,7 @@ export type Action<
 
 export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
   | {|
+      +downloadInfo?: any,
       +modelName: TName,
       +type: 'CONTAINER_DOWNLOAD_START',
     |}
@@ -48,6 +55,7 @@ export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
       +container: ModelContainer<TName, TModel>,
       +modelName: TName,
       +type: 'CONTAINER_DOWNLOAD_FINISHED',
+      +updateStrategy: ContainerUpdateStrategy,
     |}
   | {|
       +error: InfindiError,
@@ -83,7 +91,11 @@ export function createModelContainerReducer<
     switch (action.type) {
       case 'CONTAINER_DOWNLOAD_START': {
         if (action.modelName === modelName) {
-          return { type: 'DOWNLOADING' };
+          return {
+            container: getContainer(state),
+            downloadInfo: action.downloadInfo,
+            type: 'DOWNLOADING',
+          };
         }
         break;
       }
@@ -101,7 +113,12 @@ export function createModelContainerReducer<
           // than flow here.
           // $FlowFixMe - See above explanation
           const container: ModelContainer<TName, TModel> = action.container;
-          return mergeContainerWithState(modelName, state, container);
+          return mergeContainerWithState(
+            modelName,
+            state,
+            container,
+            action.updateStrategy,
+          );
         }
         break;
       }
@@ -132,53 +149,53 @@ export function createModelContainerReducer<
 
 // -----------------------------------------------------------------------------
 //
-// MIDDLEWARE GENERATOR
-//
-// -----------------------------------------------------------------------------
-
-/*
-export const createDatastorenMiddleware = <
-  TContainerName: string,
-  TModelName: string,
-  TModel: ModelStub<TModelName>,
->(
-  containerName: TContainerName,
-  modelName: TModelName,
-) => (store: Store) => (next: Next) => {
-  const Database = Firebase.firestore();
-
-  function startListening() {
-    const loginPayload = getLoginPayload(store.getState());
-    Database.container(containerName).where('userRef.refID', '==', loginPayload.userInfo.id);
-  }
-
-  function stopListening() {}
-
-  return (action: PureAction) => {};
-};
-*/
-
-// -----------------------------------------------------------------------------
-//
 // UTILITIES
 //
 // -----------------------------------------------------------------------------
+
+export function getContainer<TName: string, TModel: ModelStub<TName>>(
+  state: ModelState<TName, TModel>,
+): ModelContainer<TName, TModel> | null {
+  switch (state.type) {
+    case 'EMPTY':
+    case 'DOWNLOAD_FAILED': {
+      return null;
+    }
+    case 'DOWNLOADING': {
+      return state.container;
+    }
+    case 'STEADY': {
+      return state.container;
+    }
+    default:
+      return invariant(false, 'Unrecognized container state: %s', state.type);
+  }
+}
 
 function mergeContainerWithState<TName: string, TModel: ModelStub<TName>>(
   modelName: TName,
   state: ModelState<TName, TModel>,
   container: ModelContainer<TName, TModel>,
+  updateStrategy: ContainerUpdateStrategy,
 ): ModelState<TName, TModel> {
-  // TODO: For now, this erases the previous state and replaces it with the
-  // current state. There is going to need to be more complicated logic here.
-  // (1) For things like transactions, we want people to fetch more and
-  // continue growing the list.
-  // (2) For things like accounts, we want to always replace the current state
-  // with the new, existing state.
-  return {
-    container,
-    type: 'STEADY',
-  };
+  switch (updateStrategy) {
+    case 'REPLACE_CURRENT_CONTAINER': {
+      return { container, type: 'STEADY' };
+    }
+
+    case 'MERGE_WITH_CURRENT_CONTAINER': {
+      const prevContainer = getContainer(state);
+      const nextContainer = { ...prevContainer, ...container };
+      return { container: nextContainer, type: 'STEADY' };
+    }
+
+    default:
+      return invariant(
+        false,
+        'Unknown container update strategy: %s',
+        updateStrategy,
+      );
+  }
 }
 
 function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(

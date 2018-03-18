@@ -10,6 +10,7 @@ import providerLogin from '../link/middleware/providerLogin';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 import toast from '../middleware/toast';
+import transactions from '../middleware/transactions';
 
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
@@ -25,7 +26,8 @@ if (__DEV__) {
     authentication,
     accountLinks,
     accounts,
-    // plaid,
+    transactions,
+    // yodlee,
     providerLogin,
     // Then comes ui-managing middleware.
     accountLinkFlow,
@@ -42,7 +44,8 @@ if (__DEV__) {
     authentication,
     accountLinks,
     accounts,
-    // plaid,
+    transactions,
+    // yodlee,
     providerLogin,
     // Then comes ui-managing middleware.
     accountLinkFlow,
