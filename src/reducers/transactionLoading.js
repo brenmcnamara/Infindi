@@ -6,6 +6,7 @@ import type { ID } from 'common/types/core';
 import type { PureAction } from '../typesDEPRECATED/redux';
 
 export type TransactionLoadingStatus =
+  | 'EMPTY'
   | 'LOADING'
   | 'STEADY'
   | 'END_OF_INPUT'
@@ -115,7 +116,7 @@ function removeOperationID(
   map: OperationToAccountIDMap,
   operationID: ID,
 ): OperationToAccountIDMap {
-  const newMap = {...map};
+  const newMap = { ...map };
   delete newMap[operationID];
   return newMap;
 }

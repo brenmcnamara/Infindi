@@ -3,7 +3,7 @@
 import Colors from '../../design/colors';
 import React, { Component } from 'react';
 
-import { StyleSheet, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import type { Dollars } from 'common/types/core';
 
@@ -37,6 +37,8 @@ export default class MoneyText extends Component<Props> {
 
     if (digits.length === 0) {
       return `${sign}$0`;
+    } else if (digits.length === 1) {
+      return `${sign}$0.0${digits[0]}`;
     }
 
     // Start with the stuff after the decimal point.
@@ -58,9 +60,3 @@ export default class MoneyText extends Component<Props> {
     return `${sign}$${formatted}`;
   }
 }
-
-const styles = StyleSheet.create({
-  green: {
-    color: Colors.MONEY_GOOD,
-  },
-});

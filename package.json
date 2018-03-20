@@ -10,6 +10,7 @@
   "dependencies": {
     "common": "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git",
     "invariant": "^2.2.2",
+    "moment": "^2.21.0",
     "nullthrows": "^1.0.0",
     "react": "16.2.0",
     "react-native": "0.52.2",

@@ -12,6 +12,7 @@ import type { ModelContainer } from '../datastore';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
 import type { Transaction } from 'common/lib/models/Transaction';
+import type { TransactionLoadingStatus } from '../reducers/transactionLoading';
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
@@ -117,4 +118,11 @@ export function getTransactionsForAccount(
     (t1, t2) => t2.transactionDate.getTime() - t1.transactionDate.getTime(),
   );
   return transactions;
+}
+
+export function getTransactionLoadingStatus(
+  state: State,
+  accountID: ID,
+): TransactionLoadingStatus {
+  return state.transactionLoading.accountToLoadingStatus[accountID] || 'EMPTY';
 }

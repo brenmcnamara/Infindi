@@ -88,7 +88,7 @@ export default class AccountComponent extends Component<Props> {
               />
             </View>
             <View style={styles.accountLoaderBottom}>
-              <Text style={[styles.accountBank, TextDesign.small]}>
+              <Text style={[styles.accountInstitution, TextDesign.small]}>
                 {getInstitution(account)}
               </Text>
               <Text style={[styles.accountType, TextDesign.small]}>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 
-  accountBank: {
+  accountInstitution: {
     flex: 1,
     textAlign: 'left',
   },

@@ -141,6 +141,22 @@ export const ProviderSearchError = cleanupWhitespace(`
   There is an issue with our service. Please try again later.
 `);
 
+/**
+ * Shown when the user is looking at the account details and has no transactions
+ * in their history.
+ */
+export const TransactionEmpty = cleanupWhitespace(`
+  You have no transactions
+`);
+
+/**
+ * This content shows when there was an error while loading a user's
+ * transactions.
+ */
+export const TransactionLoadingError = cleanupWhitespace(`
+  Error loading transactions
+`);
+
 // -----------------------------------------------------------------------------
 //
 // UTILITIES
