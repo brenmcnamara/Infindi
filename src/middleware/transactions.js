@@ -13,9 +13,13 @@ import type { Transaction } from 'common/lib/models/Transaction';
 
 type TransactionContainer = ModelContainer<'Transaction', Transaction>;
 
-export default (store: Store) => (next: Next) => {
+const TRANSACTIONS_PER_PAGE = 20;
 
-  async function genFetchTransactions(accountID: ID): Promise<void> {
+export default (store: Store) => (next: Next) => {
+  async function genFetchTransactions(
+    accountID: ID,
+    cursor: Object | null,
+  ): Promise<void> {
     const operationID = uuid();
     next({
       downloadInfo: { accountID },
@@ -27,17 +31,25 @@ export default (store: Store) => (next: Next) => {
     const userID = getUserID(store.getState());
     invariant(userID, 'Trying to fetch transactions when no user is logged in');
 
+    let query = getTransactionCollection()
+      .where('userRef.refID', '==', userID)
+      .where('accountRef.refID', '==', accountID)
+      .orderBy('transactionDate', 'desc')
+      // NOTE: Sorting by id so that all results have a deterministic order.
+      // Because transaction dates are rounded to the nearest day, there are
+      // often ties when sorting by transaction date, which messes with paging.
+      .orderBy('id');
+
+    if (cursor) {
+      query = query.startAfter(cursor);
+    }
+
     let snapshot;
     try {
       // NOTE: The order the transaction firebase query returns transactions must
       // be in sync with the ordering returned from the method
       // getTransactionsForAccount, or there will be paging issues.
-      snapshot = await getTransactionCollection()
-        .where('userRef.refID', '==', userID)
-        .where('accountRef.refID', '==', accountID)
-        .orderBy('transactionDate', 'desc')
-        .limit(20)
-        .get();
+      snapshot = await query.limit(TRANSACTIONS_PER_PAGE).get();
     } catch (error) {
       next({
         error,
@@ -49,7 +61,8 @@ export default (store: Store) => (next: Next) => {
     }
 
     const container: TransactionContainer = {};
-    snapshot.docs.forEach(doc => {
+    const { docs } = snapshot;
+    docs.forEach(doc => {
       if (!doc.exists) {
         return;
       }
@@ -57,8 +70,14 @@ export default (store: Store) => (next: Next) => {
       container[transaction.id] = transaction;
     });
 
+    const downloadInfo = {
+      cursor:
+        docs.length < TRANSACTIONS_PER_PAGE ? null : docs[docs.length - 1],
+    };
+
     next({
       container,
+      downloadInfo,
       modelName: 'Transaction',
       operationID,
       type: 'CONTAINER_DOWNLOAD_FINISHED',
@@ -79,7 +98,13 @@ export default (store: Store) => (next: Next) => {
         if (transactions.length !== 0) {
           break;
         }
-        genFetchTransactions(accountID);
+        genFetchTransactions(accountID, null);
+        break;
+      }
+
+      case 'TRANSACTIONS_FETCH': {
+        const {accountID, cursor} = action;
+        genFetchTransactions(accountID, cursor);
         break;
       }
     }

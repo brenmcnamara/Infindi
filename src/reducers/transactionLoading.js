@@ -13,14 +13,17 @@ export type TransactionLoadingStatus =
   | 'FAILURE';
 
 export type State = {
+  +accountToCursor: AccountToCursorMap,
   +accountToLoadingStatus: AccountToLoadingStatusMap,
   +operationToAccountID: OperationToAccountIDMap,
 };
 
+type AccountToCursorMap = { [accountID: ID]: Object };
 type AccountToLoadingStatusMap = { [accountID: ID]: TransactionLoadingStatus };
 type OperationToAccountIDMap = { [operationID: ID]: ID };
 
 const DEFAULT_STATE: State = {
+  accountToCursor: {},
   accountToLoadingStatus: {},
   operationToAccountID: {},
 };
@@ -70,11 +73,25 @@ export default function transactionLoading(
         'Cannot fail an operation that does not exist: %s',
         action.operationID,
       );
-      const loadingStatus =
-        action.type === 'CONTAINER_DOWNLOAD_FAILURE' ? 'FAILURE' : 'STEADY';
+
+      let loadingStatus = 'FAILURE';
+      let { accountToCursor } = state;
+      if (action.type === 'CONTAINER_DOWNLOAD_FINISHED') {
+        invariant(
+          action.downloadInfo,
+          'Expecting transaction download to contain download info with cursor: %s',
+          action.operationID,
+        );
+        const { cursor } = action.downloadInfo;
+        accountToCursor = cursor
+          ? addCursor(accountToCursor, accountID, cursor)
+          : removeCursor(accountToCursor, accountID);
+        loadingStatus = cursor ? 'STEADY' : 'END_OF_INPUT';
+      }
 
       return {
         ...state,
+        accountToCursor,
         accountToLoadingStatus: addLoadingStatus(
           state.accountToLoadingStatus,
           accountID,
@@ -90,15 +107,20 @@ export default function transactionLoading(
   return state;
 }
 
+function addCursor(
+  map: AccountToCursorMap,
+  accountID: ID,
+  cursor: Object,
+): AccountToCursorMap {
+  return { ...map, [accountID]: cursor };
+}
+
 function addLoadingStatus(
   map: AccountToLoadingStatusMap,
   accountID: ID,
   loadingStatus: TransactionLoadingStatus,
 ): AccountToLoadingStatusMap {
-  return {
-    ...map,
-    [accountID]: loadingStatus,
-  };
+  return { ...map, [accountID]: loadingStatus };
 }
 
 function addOperationToAccountID(
@@ -110,6 +132,15 @@ function addOperationToAccountID(
     ...map,
     [operationID]: accountID,
   };
+}
+
+function removeCursor(
+  map: AccountToCursorMap,
+  accountID: ID,
+): AccountToCursorMap {
+  const newMap = { ...map };
+  delete newMap[accountID];
+  return newMap;
 }
 
 function removeOperationID(

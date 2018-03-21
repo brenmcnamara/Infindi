@@ -7,7 +7,10 @@ import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextDesign from '../design/text';
+import TransactionActions from '../data-model/actions/transactions';
+import TransactionState from '../data-model/state/transactions';
 
+import invariant from 'invariant';
 import moment from 'moment';
 
 import {
@@ -43,6 +46,7 @@ type ComponentProps = {
 };
 
 type ComputedProps = {
+  cursor: Object | null,
   loadingStatus: TransactionLoadingStatus,
   transactions: Array<Transaction>,
 };
@@ -60,6 +64,8 @@ class AccountDetailsScreen extends Component<Props> {
     return (
       <FlatList
         data={this._getListData()}
+        onEndReached={this._onEndReached}
+        onEndReachedThreshold={5}
         renderItem={this._renderListItem}
         style={styles.list}
       />
@@ -144,6 +150,17 @@ class AccountDetailsScreen extends Component<Props> {
     );
   };
 
+  _onEndReached = (): void => {
+    const { accountID, cursor, loadingStatus } = this.props;
+    if (loadingStatus === 'STEADY') {
+      invariant(
+        cursor,
+        'Transactions must have cursor if loading status is "STEADY"',
+      );
+      this.props.dispatch(TransactionActions.fetchTransactions(accountID, cursor));
+    }
+  };
+
   _getKeyExtractor = item => {
     return item.key;
   };
@@ -161,7 +178,10 @@ class AccountDetailsScreen extends Component<Props> {
       });
     });
 
-    if (loadingStatus === 'STEADY' && transactions.length === 0) {
+    if (
+      loadingStatus === 'EMPTY' ||
+      (loadingStatus === 'END_OF_INPUT' && transactions.length === 0)
+    ) {
       data.push({
         key: 'TRANSACTION_EMPTY',
         render: this._renderTransactionEmpty,
@@ -191,6 +211,7 @@ function mapReduxStateToProps(
   props: ComponentProps,
 ): ComputedProps {
   return {
+    cursor: TransactionState.getCursorForAccount(state, props.accountID),
     loadingStatus: getTransactionLoadingStatus(state, props.accountID),
     transactions: getTransactionsForAccount(state, props.accountID),
   };

@@ -28,7 +28,6 @@ export type ModelState<TName: string, TModel: ModelStub<TName>> =
     |}
   | {|
       +container: ModelContainer<TName, TModel> | null,
-      +downloadInfo?: any,
       +type: 'DOWNLOADING',
     |}
   | {|
@@ -54,6 +53,7 @@ export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
     |}
   | {|
       +container: ModelContainer<TName, TModel>,
+      +downloadInfo?: any,
       +modelName: TName,
       +operationID: ID,
       +type: 'CONTAINER_DOWNLOAD_FINISHED',
@@ -98,7 +98,6 @@ export function createModelContainerReducer<
         if (action.modelName === modelName) {
           return {
             container: getContainer(state),
-            downloadInfo: action.downloadInfo,
             type: 'DOWNLOADING',
           };
         }

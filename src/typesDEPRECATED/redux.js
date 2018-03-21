@@ -6,6 +6,7 @@ import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../actions/authentication';
 import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
 import type { Action as Action$Config } from '../actions/config';
+import type { Action as Action$DataModel } from '../data-model/actions';
 import type { Action as Action$Datastore } from '../datastore';
 import type { Action as Action$Link } from '../link/action';
 import type { Action as Action$Modal } from '../actions/modal';
@@ -25,6 +26,7 @@ export type PureAction =
   | Action$Auth
   | Action$AuthMiddleware
   | Action$Config
+  | Action$DataModel
   | Action$Datastore<'Account', Account>
   | Action$Datastore<'AccountLink', AccountLink>
   | Action$Datastore<'Transaction', Transaction>

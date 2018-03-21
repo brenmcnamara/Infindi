@@ -114,9 +114,14 @@ export function getTransactionsForAccount(
       transactions.push(transactionContainer[transactionID]);
     }
   }
-  transactions.sort(
-    (t1, t2) => t2.transactionDate.getTime() - t1.transactionDate.getTime(),
-  );
+  transactions.sort((t1, t2) => {
+    const timeDiff =
+      t2.transactionDate.getTime() - t1.transactionDate.getTime();
+    if (timeDiff === 0) {
+      return t1.id < t2.id ? -1 : 1;
+    }
+    return timeDiff;
+  });
   return transactions;
 }
 
