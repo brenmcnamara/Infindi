@@ -22,7 +22,6 @@ const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
 export default (store: Store) => (next: Next) => {
   const accountLinkStatusMap: { [id: ID]: AccountLinkStatus } = {};
   let isAccountsDownloadingBanner = false;
-  // let failureBannerProviderLoginTimeoutID = null;
 
   function updateAccountLinkStatus(
     providerID: ID,
@@ -34,11 +33,20 @@ export default (store: Store) => (next: Next) => {
       return;
     }
 
-    const preVerificationPhases = ['INITIALIZING', 'VERIFYING_CREDENTIALS'];
-    const postVerificationPhases = ['IN_PROGRESS', 'SUCCESS'];
+    const preVerificationPhases = [
+      'IN_PROGRESS / INITIALIZING',
+      'IN_PROGRESS / VERIFYING_CREDENTIALS',
+      'FAILURE / BAD_CREDENTIALS',
+    ];
+    const postVerificationPhases = [
+      'IN_PROGRESS / DOWNLOADING_DATA',
+      'SUCCESS',
+      'FAILURE / INTERNAL_SERVICE_FAILURE',
+      'FAILURE / EXTERNAL_SERVICE_FAILURE',
+    ];
     if (
       fromStatus &&
-      preVerificationPhases.includes(toStatus) &&
+      preVerificationPhases.includes(fromStatus) &&
       postVerificationPhases.includes(toStatus) &&
       isShowingProviderLoginScreen(store.getState())
     ) {
