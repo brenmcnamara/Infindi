@@ -1,14 +1,15 @@
 /* @flow */
 
-import invariant from 'invariant';
-
 import { AccountsDownloadingBanner, AccountLinkBanner } from '../../../content';
 import { dismissAccountVerification, PROVIDER_LOGIN_MODAL_ID } from '../action';
 import { dismissToast, requestToast } from '../../actions/toast';
 import { isLinking } from 'common/lib/models/AccountLink';
 import { forEachObject } from '../../common/obj-utils';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
+import type {
+  AccountLink,
+  AccountLinkStatus,
+} from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../../datastore';
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
@@ -18,50 +19,35 @@ type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
 
-type AccountLinkPhase =
-  | {
-      type: | 'INITIALIZING'
-        | 'VERIFYING_CREDENTIALS'
-        | 'IN_PROGRESS'
-        | 'SUCCESS',
-    }
-  | { error: Object, type: 'FAILURE_GENERAL' | 'FAILURE_LOGIN' };
-
 export default (store: Store) => (next: Next) => {
-  const accountLinkPhaseMap: { [id: ID]: AccountLinkPhase } = {};
+  const accountLinkStatusMap: { [id: ID]: AccountLinkStatus } = {};
   let isAccountsDownloadingBanner = false;
   // let failureBannerProviderLoginTimeoutID = null;
 
-  function updateAccountLinkPhase(
+  function updateAccountLinkStatus(
     providerID: ID,
-    toPhase: AccountLinkPhase,
+    toStatus: AccountLinkStatus,
+    bannerText: string,
   ): void {
-    const fromPhase: AccountLinkPhase | null =
-      accountLinkPhaseMap[providerID] || null;
-    if (fromPhase === toPhase) {
+    const fromStatus = accountLinkStatusMap[providerID] || null;
+    if (fromStatus === toStatus) {
       return;
     }
 
     const preVerificationPhases = ['INITIALIZING', 'VERIFYING_CREDENTIALS'];
     const postVerificationPhases = ['IN_PROGRESS', 'SUCCESS'];
     if (
-      fromPhase &&
-      preVerificationPhases.includes(fromPhase.type) &&
-      postVerificationPhases.includes(toPhase.type) &&
+      fromStatus &&
+      preVerificationPhases.includes(toStatus) &&
+      postVerificationPhases.includes(toStatus) &&
       isShowingProviderLoginScreen(store.getState())
     ) {
       next(dismissAccountVerification());
     }
 
-    next(
-      requestAccountLinkBanner(
-        providerID,
-        toPhase,
-        AccountLinkBanner[toPhase.type],
-      ),
-    );
+    next(requestAccountLinkBanner(providerID, toStatus, bannerText));
 
-    accountLinkPhaseMap[providerID] = toPhase;
+    accountLinkStatusMap[providerID] = toStatus;
   }
 
   function updateAccountsDownloading(
@@ -94,10 +80,13 @@ export default (store: Store) => (next: Next) => {
         const container: AccountLinkContainer = action.container;
         forEachObject(container, accountLink => {
           const providerID = accountLink.providerRef.refID;
-          const accountLinkPhase = getAccountLinkPhase(accountLink);
-          updateAccountLinkPhase(providerID, accountLinkPhase);
+          const { status } = accountLink;
+          updateAccountLinkStatus(
+            providerID,
+            accountLink.status,
+            AccountLinkBanner[status],
+          );
         });
-
         const shouldShowAccountsDownloadingBanner = containsLinking(container);
         updateAccountsDownloading(shouldShowAccountsDownloadingBanner);
         break;
@@ -114,14 +103,25 @@ export default (store: Store) => (next: Next) => {
         // probably a very rare edge case and the bug does not result in any
         // serious issues with the app.
         const providerID = action.provider.id;
-        updateAccountLinkPhase(providerID, { type: 'INITIALIZING' });
+        const text = AccountLinkBanner['IN_PROGRESS / INITIALIZING'];
+        updateAccountLinkStatus(providerID, 'IN_PROGRESS / INITIALIZING', text);
         break;
       }
 
       case 'REQUEST_PROVIDER_LOGIN_FAILED': {
         const providerID = action.provider.id;
         const { error } = action;
-        updateAccountLinkPhase(providerID, { error, type: 'FAILURE_GENERAL' });
+        // $FlowFixMe - This is correct.
+        const message: string =
+          error.error_message ||
+          error.message ||
+          error.errorMessage ||
+          AccountLinkBanner['FAILURE / INTERNAL_SERVICE_FAILURE'];
+        updateAccountLinkStatus(
+          providerID,
+          'FAILURE / INTERNAL_SERVICE_FAILURE',
+          message,
+        );
       }
     }
   };
@@ -145,22 +145,18 @@ function dismissAccountsDownloadingBanner() {
 
 function requestAccountLinkBanner(
   providerID: ID,
-  phase: AccountLinkPhase,
+  status: AccountLinkStatus,
   text: string,
 ) {
   const id = `PROVIDERS/${providerID}`;
   return requestToast({
     bannerChannel: id,
-    bannerType:
-      phase.type === 'FAILURE_GENERAL' || phase.type === 'FAILURE_LOGIN'
-        ? 'ERROR'
-        : phase.type === 'SUCCESS' ? 'SUCCESS' : 'INFO',
+    bannerType: status.startsWith('FAILURE')
+      ? 'ERROR'
+      : status.startsWith('SUCCESS') ? 'SUCCESS' : 'INFO',
     id,
     priority: 'LOW',
-    showSpinner:
-      phase.type !== 'FAILURE_GENERAL' &&
-      phase.type !== 'FAILURE_LOGIN' &&
-      phase.type !== 'SUCCESS',
+    showSpinner: status.startsWith('IN_PROGRESS'),
     text,
     toastType: 'BANNER',
   });
@@ -177,36 +173,6 @@ function containsLinking(container: AccountLinkContainer): bool {
     }
   }
   return false;
-}
-
-function getAccountLinkPhase(accountLink: AccountLink): AccountLinkPhase {
-  const { sourceOfTruth } = accountLink;
-  invariant(
-    sourceOfTruth.type === 'YODLEE',
-    'Expecting account link to come from YODLEE',
-  );
-
-  const { refreshInfo } = sourceOfTruth.providerAccount;
-
-  if (refreshInfo.status === 'IN_PROGRESS') {
-    return refreshInfo.additionalStatus === 'LOGIN_IN_PROGRESS'
-      ? { type: 'VERIFYING_CREDENTIALS' }
-      : { type: 'IN_PROGRESS' };
-  }
-  if (refreshInfo.status === 'FAILED') {
-    const isLoginFailure = refreshInfo.additionalStatus === 'LOGIN_FAILED';
-    const error = {
-      errorCode: 'infindi/unknown-error',
-      errorMessage: isLoginFailure
-        ? AccountLinkBanner.FAILURE_LOGIN
-        : AccountLinkBanner.FAILURE_GENERAL,
-    };
-    return {
-      error,
-      type: isLoginFailure ? 'FAILURE_LOGIN' : 'FAILURE_GENERAL',
-    };
-  }
-  return { type: 'SUCCESS' };
 }
 
 function isShowingProviderLoginScreen(state: ReduxState): bool {

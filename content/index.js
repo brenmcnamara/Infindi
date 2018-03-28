@@ -112,28 +112,32 @@ export const AccountsDownloadingBanner = cleanupWhitespace(`
  * of account login to the user.
  */
 export const AccountLinkBanner = {
-  FAILURE_GENERAL: cleanupWhitespace(`
-    Download failed. Please try again.
-  `),
-
-  FAILURE_LOGIN: cleanupWhitespace(`
+  'FAILURE / BAD_CREDENTIALS': cleanupWhitespace(`
     Login Failed. Please check your credentials.
   `),
 
-  IN_PROGRESS: cleanupWhitespace(`
+  'FAILURE / EXTERNAL_SERVICE_FAILURE': cleanupWhitespace(`
+    Download failed. Please try again.
+  `),
+
+  'FAILURE / INTERNAL_SERVICE_FAILURE': cleanupWhitespace(`
+    Download failed. Please try again.
+  `),
+
+  'IN_PROGRESS / DOWNLOADING_DATA': cleanupWhitespace(`
     Download in progress
   `),
 
-  INITIALIZING: cleanupWhitespace(`
+  'IN_PROGRESS / INITIALIZING': cleanupWhitespace(`
     Initializing your link
+  `),
+
+  'IN_PROGRESS / VERIFYING_CREDENTIALS': cleanupWhitespace(`
+    Verifying your credentials
   `),
 
   SUCCESS: cleanupWhitespace(`
     You are linked with this institution
-  `),
-
-  VERIFYING_CREDENTIALS: cleanupWhitespace(`
-    Verifying your credentials
   `),
 };
 
