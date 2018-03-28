@@ -4,7 +4,7 @@ import invariant from 'invariant';
 import uuid from 'uuid/v4';
 
 import { didLogin, willLogout } from '../common/action-utils';
-import { getAccountsCollection } from 'common/lib/models/Account';
+import { getAccountCollection } from 'common/lib/models/Account';
 
 import type { Account } from 'common/lib/models/Account';
 import type { EmitterSubscription } from '../common/event-utils';
@@ -37,7 +37,7 @@ function listenForAccounts(
   let operationID = uuid();
   next({ modelName: 'Account', operationID, type: 'CONTAINER_DOWNLOAD_START' });
   const userID = loginPayload.firebaseUser.uid;
-  const remove = getAccountsCollection()
+  const remove = getAccountCollection()
     .where('canDisplay', '==', true)
     .where('sourceOfTruth.type', '==', 'YODLEE')
     .where('userRef.refID', '==', userID)
