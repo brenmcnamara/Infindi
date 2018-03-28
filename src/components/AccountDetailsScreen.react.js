@@ -52,6 +52,12 @@ type ComputedProps = {
 };
 
 class AccountDetailsScreen extends Component<Props> {
+  _shouldAllowBackButton: bool = false;
+
+  componentDidMount(): void {
+
+  }
+
   render() {
     return (
       <Screen>

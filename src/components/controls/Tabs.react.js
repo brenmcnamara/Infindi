@@ -21,6 +21,8 @@ export type Props = ReduxProps & {
 };
 
 class Tabs extends Component<Props> {
+  _shouldAllowBackButton: bool = true;
+
   componentDidMount(): void {
     invariant(
       this.props.routeNode.name === 'ACCOUNTS',
@@ -43,12 +45,19 @@ class Tabs extends Component<Props> {
     if (didShowAccountDetails && !willShowAccountDetails) {
       this.refs.nav.pop();
     } else if (!didShowAccountDetails && willShowAccountDetails) {
+      this._shouldAllowBackButton = false;
+      // NOTE: We are doing this in order to prevent the user from hitting the
+      // back button and popping this view before it has completed animated in.
+      // Doing this would result in the screen getting stuck on account details.
+      // Would like to abstract this away at some point.
+      setTimeout(() => (this._shouldAllowBackButton = true), 1000);
       this.refs.nav.push({
         barTintColor: Colors.BACKGROUND,
         component: AccountDetailsScreen,
         leftButtonIcon: Icons.LeftArrow,
         onLeftButtonPress: () => {
-          this.props.dispatch(exitAccountDetails());
+          this._shouldAllowBackButton &&
+            this.props.dispatch(exitAccountDetails());
         },
         passProps: {
           accountID: getAccountDetailsAccountID(nextProps.routeNode),

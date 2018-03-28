@@ -1,6 +1,5 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
