@@ -38,7 +38,7 @@ type State = {
 };
 
 class ModalManager extends Component<Props, State> {
-  _timeoutIDs: Array<number> = [];
+  _timeoutIDs: Array<TimeoutID> = [];
 
   constructor(props: Props) {
     super(props);

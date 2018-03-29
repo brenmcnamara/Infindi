@@ -206,18 +206,18 @@ class HomeToActionItemTransitionModal extends Component<Props, State> {
 
   _genFadeIn = (): Promise<void> => {
     return new Promise(resolve => {
-      // $FlowFixMe - Why is this wrong?
       Animated.timing(this._fadeTransition, {
         duration: FadeInTransitionMillis,
         easing: Easing.cubic,
         toValue: 1.0,
-      }).start(resolve);
+      }).start(() => {
+        resolve();
+      });
     });
   };
 
   _genResize = (): Promise<void> => {
     return new Promise(resolve => {
-      // $FlowFixMe - Why is this wrong?
       Animated.timing(this._resizeTransition, {
         duration: TransformTransitionMillis,
         easing:
@@ -225,18 +225,21 @@ class HomeToActionItemTransitionModal extends Component<Props, State> {
             ? Easing.out(Easing.cubic)
             : Easing.out(Easing.quad),
         toValue: 1.0,
-      }).start(resolve);
+      }).start(() => {
+        resolve();
+      });
     });
   };
 
   _genFadeOut = (): Promise<void> => {
     return new Promise(resolve => {
-      // $FlowFixMe - Why is this wrong?
       Animated.timing(this._fadeTransition, {
         duration: FadeOutTransitionMillis,
         easing: Easing.out(Easing.cubic),
         toValue: 0.0,
-      }).start(resolve);
+      }).start(() => {
+        resolve();
+      });
     });
   };
 

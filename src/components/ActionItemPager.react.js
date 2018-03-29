@@ -301,12 +301,13 @@ class ActionItemPager extends Component<Props, State> {
 
   _genPerformFadeOut = (): Promise<void> => {
     return new Promise(resolve => {
-      // $FlowFixMe - wierd flow error.
       Animated.timing(this._deleteFadeTransition, {
         duration: DELETE_FADE_TRANSITION_MILLIS,
         easing: Easing.out(Easing.cubic),
         toValue: 0.0,
-      }).start(resolve);
+      }).start(() => {
+        resolve();
+      });
     });
   };
 
@@ -328,12 +329,13 @@ class ActionItemPager extends Component<Props, State> {
         resolve();
         return;
       }
-      // $FlowFixMe - Wierd flow error.
       Animated.timing(this._deleteShiftTransition, {
         duration: DELETE_SHIFT_TRANSITION_MILLIS,
         easing: Easing.out(Easing.cubic),
         toValue: 0.0,
-      }).start(resolve);
+      }).start(() => {
+        resolve();
+      });
     });
   };
 

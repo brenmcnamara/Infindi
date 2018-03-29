@@ -26,7 +26,7 @@ export type Props = ActionItemComponentProps;
 const NAVIGATOR_TRANSITION_MILLIS = 500;
 
 class OpenHSAAccount extends Component<Props, State> {
-  _navigatorTransitionTimeout: number | null = null;
+  _navigatorTransitionTimeout: TimeoutID | null = null;
   _isNavigatorTransitioning: bool = false;
 
   constructor(props: Props) {
@@ -82,7 +82,8 @@ class OpenHSAAccount extends Component<Props, State> {
   }
 
   componentWillUnmount(): void {
-    clearTimeout(this._navigatorTransitionTimeout);
+    this._navigatorTransitionTimeout &&
+      clearTimeout(this._navigatorTransitionTimeout);
     this._navigatorTransitionTimeout = null;
   }
 
@@ -168,7 +169,8 @@ class OpenHSAAccount extends Component<Props, State> {
   // navigation back button resulting in the state to go back twice but the
   // ios navigator to only go back once.
   _startNavigatorTransition(): void {
-    clearTimeout(this._navigatorTransitionTimeout);
+    this._navigatorTransitionTimeout &&
+      clearTimeout(this._navigatorTransitionTimeout);
     this._isNavigatorTransitioning = true;
     this._navigatorTransitionTimeout = setTimeout(() => {
       this._isNavigatorTransitioning = false;

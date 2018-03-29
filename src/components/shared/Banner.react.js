@@ -175,12 +175,13 @@ export default class Banner extends Component<Props, State> {
           if (!this._isTransitioning) {
             return;
           }
-          // $FlowFixMe - Need to figure out why this is an error.
           Animated.timing(this._height, {
             easing: Easing.out(Easing.cubic),
             duration: TRANSITION_OUT_MILLIS,
             toValue: 0,
-          }).start(resolve);
+          }).start(() => {
+            resolve();
+          });
         },
       );
     });
@@ -194,12 +195,13 @@ export default class Banner extends Component<Props, State> {
       this.setState(
         { transition: { banner, from, type: 'TRANSITION_IN' } },
         () => {
-          // $FlowFixMe - Need to figure out why this is an error.
           Animated.timing(this._height, {
             easing: Easing.out(Easing.cubic),
             duration: TRANSITION_IN_MILLIS,
             toValue: BANNER_HEIGHT,
-          }).start(resolve);
+          }).start(() => {
+            resolve();
+          });
         },
       );
     });
