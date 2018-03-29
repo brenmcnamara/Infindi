@@ -94,12 +94,12 @@ export function forceGetNextNode(node: RouteNode): RouteNode {
 }
 
 function calculateRootName(state: ReduxState): RootName {
-  const { authStatus, configState, actionItems } = state;
+  const { auth, configState, actionItems } = state;
   if (configState.envStatus === 'ENV_LOADING') {
     return 'LOADING';
   }
 
-  switch (authStatus.type) {
+  switch (auth.type) {
     case 'LOGIN_INITIALIZE':
     case 'LOGIN_FAILURE':
     case 'LOGOUT_INITIALIZE':
@@ -112,6 +112,6 @@ function calculateRootName(state: ReduxState): RootName {
     case 'NOT_INITIALIZED':
       return 'LOADING';
     default:
-      invariant(false, 'Unrecognized auth status: %s', authStatus.type);
+      invariant(false, 'Unrecognized auth status: %s', auth.type);
   }
 }

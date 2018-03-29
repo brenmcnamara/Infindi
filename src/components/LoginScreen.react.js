@@ -22,7 +22,7 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { login } from '../actions/authentication';
+import { login } from '../auth/actions';
 
 import type { LoginCredentials } from 'common/lib/models/Auth';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
@@ -161,9 +161,9 @@ class LoginScreen extends Component<Props, State> {
 }
 
 function mapReduxStateToProps(state: StoreState) {
-  const { authStatus } = state;
+  const { auth } = state;
   let loginType;
-  switch (authStatus.type) {
+  switch (auth.type) {
     case 'LOGGED_OUT':
     case 'LOGOUT_FAILURE':
     case 'LOGOUT_INITIALIZE':
@@ -183,7 +183,7 @@ function mapReduxStateToProps(state: StoreState) {
       invariant(
         false,
         'LoginScreen does not handle auth status %s',
-        authStatus.type,
+        auth.type,
       );
   }
   return { loginType };

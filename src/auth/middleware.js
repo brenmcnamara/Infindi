@@ -7,7 +7,7 @@ import invariant from 'invariant';
 import { initialize as initializeBackend } from '../backend';
 
 import type { Action as AllActions, Store } from '../typesDEPRECATED/redux';
-import type { AuthStatus } from '../reducers/authStatus';
+import type { AuthStatus } from './types';
 import type { User as FirebaseUser } from 'common/types/firebase';
 import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';
 import type { UserInfo } from 'common/lib/models/UserInfo';
@@ -15,14 +15,7 @@ import type { UserInfo } from 'common/lib/models/UserInfo';
 const Auth = Firebase.auth();
 const Database = Firebase.firestore();
 
-export type Action = Action$AuthStatusChange;
-
-export type Action$AuthStatusChange = {|
-  +status: AuthStatus,
-  +type: 'AUTH_STATUS_CHANGE',
-|};
-
-type ChangeStatus = (authStatus: AuthStatus) => *;
+type ChangeStatus = (auth: AuthStatus) => *;
 
 // -----------------------------------------------------------------------------
 //
@@ -38,13 +31,13 @@ export default (store: Store) => (next: Function) => {
   // Listen to firebase changes for authentication and
   // generate the relevant actions.
   Auth.onAuthStateChanged(async () => {
-    const authStatus = store.getState().authStatus;
+    const { auth } = store.getState();
     const loginPayload: ?LoginPayload = await genLoginPayload();
 
-    if (canLogin(authStatus) && loginPayload) {
+    if (canLogin(auth) && loginPayload) {
       initializeBackend(loginPayload);
       changeStatus({ loginPayload, type: 'LOGGED_IN' });
-    } else if (canLogout(authStatus) && !loginPayload) {
+    } else if (canLogout(auth) && !loginPayload) {
       changeStatus({ type: 'LOGGED_OUT' });
     }
   });
@@ -63,8 +56,8 @@ export default (store: Store) => (next: Function) => {
       }
 
       case 'LOGOUT_REQUEST': {
-        const authStatus = store.getState().authStatus;
-        const loginPayload = getLoginPayload(authStatus);
+        const {auth} = store.getState();
+        const loginPayload = getLoginPayload(auth);
         invariant(
           loginPayload,
           'Requesting logout of a user that is not logged in',
@@ -151,25 +144,25 @@ async function genLoginPayload(): Promise<?LoginPayload> {
   return { firebaseUser, idToken, userInfo };
 }
 
-function getLoginPayload(authStatus: AuthStatus): ?LoginPayload {
-  switch (authStatus.type) {
+function getLoginPayload(auth: AuthStatus): ?LoginPayload {
+  switch (auth.type) {
     case 'LOGGED_IN':
-      return authStatus.loginPayload;
+      return auth.loginPayload;
     default:
       return null;
   }
 }
 
-function canLogin(authStatus: AuthStatus): bool {
+function canLogin(auth: AuthStatus): bool {
   return (
-    authStatus.type === 'NOT_INITIALIZED' ||
-    authStatus.type === 'LOGIN_INITIALIZE'
+    auth.type === 'NOT_INITIALIZED' ||
+    auth.type === 'LOGIN_INITIALIZE'
   );
 }
 
-function canLogout(authStatus: AuthStatus): bool {
+function canLogout(auth: AuthStatus): bool {
   return (
-    authStatus.type === 'NOT_INITIALIZED' ||
-    authStatus.type === 'LOGOUT_INITIALIZE'
+    auth.type === 'NOT_INITIALIZED' ||
+    auth.type === 'LOGOUT_INITIALIZE'
   );
 }

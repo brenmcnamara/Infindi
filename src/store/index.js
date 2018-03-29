@@ -3,7 +3,7 @@
 import accountLinks from '../middleware/accountLinks';
 import accountLinkFlow from '../link/middleware/accountLinkFlow';
 import accounts from '../middleware/accounts';
-import authentication from '../middleware/authentication';
+import authentication from '../auth/middleware';
 import modal from '../middleware/modal';
 import providerLogin from '../link/middleware/providerLogin';
 // import plaid from '../middleware/plaid';

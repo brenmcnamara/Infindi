@@ -17,7 +17,7 @@ AppRegistry.registerComponent('Infindi', () => AppContainer);
 
 import Store from './src/store';
 
-import { login, logout } from './src/actions/authentication';
+import { login, logout } from './src/auth/actions';
 
 if (__DEV__) {
   const TEST_EMAIL = 'infindi.testing@gmail.com';

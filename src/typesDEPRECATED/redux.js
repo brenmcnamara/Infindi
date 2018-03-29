@@ -3,8 +3,7 @@
 import type { Account } from 'common/lib/models/Account';
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
-import type { Action as Action$Auth } from '../actions/authentication';
-import type { Action as Action$AuthMiddleware } from '../middleware/authentication';
+import type { Action as Action$Auth } from '../auth/actions';
 import type { Action as Action$Config } from '../actions/config';
 import type { Action as Action$DataModel } from '../data-model/actions';
 import type { Action as Action$Datastore } from '../datastore';
@@ -24,7 +23,6 @@ export type ReduxProps = {
 export type PureAction =
   | Action$ActionItems
   | Action$Auth
-  | Action$AuthMiddleware
   | Action$Config
   | Action$DataModel
   | Action$Datastore<'Account', Account>

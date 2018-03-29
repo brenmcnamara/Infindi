@@ -31,7 +31,8 @@ import {
 import { connect } from 'react-redux';
 import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupType } from 'common/lib/models/Account';
-import { getLoginPayload, getNetWorth } from '../common/state-utils';
+import { getLoginPayload } from '../auth/state-utils';
+import { getNetWorth } from '../common/state-utils';
 import { requestAccountVerification } from '../link/action';
 import { requestInfoModal } from '../actions/modal';
 import { viewAccountDetails } from '../actions/router';

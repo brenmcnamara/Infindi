@@ -1,8 +1,12 @@
 /* @flow */
 
+import type { AuthStatus } from './types';
 import type { LoginCredentials } from 'common/lib/models/Auth';
 
-export type Action = Action$LoginRequest | Action$LogoutRequest;
+export type Action =
+  | Action$AuthStatusChange
+  | Action$LoginRequest
+  | Action$LogoutRequest;
 
 type Action$LoginRequest = {|
   +loginCredentials: LoginCredentials,
@@ -20,3 +24,9 @@ type Action$LogoutRequest = {|
 export function logout() {
   return { type: 'LOGOUT_REQUEST' };
 }
+
+// NOTE: Used by middleware
+type Action$AuthStatusChange = {|
+  +status: AuthStatus,
+  +type: 'AUTH_STATUS_CHANGE',
+|};

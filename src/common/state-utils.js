@@ -7,7 +7,6 @@ import { getContainer } from '../datastore';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
-import type { LoginPayload } from 'common/lib/models/Auth';
 import type { ModelContainer } from '../datastore';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
@@ -21,42 +20,6 @@ type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 // QUERY REDUX STATE
 //
 // -----------------------------------------------------------------------------
-
-export function isAuthenticated(state: State): bool {
-  return state.authStatus.type === 'LOGGED_IN';
-}
-
-export function getLoginPayload(state: State): ?LoginPayload {
-  if (state.authStatus.type === 'LOGGED_IN') {
-    return state.authStatus.loginPayload;
-  }
-  return null;
-}
-
-export function getUserID(state: State): ID | null {
-  const loginPayload = getLoginPayload(state);
-  if (!loginPayload) {
-    return null;
-  }
-  return loginPayload.userInfo.id;
-}
-
-export function getUserFirstName(state: State): ?string {
-  const loginPayload = getLoginPayload(state);
-  if (!loginPayload) {
-    return null;
-  }
-  return loginPayload.userInfo.firstName;
-}
-
-export function getUserFullName(state: State): ?string {
-  const loginPayload = getLoginPayload(state);
-  if (!loginPayload) {
-    return null;
-  }
-  const { userInfo } = loginPayload;
-  return `${userInfo.firstName} ${userInfo.lastName}`;
-}
 
 export function getNetWorth(state: State): Dollars {
   const { accounts } = state;

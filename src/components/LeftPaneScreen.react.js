@@ -22,8 +22,8 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { dismissModal } from '../actions/modal';
-import { getUserFullName } from '../common/state-utils';
-import { logout } from '../actions/authentication';
+import { getUserFullName } from '../auth/state-utils';
+import { logout } from '../auth/actions';
 
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 

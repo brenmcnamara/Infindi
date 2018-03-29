@@ -3,7 +3,7 @@
 import accountLinks from './accountLinks';
 import accounts from './accounts';
 import actionItems from './actionItems';
-import authStatus from './authStatus';
+import auth from '../auth/reducer';
 import configState from './configState';
 import modalState from './modalState';
 import providers from '../link/reducers/providers';
@@ -17,7 +17,7 @@ import { combineReducers } from 'redux';
 import type { State as State$AccountLinks } from './accountLinks';
 import type { State as State$Accounts } from './accounts';
 import type { State as State$ActionItems } from './actionItems';
-import type { State as State$AuthStatus } from './authStatus';
+import type { State as State$Auth } from '../auth/reducer';
 import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
 import type { State as State$RouteState } from './routeState';
@@ -30,7 +30,7 @@ export type State = {|
   +accountLinks: State$AccountLinks,
   +accounts: State$Accounts,
   +actionItems: State$ActionItems,
-  +authStatus: State$AuthStatus,
+  +auth: State$Auth,
   +configState: State$ConfigState,
   +modalState: State$ModalState,
   +providers: State$Providers,
@@ -45,7 +45,7 @@ export default combineReducers({
   accountLinks,
   actionItems,
   accounts,
-  authStatus,
+  auth,
   configState,
   modalState,
   providers,

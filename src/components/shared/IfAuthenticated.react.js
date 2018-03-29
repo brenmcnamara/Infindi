@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
+import { getIsAuthenticated } from '../../auth/state-utils';
 
 import { type ReduxProps } from '../../typesDEPRECATED/redux';
 import { type State } from '../../reducers/root';
@@ -14,7 +15,7 @@ type Props = ReduxProps & {
 
 function mapReduxStateToProps(state: State) {
   return {
-    isAuthenticated: state.authStatus.type === 'LOGGED_IN',
+    isAuthenticated: getIsAuthenticated(state),
   };
 }
 

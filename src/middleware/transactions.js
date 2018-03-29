@@ -4,7 +4,8 @@ import invariant from 'invariant';
 import uuid from 'uuid/v4';
 
 import { getTransactionCollection } from 'common/lib/models/Transaction';
-import { getTransactionsForAccount, getUserID } from '../common/state-utils';
+import { getTransactionsForAccount } from '../common/state-utils';
+import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../datastore';
@@ -103,7 +104,7 @@ export default (store: Store) => (next: Next) => {
       }
 
       case 'TRANSACTIONS_FETCH': {
-        const {accountID, cursor} = action;
+        const { accountID, cursor } = action;
         genFetchTransactions(accountID, cursor);
         break;
       }

@@ -9,9 +9,9 @@ import Screen from './shared/Screen.react';
 import TextDesign from '../design/text';
 
 import { connect } from 'react-redux';
-import { getUserFirstName } from '../common/state-utils';
+import { getUserFirstName } from '../auth/state-utils';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { logout } from '../actions/authentication';
+import { logout } from '../auth/actions';
 
 import { type ReduxProps } from '../typesDEPRECATED/redux';
 import { type State } from '../reducers/root';
