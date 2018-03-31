@@ -6,7 +6,8 @@ import actionItems from './actionItems';
 import auth from '../auth/reducer';
 import configState from './configState';
 import modalState from './modalState';
-import providers from '../link/reducers/providers';
+import providers from '../data-model/reducers/providers';
+import providersDEPRECATED from '../link/reducers/providers';
 import routeState from './routeState';
 import toast from './toast';
 import transactionLoading from './transactionLoading';
@@ -21,7 +22,8 @@ import type { State as State$Auth } from '../auth/reducer';
 import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
 import type { State as State$RouteState } from './routeState';
-import type { State as State$Providers } from '../link/reducers/providers';
+import type { State as State$Providers } from '../data-model/reducers/providers';
+import type { State as State$ProvidersDEPRECATED } from '../link/reducers/providers';
 import type { State as State$Toast } from './toast';
 import type { State as State$TransactionLoading } from './transactionLoading';
 import type { State as State$Transactions } from './transactions';
@@ -34,6 +36,7 @@ export type State = {|
   +configState: State$ConfigState,
   +modalState: State$ModalState,
   +providers: State$Providers,
+  +providersDEPRECATED: State$ProvidersDEPRECATED,
   +routeState: State$RouteState,
   +toast: State$Toast,
   +transactionLoading: State$TransactionLoading,
@@ -49,6 +52,7 @@ export default combineReducers({
   configState,
   modalState,
   providers,
+  providersDEPRECATED,
   routeState,
   toast,
   transactionLoading,

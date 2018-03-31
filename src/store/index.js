@@ -6,7 +6,7 @@ import accounts from '../middleware/accounts';
 import authentication from '../auth/middleware';
 import modal from '../middleware/modal';
 import providerLogin from '../link/middleware/providerLogin';
-// import plaid from '../middleware/plaid';
+import providers from '../data-model/middleware/providers';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 import toast from '../middleware/toast';
@@ -24,10 +24,10 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
+    providers,
     accountLinks,
     accounts,
     transactions,
-    // yodlee,
     providerLogin,
     // Then comes ui-managing middleware.
     accountLinkFlow,
@@ -42,10 +42,10 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
+    providers,
     accountLinks,
     accounts,
     transactions,
-    // yodlee,
     providerLogin,
     // Then comes ui-managing middleware.
     accountLinkFlow,

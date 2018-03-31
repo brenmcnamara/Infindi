@@ -7,7 +7,6 @@ import Content from '../../components/shared/Content.react';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import ProviderSearch from './ProviderSearch.react';
-import ProviderSearchManager from './ProviderSearchManager';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
 import TextDesign from '../../design/text';
@@ -34,6 +33,7 @@ import {
   requestProviderLogin,
   unsupportedProvider,
 } from '../action';
+import { fetchProviders } from '../../data-model/actions/providers';
 import { isSupportedProvider } from '../utils';
 import { getAccountLinkContainer } from '../../common/state-utils';
 import { NavBarHeight } from '../../design/layout';
@@ -44,21 +44,23 @@ import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
+import type { ProviderFetchStatus } from '../../data-model/types';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../../reducers/root';
-import type { Subscription } from './ProviderSearchManager';
 import type { TransitionStage } from '../../reducers/modalState';
 
 export type ComponentProps = {
   transitionStage: TransitionStage,
 };
 
-export type ReduxStateProps = {
+export type ComputedProps = {
   accountLinkContainer: AccountLinkContainer,
+  providerFetchStatus: ProviderFetchStatus,
   providerPendingLoginID: ID | null,
+  providers: Array<Provider>,
 };
 
-export type Props = ReduxProps & ReduxStateProps & ComponentProps;
+export type Props = ReduxProps & ComputedProps & ComponentProps;
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
@@ -115,8 +117,6 @@ const INSET_DEFAULT = { bottom: 0, left: 0, right: 0, top: 20 };
 class AccountVerification extends Component<Props, State> {
   _pageTransitionA: Animated.Value;
   _pageTransitionB: Animated.Value;
-  _searchManager: ProviderSearchManager = new ProviderSearchManager();
-  _searchSubscription: Subscription | null = null;
 
   constructor(props: Props) {
     super(props);
@@ -125,17 +125,16 @@ class AccountVerification extends Component<Props, State> {
     );
     this._pageTransitionB = new Animated.Value(0.0);
 
-    const payload = this._searchManager.getProvidersPayload();
     const page =
-      payload.type === 'SUCCESS'
+      props.providerFetchStatus === 'FAILURE'
         ? {
-            providers: payload.providers,
-            search: '',
-            type: 'SEARCH',
-          }
-        : {
             search: '',
             type: 'SEARCH_ERROR',
+          }
+        : {
+            providers: props.providers,
+            search: '',
+            type: 'SEARCH',
           };
 
     this.state = {
@@ -154,24 +153,25 @@ class AccountVerification extends Component<Props, State> {
   }
 
   componentDidMount(): void {
-    this._searchSubscription = this._searchManager.listenToSearchResults(
-      this._onUpdateSearchResults,
-    );
-
     // Start initial search.
     const page = this._getCurrentPage();
     const search = page.type === 'SEARCH' ? page.search : '';
-    this._searchManager.updateSearch(search);
+    this.props.dispatch(fetchProviders(search));
   }
 
   componentWillUnmount(): void {
-    this._searchSubscription && this._searchSubscription();
-    this._searchManager.clearSearch();
     Keyboard.removeListener('keyboardWillShow', this._onKeyboardWillShow);
     Keyboard.removeListener('keyboardWillHide', this._onKeyboardWillHide);
   }
 
   componentWillReceiveProps(nextProps: Props): void {
+    if (
+      this.props.providerFetchStatus === 'LOADING' &&
+      nextProps.providerFetchStatus !== 'LOADING'
+    ) {
+      this._updateProviders(nextProps);
+    }
+
     // Handle animating transitions to show / hide this modal.
     const didTransition =
       this.props.transitionStage === 'TRANSITION_IN' ||
@@ -438,7 +438,6 @@ class AccountVerification extends Component<Props, State> {
         type: 'NOT_TRANSITIONING',
       },
     });
-    this._searchManager.updateSearch(search);
   };
 
   _onSelectProvider = (provider: Provider): void => {
@@ -500,17 +499,17 @@ class AccountVerification extends Component<Props, State> {
     });
   };
 
-  _onUpdateSearchResults = (): void => {
+  _updateProviders(props: Props): void {
     const page = this._getCurrentPage();
-    const payload = this._searchManager.getProvidersPayload();
-
+    const didFail = props.providerFetchStatus === 'FAILURE';
+    const { providers } = props;
     switch (page.type) {
       case 'LOGIN': {
         this.setState({
           didCompleteInitialSearch: true,
           pageTransition: {
             page: {
-              providers: payload.type === 'SUCCESS' ? payload.providers : [],
+              providers,
               search: page.search,
               selectedProvider: page.selectedProvider,
               type: 'LOGIN',
@@ -526,17 +525,16 @@ class AccountVerification extends Component<Props, State> {
         this.setState({
           didCompleteInitialSearch: true,
           pageTransition: {
-            page:
-              payload.type === 'SUCCESS'
-                ? {
-                    providers: payload.providers,
-                    search: page.search,
-                    type: 'SEARCH',
-                  }
-                : {
-                    search: page.search,
-                    type: 'SEARCH_ERROR',
-                  },
+            page: didFail
+              ? {
+                  search: page.search,
+                  type: 'SEARCH_ERROR',
+                }
+              : {
+                  providers,
+                  search: page.search,
+                  type: 'SEARCH',
+                },
             type: 'NOT_TRANSITIONING',
           },
         });
@@ -546,7 +544,7 @@ class AccountVerification extends Component<Props, State> {
       default:
         invariant(false, 'Unrecognized page type %s', page.type);
     }
-  };
+  }
 
   _performPageTransition(fromPage: Page, toPage: Page): void {
     this.setState(
@@ -622,12 +620,16 @@ class AccountVerification extends Component<Props, State> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
   return {
     accountLinkContainer: getAccountLinkContainer(state),
-    providerPendingLoginID: state.providers.providerPendingLogin
-      ? state.providers.providerPendingLogin.id
+    providerFetchStatus: state.providers.status,
+    providerPendingLoginID: state.providersDEPRECATED.providerPendingLogin
+      ? state.providersDEPRECATED.providerPendingLogin.id
       : null,
+    providers: state.providers.ordering.map(
+      id => state.providers.container[id],
+    ),
   };
 }
 

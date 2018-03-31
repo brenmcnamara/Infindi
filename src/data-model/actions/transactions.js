@@ -1,6 +1,6 @@
 /* @flow */
 
-import type {ID} from 'common/types/core';
+import type { ID } from 'common/types/core';
 
 export type Action = Action$TransactionsFetch;
 
