@@ -141,7 +141,6 @@ export default class YodleeLoginForm extends Component<Props> {
         placeholder={row.label.length <= 15 ? row.label : ''}
         secureTextEntry={field.type === 'password'}
         style={styles.fieldTextOrPassword}
-        value={field.value}
       />
     );
   }

@@ -50,6 +50,32 @@ export function isSupportedProvider(provider: Provider): SupportType {
   return { type: 'YES' };
 }
 
+// Check if 2 forms are equivalent when all the entered values are ignored.
+export function isSameLoginForm(
+  loginForm1: YodleeLoginForm,
+  loginForm2: YodleeLoginForm,
+): bool {
+  if (loginForm1.row.length !== loginForm2.row.length) {
+    return false;
+  }
+  for (let i = 0; i < loginForm1.row.length; ++i) {
+    if (loginForm1.row[i].id !== loginForm2.row[i].id) {
+      return false;
+    }
+    const field1 = loginForm1.row[i].field;
+    const field2 = loginForm2.row[i].field;
+    if (field1.length !== field2.length) {
+      return false;
+    }
+    for (let j = 0; j < field1.length; ++j) {
+      if (field1[j].id !== field2[j].id) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 export const PRE_DOWNLOADING_STATUSES = [
   'FAILURE / BAD_CREDENTIALS',
   'IN_PROGRESS / INITIALIZING',

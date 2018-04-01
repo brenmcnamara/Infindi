@@ -3,6 +3,7 @@
 import invariant from 'invariant';
 
 import { isInMFA } from 'common/lib/models/AccountLink';
+import { isSameLoginForm } from '../utils';
 
 import type { AccountLinkContainer } from '../../data-model/types';
 import type { ID } from 'common/types/core';
@@ -150,32 +151,6 @@ export default function loginForms(
     }
   }
   return state;
-}
-
-// Check if 2 forms are equivalent when all the entered values are ignored.
-function isSameLoginForm(
-  loginForm1: YodleeLoginForm,
-  loginForm2: YodleeLoginForm,
-): bool {
-  if (loginForm1.row.length !== loginForm2.row.length) {
-    return false;
-  }
-  for (let i = 0; i < loginForm1.row.length; ++i) {
-    if (loginForm1.row[i].id !== loginForm2.row[i].id) {
-      return false;
-    }
-    const field1 = loginForm1.row[i].field;
-    const field2 = loginForm2.row[i].field;
-    if (field1.length !== field2.length) {
-      return false;
-    }
-    for (let j = 0; j < field1.length; ++j) {
-      if (field1[j].id !== field2[j].id) {
-        return false;
-      }
-    }
-  }
-  return true;
 }
 
 function getYodleeLoginForm(provider: Provider): YodleeLoginForm {
