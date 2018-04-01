@@ -1,5 +1,6 @@
 /* @flow */
 
+import AccountVerification from '../../link/components/AccountVerification.react';
 import Colors from '../../design/colors';
 import Environment from '../../modules/Environment';
 import LoadingScreen from '../LoadingScreen.react';
@@ -46,6 +47,11 @@ class App extends Component<Props> {
     const { root } = this.props;
     let mainContent = null;
     switch (root.name) {
+      case 'ACCOUNT_VERIFICATION': {
+        mainContent = <AccountVerification transitionStage="IN" />;
+        break;
+      }
+
       case 'AUTH': {
         mainContent = <LoginScreen />;
         break;

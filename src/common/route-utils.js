@@ -21,6 +21,7 @@ export type RouteNode = {|
 |};
 
 export type RootName =
+  | 'ACCOUNT_VERIFICATION'
   | 'MAIN'
   | 'NO_INTERNET'
   | 'AUTH'
@@ -108,7 +109,9 @@ function calculateRootName(state: ReduxState): RootName {
       // The user can only see the login page if they have internet.
       return 'AUTH';
     case 'LOGGED_IN':
-      return actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
+      return state.routeState.isRequestingAccountVerification
+        ? 'ACCOUNT_VERIFICATION'
+        : actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
     case 'NOT_INITIALIZED':
       return 'LOADING';
     default:

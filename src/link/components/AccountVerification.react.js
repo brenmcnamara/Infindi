@@ -18,8 +18,6 @@ import {
   Dimensions,
   Easing,
   Image,
-  Keyboard,
-  KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
@@ -28,16 +26,12 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  dismissAccountVerification,
-  submitYodleeLoginFormForProviderID,
-  unsupportedProvider,
-} from '../action';
 import { fetchProviders } from '../../data-model/actions/providers';
 import { isSupportedProvider } from '../utils';
 import { getAccountLinkContainer } from '../../common/state-utils';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content';
+import { unsupportedProvider } from '../action';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { AccountVerificationPage } from '../utils';
@@ -87,7 +81,6 @@ type State = {
   activeTransition: 'A' | 'B',
   didCompleteInitialSearch: bool,
   pageTransition: PageTransition,
-  safeAreaInset: Inset,
 };
 
 // TODO: BUG: Click on Add Account / Cancel many times really fast to get
@@ -125,15 +118,7 @@ class AccountVerification extends Component<Props, State> {
       activeTransition: 'A',
       didCompleteInitialSearch: false,
       pageTransition: { page, type: 'NOT_TRANSITIONING' },
-      safeAreaInset: isIphoneX()
-        ? { bottom: 20, left: 0, right: 0, top: 44 }
-        : INSET_DEFAULT,
     };
-  }
-
-  componentWillMount(): void {
-    Keyboard.addListener('keyboardWillShow', this._onKeyboardWillShow);
-    Keyboard.addListener('keyboardWillHide', this._onKeyboardWillHide);
   }
 
   componentDidMount(): void {
@@ -141,11 +126,6 @@ class AccountVerification extends Component<Props, State> {
     const page = this._getCurrentPage();
     const search = page.type === 'SEARCH' ? page.search : '';
     this.props.dispatch(fetchProviders(search));
-  }
-
-  componentWillUnmount(): void {
-    Keyboard.removeListener('keyboardWillShow', this._onKeyboardWillShow);
-    Keyboard.removeListener('keyboardWillHide', this._onKeyboardWillHide);
   }
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -204,21 +184,24 @@ class AccountVerification extends Component<Props, State> {
     switch (pageTransition.type) {
       case 'NOT_TRANSITIONING': {
         const { page } = pageTransition;
-        return (
+        return this._renderScreen(page, this._getActiveTransition(), true);
+/*        return (
           <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-            {this._renderScreen(page, this._getActiveTransition(), true)}
+
           </KeyboardAvoidingView>
-        );
+
+        );*/
       }
 
       case 'TRANSITIONING': {
         const { fromPage, toPage } = pageTransition;
-        return (
-          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-            {this._renderScreen(toPage, 1.0, false)}
-            {this._renderScreen(fromPage, this._getActiveTransition(), false)}
-          </KeyboardAvoidingView>
-        );
+        return this._renderScreen(toPage, 1.0, false);
+        /*
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+
+          {this._renderScreen(fromPage, this._getActiveTransition(), false)}
+        </KeyboardAvoidingView>
+        */
       }
 
       default:
@@ -231,20 +214,8 @@ class AccountVerification extends Component<Props, State> {
     opacity: Animated.Value | number,
     enableInteraction: bool,
   ) {
-    const { safeAreaInset } = this.state;
-    const rootStyles = [
-      styles.root,
-      {
-        bottom: safeAreaInset.bottom,
-        left: safeAreaInset.left,
-        opacity,
-        position: 'absolute',
-        right: safeAreaInset.right,
-        top: safeAreaInset.top,
-      },
-    ];
     return (
-      <Animated.View style={rootStyles}>
+      <Animated.View style={styles.root}>
         <Screen>
           <Content>
             {this._renderHeader(page, enableInteraction)}
@@ -382,22 +353,6 @@ class AccountVerification extends Component<Props, State> {
         return invariant(false, 'Unhandled page: %s', page.type);
     }
   }
-
-  _onKeyboardWillShow = (): void => {
-    this.setState({
-      safeAreaInset: isIphoneX()
-        ? { bottom: 0, left: 0, right: 0, top: 44 }
-        : INSET_DEFAULT,
-    });
-  };
-
-  _onKeyboardWillHide = (): void => {
-    this.setState({
-      safeAreaInset: isIphoneX()
-        ? { bottom: 20, left: 0, right: 0, top: 44 }
-        : INSET_DEFAULT,
-    });
-  };
 
   _onChangeSearch = (search: string): void => {
     const page = this._getCurrentPage();

@@ -1,9 +1,5 @@
 /* @flow */
 
-import AccountVerification, {
-  TransitionInMillis as AccountVerificationTransitionInMillis,
-  TransitionOutMillis as AccountVerificationTransitionOutMillis,
-} from './components/AccountVerification.react';
 import InfoModal, {
   TransitionInMillis as InfoModalTransitionInMillis,
   TransitionOutMillis as InfoModalTransitionOutMillis,
@@ -24,6 +20,8 @@ import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 
 export type Action =
   | Action$ClearLoginForm
+  | Action$DismissAccountVerification
+  | Action$RequestAccountVerification
   | Action$SubmitYodleeLoginFormFailure
   | Action$SubmitYodleeLoginFormInitialize
   | Action$SubmitYodleeLoginFormSuccess
@@ -33,34 +31,20 @@ export const PROVIDER_LOGIN_MODAL_ID = 'YODLEE_LOGIN';
 
 const UNSUPPORTED_MODAL_ID = 'UNSUPPORTED_MODAL';
 
-export function requestAccountVerification(): Action$RequestModal {
-  return {
-    modal: {
-      id: PROVIDER_LOGIN_MODAL_ID,
-      modalType: 'REACT_WITH_TRANSITION',
-      priority: 'USER_REQUESTED',
-      renderIn: () => <AccountVerification transitionStage="IN" />,
-      renderOut: () => <AccountVerification transitionStage="OUT" />,
-      renderTransitionIn: () => (
-        <AccountVerification transitionStage="TRANSITION_IN" />
-      ),
-      renderTransitionOut: () => (
-        <AccountVerification transitionStage="TRANSITION_OUT" />
-      ),
-      transitionInMillis: AccountVerificationTransitionInMillis,
-      transitionOutMillis: AccountVerificationTransitionOutMillis,
-    },
-    shouldIgnoreRequestingExistingModal: true,
-    type: 'REQUEST_MODAL',
-  };
+export type Action$RequestAccountVerification = {|
+  +type: 'REQUEST_ACCOUNT_VERIFICATION',
+|};
+
+export function requestAccountVerification() {
+  return { type: 'REQUEST_ACCOUNT_VERIFICATION' };
 }
 
-export function dismissAccountVerification(): Action$DismissModal {
-  return {
-    modalID: PROVIDER_LOGIN_MODAL_ID,
-    shouldIgnoreDismissingNonExistantModal: true,
-    type: 'DISMISS_MODAL',
-  };
+export type Action$DismissAccountVerification = {|
+  +type: 'DISMISS_ACCOUNT_VERIFICATION',
+|};
+
+export function dismissAccountVerification() {
+  return { type: 'DISMISS_ACCOUNT_VERIFICATION' };
 }
 
 export function unsupportedProvider(reason: string): Action$RequestModal {
