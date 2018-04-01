@@ -11,6 +11,8 @@ import InfoModal, {
 import React from 'react';
 import TextDesign from '../design/text';
 
+import uuid from 'uuid/v4';
+
 import { Text } from 'react-native';
 
 import type {
@@ -19,11 +21,11 @@ import type {
 } from '../actions/modal';
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
-import type { Provider } from 'common/lib/models/Provider';
 
 export type Action =
-  | Action$RequestProviderLogin
-  | Action$RequestProviderLoginFailed
+  | Action$SubmitYodleeLoginFormFailure
+  | Action$SubmitYodleeLoginFormInitialize
+  | Action$SubmitYodleeLoginFormSuccess
   | Action$UpdateLoginForm;
 
 export const PROVIDER_LOGIN_MODAL_ID = 'YODLEE_LOGIN';
@@ -95,29 +97,35 @@ export function unsupportedProvider(reason: string): Action$RequestModal {
   };
 }
 
-export type Action$RequestProviderLogin = {|
-  +provider: Provider,
-  +type: 'REQUEST_PROVIDER_LOGIN',
+export type Action$SubmitYodleeLoginFormInitialize = {|
+  +loginForm: YodleeLoginForm,
+  +operationID: ID,
+  +providerID: ID,
+  +type: 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE',
 |};
 
-export function requestProviderLogin(provider: Provider) {
-  return {
-    provider,
-    type: 'REQUEST_PROVIDER_LOGIN',
-  };
-}
-
-export type Action$RequestProviderLoginFailed = {|
-  +error: Error,
-  +provider: Provider,
-  +type: 'REQUEST_PROVIDER_LOGIN_FAILED',
+export type Action$SubmitYodleeLoginFormSuccess = {|
+  +operationID: ID,
+  +providerID: ID,
+  +type: 'SUBMIT_YODLEE_LOGIN_FORM_SUCCESS',
 |};
 
-export function requestProviderLoginFailed(provider: Provider, error: Error) {
+export type Action$SubmitYodleeLoginFormFailure = {|
+  +error: Object,
+  +operationID: ID,
+  +providerID: ID,
+  +type: 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE',
+|};
+
+export function submitYodleeLoginForm(
+  providerID: ID,
+  loginForm: YodleeLoginForm,
+) {
   return {
-    error,
-    provider,
-    type: 'REQUEST_PROVIDER_LOGIN_FAILED',
+    loginForm,
+    providerID,
+    operationID: uuid(),
+    type: 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE',
   };
 }
 

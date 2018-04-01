@@ -101,7 +101,7 @@ export default (store: Store) => (next: Next) => {
         break;
       }
 
-      case 'REQUEST_PROVIDER_LOGIN': {
+      case 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE': {
         // NOTE: There is an edge case we are not properly handling here. If
         // a provider sends a long request, we get the banner to show that
         // accounts are downloading. It could be the case that right after this
@@ -111,15 +111,14 @@ export default (store: Store) => (next: Next) => {
         // accounts, then the banner will get dismissed too early. This is
         // probably a very rare edge case and the bug does not result in any
         // serious issues with the app.
-        const providerID = action.provider.id;
+        const { providerID } = action;
         const text = AccountLinkBanner['IN_PROGRESS / INITIALIZING'];
         updateAccountLinkStatus(providerID, 'IN_PROGRESS / INITIALIZING', text);
         break;
       }
 
-      case 'REQUEST_PROVIDER_LOGIN_FAILED': {
-        const providerID = action.provider.id;
-        const { error } = action;
+      case 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE': {
+        const { error, providerID } = action;
         // $FlowFixMe - This is correct.
         const message: string =
           error.error_message ||
@@ -178,7 +177,6 @@ function requestAccountLinkBanner(
 function containsLinking(container: AccountLinkContainer): bool {
   for (const id in container) {
     if (container.hasOwnProperty(id) && isLinking(container[id])) {
-      console.log(container[id].status);
       return true;
     }
   }

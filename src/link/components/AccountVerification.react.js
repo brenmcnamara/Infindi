@@ -30,7 +30,7 @@ import {
 import { connect } from 'react-redux';
 import {
   dismissAccountVerification,
-  requestProviderLogin,
+  submitYodleeLoginForm,
   unsupportedProvider,
   updateLoginForm,
 } from '../action';
@@ -431,7 +431,9 @@ class AccountVerification extends Component<Props, State> {
       page.type === 'LOGIN',
       'Expected to be on login page when login button is pressed',
     );
-    this.props.dispatch(requestProviderLogin(page.selectedProvider));
+    const providerID = page.selectedProvider.id;
+    const loginForm = this.props.loginForms[providerID];
+    this.props.dispatch(submitYodleeLoginForm(providerID, loginForm));
   };
 
   _onChangeSearch = (search: string): void => {

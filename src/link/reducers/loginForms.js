@@ -41,16 +41,16 @@ export default function loginForms(
       return { ...state, loginFormContainer, loginFormSource };
     }
 
-    case 'REQUEST_PROVIDER_LOGIN': {
+    case 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE': {
       // TODO: This is lame! Fix it!
       invariant(
         !state.providerPendingLoginID,
         'Only supports 1 pending login at a time',
       );
-      return { ...state, providerPendingLoginID: action.provider.id };
+      return { ...state, providerPendingLoginID: action.providerID };
     }
 
-    case 'REQUEST_PROVIDER_LOGIN_FAILED': {
+    case 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE': {
       invariant(
         state.providerPendingLoginID,
         'Expecting pending login on provider',

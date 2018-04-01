@@ -1,7 +1,6 @@
 /* @flow */
 
-import { genYodleeProviderLogin } from '../../backend';
-import { requestProviderLoginFailed } from '../action';
+import { genYodleeSubmitProviderLoginForm } from '../../backend';
 
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
 
@@ -10,11 +9,24 @@ export default (store: Store) => (next: Next) => {
     next(action);
 
     switch (action.type) {
-      case 'REQUEST_PROVIDER_LOGIN': {
-        const { provider } = action;
-        genYodleeProviderLogin(provider).catch(error => {
-          next(requestProviderLoginFailed(provider, error));
-        });
+      case 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE': {
+        const { loginForm, operationID, providerID } = action;
+        genYodleeSubmitProviderLoginForm(providerID, loginForm)
+          .then(response => {
+            next({
+              operationID,
+              providerID,
+              type: 'SUBMIT_YODLEE_LOGIN_FORM_SUCCESS',
+            });
+          })
+          .catch(error => {
+            next({
+              error,
+              operationID,
+              providerID,
+              type: 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE',
+            });
+          });
       }
     }
   };
