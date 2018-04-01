@@ -137,7 +137,7 @@ export default function loginForms(
         'Expecting a default login form to exist for provider: %s',
         providerID,
       );
-      const loginFormContainer = { ...state.loginFormCntainer };
+      const loginFormContainer = { ...state.loginFormContainer };
       loginFormContainer[providerID] =
         state.defaultLoginFormContainer[providerID];
       return { ...state, loginFormContainer };

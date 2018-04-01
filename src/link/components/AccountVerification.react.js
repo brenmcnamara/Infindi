@@ -1,10 +1,10 @@
 /* @flow */
 
 import AccountLogin from './AccountLogin.react';
+import AccountVerificationFooter from './AccountVerificationFooter.react';
 import BannerManager from '../../components/shared/BannerManager.react';
 import Colors from '../../design/colors';
 import Content from '../../components/shared/Content.react';
-import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import ProviderSearch from './ProviderSearch.react';
 import React, { Component } from 'react';
@@ -40,10 +40,9 @@ import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
+import type { AccountVerificationPage } from '../utils';
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
-import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
-import type { LoginFormContainer } from '../../link/types';
 import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ProviderFetchStatus } from '../../data-model/types';
@@ -57,7 +56,6 @@ export type ComponentProps = {
 
 export type ComputedProps = {
   accountLinkContainer: AccountLinkContainer,
-  loginForms: LoginFormContainer,
   providerFetchStatus: ProviderFetchStatus,
   providerPendingLoginID: ID | null,
   providers: Array<Provider>,
@@ -74,31 +72,14 @@ type Inset = {|
   +top: number,
 |};
 
-type Page =
-  | {|
-      +search: string,
-      +type: 'SEARCH_ERROR',
-    |}
-  | {|
-      +providers: Array<Provider>,
-      +search: string,
-      +type: 'SEARCH',
-    |}
-  | {|
-      +providers: Array<Provider>,
-      +search: string,
-      +selectedProvider: Provider,
-      +type: 'LOGIN',
-    |};
-
 type PageTransition =
   | {|
-      +fromPage: Page,
-      +toPage: Page,
+      +fromPage: AccountVerificationPage,
+      +toPage: AccountVerificationPage,
       +type: 'TRANSITIONING',
     |}
   | {|
-      +page: Page,
+      +page: AccountVerificationPage,
       +type: 'NOT_TRANSITIONING',
     |};
 
@@ -246,7 +227,7 @@ class AccountVerification extends Component<Props, State> {
   }
 
   _renderScreen(
-    page: Page,
+    page: AccountVerificationPage,
     opacity: Animated.Value | number,
     enableInteraction: bool,
   ) {
@@ -270,16 +251,19 @@ class AccountVerification extends Component<Props, State> {
             {this._renderBanner(page)}
             {this._renderContent(page, enableInteraction)}
           </Content>
-          <FooterWithButtons
-            buttonLayout={this._getFooterButtonLayout(page, enableInteraction)}
-            onPress={this._onFooterButtonPress}
+          <AccountVerificationFooter
+            enableInteraction={
+              page.type !== 'LOGIN' ||
+              page.selectedProvider.id !== this.props.providerPendingLoginID
+            }
+            page={page}
           />
         </Screen>
       </Animated.View>
     );
   }
 
-  _renderHeader(page: Page, enableInteraction: bool) {
+  _renderHeader(page: AccountVerificationPage, enableInteraction: bool) {
     switch (page.type) {
       case 'SEARCH':
         return this._renderSearchHeader(page.search, enableInteraction);
@@ -341,13 +325,13 @@ class AccountVerification extends Component<Props, State> {
     );
   }
 
-  _renderBanner(page: Page) {
+  _renderBanner(page: AccountVerificationPage) {
     const channels =
       page.type === 'LOGIN' ? [`PROVIDERS/${page.selectedProvider.id}`] : [];
     return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
-  _renderContent(page: Page, enableInteraction: bool) {
+  _renderContent(page: AccountVerificationPage, enableInteraction: bool) {
     const { providerPendingLoginID, transitionStage } = this.props;
     const { didCompleteInitialSearch } = this.state;
 
@@ -413,21 +397,6 @@ class AccountVerification extends Component<Props, State> {
         ? { bottom: 20, left: 0, right: 0, top: 44 }
         : INSET_DEFAULT,
     });
-  };
-
-  _onFooterButtonPress = (button: 'LEFT' | 'RIGHT' | 'CENTER'): void => {
-    if (this._isCancelButton(button)) {
-      this.props.dispatch(dismissAccountVerification());
-      return;
-    }
-    // Otherwise, it is the login button.
-    const page = this._getCurrentPage();
-    invariant(
-      page.type === 'LOGIN',
-      'Expected to be on login page when login button is pressed',
-    );
-    const providerID = page.selectedProvider.id;
-    this.props.dispatch(submitYodleeLoginFormForProviderID(providerID));
   };
 
   _onChangeSearch = (search: string): void => {
@@ -530,7 +499,10 @@ class AccountVerification extends Component<Props, State> {
     }
   }
 
-  _performPageTransition(fromPage: Page, toPage: Page): void {
+  _performPageTransition(
+    fromPage: AccountVerificationPage,
+    toPage: AccountVerificationPage,
+  ): void {
     this.setState(
       {
         pageTransition: {
@@ -558,29 +530,7 @@ class AccountVerification extends Component<Props, State> {
     );
   }
 
-  _getFooterButtonLayout(page: Page, enableInteraction: bool) {
-    const { providerPendingLoginID } = this.props;
-    if (page.type === 'LOGIN') {
-      const loginForm = this.props.loginForms[page.selectedProvider.id];
-      const shouldDisableLoginButton =
-        Boolean(providerPendingLoginID) || !canSubmitLoginForm(loginForm);
-      const callToAction = getCallToActionForLoginForm(loginForm);
-      return {
-        isLeftButtonDisabled: !enableInteraction,
-        isRightButtonDisabled: !enableInteraction || shouldDisableLoginButton,
-        leftButtonText: 'EXIT',
-        rightButtonText: callToAction,
-        type: 'LEFT_AND_RIGHT',
-      };
-    }
-    return {
-      centerButtonText: 'EXIT',
-      isCenterButtonDisabled: !enableInteraction,
-      type: 'CENTER',
-    };
-  }
-
-  _getCurrentPage(): Page {
+  _getCurrentPage(): AccountVerificationPage {
     return this.state.pageTransition.type === 'NOT_TRANSITIONING'
       ? this.state.pageTransition.page
       : this.state.pageTransition.toPage;
@@ -597,16 +547,11 @@ class AccountVerification extends Component<Props, State> {
       ? this._pageTransitionB
       : this._pageTransitionA;
   }
-
-  _isCancelButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {
-    return button === 'CENTER' || button === 'LEFT';
-  }
 }
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   return {
     accountLinkContainer: getAccountLinkContainer(state),
-    loginForms: state.loginForms.loginFormContainer,
     providerFetchStatus: state.providers.status,
     providerPendingLoginID: state.loginForms.providerPendingLoginID,
     providers: state.providers.ordering.map(
@@ -697,21 +642,6 @@ const styles = StyleSheet.create({
 // UTILITIES
 //
 // -----------------------------------------------------------------------------
-
-function getCallToActionForLoginForm(loginForm: YodleeLoginForm): string {
-  return loginForm.formType === 'login' ? 'LOGIN' : 'SUBMIT';
-}
-
-function canSubmitLoginForm(loginForm: YodleeLoginForm): bool {
-  for (const row of loginForm.row) {
-    for (const field of row.field) {
-      if (!field.isOptional && field.value.length === 0) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
 
 // TODO: This is a hack to fix the safe area bugs, since it does not work
 // well in a modal view inside a keyboard avoiding view.
