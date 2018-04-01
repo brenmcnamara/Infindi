@@ -17,11 +17,14 @@ import type {
   Action$DismissModal,
   Action$RequestModal,
 } from '../actions/modal';
+import type { ID } from 'common/types/core';
+import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
 
 export type Action =
   | Action$RequestProviderLogin
-  | Action$RequestProviderLoginFailed;
+  | Action$RequestProviderLoginFailed
+  | Action$UpdateLoginForm;
 
 export const PROVIDER_LOGIN_MODAL_ID = 'YODLEE_LOGIN';
 
@@ -115,5 +118,19 @@ export function requestProviderLoginFailed(provider: Provider, error: Error) {
     error,
     provider,
     type: 'REQUEST_PROVIDER_LOGIN_FAILED',
+  };
+}
+
+export type Action$UpdateLoginForm = {|
+  +loginForm: YodleeLoginForm,
+  +providerID: ID,
+  +type: 'UPDATE_LOGIN_FORM',
+|};
+
+export function updateLoginForm(providerID: ID, loginForm: YodleeLoginForm) {
+  return {
+    loginForm,
+    providerID,
+    type: 'UPDATE_LOGIN_FORM',
   };
 }

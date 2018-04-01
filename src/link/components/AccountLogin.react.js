@@ -8,17 +8,16 @@ import TextDesign from '../../design/text';
 import invariant from 'invariant';
 
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
+import { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 
-import type {
-  LoginEntry,
-  ProviderFull as YodleeProvider,
-} from 'common/types/yodlee';
+import type { LoginEntry } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
 
 export type Props = {
   isEditable: bool,
-  onChangeProvider: (provider: Provider) => any,
+  onChangeLoginForm: (loginForm: LoginForm) => any,
   onPressForgotPassword: (url: string) => any,
+  loginForm: YodleeLoginForm,
   provider: Provider,
 };
 
@@ -105,16 +104,10 @@ export default class AccountLogin extends Component<Props> {
       field,
     };
 
-    const { provider } = this.props;
-    const yodleeProvider = getYodleeProvider(provider);
-    const row = yodleeProvider.loginForm.row.slice();
+    const row = this.props.loginForm.row.slice();
     row.splice(index, 1, newEntry);
-    const loginForm = { ...yodleeProvider.loginForm, row };
-    const newYodleeProvider = { ...yodleeProvider, loginForm };
-    this.props.onChangeProvider({
-      ...provider,
-      sourceOfTruth: { type: 'YODLEE', value: newYodleeProvider },
-    });
+    const loginForm = { ...loginForm, row };
+    this.props.onChangeLoginForm(loginForm);
   };
 
   _onPressForgotCredentials = (url: string): void => {
@@ -122,9 +115,7 @@ export default class AccountLogin extends Component<Props> {
   };
 
   _getData() {
-    const { provider } = this.props;
-    const yodleeProvider = getYodleeProvider(provider);
-    const { loginForm } = yodleeProvider;
+    const { loginForm } = this.props;
     const rows: Array<RowItem> = loginForm.row.map((loginEntry, index) => ({
       entryIndex: index,
       loginEntry,
@@ -137,15 +128,6 @@ export default class AccountLogin extends Component<Props> {
     }
     return rows;
   }
-}
-
-function getYodleeProvider(provider: Provider): YodleeProvider {
-  const { sourceOfTruth } = provider;
-  invariant(
-    sourceOfTruth.type === 'YODLEE',
-    'Expecting Provider to come from YODLEE',
-  );
-  return sourceOfTruth.value;
 }
 
 const styles = StyleSheet.create({

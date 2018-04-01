@@ -32,6 +32,7 @@ import {
   dismissAccountVerification,
   requestProviderLogin,
   unsupportedProvider,
+  updateLoginForm,
 } from '../action';
 import { fetchProviders } from '../../data-model/actions/providers';
 import { isSupportedProvider } from '../utils';
@@ -42,6 +43,8 @@ import { ProviderSearchError } from '../../../content';
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
+import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
+import type { LoginFormContainer } from '../../link/types';
 import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ProviderFetchStatus } from '../../data-model/types';
@@ -55,6 +58,7 @@ export type ComponentProps = {
 
 export type ComputedProps = {
   accountLinkContainer: AccountLinkContainer,
+  loginForms: LoginFormContainer,
   providerFetchStatus: ProviderFetchStatus,
   providerPendingLoginID: ID | null,
   providers: Array<Provider>,
@@ -380,8 +384,11 @@ class AccountVerification extends Component<Props, State> {
               transitionStage === 'IN' &&
               !providerPendingLoginID
             }
-            onChangeProvider={this._onChangeProvider}
+            onChangeLoginForm={loginForm =>
+              this._onChangeLoginForm(provider.id, loginForm)
+            }
             onPressForgotPassword={this._onPressForgotPassword}
+            loginForm={this.props.loginForms[provider.id]}
             provider={provider}
           />
         );
@@ -480,23 +487,8 @@ class AccountVerification extends Component<Props, State> {
     // https://facebook.github.io/react-native/docs/linking.html
   };
 
-  _onChangeProvider = (provider: Provider): void => {
-    const page = this._getCurrentPage();
-    invariant(
-      page.type === 'LOGIN',
-      'Expecting page to be LOGIN while changing provider',
-    );
-    this.setState({
-      pageTransition: {
-        page: {
-          providers: page.providers,
-          search: page.search,
-          selectedProvider: provider,
-          type: 'LOGIN',
-        },
-        type: 'NOT_TRANSITIONING',
-      },
-    });
+  _onChangeLoginForm = (providerID: ID, loginForm: YodleeLoginForm): void => {
+    this.props.dispatch(updateLoginForm(providerID, loginForm));
   };
 
   _updateProviders(props: Props): void {
@@ -623,10 +615,9 @@ class AccountVerification extends Component<Props, State> {
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   return {
     accountLinkContainer: getAccountLinkContainer(state),
+    loginForms: state.loginForms.loginFormContainer,
     providerFetchStatus: state.providers.status,
-    providerPendingLoginID: state.providersDEPRECATED.providerPendingLogin
-      ? state.providersDEPRECATED.providerPendingLogin.id
-      : null,
+    providerPendingLoginID: state.loginForms.providerPendingLoginID,
     providers: state.providers.ordering.map(
       id => state.providers.container[id],
     ),
