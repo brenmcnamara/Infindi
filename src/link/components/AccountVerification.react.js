@@ -15,10 +15,8 @@ import invariant from 'invariant';
 
 import {
   Animated,
-  Dimensions,
   Easing,
   Image,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -58,13 +56,6 @@ export type ComputedProps = {
 export type Props = ReduxProps & ComputedProps & ComponentProps;
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
-
-type Inset = {|
-  +bottom: number,
-  +left: number,
-  +right: number,
-  +top: number,
-|};
 
 type PageTransition =
   | {|
@@ -185,7 +176,7 @@ class AccountVerification extends Component<Props, State> {
       case 'NOT_TRANSITIONING': {
         const { page } = pageTransition;
         return this._renderScreen(page, this._getActiveTransition(), true);
-/*        return (
+        /*        return (
           <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
 
           </KeyboardAvoidingView>
@@ -591,23 +582,3 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
 });
-
-// -----------------------------------------------------------------------------
-//
-// UTILITIES
-//
-// -----------------------------------------------------------------------------
-
-// TODO: This is a hack to fix the safe area bugs, since it does not work
-// well in a modal view inside a keyboard avoiding view.
-function isIphoneX() {
-  let d = Dimensions.get('window');
-  const { height, width } = d;
-
-  return (
-    // This has to be iOS duh
-    Platform.OS === 'ios' &&
-    // Accounting for the height in either orientation
-    (height === 812 || width === 812)
-  );
-}
