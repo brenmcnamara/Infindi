@@ -1,10 +1,15 @@
 /* @flow */
 
 import { AccountsDownloadingBanner, AccountLinkBanner } from '../../../content';
-import { dismissAccountVerification, PROVIDER_LOGIN_MODAL_ID } from '../action';
+import {
+  clearLoginForm,
+  dismissAccountVerification,
+  PROVIDER_LOGIN_MODAL_ID,
+} from '../action';
 import { dismissToast, requestToast } from '../../actions/toast';
-import { isLinking } from 'common/lib/models/AccountLink';
 import { forEachObject } from '../../common/obj-utils';
+import { isLinking } from 'common/lib/models/AccountLink';
+import { POST_DOWNLOADING_STATUSES, PRE_DOWNLOADING_STATUSES } from '../utils';
 
 import type {
   AccountLink,
@@ -33,25 +38,14 @@ export default (store: Store) => (next: Next) => {
       return;
     }
 
-    const preVerificationPhases = [
-      'IN_PROGRESS / INITIALIZING',
-      'IN_PROGRESS / USER_INPUT_REQUIRED',
-      'IN_PROGRESS / VERIFYING_CREDENTIALS',
-      'FAILURE / BAD_CREDENTIALS',
-    ];
-    const postVerificationPhases = [
-      'IN_PROGRESS / DOWNLOADING_DATA',
-      'SUCCESS',
-      'FAILURE / INTERNAL_SERVICE_FAILURE',
-      'FAILURE / EXTERNAL_SERVICE_FAILURE',
-    ];
     if (
       fromStatus &&
-      preVerificationPhases.includes(fromStatus) &&
-      postVerificationPhases.includes(toStatus) &&
+      PRE_DOWNLOADING_STATUSES.includes(fromStatus) &&
+      POST_DOWNLOADING_STATUSES.includes(toStatus) &&
       isShowingProviderLoginScreen(store.getState())
     ) {
       next(dismissAccountVerification());
+      next(clearLoginForm(providerID));
     }
 
     next(requestAccountLinkBanner(providerID, toStatus, bannerText));
@@ -112,8 +106,15 @@ export default (store: Store) => (next: Next) => {
         // probably a very rare edge case and the bug does not result in any
         // serious issues with the app.
         const { providerID } = action;
-        const text = AccountLinkBanner['IN_PROGRESS / INITIALIZING'];
-        updateAccountLinkStatus(providerID, 'IN_PROGRESS / INITIALIZING', text);
+        const loginFormSource = store.getState().loginForms.loginFormSource[
+          providerID
+        ];
+        const nextStatus =
+          loginFormSource === 'ACCOUNT_LINK'
+            ? 'MFA / WAITING_FOR_LOGIN_FORM'
+            : 'IN_PROGRESS / INITIALIZING';
+        const text = AccountLinkBanner[nextStatus];
+        updateAccountLinkStatus(providerID, nextStatus, text);
         break;
       }
 

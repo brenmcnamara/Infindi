@@ -49,9 +49,14 @@ type DataRow =
       url: string,
     }
   | {
+      subtitle: string | null,
+      title: string | null,
+      type: 'HEADER',
+    }
+  | {
       label: string,
       rowIndex: number,
-      type: 'ROW_LABEL',
+      type: 'SUBHEADER',
     };
 
 export default class YodleeLoginForm extends Component<Props> {
@@ -83,18 +88,41 @@ export default class YodleeLoginForm extends Component<Props> {
       }
     } else if (item.type === 'FORGOT_PASSWORD') {
       invariant(false, 'FORGOT PASSWORD NOT YET SUPPORTED');
-    } else if (item.type === 'ROW_LABEL') {
-      return this._renderRowLabel(item.label);
+    } else if (item.type === 'HEADER') {
+      return this._renderHeader(item.title, item.subtitle);
+    } else if (item.type === 'SUBHEADER') {
+      return this._renderSubheader(item.label);
     } else {
       invariant(false, 'Unrecognized data row: %s', item.type);
     }
   };
 
-  _renderRowLabel(label: string) {
+  _renderHeader(title: string | null, subtitle: string | null) {
     return (
-      <Text style={[TextDesign.normalWithEmphasis, styles.rowLabel]}>
-        {label}
-      </Text>
+      <View style={styles.formHeader}>
+        {title ? (
+          <Text style={[TextDesign.header3, styles.formHeaderTitle]}>
+            {title}
+          </Text>
+        ) : null}
+        {subtitle ? (
+          <Text
+            style={[TextDesign.normalWithEmphasis, styles.formHeaderSubtitle]}
+          >
+            {subtitle}
+          </Text>
+        ) : null}
+      </View>
+    );
+  }
+
+  _renderSubheader(label: string) {
+    return (
+      <View style={styles.formSubheader}>
+        <Text style={[TextDesign.normalWithEmphasis, styles.formSubheaderText]}>
+          {label}
+        </Text>
+      </View>
     );
   }
 
@@ -110,7 +138,7 @@ export default class YodleeLoginForm extends Component<Props> {
         autoFocus={location.rowIndex === 0 && location.fieldIndex === 0}
         editable={this.props.isEditable}
         onChangeText={text => this._onChangeFormTextValue(location, text)}
-        placeholder={row.label}
+        placeholder={row.label.length <= 15 ? row.label : ''}
         secureTextEntry={field.type === 'password'}
         style={styles.fieldTextOrPassword}
         value={field.value}
@@ -133,7 +161,7 @@ export default class YodleeLoginForm extends Component<Props> {
                 <Text style={[styles.fieldOptionItemText, TextDesign.normal]}>
                   {option.displayText}
                 </Text>
-                {option.isSelected ? (
+                {option.isSelected === 'true' ? (
                   <Image
                     resizeMode="contain"
                     source={Icons.Checkmark}
@@ -181,7 +209,7 @@ export default class YodleeLoginForm extends Component<Props> {
       // of option objects.
       const newOptions = newField.option.map(option => ({
         ...option,
-        isSelected: option.optionValue === value,
+        isSelected: option.optionValue === value ? 'true' : 'false',
       }));
       newField = { ...newField, option: newOptions };
     }
@@ -211,10 +239,23 @@ export default class YodleeLoginForm extends Component<Props> {
 
   _getData() {
     const { loginForm } = this.props;
-    const data = [];
+    const data = [
+      {
+        subtitle:
+          loginForm.formType === 'questionAndAnswer'
+            ? loginForm.mfaInfoText
+            : null,
+        title:
+          loginForm.formType === 'questionAndAnswer'
+            ? loginForm.mfaInfoTitle
+            : null,
+        type: 'HEADER',
+      },
+    ];
+
     loginForm.row.forEach((row, rowIndex) => {
-      if (loginForm.formType === 'questionAndAnswer') {
-        data.push({ label: row.label, rowIndex, type: 'ROW_LABEL' });
+      if (loginForm.formType === 'questionAndAnswer' || row.label.length > 15) {
+        data.push({ label: row.label, rowIndex, type: 'SUBHEADER' });
       }
       row.field.forEach((field, fieldIndex) => {
         data.push({
@@ -273,10 +314,27 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
 
-  rowLabel: {
+  formHeader: {
     alignItems: 'center',
-    marginBottom: 4,
+    marginVertical: 20,
+  },
+
+  formHeaderSubtitle: {
+    marginTop: 4,
+    textAlign: 'center',
+  },
+
+  formHeaderTitle: {
+    textAlign: 'center',
+  },
+
+  formSubheader: {
+    alignItems: 'center',
+    marginBottom: 8,
     marginHorizontal: 8,
+  },
+
+  formSubheaderText: {
     textAlign: 'center',
   },
 });

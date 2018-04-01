@@ -49,3 +49,17 @@ export function isSupportedProvider(provider: Provider): SupportType {
   }
   return { type: 'YES' };
 }
+
+export const PRE_DOWNLOADING_STATUSES = [
+  'FAILURE / BAD_CREDENTIALS',
+  'IN_PROGRESS / INITIALIZING',
+  'IN_PROGRESS / USER_INPUT_REQUIRED',
+  'IN_PROGRESS / VERIFYING_CREDENTIALS',
+  'MFA / PENDING_USER_INPUT',
+  'MFA / WAITING_FOR_LOGIN_FORM',
+];
+
+export const POST_DOWNLOADING_STATUSES = [
+  'IN_PROGRESS / DOWNLOADING_DATA',
+  'SUCCESS',
+];

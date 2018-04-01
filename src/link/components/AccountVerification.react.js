@@ -30,9 +30,8 @@ import {
 import { connect } from 'react-redux';
 import {
   dismissAccountVerification,
-  submitYodleeLoginForm,
+  submitYodleeLoginFormForProviderID,
   unsupportedProvider,
-  updateLoginForm,
 } from '../action';
 import { fetchProviders } from '../../data-model/actions/providers';
 import { isSupportedProvider } from '../utils';
@@ -390,11 +389,7 @@ class AccountVerification extends Component<Props, State> {
               transitionStage === 'IN' &&
               !providerPendingLoginID
             }
-            onChangeLoginForm={loginForm =>
-              this._onChangeLoginForm(selectedProvider.id, loginForm)
-            }
-            onPressForgotPassword={this._onPressForgotPassword}
-            loginForm={this.props.loginForms[selectedProvider.id]}
+            providerID={selectedProvider.id}
           />
         );
       }
@@ -432,8 +427,7 @@ class AccountVerification extends Component<Props, State> {
       'Expected to be on login page when login button is pressed',
     );
     const providerID = page.selectedProvider.id;
-    const loginForm = this.props.loginForms[providerID];
-    this.props.dispatch(submitYodleeLoginForm(providerID, loginForm));
+    this.props.dispatch(submitYodleeLoginFormForProviderID(providerID));
   };
 
   _onChangeSearch = (search: string): void => {
@@ -487,15 +481,6 @@ class AccountVerification extends Component<Props, State> {
       type: 'SEARCH',
     };
     this._performPageTransition(fromPage, toPage);
-  };
-
-  _onPressForgotPassword = (url: string): void => {
-    // TODO: Open safari at the url.
-    // https://facebook.github.io/react-native/docs/linking.html
-  };
-
-  _onChangeLoginForm = (providerID: ID, loginForm: YodleeLoginForm): void => {
-    this.props.dispatch(updateLoginForm(providerID, loginForm));
   };
 
   _updateProviders(props: Props): void {

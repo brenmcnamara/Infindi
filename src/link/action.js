@@ -98,7 +98,6 @@ export function unsupportedProvider(reason: string): Action$RequestModal {
 }
 
 export type Action$SubmitYodleeLoginFormInitialize = {|
-  +loginForm: YodleeLoginForm,
   +operationID: ID,
   +providerID: ID,
   +type: 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE',
@@ -117,12 +116,8 @@ export type Action$SubmitYodleeLoginFormFailure = {|
   +type: 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE',
 |};
 
-export function submitYodleeLoginForm(
-  providerID: ID,
-  loginForm: YodleeLoginForm,
-) {
+export function submitYodleeLoginFormForProviderID(providerID: ID) {
   return {
-    loginForm,
     providerID,
     operationID: uuid(),
     type: 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE',
@@ -140,5 +135,17 @@ export function updateLoginForm(providerID: ID, loginForm: YodleeLoginForm) {
     loginForm,
     providerID,
     type: 'UPDATE_LOGIN_FORM',
+  };
+}
+
+export type Action$ClearLoginForm = {|
+  +providerID: ID,
+  +type: 'CLEAR_LOGIN_FORM',
+|};
+
+export function clearLoginForm(providerID: ID) {
+  return {
+    providerID,
+    type: 'CLEAR_LOGIN_FORM',
   };
 }

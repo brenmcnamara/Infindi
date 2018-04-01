@@ -56,6 +56,22 @@ export function getAccountLinkContainer(state: State): AccountLinkContainer {
     : {};
 }
 
+export function getAccountLinkForProviderID(
+  state: State,
+  providerID: ID,
+): AccountLink | null {
+  const container = getAccountLinkContainer(state);
+  for (const id in container) {
+    if (
+      container.hasOwnProperty(id) &&
+      container[id].providerRef.refID === providerID
+    ) {
+      return container[id];
+    }
+  }
+  return null;
+}
+
 // NOTE: The order the transaction firebase query returns transactions must be
 // in sync with the ordering returned from the method getTransactionsForAccount,
 // or there will be paging issues.

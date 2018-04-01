@@ -1,5 +1,7 @@
 /* @flow */
 
+import invariant from 'invariant';
+
 import { genYodleeSubmitProviderLoginForm } from '../../backend';
 
 import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
@@ -10,7 +12,15 @@ export default (store: Store) => (next: Next) => {
 
     switch (action.type) {
       case 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE': {
-        const { loginForm, operationID, providerID } = action;
+        const { operationID, providerID } = action;
+        const loginForm = store.getState().loginForms.loginFormContainer[
+          providerID
+        ];
+        invariant(
+          loginForm,
+          'Expecting login form to exist for provider id: %s',
+          providerID,
+        );
         genYodleeSubmitProviderLoginForm(providerID, loginForm)
           .then(response => {
             next({

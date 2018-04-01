@@ -1231,11 +1231,7 @@ commander@~2.13.0:
 
 "common@git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git":
   version "1.0.0"
-<<<<<<< HEAD
-  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#f8eb7623701df64e949c50ecfc12a49d1fcde78e"
-=======
-  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#c7aa13ddff319a0a218f1129ba20d08d52c3beeb"
->>>>>>> TEMP COMMIT
+  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#2126a65d88fb21a1da806d5a9cf630f011528c65"
   dependencies:
     uuid "^3.1.0"
 
