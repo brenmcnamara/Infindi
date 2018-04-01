@@ -10,7 +10,10 @@ import {
   dismissAccountVerification,
   submitYodleeLoginFormForProviderID,
 } from '../action';
+import { getAccountLinkForProviderID } from '../../common/state-utils';
+import { isLinkFailure, isLinkSuccess } from 'common/lib/models/AccountLink';
 
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { AccountVerificationPage } from '../utils';
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
@@ -41,16 +44,15 @@ class AccountVerificationFooter extends Component<Props> {
   }
 
   _getFooterButtonLayout() {
-    const {callToAction, canSubmit, enableInteraction} = this.props;
+    const { callToAction, canSubmit, enableInteraction } = this.props;
     if (this.props.page.type === 'LOGIN') {
       invariant(
-        this.props.callToAction,
+        callToAction,
         'Expecting call to action to exist when page is type LOGIN',
       );
       return {
         isLeftButtonDisabled: !enableInteraction,
-        isRightButtonDisabled:
-          !enableInteraction || !canSubmit,
+        isRightButtonDisabled: !enableInteraction || !canSubmit,
         leftButtonText: 'EXIT',
         rightButtonText: callToAction,
         type: 'LEFT_AND_RIGHT',
@@ -86,14 +88,19 @@ function mapReduxStateToProps(
   state: ReduxState,
   props: ComponentProps,
 ): ComputedProps {
-  const loginForm =
-    props.page.type === 'LOGIN'
-      ? state.loginForms.loginFormContainer[props.page.selectedProvider.id]
-      : null;
+  const providerID =
+    props.page.type === 'LOGIN' ? props.page.selectedProvider.id : null;
 
-  const canSubmit = Boolean(
-    loginForm && calculateCanSubmitLoginForm(loginForm),
-  );
+  const loginForm = providerID
+    ? state.loginForms.loginFormContainer[providerID]
+    : null;
+  const accountLink =
+    providerID && getAccountLinkForProviderID(state, providerID);
+
+  const canSubmit =
+    Boolean(loginForm && calculateIsFormFilledOut(loginForm)) &&
+    (!accountLink || calculateCanSubmitAccountLink(accountLink));
+
   const callToAction = loginForm
     ? calculateCallToActionForLoginForm(loginForm)
     : null;
@@ -109,7 +116,7 @@ function calculateCallToActionForLoginForm(loginForm: YodleeLoginForm): string {
   return loginForm.formType === 'login' ? 'LOGIN' : 'SUBMIT';
 }
 
-function calculateCanSubmitLoginForm(loginForm: YodleeLoginForm): bool {
+function calculateIsFormFilledOut(loginForm: YodleeLoginForm): bool {
   for (const row of loginForm.row) {
     for (const field of row.field) {
       if (!field.isOptional && field.value.length === 0) {
@@ -118,6 +125,14 @@ function calculateCanSubmitLoginForm(loginForm: YodleeLoginForm): bool {
     }
   }
   return true;
+}
+
+function calculateCanSubmitAccountLink(accountLink: AccountLink): bool {
+  return (
+    isLinkSuccess(accountLink) ||
+    isLinkFailure(accountLink) ||
+    accountLink.status === 'MFA / PENDING_USER_INPUT'
+  );
 }
 
 export default connect(mapReduxStateToProps)(AccountVerificationFooter);
