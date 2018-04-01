@@ -187,6 +187,12 @@ class AccountVerification extends Component<Props, State> {
       return;
     }
 
+    // NOTE: This component manages 2 types of transitions. The modal transition
+    // that causes this component to fade in and out, and the transitions
+    // between the provider search and provider login pages. Below, we are
+    // managing the transitioning for the modal view. Will eventually separate
+    // the modal transitioning into its own component so we can reduce the
+    // complexity of this component.
     const willShow = nextProps.transitionStage === 'TRANSITION_IN';
     const animations = [
       Animated.timing(this._getActiveTransition(), {
@@ -376,7 +382,7 @@ class AccountVerification extends Component<Props, State> {
       }
 
       case 'LOGIN': {
-        const provider = page.selectedProvider;
+        const { selectedProvider } = page;
         return (
           <AccountLogin
             isEditable={
@@ -385,11 +391,10 @@ class AccountVerification extends Component<Props, State> {
               !providerPendingLoginID
             }
             onChangeLoginForm={loginForm =>
-              this._onChangeLoginForm(provider.id, loginForm)
+              this._onChangeLoginForm(selectedProvider.id, loginForm)
             }
             onPressForgotPassword={this._onPressForgotPassword}
-            loginForm={this.props.loginForms[provider.id]}
-            provider={provider}
+            loginForm={this.props.loginForms[selectedProvider.id]}
           />
         );
       }
@@ -569,16 +574,15 @@ class AccountVerification extends Component<Props, State> {
   _getFooterButtonLayout(page: Page, enableInteraction: bool) {
     const { providerPendingLoginID } = this.props;
     if (page.type === 'LOGIN') {
-      const { selectedProvider } = page;
-      const authValues = getAuthValues(selectedProvider);
+      const loginForm = this.props.loginForms[page.selectedProvider.id];
       const shouldDisableLoginButton =
-        Boolean(providerPendingLoginID) ||
-        authValues.some(val => !val || val.length === 0);
+        Boolean(providerPendingLoginID) || !canSubmitLoginForm(loginForm);
+      const callToAction = getCallToActionForLoginForm(loginForm);
       return {
         isLeftButtonDisabled: !enableInteraction,
         isRightButtonDisabled: !enableInteraction || shouldDisableLoginButton,
         leftButtonText: 'EXIT',
-        rightButtonText: 'LOGIN',
+        rightButtonText: callToAction,
         type: 'LEFT_AND_RIGHT',
       };
     }
@@ -627,16 +631,6 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
 export default (connect(mapReduxStateToProps)(
   AccountVerification,
 ): ComponentType<ComponentProps>);
-
-export function getAuthValues(provider: Provider): Array<string> {
-  invariant(
-    provider.sourceOfTruth.type === 'YODLEE',
-    'Expecting provider to come from YODLEE',
-  );
-  return provider.sourceOfTruth.value.loginForm.row.map(
-    entry => entry.field[0].value,
-  );
-}
 
 const styles = StyleSheet.create({
   bottomArea: {
@@ -710,6 +704,27 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
 });
+
+// -----------------------------------------------------------------------------
+//
+// UTILITIES
+//
+// -----------------------------------------------------------------------------
+
+function getCallToActionForLoginForm(loginForm: YodleeLoginForm): string {
+  return loginForm.formType === 'login' ? 'LOGIN' : 'SUBMIT';
+}
+
+function canSubmitLoginForm(loginForm: YodleeLoginForm): bool {
+  for (const row of loginForm.row) {
+    for (const field of row.field) {
+      if (!field.isOptional && field.value.length === 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
 
 // TODO: This is a hack to fix the safe area bugs, since it does not work
 // well in a modal view inside a keyboard avoiding view.

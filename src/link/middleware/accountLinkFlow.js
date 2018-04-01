@@ -35,6 +35,7 @@ export default (store: Store) => (next: Next) => {
 
     const preVerificationPhases = [
       'IN_PROGRESS / INITIALIZING',
+      'IN_PROGRESS / USER_INPUT_REQUIRED',
       'IN_PROGRESS / VERIFYING_CREDENTIALS',
       'FAILURE / BAD_CREDENTIALS',
     ];
@@ -177,6 +178,7 @@ function requestAccountLinkBanner(
 function containsLinking(container: AccountLinkContainer): bool {
   for (const id in container) {
     if (container.hasOwnProperty(id) && isLinking(container[id])) {
+      console.log(container[id].status);
       return true;
     }
   }

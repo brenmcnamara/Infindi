@@ -124,6 +124,10 @@ export const AccountLinkBanner = {
     Download failed. Please try again.
   `),
 
+  'FAILURE / MFA_FAILURE': cleanupWhitespace(`
+    Multi-Factor authenticated failed
+  `),
+
   'IN_PROGRESS / DOWNLOADING_DATA': cleanupWhitespace(`
     Download in progress
   `),
@@ -134,6 +138,14 @@ export const AccountLinkBanner = {
 
   'IN_PROGRESS / VERIFYING_CREDENTIALS': cleanupWhitespace(`
     Verifying your credentials
+  `),
+
+  'MFA / PENDING_USER_INPUT': cleanupWhitespace(`
+    Your input is required
+  `),
+
+  'MFA / WAITING_FOR_LOGIN_FORM': cleanupWhitespace(`
+    Waiting for banking service
   `),
 
   SUCCESS: cleanupWhitespace(`

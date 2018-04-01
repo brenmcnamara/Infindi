@@ -3,6 +3,7 @@
 import AmericanExpress from '../../assets/icons/AmericanExpress-50x33.png';
 import Bank from '../../assets/icons/Bank-33x28.png';
 import BankColored from '../../assets/icons/BankColored-123x106.png';
+import Checkmark from '../../assets/icons/Checkmark-23x19.png';
 import CreditCard from '../../assets/icons/CreditCard-50x33.png';
 import Delta from '../../assets/icons/Delta-50x33.png';
 import Discover from '../../assets/icons/Discover-50x33.png';
@@ -36,6 +37,7 @@ import Wifi from '../../assets/icons/Wifi-133x100.png';
 export default {
   Bank,
   BankColored,
+  Checkmark,
   CreditCard: {
     AMEX: AmericanExpress,
     DELTA: Delta,
