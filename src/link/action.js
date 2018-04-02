@@ -11,10 +11,7 @@ import uuid from 'uuid/v4';
 
 import { Text } from 'react-native';
 
-import type {
-  Action$DismissModal,
-  Action$RequestModal,
-} from '../actions/modal';
+import type { Action$RequestModal } from '../actions/modal';
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 

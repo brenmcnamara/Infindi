@@ -2,6 +2,7 @@
 
 import invariant from 'invariant';
 
+import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
 
@@ -94,16 +95,15 @@ export function isSameLoginForm(
   return true;
 }
 
-export const PRE_DOWNLOADING_STATUSES = [
+export const PRE_DOWNLOADING_STATUSES: Array<AccountLinkStatus> = [
   'FAILURE / BAD_CREDENTIALS',
   'IN_PROGRESS / INITIALIZING',
-  'IN_PROGRESS / USER_INPUT_REQUIRED',
   'IN_PROGRESS / VERIFYING_CREDENTIALS',
   'MFA / PENDING_USER_INPUT',
   'MFA / WAITING_FOR_LOGIN_FORM',
 ];
 
-export const POST_DOWNLOADING_STATUSES = [
+export const POST_DOWNLOADING_STATUSES: Array<AccountLinkStatus> = [
   'IN_PROGRESS / DOWNLOADING_DATA',
   'SUCCESS',
 ];
