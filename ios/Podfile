@@ -20,7 +20,6 @@ target 'Infindi' do
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
-  pod 'Plaid'
 
   target 'InfindiTests' do
     inherit! :search_paths

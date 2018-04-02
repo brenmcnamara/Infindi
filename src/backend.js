@@ -13,7 +13,6 @@ import invariant from 'invariant';
 import type { ID, Pointer } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { LoginPayload } from 'common/lib/models/Auth';
-import type { PlaidDownloadStatus } from 'common/lib/models/PlaidCredentials';
 import type { Provider } from 'common/lib/models/Provider';
 
 let loginPayload: ?LoginPayload = null;
@@ -64,56 +63,6 @@ export async function genYodleeSubmitProviderLoginForm(
   await Environment.genLazyLoad();
   const uri = createURI(`/yodlee/providers/${providerID}/loginForm`);
   const json = await genPostRequest(uri, { loginForm });
-  return json.data;
-}
-
-// -----------------------------------------------------------------------------
-//
-// CREATE PLAID CREDENTIALS
-//
-// -----------------------------------------------------------------------------
-
-export type CreatePlaidCredentialsPayload = Pointer<'PlaidCredentials'>;
-
-export async function genCreatePlaidCredentials(
-  publicToken: string,
-  metadata: Object,
-): Promise<CreatePlaidCredentialsPayload> {
-  await Environment.genLazyLoad();
-  const uri = createURI('/plaid/credentials');
-  const json = await genPostRequest(uri, { publicToken, metadata });
-  return json.data;
-}
-
-// -----------------------------------------------------------------------------
-//
-// CREATE PLAID DOWNLOAD REQUEST
-//
-// -----------------------------------------------------------------------------
-
-export type CreatePlaidDownloadRequestPayload = Pointer<'JobRequest'>;
-
-export async function genCreatePlaidDownloadRequest(
-  credentialsID: string,
-): Promise<CreatePlaidDownloadRequestPayload> {
-  await Environment.genLazyLoad();
-  const uri = createURI(`/plaid/download/${credentialsID}`);
-  const json = await genPostRequest(uri, {});
-  return json.data;
-}
-
-// -----------------------------------------------------------------------------
-//
-// GET PLAID DOWNLOAD STATUS
-//
-// -----------------------------------------------------------------------------
-
-export type PlaidDownloadStatusPayload = { [itemID: ID]: PlaidDownloadStatus };
-
-export async function genPlaidDownloadStatus(): Promise<PlaidDownloadStatusPayload,> {
-  await Environment.genLazyLoad();
-  const uri = createURI('/plaid/credentials/status');
-  const json = await genGetRequest(uri);
   return json.data;
 }
 

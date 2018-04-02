@@ -37,22 +37,6 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
-	<key>PLKPlaidLinkConfiguration</key>
-	<dict>
-		<key>clientName</key>
-		<string>Infindi</string>
-		<key>env</key>
-		<string>Sandbox</string>
-		<key>key</key>
-		<string>9ef581824905d24a16c3fa522b949d</string>
-		<key>product</key>
-		<array>
-			<string>auth</string>
-			<string>transactions</string>
-		</array>
-		<key>webhook</key>
-		<string>https://infindi-20cf1.appspot.com/plaid/webhook</string>
-	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Lato-Black.ttf</string>

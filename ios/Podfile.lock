@@ -72,7 +72,6 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - Plaid (1.1.7)
   - Protobuf (3.5.0)
   - React (0.53.0):
     - React/Core (= 0.53.0)
@@ -88,7 +87,6 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Firestore
-  - Plaid
   - React (from `../node_modules/react-native`)
   - RNFirebase (from `../node_modules/react-native-firebase`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -119,12 +117,11 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 390ea358e5a0d0133153806f744662dad933d06b
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  Plaid: 85572efe3ec98e36dd449fd90a2ccac521f29880
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   React: 6a94a44468604816ad2fd3bae908b2ebbab0f95d
   RNFirebase: a76befd482c5e84df7f69893358abda498ee9f76
   yoga: 36cb943786c0587f19094c593b5683074d679c46
 
-PODFILE CHECKSUM: 0c7cab7d2f529291c9a476c31584da481afad2ec
+PODFILE CHECKSUM: ab344c8ce47e1150fb6267eb8030066519c176c0
 
 COCOAPODS: 1.3.1

@@ -11,7 +11,6 @@
 #import <React/RCTRootView.h>
 
 #import "Environment.h"
-#import "PlaidLinkManager.h"
 
 @implementation AppDelegate
 
@@ -38,8 +37,6 @@
 
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;
-
-  [[PlaidLinkManager sharedInstance] initializeWithContainingController: rootViewController];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   self.window.rootViewController = rootViewController;  
