@@ -36,7 +36,8 @@ export function getCreditCardNumber(account: Account): string {
     account.sourceOfTruth.type === 'YODLEE',
     'Expecting account to come from YODLEE',
   );
-  return account.sourceOfTruth.value.accountNumber;
+  const {accountNumber} = account.sourceOfTruth.value;
+  return accountNumber || '(No Card Number Found)';
 }
 
 export function getCreditCardType(account: Account): CreditCardType {
