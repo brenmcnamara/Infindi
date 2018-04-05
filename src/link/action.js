@@ -1,14 +1,11 @@
 /* @flow */
 
-import InfoModal, {
-  TransitionInMillis as InfoModalTransitionInMillis,
-  TransitionOutMillis as InfoModalTransitionOutMillis,
-} from '../components/shared/InfoModal.react';
 import React from 'react';
 import TextDesign from '../design/text';
 
 import uuid from 'uuid/v4';
 
+import { requestInfoModal } from '../actions/modal';
 import { Text } from 'react-native';
 
 import type { Action$RequestModal } from '../actions/modal';
@@ -46,37 +43,12 @@ export function dismissAccountVerification() {
 
 export function unsupportedProvider(reason: string): Action$RequestModal {
   const title = 'Unsupported Provider';
-  return {
-    modal: {
-      id: UNSUPPORTED_MODAL_ID,
-      modalType: 'REACT_WITH_TRANSITION',
-      priority: 'USER_REQUESTED',
-      renderIn: () => (
-        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={true} title={title}>
-          <Text style={TextDesign.normal}>{reason}</Text>
-        </InfoModal>
-      ),
-      renderOut: () => (
-        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={false} title={title}>
-          <Text style={TextDesign.normal}>{reason}</Text>
-        </InfoModal>
-      ),
-      renderTransitionIn: () => (
-        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={true} title={title}>
-          <Text style={TextDesign.normal}>{reason}</Text>
-        </InfoModal>
-      ),
-      renderTransitionOut: () => (
-        <InfoModal modalID={UNSUPPORTED_MODAL_ID} show={false} title={title}>
-          <Text style={TextDesign.normal}>{reason}</Text>
-        </InfoModal>
-      ),
-      transitionInMillis: InfoModalTransitionInMillis,
-      transitionOutMillis: InfoModalTransitionOutMillis,
-    },
-    shouldIgnoreRequestingExistingModal: false,
-    type: 'REQUEST_MODAL',
-  };
+  return requestInfoModal({
+    id: UNSUPPORTED_MODAL_ID,
+    priority: 'USER_REQUESTED',
+    render: () => <Text style={TextDesign.normal}>{reason}</Text>,
+    title,
+  });
 }
 
 export type Action$SubmitYodleeLoginFormInitialize = {|

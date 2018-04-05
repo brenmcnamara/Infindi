@@ -49,7 +49,7 @@ export type Props = ReduxProps & ReduxStateProps;
 type ReduxStateProps = {
   accountLinkContainer: AccountLinkContainer,
   accounts: AccountContainer,
-  isDownloading: bool,
+  isDownloading: boolean,
   netWorth: number,
 };
 

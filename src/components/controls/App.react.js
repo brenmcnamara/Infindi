@@ -95,7 +95,10 @@ class App extends Component<Props> {
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.main}>
-            {this.props.root.name === 'MAIN' ? <ModalManager /> : null}
+            {this.props.root.name === 'MAIN' ||
+            this.props.root.name === 'ACCOUNT_VERIFICATION' ? (
+              <ModalManager />
+            ) : null}
             {mainContent}
           </View>
           <View style={bottomAreaStyles} />

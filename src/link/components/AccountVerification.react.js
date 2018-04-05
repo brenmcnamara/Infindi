@@ -70,7 +70,7 @@ type PageTransition =
 
 type State = {
   activeTransition: 'A' | 'B',
-  didCompleteInitialSearch: bool,
+  didCompleteInitialSearch: boolean,
   pageTransition: PageTransition,
 };
 
@@ -80,7 +80,6 @@ export const TransitionInMillis = 400;
 export const TransitionOutMillis = 400;
 
 const LEFT_ARROW_WIDTH = 18;
-const INSET_DEFAULT = { bottom: 0, left: 0, right: 0, top: 20 };
 
 class AccountVerification extends Component<Props, State> {
   _pageTransitionA: Animated.Value;
@@ -203,7 +202,7 @@ class AccountVerification extends Component<Props, State> {
   _renderScreen(
     page: AccountVerificationPage,
     opacity: Animated.Value | number,
-    enableInteraction: bool,
+    enableInteraction: boolean,
   ) {
     return (
       <Animated.View style={styles.root}>
@@ -225,7 +224,7 @@ class AccountVerification extends Component<Props, State> {
     );
   }
 
-  _renderHeader(page: AccountVerificationPage, enableInteraction: bool) {
+  _renderHeader(page: AccountVerificationPage, enableInteraction: boolean) {
     switch (page.type) {
       case 'SEARCH':
         return this._renderSearchHeader(page.search, enableInteraction);
@@ -241,7 +240,7 @@ class AccountVerification extends Component<Props, State> {
     }
   }
 
-  _renderSearchHeader(search: string, enableInteraction: bool) {
+  _renderSearchHeader(search: string, enableInteraction: boolean) {
     return (
       <View style={styles.searchHeader}>
         <Image
@@ -263,7 +262,7 @@ class AccountVerification extends Component<Props, State> {
     );
   }
 
-  _renderLoginHeader(provider: Provider, enableInteraction: bool) {
+  _renderLoginHeader(provider: Provider, enableInteraction: boolean) {
     invariant(
       provider.sourceOfTruth.type === 'YODLEE',
       'Expecting provider to come from YODLEE',
@@ -293,7 +292,7 @@ class AccountVerification extends Component<Props, State> {
     return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
-  _renderContent(page: AccountVerificationPage, enableInteraction: bool) {
+  _renderContent(page: AccountVerificationPage, enableInteraction: boolean) {
     const { providerPendingLoginID, transitionStage } = this.props;
     const { didCompleteInitialSearch } = this.state;
 

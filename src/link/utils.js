@@ -55,14 +55,16 @@ export function isSupportedProvider(provider: Provider): SupportType {
     };
   }
 
-  const VALID_FIELDS = ['text', 'password'];
+  const VALID_FIELDS = ['text', 'password', 'option'];
   const hasAllValidFields = loginForm.row.every(entry =>
     VALID_FIELDS.includes(entry.field[0].type),
   );
 
   if (!hasAllValidFields) {
     return {
-      reason: 'Provider login fields must be of type text or password',
+      reason: `Provider login fields must be one of the following: ${VALID_FIELDS.join(
+        ', ',
+      )}`,
       type: 'NO',
     };
   }
@@ -73,7 +75,7 @@ export function isSupportedProvider(provider: Provider): SupportType {
 export function isSameLoginForm(
   loginForm1: YodleeLoginForm,
   loginForm2: YodleeLoginForm,
-): bool {
+): boolean {
   if (loginForm1.row.length !== loginForm2.row.length) {
     return false;
   }

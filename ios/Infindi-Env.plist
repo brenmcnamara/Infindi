@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>hostname</key>
-	<string>https://infindi.herokuapp.com</string>
+	<string>http://localhost:8080</string>
 	<key>verificationService</key>
 	<string>YODLEE</string>
 </dict>

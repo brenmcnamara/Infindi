@@ -164,7 +164,7 @@ class ModalManager extends Component<Props, State> {
 
   _transitionOutModal(
     modal: Modal$ReactWithTransition,
-    shouldTransitionToNull: bool = true,
+    shouldTransitionToNull: boolean = true,
   ): Promise<void> {
     return new Promise(resolve => {
       this.setState({
@@ -207,11 +207,11 @@ export default connect(mapReduxStateToProps)(ModalManager);
 //
 // -----------------------------------------------------------------------------
 
-function isNativeModal(modal: ?Modal): bool {
+function isNativeModal(modal: ?Modal): boolean {
   return Boolean(modal && modal.modalType === 'NATIVE');
 }
 
-function isReactWithTransitionModal(modal: ?Modal): bool {
+function isReactWithTransitionModal(modal: ?Modal): boolean {
   return Boolean(modal && modal.modalType === 'REACT_WITH_TRANSITION');
 }
 

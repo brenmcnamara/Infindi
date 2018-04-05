@@ -22,7 +22,7 @@
   },
   "rules": {
     "comma-dangle": ["error", "always-multiline"],
-    "flowtype/boolean-style": [2, "bool"],
+    "flowtype/boolean-style": [2, "boolean"],
     "flowtype/define-flow-type": 1,
     "flowtype/delimiter-dangle": [2, "always-multiline"],
     "flowtype/generic-spacing": [2, "never"],

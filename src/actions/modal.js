@@ -26,13 +26,13 @@ export type Action = Action$DismissModal | Action$RequestModal;
 
 export type Action$DismissModal = {|
   +modalID: ID,
-  +shouldIgnoreDismissingNonExistantModal: bool,
+  +shouldIgnoreDismissingNonExistantModal: boolean,
   +type: 'DISMISS_MODAL',
 |};
 
 export type Action$RequestModal = {|
   +modal: Modal,
-  +shouldIgnoreRequestingExistingModal: bool,
+  +shouldIgnoreRequestingExistingModal: boolean,
   +type: 'REQUEST_MODAL',
 |};
 
@@ -137,7 +137,7 @@ export function requestUnimplementedModal(
 
 export function dismissModal(
   modalID: ID,
-  shouldIgnoreDismissingNonExistantModal: bool = false,
+  shouldIgnoreDismissingNonExistantModal: boolean = false,
 ): Action$DismissModal {
   return {
     modalID,

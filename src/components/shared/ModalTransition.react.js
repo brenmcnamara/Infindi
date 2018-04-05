@@ -14,7 +14,7 @@ import {
 export type Props = {
   children?: ?any,
   onPressBackground: () => any,
-  show: bool,
+  show: boolean,
 };
 
 export const TransitionInMillis = 300;
@@ -28,7 +28,7 @@ const VERTICAL_OFFSET = 30;
  * that takes up the entire screen.
  */
 export default class ModalTransition extends Component<Props> {
-  _isTransitioning: bool = false;
+  _isTransitioning: boolean = false;
   _transitionProgress: Animated.Value;
 
   componentWillMount(): void {
@@ -112,6 +112,8 @@ const styles = StyleSheet.create({
   },
 
   root: {
+    borderColor: 'red',
+    borderWidth: 1,
     alignItems: 'stretch',
     flex: 1,
     justifyContent: 'center',
