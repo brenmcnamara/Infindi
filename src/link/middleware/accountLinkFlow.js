@@ -101,7 +101,7 @@ export default (store: Store) => (next: Next) => {
         // probably a very rare edge case and the bug does not result in any
         // serious issues with the app.
         const { providerID } = action;
-        const loginFormSource = store.getState().loginForms.loginFormSource[
+        const loginFormSource = store.getState().accountVerification.loginFormSource[
           providerID
         ];
         const nextStatus =

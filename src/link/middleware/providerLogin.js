@@ -13,9 +13,8 @@ export default (store: Store) => (next: Next) => {
     switch (action.type) {
       case 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE': {
         const { operationID, providerID } = action;
-        const loginForm = store.getState().loginForms.loginFormContainer[
-          providerID
-        ];
+        const loginForm = store.getState().accountVerification
+          .loginFormContainer[providerID];
         invariant(
           loginForm,
           'Expecting login form to exist for provider id: %s',

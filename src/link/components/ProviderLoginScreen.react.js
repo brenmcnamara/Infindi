@@ -184,7 +184,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     page && page.type,
   );
   const { providerID } = page;
-  const loginForm = state.loginForms.loginFormContainer[providerID];
+  const loginForm = state.accountVerification.loginFormContainer[providerID];
   const accountLink = getAccountLinkForProviderID(state, providerID);
   invariant(
     loginForm,

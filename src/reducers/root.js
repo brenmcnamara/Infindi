@@ -6,7 +6,6 @@ import accountVerification from '../link/reducers/accountVerification';
 import actionItems from './actionItems';
 import auth from '../auth/reducer';
 import configState from './configState';
-import loginForms from '../link/reducers/loginForms';
 import modalState from './modalState';
 import providers from '../data-model/reducers/providers';
 import routeState from './routeState';
@@ -22,7 +21,6 @@ import type { State as State$AccountVerification } from '../link/reducers/accoun
 import type { State as State$ActionItems } from './actionItems';
 import type { State as State$Auth } from '../auth/reducer';
 import type { State as State$ConfigState } from './configState';
-import type { State as State$LoginForms } from '../link/reducers/loginForms';
 import type { State as State$ModalState } from './modalState';
 import type { State as State$Providers } from '../data-model/reducers/providers';
 import type { State as State$RouteState } from './routeState';
@@ -37,7 +35,6 @@ export type State = {|
   +actionItems: State$ActionItems,
   +auth: State$Auth,
   +configState: State$ConfigState,
-  +loginForms: State$LoginForms,
   +modalState: State$ModalState,
   +providers: State$Providers,
   +routeState: State$RouteState,
@@ -54,7 +51,6 @@ export default combineReducers({
   accountVerification,
   auth,
   configState,
-  loginForms,
   modalState,
   providers,
   routeState,
