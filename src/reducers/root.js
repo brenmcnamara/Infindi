@@ -2,6 +2,7 @@
 
 import accountLinks from './accountLinks';
 import accounts from './accounts';
+import accountVerification from '../link/reducers/accountVerification';
 import actionItems from './actionItems';
 import auth from '../auth/reducer';
 import configState from './configState';
@@ -17,6 +18,7 @@ import { combineReducers } from 'redux';
 
 import type { State as State$AccountLinks } from './accountLinks';
 import type { State as State$Accounts } from './accounts';
+import type { State as State$AccountVerification } from '../link/reducers/accountVerification';
 import type { State as State$ActionItems } from './actionItems';
 import type { State as State$Auth } from '../auth/reducer';
 import type { State as State$ConfigState } from './configState';
@@ -31,6 +33,7 @@ import type { State as State$Transactions } from './transactions';
 export type State = {|
   +accountLinks: State$AccountLinks,
   +accounts: State$Accounts,
+  +accountVerification: State$AccountVerification,
   +actionItems: State$ActionItems,
   +auth: State$Auth,
   +configState: State$ConfigState,
@@ -48,6 +51,7 @@ export default combineReducers({
   accountLinks,
   actionItems,
   accounts,
+  accountVerification,
   auth,
   configState,
   loginForms,

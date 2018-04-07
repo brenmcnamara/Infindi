@@ -1,12 +1,13 @@
 /* @flow */
 
-import AccountVerification from '../../link/components/AccountVerification.react';
 import Colors from '../../design/colors';
 import Environment from '../../modules/Environment';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
 import ModalManager from '../ModalManager.react';
 import NoInternetScreen from '../NoInternetScreen.react';
+import ProviderLoginScreen from '../../link/components/ProviderLoginScreen.react';
+import ProviderSearchScreen from '../../link/components/ProviderSearchScreen.react';
 import React, { Component } from 'react';
 import RecommendationScreen from '../RecommendationScreen.react';
 import Tabs from './Tabs.react';
@@ -47,11 +48,6 @@ class App extends Component<Props> {
     const { root } = this.props;
     let mainContent = null;
     switch (root.name) {
-      case 'ACCOUNT_VERIFICATION': {
-        mainContent = <AccountVerification transitionStage="IN" />;
-        break;
-      }
-
       case 'AUTH': {
         mainContent = <LoginScreen />;
         break;
@@ -69,6 +65,16 @@ class App extends Component<Props> {
 
       case 'NO_INTERNET': {
         mainContent = <NoInternetScreen />;
+        break;
+      }
+
+      case 'PROVIDER_LOGIN': {
+        mainContent = <ProviderLoginScreen />;
+        break;
+      }
+
+      case 'PROVIDER_SEARCH': {
+        mainContent = <ProviderSearchScreen />;
         break;
       }
 
@@ -96,7 +102,8 @@ class App extends Component<Props> {
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.main}>
             {this.props.root.name === 'MAIN' ||
-            this.props.root.name === 'ACCOUNT_VERIFICATION' ? (
+            this.props.root.name === 'PROVIDER_SEARCH' ||
+            this.props.root.name === 'PROVIDER_LOGIN' ? (
               <ModalManager />
             ) : null}
             {mainContent}

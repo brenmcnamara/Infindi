@@ -33,7 +33,7 @@ import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload } from '../auth/state-utils';
 import { getNetWorth } from '../common/state-utils';
-import { requestAccountVerification } from '../link/action';
+import { requestProviderSearch } from '../link/action';
 import { requestInfoModal } from '../actions/modal';
 import { viewAccountDetails } from '../actions/router';
 
@@ -190,7 +190,7 @@ class AccountsScreen extends Component<Props> {
   };
 
   _onPressAddAccount = (): void => {
-    this.props.dispatch(requestAccountVerification());
+    this.props.dispatch(requestProviderSearch());
   };
 
   _onPressGroupInfo = (groupType: AccountGroupType): void => {

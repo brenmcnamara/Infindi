@@ -8,13 +8,11 @@ import type { TabName } from '../common/route-utils';
 
 export type State = {
   +accountDetailsID: ID | null,
-  +isRequestingAccountVerification: bool,
   +tabName: TabName,
 };
 
 const DEFAULT_STATE: State = {
   accountDetailsID: null,
-  isRequestingAccountVerification: false,
   tabName: DEFAULT_TAB_NAME,
 };
 
@@ -23,14 +21,6 @@ export default function routeState(
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'REQUEST_ACCOUNT_VERIFICATION': {
-      return { ...state, isRequestingAccountVerification: true };
-    }
-
-    case 'DISMISS_ACCOUNT_VERIFICATION': {
-      return { ...state, isRequestingAccountVerification: false };
-    }
-
     case 'EXIT_ACCOUNT_DETAILS':
       return {
         ...state,

@@ -14,31 +14,54 @@ import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 
 export type Action =
   | Action$ClearLoginForm
-  | Action$DismissAccountVerification
-  | Action$RequestAccountVerification
+  | Action$ExitAccountVerification
+  | Action$RequestProviderLogin
+  | Action$RequestProviderSearch
   | Action$SubmitYodleeLoginFormFailure
   | Action$SubmitYodleeLoginFormInitialize
   | Action$SubmitYodleeLoginFormSuccess
-  | Action$UpdateLoginForm;
+  | Action$UpdateLoginForm
+  | Action$UpdateProviderSearchText;
 
 export const PROVIDER_LOGIN_MODAL_ID = 'YODLEE_LOGIN';
 
 const UNSUPPORTED_MODAL_ID = 'UNSUPPORTED_MODAL';
 
-export type Action$RequestAccountVerification = {|
-  +type: 'REQUEST_ACCOUNT_VERIFICATION',
+export type Action$ExitAccountVerification = {|
+  +type: 'EXIT_ACCOUNT_VERIFICATION',
 |};
 
-export function requestAccountVerification() {
-  return { type: 'REQUEST_ACCOUNT_VERIFICATION' };
+export function exitAccountVerification() {
+  return { type: 'EXIT_ACCOUNT_VERIFICATION' };
 }
 
-export type Action$DismissAccountVerification = {|
-  +type: 'DISMISS_ACCOUNT_VERIFICATION',
+export type Action$RequestProviderSearch = {|
+  +type: 'REQUEST_PROVIDER_SEARCH',
 |};
 
-export function dismissAccountVerification() {
-  return { type: 'DISMISS_ACCOUNT_VERIFICATION' };
+export function requestProviderSearch() {
+  return { type: 'REQUEST_PROVIDER_SEARCH' };
+}
+
+export type Action$RequestProviderLogin = {|
+  +providerID: ID,
+  +type: 'REQUEST_PROVIDER_LOGIN',
+|};
+
+export function requestProviderLogin(providerID: ID) {
+  return { providerID, type: 'REQUEST_PROVIDER_LOGIN' };
+}
+
+export type Action$UpdateProviderSearchText = {|
+  +searchText: string,
+  +type: 'UPDATE_PROVIDER_SEARCH_TEXT',
+|};
+
+export function updateProviderSearchText(searchText: string) {
+  return {
+    searchText,
+    type: 'UPDATE_PROVIDER_SEARCH_TEXT',
+  };
 }
 
 export function unsupportedProvider(reason: string): Action$RequestModal {

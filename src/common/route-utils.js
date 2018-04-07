@@ -21,11 +21,12 @@ export type RouteNode = {|
 |};
 
 export type RootName =
-  | 'ACCOUNT_VERIFICATION'
   | 'MAIN'
   | 'NO_INTERNET'
   | 'AUTH'
   | 'LOADING'
+  | 'PROVIDER_SEARCH'
+  | 'PROVIDER_LOGIN'
   | 'RECOMMENDATION';
 
 export type TabName = 'ACCOUNTS';
@@ -105,15 +106,25 @@ function calculateRootName(state: ReduxState): RootName {
     case 'LOGIN_FAILURE':
     case 'LOGOUT_INITIALIZE':
     case 'LOGOUT_FAILURE':
-    case 'LOGGED_OUT':
+    case 'LOGGED_OUT': {
       // The user can only see the login page if they have internet.
       return 'AUTH';
-    case 'LOGGED_IN':
-      return state.routeState.isRequestingAccountVerification
-        ? 'ACCOUNT_VERIFICATION'
-        : actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
-    case 'NOT_INITIALIZED':
+    }
+
+    case 'LOGGED_IN': {
+      const accountVerificationPage = state.accountVerification.page;
+      if (!accountVerificationPage) {
+        return actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
+      }
+      return accountVerificationPage.type === 'SEARCH'
+        ? 'PROVIDER_SEARCH'
+        : 'PROVIDER_LOGIN';
+    }
+
+    case 'NOT_INITIALIZED': {
       return 'LOADING';
+    }
+
     default:
       invariant(false, 'Unrecognized auth status: %s', auth.type);
   }

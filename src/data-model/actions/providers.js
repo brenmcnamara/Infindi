@@ -1,7 +1,5 @@
 /* @flow */
 
-import uuid from 'uuid/v4';
-
 import type { ID } from 'common/types/core';
 import type { ProviderContainer } from '../types';
 
@@ -27,11 +25,3 @@ type Action$FetchProvidersFailure = {|
   +operationID: ID,
   +type: 'FETCH_PROVIDERS_FAILURE',
 |};
-
-export function fetchProviders(searchText: string) {
-  return {
-    operationID: uuid(),
-    searchText,
-    type: 'FETCH_PROVIDERS_INITIALIZE',
-  };
-}

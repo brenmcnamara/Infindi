@@ -6,13 +6,13 @@ import TextButton from '../../components/shared/TextButton.react';
 
 import invariant from 'invariant';
 
-import { Animated, Easing, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 type ButtonLayout = ButtonLayout$LeftAndRight | ButtonLayout$Center;
 
 type ButtonLayout$LeftAndRight = {|
-  +isLeftButtonDisabled?: bool,
-  +isRightButtonDisabled?: bool,
+  +isLeftButtonDisabled?: boolean,
+  +isRightButtonDisabled?: boolean,
   +leftButtonText: string,
   +rightButtonText: string,
   +type: 'LEFT_AND_RIGHT',
@@ -20,7 +20,7 @@ type ButtonLayout$LeftAndRight = {|
 
 type ButtonLayout$Center = {|
   +centerButtonText: string,
-  +isCenterButtonDisabled?: bool,
+  +isCenterButtonDisabled?: boolean,
   +type: 'CENTER',
 |};
 
@@ -30,83 +30,16 @@ export type Props = {
 };
 
 export type DefaultProps = {
-  shouldShowCallToAction: bool,
+  shouldShowCallToAction: boolean,
 };
 
-export type TransitionStage =
-  | {| +props: Props, +type: 'TRANSITION_OUT' |}
-  | {| +props: Props, +type: 'TRANSITION_IN' |}
-  | {| +props: Props, +type: 'IN' |};
-
-export type State = {
-  transitionStage: TransitionStage,
-};
-
-export default class Footer extends Component<Props, State> {
-  _isTransitioning: bool = false;
-  _transitionValue: Animated.Value = new Animated.Value(1.0);
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      transitionStage: { props, type: 'IN' },
-    };
-  }
-
-  componentWillReceiveProps(nextProps: Props): void {
-    if (
-      !this._shouldAnimateButtonLayoutChange(
-        nextProps.buttonLayout,
-        this.props.buttonLayout,
-      )
-    ) {
-      this._isTransitioning = false;
-      this.setState({ transitionStage: { type: 'IN', props: nextProps } });
-      return;
-    }
-
-    // TODO: Callback hell. Clean this up.
-    this._isTransitioning = true;
-    this.setState(
-      { transitionStage: { type: 'TRANSITION_OUT', props: this.props } },
-      () => {
-        Animated.timing(this._transitionValue, {
-          duration: 200,
-          easing: Easing.cubic,
-          toValue: 0.0,
-        }).start(() => {
-          this._isTransitioning &&
-            this.setState(
-              { transitionStage: { type: 'TRANSITION_IN', props: nextProps } },
-              () => {
-                this._isTransitioning &&
-                  Animated.timing(this._transitionValue, {
-                    duration: 200,
-                    easing: Easing.out(Easing.cubic),
-                    toValue: 1.0,
-                  }).start(() => {
-                    this._isTransitioning &&
-                      this.setState(
-                        {
-                          transitionStage: { type: 'IN', props: nextProps },
-                        },
-                        () => (this._isTransitioning = false),
-                      );
-                  });
-              },
-            );
-        });
-      },
-    );
-  }
-
+export default class Footer extends Component<Props> {
   render() {
-    const props = this.state.transitionStage.props;
     return (
       <View style={styles.root}>
-        {props.buttonLayout.type === 'LEFT_AND_RIGHT'
-          ? this._renderLeftAndRightButtons(props)
-          : this._renderCenterButton(props)}
+        {this.props.buttonLayout.type === 'LEFT_AND_RIGHT'
+          ? this._renderLeftAndRightButtons(this.props)
+          : this._renderCenterButton(this.props)}
       </View>
     );
   }
@@ -117,13 +50,8 @@ export default class Footer extends Component<Props, State> {
       buttonLayout.type === 'LEFT_AND_RIGHT',
       'Incorrect button layout type',
     );
-
-    const containerStyles = [
-      styles.container,
-      { opacity: this._transitionValue },
-    ];
     return (
-      <Animated.View style={containerStyles}>
+      <View style={styles.container}>
         <TextButton
           isDisabled={buttonLayout.isLeftButtonDisabled || false}
           onPress={() => props.onPress('LEFT')}
@@ -139,22 +67,15 @@ export default class Footer extends Component<Props, State> {
           text={buttonLayout.rightButtonText}
           type="PRIMARY"
         />
-      </Animated.View>
+      </View>
     );
   }
 
   _renderCenterButton(props: Props) {
     const { buttonLayout } = props;
     invariant(buttonLayout.type === 'CENTER', 'Incorrect button layout type');
-    const containerStyles = [
-      styles.container,
-      {
-        justifyContent: 'center',
-        opacity: this._transitionValue,
-      },
-    ];
     return (
-      <Animated.View style={containerStyles}>
+      <View style={styles.container}>
         <TextButton
           isDisabled={buttonLayout.isCenterButtonDisabled || false}
           layoutType="FILL_PARENT"
@@ -163,27 +84,7 @@ export default class Footer extends Component<Props, State> {
           text={buttonLayout.centerButtonText}
           type="NORMAL"
         />
-      </Animated.View>
-    );
-  }
-
-  _shouldAnimateButtonLayoutChange(
-    layout1: ButtonLayout,
-    layout2: ButtonLayout,
-  ): bool {
-    if (layout1.type !== layout2.type) {
-      return true;
-    }
-
-    if (layout1.type === 'CENTER') {
-      // $FlowFixMe - Already verified type.
-      return layout1.centerButtonText !== layout2.centerButtonText;
-    }
-    return (
-      // $FlowFixMe - Already verified type.
-      layout1.leftButtonText !== layout2.leftButtonText ||
-      // $FlowFixMe - Already verified type.
-      layout1.rightButtonText !== layout2.rightButtonText
+      </View>
     );
   }
 }

@@ -1,11 +1,7 @@
 /* @flow */
 
 import { AccountsDownloadingBanner, AccountLinkBanner } from '../../../content';
-import {
-  clearLoginForm,
-  dismissAccountVerification,
-  PROVIDER_LOGIN_MODAL_ID,
-} from '../action';
+import { clearLoginForm, PROVIDER_LOGIN_MODAL_ID } from '../action';
 import { dismissToast, requestToast } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
 import { isLinking } from 'common/lib/models/AccountLink';
@@ -44,7 +40,6 @@ export default (store: Store) => (next: Next) => {
       POST_DOWNLOADING_STATUSES.includes(toStatus) &&
       isShowingProviderLoginScreen(store.getState())
     ) {
-      next(dismissAccountVerification());
       next(clearLoginForm(providerID));
     }
 
@@ -54,7 +49,7 @@ export default (store: Store) => (next: Next) => {
   }
 
   function updateAccountsDownloading(
-    nextIsAccountsDownloadingBanner: bool,
+    nextIsAccountsDownloadingBanner: boolean,
   ): void {
     if (isAccountsDownloadingBanner === nextIsAccountsDownloadingBanner) {
       return;
@@ -175,7 +170,7 @@ function requestAccountLinkBanner(
 //   return dismissToast(`PROVIDERS/${providerID}`);
 // }
 
-function containsLinking(container: AccountLinkContainer): bool {
+function containsLinking(container: AccountLinkContainer): boolean {
   for (const id in container) {
     if (container.hasOwnProperty(id) && isLinking(container[id])) {
       return true;
@@ -184,7 +179,7 @@ function containsLinking(container: AccountLinkContainer): bool {
   return false;
 }
 
-function isShowingProviderLoginScreen(state: ReduxState): bool {
+function isShowingProviderLoginScreen(state: ReduxState): boolean {
   const { modalQueue } = state.modalState;
   return modalQueue.length > 0 && modalQueue[0].id === PROVIDER_LOGIN_MODAL_ID;
 }

@@ -21,22 +21,25 @@ export default function providers(
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'FETCH_PROVIDERS_INITIALIZE':
+    case 'FETCH_PROVIDERS_INITIALIZE': {
       // NOTE: Does not handle the case where we have simultaneous fetches.
       // That will probably never happen, so just assume we are only ever
       // fetching providers one at a time.
       return { ...state, status: 'LOADING' };
+    }
 
-    case 'FETCH_PROVIDERS_SUCCESS':
+    case 'FETCH_PROVIDERS_SUCCESS': {
       return {
         ...state,
         container: action.container,
         ordering: action.ordering,
         status: 'STEADY',
       };
+    }
 
-    case 'FETCH_PROVIDERS_FAILURE':
+    case 'FETCH_PROVIDERS_FAILURE': {
       return { ...state, status: 'FAILURE' };
+    }
   }
   return state;
 }

@@ -27,7 +27,7 @@ import type {
 } from 'common/types/yodlee';
 
 export type Props = {
-  isEditable: bool,
+  enableInteraction: boolean,
   loginForm: LoginForm,
   onChangeLoginForm: (loginForm: LoginForm) => any,
 };
@@ -136,7 +136,7 @@ export default class YodleeLoginForm extends Component<Props> {
         autoCapitalize="none"
         autoCorrect={false}
         autoFocus={location.rowIndex === 0 && location.fieldIndex === 0}
-        editable={this.props.isEditable}
+        editable={this.props.enableInteraction}
         onChangeText={text => this._onChangeFormTextValue(location, text)}
         placeholder={row.label.length <= 15 ? row.label : ''}
         secureTextEntry={field.type === 'password'}

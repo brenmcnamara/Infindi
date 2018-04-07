@@ -6,23 +6,6 @@ import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
 
-export type AccountVerificationPage =
-  | {|
-      +search: string,
-      +type: 'SEARCH_ERROR',
-    |}
-  | {|
-      +providers: Array<Provider>,
-      +search: string,
-      +type: 'SEARCH',
-    |}
-  | {|
-      +providers: Array<Provider>,
-      +search: string,
-      +selectedProvider: Provider,
-      +type: 'LOGIN',
-    |};
-
 export type SupportType =
   | {|
       +type: 'YES',
