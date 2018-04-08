@@ -67,8 +67,6 @@ export default class Banner extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props): void {
-    console.log(nextProps.banner && nextProps.banner.text);
-
     const transitionID = `request-${this._transitionIDNumber}`;
     ++this._transitionIDNumber;
     this._currentTransitionID = transitionID;
