@@ -28,10 +28,13 @@ import {
   updateLoginForm,
 } from '../action';
 import { getAccountLinkForProviderID } from '../../common/state-utils';
-import { isLinkFailure, isLinkSuccess } from 'common/lib/models/AccountLink';
+import {
+  isInMFA,
+  isLinkFailure,
+  isLinkSuccess,
+} from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
@@ -168,14 +171,6 @@ function calculateIsFormFilledOut(loginForm: YodleeLoginForm): boolean {
   return true;
 }
 
-function calculateCanSubmitAccountLink(accountLink: AccountLink): boolean {
-  return (
-    isLinkSuccess(accountLink) ||
-    isLinkFailure(accountLink) ||
-    accountLink.status === 'MFA / PENDING_USER_INPUT'
-  );
-}
-
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const { page } = state.accountVerification;
   invariant(
@@ -184,6 +179,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     page && page.type,
   );
   const { providerID } = page;
+  const { providerPendingLoginID } = state.accountVerification;
   const loginForm = state.accountVerification.loginFormContainer[providerID];
   const accountLink = getAccountLinkForProviderID(state, providerID);
   invariant(
@@ -194,16 +190,23 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const isFilledOut = calculateIsFormFilledOut(loginForm);
   const callToAction = calculateCallToActionForLoginForm(loginForm);
   const canSubmit =
+    providerID !== providerPendingLoginID &&
     Boolean(loginForm && isFilledOut) &&
-    (!accountLink || calculateCanSubmitAccountLink(accountLink));
+    (!accountLink ||
+      isLinkSuccess(accountLink) ||
+      isLinkFailure(accountLink) ||
+      accountLink.status === 'MFA / PENDING_USER_INPUT');
   const isLoadingLoginForm = Boolean(
     accountLink && accountLink.status === 'MFA / WAITING_FOR_LOGIN_FORM',
   );
+  const enableInteraction =
+    state.accountVerification.providerPendingLoginID !== providerID &&
+    (!accountLink || !isInMFA(accountLink));
 
   return {
     canSubmit,
     callToAction,
-    enableInteraction: true,
+    enableInteraction,
     isLoadingLoginForm,
     loginForm,
     provider: state.providers.container[providerID],

@@ -146,13 +146,12 @@ class AccountLinkFlowManager {
     const text = toState.customMessage || AccountLinkBanner[toStatus];
     this._callNext(requestAccountLinkBanner(providerID, toStatus, text));
 
-    if (
-      providerID === this._selectedProviderID &&
-      toStatus === 'IN_PROGRESS / DOWNLOADING_DATA'
-    ) {
-      this._callNext(exitAccountVerification());
+    if (toStatus === 'IN_PROGRESS / DOWNLOADING_DATA') {
+      if (providerID === this._selectedProviderID) {
+        this._callNext(exitAccountVerification());
+      }
+      this._callNext(clearLoginForm(providerID));
     }
-
     this._accountLinkFlowStateMap[providerID] = toState;
   }
 
