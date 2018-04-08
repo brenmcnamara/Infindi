@@ -112,8 +112,6 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    borderColor: 'red',
-    borderWidth: 1,
     alignItems: 'stretch',
     flex: 1,
     justifyContent: 'center',
