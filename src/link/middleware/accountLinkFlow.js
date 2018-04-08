@@ -3,11 +3,15 @@
 import invariant from 'invariant';
 
 import { AccountsDownloadingBanner, AccountLinkBanner } from '../../../content';
-import { clearLoginForm, PROVIDER_LOGIN_MODAL_ID } from '../action';
+import {
+  clearLoginForm,
+  exitAccountVerification,
+  PROVIDER_LOGIN_MODAL_ID,
+} from '../action';
 import { dismissToast, requestToast } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
+import { getAccountLinkContainer } from '../../common/state-utils';
 import { isLinking } from 'common/lib/models/AccountLink';
-import { POST_DOWNLOADING_STATUSES, PRE_DOWNLOADING_STATUSES } from '../utils';
 
 import type {
   AccountLink,
@@ -20,18 +24,20 @@ import type { State as ReduxState } from '../../reducers/root';
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
-// const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
-
 type AccountLinkFlowState = {|
   +customMessage?: string,
   +status: AccountLinkStatus,
 |};
 
+const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
+
 class AccountLinkFlowManager {
   static _instance: AccountLinkFlowManager | null = null;
 
   _accountLinkFlowStateMap: { [providerID: ID]: AccountLinkFlowState } = {};
+  _hasDownloadingAccounts: boolean = false;
   _next: Next | null = null;
+  _selectedProviderID: ID | null = null;
   _store: Store | null = null;
 
   static getInstance(): AccountLinkFlowManager {
@@ -65,6 +71,7 @@ class AccountLinkFlowManager {
           const toState = { status };
           this._handleStateChange(providerID, toState);
         });
+
         break;
       }
 
@@ -108,6 +115,26 @@ class AccountLinkFlowManager {
     }
 
     this._callNext(action);
+
+    const postActionState = this._getState();
+    const accountVerificationPage = postActionState.accountVerification.page;
+
+    if (accountVerificationPage && accountVerificationPage.type === 'LOGIN') {
+      const { providerID } = accountVerificationPage;
+      this._selectedProviderID = providerID;
+    } else {
+      this._selectedProviderID = null;
+    }
+
+    const accountLinkContainer = getAccountLinkContainer(postActionState);
+
+    const hasDownloadingAccounts = containsLinking(accountLinkContainer);
+    if (this._hasDownloadingAccounts && !hasDownloadingAccounts) {
+      this._callNext(dismissAccountsDownloadingBanner());
+    } else if (!this._hasDownloadingAccounts && hasDownloadingAccounts) {
+      this._callNext(requestAccountsDownloadingBanner());
+    }
+    this._hasDownloadingAccounts = hasDownloadingAccounts;
   }
 
   _handleStateChange(providerID: ID, toState: AccountLinkFlowState): void {
@@ -118,6 +145,13 @@ class AccountLinkFlowManager {
     const toStatus = toState.status;
     const text = toState.customMessage || AccountLinkBanner[toStatus];
     this._callNext(requestAccountLinkBanner(providerID, toStatus, text));
+
+    if (
+      providerID === this._selectedProviderID &&
+      toStatus === 'IN_PROGRESS / DOWNLOADING_DATA'
+    ) {
+      this._callNext(exitAccountVerification());
+    }
 
     this._accountLinkFlowStateMap[providerID] = toState;
   }
@@ -148,17 +182,30 @@ class AccountLinkFlowManager {
 
 export default AccountLinkFlowManager.getInstance().getMiddlewareHandle();
 
-// function requestAccountsDownloadingBanner() {
-//   return requestToast({
-//     bannerChannel: 'ACCOUNTS',
-//     bannerType: 'INFO',
-//     id: REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID,
-//     priority: 'LOW',
-//     showSpinner: true,
-//     text: AccountsDownloadingBanner,
-//     toastType: 'BANNER',
-//   });
-// }
+function requestAccountsDownloadingBanner() {
+  return requestToast({
+    bannerChannel: 'ACCOUNTS',
+    bannerType: 'INFO',
+    id: REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID,
+    priority: 'LOW',
+    showSpinner: true,
+    text: AccountsDownloadingBanner,
+    toastType: 'BANNER',
+  });
+}
+
+function dismissAccountsDownloadingBanner() {
+  return dismissToast(REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID);
+}
+
+function containsLinking(container: AccountLinkContainer): boolean {
+  for (const id in container) {
+    if (container.hasOwnProperty(id) && isLinking(container[id])) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function requestAccountLinkBanner(
   providerID: ID,

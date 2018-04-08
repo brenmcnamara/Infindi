@@ -53,7 +53,7 @@ const BANNER_HEIGHT = TEXT_LINE_HEIGHT + 2 * BANNER_CONTENT_PADDING;
 export default class Banner extends Component<Props, State> {
   _currentTransitionID: ID = 'request-0';
   _height: Animated.Value;
-  _isTransitioning: bool = false; // TODO: Should remove this.
+  _isTransitioning: boolean = false; // TODO: Should remove this.
   _transitionIDNumber: number = 1;
 
   constructor(props: Props) {
@@ -67,6 +67,8 @@ export default class Banner extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props): void {
+    console.log(nextProps.banner && nextProps.banner.text);
+
     const transitionID = `request-${this._transitionIDNumber}`;
     ++this._transitionIDNumber;
     this._currentTransitionID = transitionID;
@@ -90,6 +92,7 @@ export default class Banner extends Component<Props, State> {
 
     if (prevBanner) {
       transitionChain = transitionChain.then(() =>
+        this._isTransitioning &&
         this._genPerformTransitionOut(
           prevBanner,
           nextBanner ? 'NEXT_BANNER' : 'EMPTY',
@@ -99,6 +102,7 @@ export default class Banner extends Component<Props, State> {
 
     if (nextBanner) {
       transitionChain = transitionChain.then(() =>
+        this._isTransitioning &&
         this._genPerformTransitionIn(
           nextBanner,
           prevBanner ? 'PREVIOUS_BANNER' : 'EMPTY',
@@ -242,7 +246,7 @@ const styles = StyleSheet.create({
 function isEqualBannerRendering(
   b1: Toast$Banner | null,
   b2: Toast$Banner | null,
-): bool {
+): boolean {
   return Boolean(
     (!b1 && !b2) ||
       (b1 &&
