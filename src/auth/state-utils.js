@@ -4,7 +4,7 @@ import type { ID } from 'common/types/core';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { State } from '../reducers/root';
 
-export function getIsAuthenticated(state: State): bool {
+export function getIsAuthenticated(state: State): boolean {
   return state.auth.type === 'LOGGED_IN';
 }
 

@@ -20,6 +20,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {
+  calculateLoginFormCallToActionForProviderID,
+  calculateCanSubmitLoginFormForProviderID,
+} from '../utils';
 import { connect } from 'react-redux';
 import {
   exitAccountVerification,
@@ -28,11 +32,7 @@ import {
   updateLoginForm,
 } from '../action';
 import { getAccountLinkForProviderID } from '../../common/state-utils';
-import {
-  isInMFA,
-  isLinkFailure,
-  isLinkSuccess,
-} from 'common/lib/models/AccountLink';
+import { isInMFA } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
@@ -42,12 +42,14 @@ import type { State as ReduxState } from '../../reducers/root';
 
 export type Props = ReduxProps & ComputedProps & ComponentProps;
 
-type ComponentProps = {};
+type ComponentProps = {
+  enableInteraction: boolean,
+};
 
 type ComputedProps = {
   callToAction: string,
+  canExit: boolean,
   canSubmit: boolean,
-  enableInteraction: boolean,
   isLoadingLoginForm: boolean,
   loginForm: YodleeLoginForm,
   provider: Provider,
@@ -115,7 +117,9 @@ class AccountLoginScreen extends Component<Props> {
   }
 
   _onPressBack = (): void => {
-    this.props.dispatch(requestProviderSearch());
+    if (this.props.enableInteraction) {
+      this.props.dispatch(requestProviderSearch());
+    }
   };
 
   _onPressForgotPassword = (url: string): void => {
@@ -137,13 +141,13 @@ class AccountLoginScreen extends Component<Props> {
   };
 
   _getFooterButtonLayout() {
-    const { callToAction, canSubmit, enableInteraction } = this.props;
+    const { callToAction, canExit, canSubmit, enableInteraction } = this.props;
     invariant(
       callToAction,
       'Expecting call to action to exist when page is type LOGIN',
     );
     return {
-      isLeftButtonDisabled: !enableInteraction,
+      isLeftButtonDisabled: !enableInteraction || !canExit,
       isRightButtonDisabled: !enableInteraction || !canSubmit,
       leftButtonText: 'EXIT',
       rightButtonText: callToAction,
@@ -156,21 +160,6 @@ class AccountLoginScreen extends Component<Props> {
   }
 }
 
-function calculateCallToActionForLoginForm(loginForm: YodleeLoginForm): string {
-  return loginForm.formType === 'login' ? 'LOGIN' : 'SUBMIT';
-}
-
-function calculateIsFormFilledOut(loginForm: YodleeLoginForm): boolean {
-  for (const row of loginForm.row) {
-    for (const field of row.field) {
-      if (!field.isOptional && field.value.length === 0) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const { page } = state.accountVerification;
   invariant(
@@ -179,7 +168,6 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     page && page.type,
   );
   const { providerID } = page;
-  const { providerPendingLoginID } = state.accountVerification;
   const loginForm = state.accountVerification.loginFormContainer[providerID];
   const accountLink = getAccountLinkForProviderID(state, providerID);
   invariant(
@@ -187,26 +175,24 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     'Expecting login form to exist for providerID',
     providerID,
   );
-  const isFilledOut = calculateIsFormFilledOut(loginForm);
-  const callToAction = calculateCallToActionForLoginForm(loginForm);
-  const canSubmit =
-    providerID !== providerPendingLoginID &&
-    Boolean(loginForm && isFilledOut) &&
-    (!accountLink ||
-      isLinkSuccess(accountLink) ||
-      isLinkFailure(accountLink) ||
-      accountLink.status === 'MFA / PENDING_USER_INPUT');
+  const callToAction = calculateLoginFormCallToActionForProviderID(
+    state,
+    providerID,
+  );
+  const canSubmit = calculateCanSubmitLoginFormForProviderID(state, providerID);
+
   const isLoadingLoginForm = Boolean(
     accountLink && accountLink.status === 'MFA / WAITING_FOR_LOGIN_FORM',
   );
-  const enableInteraction =
-    state.accountVerification.providerPendingLoginID !== providerID &&
-    (!accountLink || !isInMFA(accountLink));
+  const pendingLoginRequest =
+    state.accountVerification.providerPendingLoginRequestMap[providerID];
+  const canExit =
+    !pendingLoginRequest && (!accountLink || !isInMFA(accountLink));
 
   return {
-    canSubmit,
     callToAction,
-    enableInteraction,
+    canExit,
+    canSubmit,
     isLoadingLoginForm,
     loginForm,
     provider: state.providers.container[providerID],

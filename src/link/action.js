@@ -2,10 +2,13 @@
 
 import React from 'react';
 import TextDesign from '../design/text';
-
+import YodleeLoginFormModal, {
+  TransitionInMillis as YodleeLoginFormModalTransitionInMillis,
+  TransitionOutMillis as YodleeLoginFormModalTransitionOutMillis,
+} from './components/YodleeLoginFormModal.react';
 import uuid from 'uuid/v4';
 
-import { requestInfoModal } from '../actions/modal';
+import { dismissModal, requestInfoModal } from '../actions/modal';
 import { Text } from 'react-native';
 
 import type { Action$RequestModal } from '../actions/modal';
@@ -125,4 +128,41 @@ export function clearLoginForm(providerID: ID) {
     providerID,
     type: 'CLEAR_LOGIN_FORM',
   };
+}
+
+export function requestLoginFormModal(providerID: ID) {
+  const modalID = `LOGIN_FORM_${providerID}`;
+  return {
+    modal: {
+      id: modalID,
+      modalType: 'REACT_WITH_TRANSITION',
+      priority: 'USER_REQUESTED',
+      renderIn: () => (
+        <YodleeLoginFormModal providerID={providerID} transitionStage="IN" />
+      ),
+      renderOut: () => (
+        <YodleeLoginFormModal providerID={providerID} transitionStage="OUT" />
+      ),
+      renderTransitionIn: () => (
+        <YodleeLoginFormModal
+          providerID={providerID}
+          transitionStage="TRANSITION_IN"
+        />
+      ),
+      renderTransitionOut: () => (
+        <YodleeLoginFormModal
+          providerID={providerID}
+          transitionStage="TRANSITION_OUT"
+        />
+      ),
+      transitionInMillis: YodleeLoginFormModalTransitionInMillis,
+      transitionOutMillis: YodleeLoginFormModalTransitionOutMillis,
+    },
+    shouldIgnoreRequestingExistingModal: false,
+    type: 'REQUEST_MODAL',
+  };
+}
+
+export function dismissLoginFormModal(providerID: ID) {
+  return dismissModal(`LOGIN_FORM_${providerID}`);
 }

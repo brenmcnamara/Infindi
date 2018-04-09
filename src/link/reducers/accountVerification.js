@@ -17,7 +17,7 @@ export type State = {
   +loginFormContainer: LoginFormContainer,
   +loginFormSource: { [providerID: ID]: 'ACCOUNT_LINK' | 'PROVIDER' },
   +page: AccountVerificationPage | null,
-  +providerPendingLoginID: ID | null,
+  +providerPendingLoginRequestMap: { [providerID: ID]: 'LOGIN' | 'MFA' },
   +providerSearchText: string,
 };
 
@@ -27,7 +27,7 @@ const DEFAULT_STATE: State = {
   loginFormContainer: {},
   loginFormSource: {},
   page: null,
-  providerPendingLoginID: null,
+  providerPendingLoginRequestMap: {},
   providerSearchText: '',
 };
 
@@ -89,20 +89,29 @@ export default function accountVerification(
     }
 
     case 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE': {
-      // TODO: This is lame! Fix it!
+      const { providerID } = action;
+      const providerPendingLoginRequestMap = {
+        ...state.providerPendingLoginRequestMap,
+      };
+      const source = state.loginFormSource[providerID];
       invariant(
-        !state.providerPendingLoginID,
-        'Only supports 1 pending login at a time',
+        source,
+        'Expecting login form source to exist when submitting login form for provider: %s',
+        providerID,
       );
-      return { ...state, providerPendingLoginID: action.providerID };
+      providerPendingLoginRequestMap[providerID] =
+        source === 'PROVIDER' ? 'LOGIN' : 'MFA';
+      return { ...state, providerPendingLoginRequestMap };
     }
 
-    case 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE': {
-      invariant(
-        state.providerPendingLoginID,
-        'Expecting pending login on provider',
-      );
-      return { ...state, providerPendingLoginID: null };
+    case 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE':
+    case 'SUBMIT_YODLEE_LOGIN_FORM_SUCCESS': {
+      const { providerID } = action;
+      const providerPendingLoginRequestMap = {
+        ...state.providerPendingLoginRequestMap,
+      };
+      delete providerPendingLoginRequestMap[providerID];
+      return { ...state, providerPendingLoginRequestMap };
     }
 
     case 'CONTAINER_DOWNLOAD_FINISHED': {
@@ -137,9 +146,9 @@ export default function accountVerification(
           // account link does not exist.
           const currentLoginForm = loginFormContainer[providerID] || null;
           if (
-            currentLoginForm &&
-            loginForm &&
-            !isSameLoginForm(loginFormContainer[providerID], loginForm)
+            !currentLoginForm ||
+            (loginForm &&
+              !isSameLoginForm(loginFormContainer[providerID], loginForm))
           ) {
             loginFormContainer[providerID] = loginForm;
             loginFormSource[providerID] = 'ACCOUNT_LINK';
@@ -161,20 +170,21 @@ export default function accountVerification(
         ...state,
         loginFormContainer,
         loginFormSource,
-        providerPendingLoginID: null,
       };
     }
 
     case 'CLEAR_LOGIN_FORM': {
       const { providerID } = action;
-      invariant(
-        state.defaultLoginFormContainer[providerID],
-        'Expecting a default login form to exist for provider: %s',
-        providerID,
-      );
       const loginFormContainer = { ...state.loginFormContainer };
-      loginFormContainer[providerID] =
-        state.defaultLoginFormContainer[providerID];
+      if (state.defaultLoginFormContainer[providerID]) {
+        loginFormContainer[providerID] =
+          state.defaultLoginFormContainer[providerID];
+      } else {
+        // NOTE: A default login form could not exist when a login form exists
+        // if the user loads the login form from the account links without ever
+        // loading the provider for that login form.
+        delete loginFormContainer[providerID];
+      }
       return { ...state, loginFormContainer };
     }
 

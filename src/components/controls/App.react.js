@@ -69,7 +69,7 @@ class App extends Component<Props> {
       }
 
       case 'PROVIDER_LOGIN': {
-        mainContent = <ProviderLoginScreen />;
+        mainContent = <ProviderLoginScreen enableInteraction={true} />;
         break;
       }
 

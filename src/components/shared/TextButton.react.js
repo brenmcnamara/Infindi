@@ -15,7 +15,7 @@ export type LayoutType =
 
 export type Props = {
   // TODO: Change this to "isEnabled"
-  isDisabled: bool,
+  isDisabled: boolean,
   layoutType: LayoutType,
   onPress: () => any,
   size: 'LARGE' | 'MEDIUM' | 'SMALL',
@@ -24,7 +24,7 @@ export type Props = {
 };
 
 export type DefaultProps = {
-  isDisabled: bool,
+  isDisabled: boolean,
   layoutType: LayoutType,
   size: ButtonSize,
   type: ButtonType,

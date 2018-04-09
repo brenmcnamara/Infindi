@@ -7,6 +7,7 @@ import { getContainer } from '../datastore';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
+import type { Modal } from '../reducers/modalState';
 import type { ModelContainer } from '../datastore';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
@@ -109,4 +110,10 @@ export function getTransactionLoadingStatus(
   accountID: ID,
 ): TransactionLoadingStatus {
   return state.transactionLoading.accountToLoadingStatus[accountID] || 'EMPTY';
+}
+
+export function getModalForID(state: State, modalID: ID): Modal | null {
+  return (
+    state.modalState.modalQueue.find(modal => modal.id === modalID) || null
+  );
 }

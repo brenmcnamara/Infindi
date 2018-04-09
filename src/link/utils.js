@@ -2,9 +2,13 @@
 
 import invariant from 'invariant';
 
-import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
+import { getAccountLinkForProviderID } from '../common/state-utils';
+import { isLinkFailure, isLinkSuccess } from 'common/lib/models/AccountLink';
+
+import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
+import type { ReduxState } from '../typesDEPRECATED/redux';
 
 export type SupportType =
   | {|
@@ -80,15 +84,40 @@ export function isSameLoginForm(
   return true;
 }
 
-export const PRE_DOWNLOADING_STATUSES: Array<AccountLinkStatus> = [
-  'FAILURE / BAD_CREDENTIALS',
-  'IN_PROGRESS / INITIALIZING',
-  'IN_PROGRESS / VERIFYING_CREDENTIALS',
-  'MFA / PENDING_USER_INPUT',
-  'MFA / WAITING_FOR_LOGIN_FORM',
-];
+export function calculateLoginFormCallToActionForProviderID(
+  state: ReduxState,
+  providerID: ID,
+): string {
+  const source = state.accountVerification.loginFormSource[providerID];
+  return source && source === 'ACCOUNT_LINK' ? 'SUBMIT' : 'LOGIN';
+}
 
-export const POST_DOWNLOADING_STATUSES: Array<AccountLinkStatus> = [
-  'IN_PROGRESS / DOWNLOADING_DATA',
-  'SUCCESS',
-];
+export function calculateCanSubmitLoginFormForProviderID(
+  state: ReduxState,
+  providerID: ID,
+): boolean {
+  const loginForm = state.accountVerification.loginFormContainer[providerID];
+  const isFilledOut = calculateIsFormFilledOut(loginForm);
+  const accountLink = getAccountLinkForProviderID(state, providerID);
+  const pendingLoginRequest =
+    state.accountVerification.providerPendingLoginRequestMap[providerID];
+  return (
+    !pendingLoginRequest &&
+    Boolean(loginForm && isFilledOut) &&
+    (!accountLink ||
+      isLinkSuccess(accountLink) ||
+      isLinkFailure(accountLink) ||
+      accountLink.status === 'MFA / PENDING_USER_INPUT')
+  );
+}
+
+function calculateIsFormFilledOut(loginForm: YodleeLoginForm): boolean {
+  for (const row of loginForm.row) {
+    for (const field of row.field) {
+      if (!field.isOptional && field.value.length === 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
