@@ -12,7 +12,7 @@ import {
 import { dismissToast, requestToast } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
 import { getAccountLinkContainer } from '../../common/state-utils';
-import { isInMFA, isLinking } from 'common/lib/models/AccountLink';
+import { isInMFA } from 'common/lib/models/AccountLink';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
@@ -104,7 +104,9 @@ class AccountLinkFlowManager {
         shouldShowLoginFormModal: !isViewingLoginScreen && isInMFA(accountLink),
         status: accountLink.status,
       };
-      hasDownloadingAccounts = hasDownloadingAccounts || isLinking(accountLink);
+      hasDownloadingAccounts =
+        hasDownloadingAccounts ||
+        accountLink.status === 'IN_PROGRESS / DOWNLOADING_DATA';
     });
 
     // STEP 2: PERFORM THE UPDATES GOING FROM THE PREVIOUS STATE TO THE NEXT STATE.
