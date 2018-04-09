@@ -25,7 +25,7 @@ const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
 type ProviderState = {|
   +isViewingLoginScreen: boolean,
   +loginFormSource: 'PROVIDER' | 'ACCOUNT_LINK' | null,
-  +pendingRequest: 'LOGIN' | 'MFA' | null,
+  +pendingRequest: 'LOGIN' | 'MFA' | 'FAILURE' | null,
   +providerID: ID,
   +shouldShowLoginFormModal: boolean,
   +status: AccountLinkStatus | null,
@@ -206,7 +206,10 @@ function calculateDerivedAccountLinkStatus(
     return 'IN_PROGRESS / INITIALIZING';
   } else if (providerState.pendingRequest === 'MFA') {
     return 'MFA / WAITING_FOR_LOGIN_FORM';
+  } else if (providerState.pendingRequest === 'FAILURE') {
+    return 'FAILURE / INTERNAL_SERVICE_FAILURE';
   }
+
   return providerState.status;
 }
 

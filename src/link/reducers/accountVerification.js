@@ -17,7 +17,9 @@ export type State = {
   +loginFormContainer: LoginFormContainer,
   +loginFormSource: { [providerID: ID]: 'ACCOUNT_LINK' | 'PROVIDER' },
   +page: AccountVerificationPage | null,
-  +providerPendingLoginRequestMap: { [providerID: ID]: 'LOGIN' | 'MFA' },
+  +providerPendingLoginRequestMap: {
+    [providerID: ID]: 'LOGIN' | 'MFA' | 'FAILURE',
+  },
   +providerSearchText: string,
 };
 
@@ -104,13 +106,12 @@ export default function accountVerification(
       return { ...state, providerPendingLoginRequestMap };
     }
 
-    case 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE':
-    case 'SUBMIT_YODLEE_LOGIN_FORM_SUCCESS': {
+    case 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE': {
       const { providerID } = action;
       const providerPendingLoginRequestMap = {
         ...state.providerPendingLoginRequestMap,
       };
-      delete providerPendingLoginRequestMap[providerID];
+      providerPendingLoginRequestMap[providerID] = 'FAILURE';
       return { ...state, providerPendingLoginRequestMap };
     }
 
@@ -123,6 +124,9 @@ export default function accountVerification(
 
       const loginFormContainer = { ...state.loginFormContainer };
       const loginFormSource = { ...state.loginFormSource };
+      const providerPendingLoginRequestMap = {
+        ...state.providerPendingLoginRequestMap,
+      };
 
       // We need to scan the account links to see if any are in the process
       // of entering or exiting multi-factor authentication. If so, we need to
@@ -161,6 +165,7 @@ export default function accountVerification(
             state.defaultLoginFormContainer[providerID];
           loginFormSource[providerID] = 'PROVIDER';
         }
+        delete providerPendingLoginRequestMap[providerID];
       }
 
       // NOTE: We are assuming here that once we get an update of account links
@@ -170,6 +175,7 @@ export default function accountVerification(
         ...state,
         loginFormContainer,
         loginFormSource,
+        providerPendingLoginRequestMap,
       };
     }
 
