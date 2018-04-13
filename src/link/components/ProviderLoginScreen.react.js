@@ -25,6 +25,7 @@ import {
   calculateCanSubmitLoginFormForProviderID,
 } from '../utils';
 import { connect } from 'react-redux';
+import { withStaleGuard } from '../../components/controls/StaleGuard.react';
 import {
   exitAccountVerification,
   requestProviderSearch,
@@ -57,7 +58,7 @@ type ComputedProps = {
 
 const LEFT_ARROW_WIDTH = 18;
 
-class AccountLoginScreen extends Component<Props> {
+class ProviderLoginScreen extends Component<Props> {
   render() {
     return (
       <Screen>
@@ -160,7 +161,10 @@ class AccountLoginScreen extends Component<Props> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ComputedProps {
+function mapReduxStateToProps(
+  state: ReduxState,
+  props: ComponentProps,
+): ComputedProps {
   const { page } = state.accountVerification;
   invariant(
     page && page.type === 'LOGIN',
@@ -199,7 +203,9 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   };
 }
 
-export default connect(mapReduxStateToProps)(AccountLoginScreen);
+export default withStaleGuard(
+  connect(mapReduxStateToProps)(ProviderLoginScreen),
+);
 
 const styles = StyleSheet.create({
   activityIndicatorContainer: {

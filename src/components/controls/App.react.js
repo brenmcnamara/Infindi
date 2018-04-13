@@ -1,6 +1,7 @@
 /* @flow */
 
 import Colors from '../../design/colors';
+import CrossFadeScreens from './CrossFadeScreens.react';
 import Environment from '../../modules/Environment';
 import LoadingScreen from '../LoadingScreen.react';
 import LoginScreen from '../LoginScreen.react';
@@ -98,19 +99,21 @@ class App extends Component<Props> {
     // together. Keyboard avoiding view should always be the parent of the
     // safe area view.
     return (
-      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-        <SafeAreaView style={styles.safeArea}>
-          <View style={styles.main}>
-            {this.props.root.name === 'MAIN' ||
-            this.props.root.name === 'PROVIDER_SEARCH' ||
-            this.props.root.name === 'PROVIDER_LOGIN' ? (
-              <ModalManager />
-            ) : null}
-            {mainContent}
-          </View>
-          <View style={bottomAreaStyles} />
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+      <CrossFadeScreens transitionKey={this.props.root.name}>
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          <SafeAreaView style={styles.safeArea}>
+            <View style={styles.main}>
+              {this.props.root.name === 'MAIN' ||
+              this.props.root.name === 'PROVIDER_SEARCH' ||
+              this.props.root.name === 'PROVIDER_LOGIN' ? (
+                <ModalManager />
+              ) : null}
+              {mainContent}
+            </View>
+            <View style={bottomAreaStyles} />
+          </SafeAreaView>
+        </KeyboardAvoidingView>
+      </CrossFadeScreens>
     );
   }
 }
