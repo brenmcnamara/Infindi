@@ -44,11 +44,14 @@ export default class CrossFadeScreens extends Component<Props, State> {
     const didChangeKey = currentProps.transitionKey !== nextProps.transitionKey;
     if (didChangeKey) {
       this._markSteadyAsStale = true;
-      this._transitionOp = this._transitionOp.then(() =>
-        this._genTransition(currentProps, nextProps),
-      ).then(() => {
-        this._markSteadyAsStale = false;
-      });
+      this._transitionOp = this._transitionOp
+        .then(() => this._genTransition(currentProps, nextProps))
+        .then(() => {
+          this._markSteadyAsStale = false;
+        })
+        .catch(error => {
+          this._markSteadyAsStale = false;
+        });
       return;
     }
 
@@ -199,6 +202,7 @@ type CrossFadeChildProps = {
 
 class CrossFadeChild extends Component<CrossFadeChildProps> {
   getChildContext() {
+    console.log('getting child context', this.props.isStale);
     return { isStale: this.props.isStale };
   }
 

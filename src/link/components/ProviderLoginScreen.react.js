@@ -25,7 +25,7 @@ import {
   calculateCanSubmitLoginFormForProviderID,
 } from '../utils';
 import { connect } from 'react-redux';
-import { withStaleGuard } from '../../components/controls/StaleGuard.react';
+import { connectWithStaleGuard } from '../../components/controls/StaleGuard.react';
 import {
   exitAccountVerification,
   requestProviderSearch,
@@ -147,6 +147,7 @@ class ProviderLoginScreen extends Component<Props> {
       callToAction,
       'Expecting call to action to exist when page is type LOGIN',
     );
+
     return {
       isLeftButtonDisabled: !enableInteraction || !canExit,
       isRightButtonDisabled: !enableInteraction || !canSubmit,
@@ -168,7 +169,7 @@ function mapReduxStateToProps(
   const { page } = state.accountVerification;
   invariant(
     page && page.type === 'LOGIN',
-    'Login page showing when page is not type login: %s',
+    'Provider Login page showing when page is not type login: %s',
     page && page.type,
   );
   const { providerID } = page;
@@ -203,9 +204,7 @@ function mapReduxStateToProps(
   };
 }
 
-export default withStaleGuard(
-  connect(mapReduxStateToProps)(ProviderLoginScreen),
-);
+export default connectWithStaleGuard(mapReduxStateToProps)(ProviderLoginScreen);
 
 const styles = StyleSheet.create({
   activityIndicatorContainer: {
