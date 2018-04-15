@@ -4,7 +4,6 @@ import Content from './shared/Content.react';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import Themes from '../design/themes';
 
 import invariant from 'invariant';
 
@@ -21,10 +20,12 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { dismissModal } from '../actions/modal';
+import { GetTheme } from '../design/components/Theme.react';
 import { getUserFullName } from '../auth/state-utils';
 import { logout } from '../auth/actions';
 
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
+import type { Theme } from '../design/themes';
 
 export type Props = ReduxProps & {
   show: boolean,
@@ -82,31 +83,33 @@ class LeftPaneScreen extends Component<Props> {
   }
 
   _renderScreen() {
-    const theme = Themes.primary;
     // TODO: Set coloring themes for different types of screens. Would like
     // this screen to have a light background with adding a child element.
     return (
-      <Screen>
-        <Content>
-          <View
-            style={[
-              styles.listContainer,
-              { backgroundColor: theme.color.backgroundApp },
-            ]}
-          >
-            <FlatList
-              automaticallyAdjustContentInsets={false}
-              data={this._getData()}
-              renderItem={({ item }) => item}
-            />
-          </View>
-        </Content>
-      </Screen>
+      <GetTheme>
+        {theme => (
+          <Screen>
+            <Content>
+              <View
+                style={[
+                  styles.listContainer,
+                  { backgroundColor: theme.color.backgroundApp },
+                ]}
+              >
+                <FlatList
+                  automaticallyAdjustContentInsets={false}
+                  data={this._getData(theme)}
+                  renderItem={({ item }) => item}
+                />
+              </View>
+            </Content>
+          </Screen>
+        )}
+      </GetTheme>
     );
   }
 
-  _renderUserProfile() {
-    const theme = Themes.primary;
+  _renderUserProfile(theme: Theme) {
     return (
       <View
         key="user-profile"
@@ -132,8 +135,7 @@ class LeftPaneScreen extends Component<Props> {
     );
   }
 
-  _renderSignOut() {
-    const theme = Themes.primary;
+  _renderSignOut(theme: Theme) {
     return (
       <TouchableOpacity
         key="sign-out"
@@ -165,8 +167,8 @@ class LeftPaneScreen extends Component<Props> {
     }
   };
 
-  _getData() {
-    return [this._renderUserProfile(), this._renderSignOut()];
+  _getData(theme: Theme) {
+    return [this._renderUserProfile(theme), this._renderSignOut(theme)];
   }
 }
 

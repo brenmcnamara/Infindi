@@ -6,7 +6,6 @@ import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
-import Themes from '../../design/themes';
 import YodleeLoginFormComponent from './YodleeLoginForm.react';
 
 import invariant from 'invariant';
@@ -31,6 +30,7 @@ import {
   updateLoginForm,
 } from '../action';
 import { getAccountLinkForProviderID } from '../../common/state-utils';
+import { GetTheme } from '../../design/components/Theme.react';
 import { isInMFA } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 
@@ -86,7 +86,6 @@ class AccountLoginScreen extends Component<Props> {
   }
 
   _renderHeader() {
-    const theme = Themes.primary;
     const { provider } = this.props;
     invariant(
       provider.sourceOfTruth.type === 'YODLEE',
@@ -95,24 +94,28 @@ class AccountLoginScreen extends Component<Props> {
     const yodleeProvider = provider.sourceOfTruth.value;
 
     return (
-      <View
-        style={[
-          styles.loginHeader,
-          { borderColor: theme.color.borderHairline },
-        ]}
-      >
-        <TouchableOpacity onPress={this._onPressBack}>
-          <Image
-            resizeMode="contain"
-            source={Icons.LeftArrow}
-            style={styles.headerLeftIcon}
-          />
-        </TouchableOpacity>
-        <Text style={[theme.getTextStyleHeader3(), styles.headerTitle]}>
-          {yodleeProvider.name}
-        </Text>
-        <View style={styles.headerRightIcon} />
-      </View>
+      <GetTheme>
+        {theme => (
+          <View
+            style={[
+              styles.loginHeader,
+              { borderColor: theme.color.borderHairline },
+            ]}
+          >
+            <TouchableOpacity onPress={this._onPressBack}>
+              <Image
+                resizeMode="contain"
+                source={Icons.LeftArrow}
+                style={styles.headerLeftIcon}
+              />
+            </TouchableOpacity>
+            <Text style={[theme.getTextStyleHeader3(), styles.headerTitle]}>
+              {yodleeProvider.name}
+            </Text>
+            <View style={styles.headerRightIcon} />
+          </View>
+        )}
+      </GetTheme>
     );
   }
 

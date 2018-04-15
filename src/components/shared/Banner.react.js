@@ -1,7 +1,8 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import Themes from '../../design/themes';
+
+import { GetTheme } from '../../design/components/Theme.react';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
@@ -91,7 +92,6 @@ export default class Banner extends Component<Props, State> {
   }
 
   render() {
-    const theme = Themes.primary;
     const banner = this._getBanner();
     if (!banner) {
       return null;
@@ -110,30 +110,42 @@ export default class Banner extends Component<Props, State> {
         height: shouldMaintainHeight ? BANNER_HEIGHT : 'auto',
       },
     ];
-    const bannerContainerStyles = {
-      backgroundColor: theme.getBackgroundColorForBannerType(banner.bannerType),
-      height: this._height,
-    };
-    const textStyles = [
-      styles.text,
-      theme.getTextStyleSmallWithEmphasis(),
-      { color: theme.getTextColorForBannerType(banner.bannerType) },
-    ];
 
     return (
-      <View style={rootStyles}>
-        <Animated.View style={bannerContainerStyles}>
-          <View style={styles.banner}>
-            <Text style={textStyles}>{banner.text}</Text>
-            {banner.showSpinner ? (
-              <ActivityIndicator
-                color={theme.color.backgroundApp}
-                size="small"
-              />
-            ) : null}
+      <GetTheme>
+        {theme => (
+          <View style={rootStyles}>
+            <Animated.View
+              style={{
+                backgroundColor: theme.getBackgroundColorForBannerType(
+                  banner.bannerType,
+                ),
+                height: this._height,
+              }}
+            >
+              <View style={styles.banner}>
+                <Text
+                  style={[
+                    styles.text,
+                    theme.getTextStyleSmallWithEmphasis(),
+                    {
+                      color: theme.getTextColorForBannerType(banner.bannerType),
+                    },
+                  ]}
+                >
+                  {banner.text}
+                </Text>
+                {banner.showSpinner ? (
+                  <ActivityIndicator
+                    color={theme.color.backgroundApp}
+                    size="small"
+                  />
+                ) : null}
+              </View>
+            </Animated.View>
           </View>
-        </Animated.View>
-      </View>
+        )}
+      </GetTheme>
     );
   }
 

@@ -4,9 +4,9 @@ import AccountComponent from './Account.react';
 import InfoButton from './shared/InfoButton.react';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
-import Themes from '../design/themes';
 
 import { getBalance } from 'common/lib/models/Account';
+import { GetTheme } from '../design/components/Theme.react';
 import { isLinking } from 'common/lib/models/AccountLink';
 import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
@@ -15,6 +15,7 @@ import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type { AccountLinkContainer } from '../reducers/accountLinks';
 import type { AccountContainer } from '../reducers/accounts';
 import type { Dollars } from 'common/types/core';
+import type { Theme } from '../design/themes';
 
 export type Props = {
   accountLinkContainer: AccountLinkContainer,
@@ -27,26 +28,28 @@ export type Props = {
 // TODO: Rename to AccountsGroup
 export default class AccountGroup extends Component<Props> {
   render() {
-    const theme = Themes.primary;
     return (
-      <View style={styles.root}>
-        {this._renderHeader()}
-        <View
-          style={[
-            styles.accountContainer,
-            { borderColor: theme.color.borderNormal },
-          ]}
-        >
-          {mapObjectToArray(this.props.accounts, (account, _, i) =>
-            this._renderAccount(account, i === 0),
-          )}
-        </View>
-      </View>
+      <GetTheme>
+        {theme => (
+          <View style={styles.root}>
+            {this._renderHeader(theme)}
+            <View
+              style={[
+                styles.accountContainer,
+                { borderColor: theme.color.borderNormal },
+              ]}
+            >
+              {mapObjectToArray(this.props.accounts, (account, _, i) =>
+                this._renderAccount(account, i === 0),
+              )}
+            </View>
+          </View>
+        )}
+      </GetTheme>
     );
   }
 
-  _renderHeader() {
-    const theme = Themes.primary;
+  _renderHeader(theme: Theme) {
     return (
       <View style={[styles.header, { borderColor: theme.color.borderNormal }]}>
         <Text

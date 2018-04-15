@@ -2,7 +2,6 @@
 
 import Icons from '../design/icons';
 import React, { Component } from 'react';
-import Themes from '../design/themes';
 
 import {
   Animated,
@@ -13,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { GetTheme } from '../design/components/Theme.react';
 import { NavBarHeight } from '../design/layout';
 
 export type Props = {
@@ -57,7 +57,6 @@ export default class Header extends Component<Props> {
   }
 
   render() {
-    const theme = Themes.primary;
     const contentStyles = [
       {
         transform: [
@@ -85,35 +84,42 @@ export default class Header extends Component<Props> {
       },
     ];
 
-    const rootStyles = [
-      styles.root,
-      this.props.showHairline
-        ? { borderBottomWidth: 1, borderColor: theme.color.borderNormal }
-        : null,
-    ];
-
     return (
-      <View style={rootStyles}>
-        <Animated.View style={contentStyles}>
-          <Animated.View style={titleContainerStyles}>
-            <Text style={theme.getTextStyleNormalWithEmphasis()}>
-              {this.props.title}
-            </Text>
-          </Animated.View>
-          <Animated.View style={backButtonContainerStyles}>
-            <TouchableOpacity
-              disabled={!this.props.canNavigateBack}
-              onPress={this.props.onPressBack}
-            >
-              <Image
-                resizeMode="contain"
-                source={Icons.LeftArrow}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-          </Animated.View>
-        </Animated.View>
-      </View>
+      <GetTheme>
+        {theme => (
+          <View
+            style={[
+              styles.root,
+              this.props.showHairline
+                ? {
+                    borderBottomWidth: 1,
+                    borderColor: theme.color.borderNormal,
+                  }
+                : null,
+            ]}
+          >
+            <Animated.View style={contentStyles}>
+              <Animated.View style={titleContainerStyles}>
+                <Text style={theme.getTextStyleNormalWithEmphasis()}>
+                  {this.props.title}
+                </Text>
+              </Animated.View>
+              <Animated.View style={backButtonContainerStyles}>
+                <TouchableOpacity
+                  disabled={!this.props.canNavigateBack}
+                  onPress={this.props.onPressBack}
+                >
+                  <Image
+                    resizeMode="contain"
+                    source={Icons.LeftArrow}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            </Animated.View>
+          </View>
+        )}
+      </GetTheme>
     );
   }
 }

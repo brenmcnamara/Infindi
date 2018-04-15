@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 import TextButton from '../../components/shared/TextButton.react';
-import Themes from '../../design/themes';
 
 import invariant from 'invariant';
 
+import { GetTheme } from '../../design/components/Theme.react';
 import { StyleSheet, View } from 'react-native';
 
 type ButtonLayout = ButtonLayout$LeftAndRight | ButtonLayout$Center;
@@ -35,13 +35,18 @@ export type DefaultProps = {
 
 export default class Footer extends Component<Props> {
   render() {
-    const theme = Themes.primary;
     return (
-      <View style={[styles.root, { borderColor: theme.color.borderNormal }]}>
-        {this.props.buttonLayout.type === 'LEFT_AND_RIGHT'
-          ? this._renderLeftAndRightButtons(this.props)
-          : this._renderCenterButton(this.props)}
-      </View>
+      <GetTheme>
+        {theme => (
+          <View
+            style={[styles.root, { borderColor: theme.color.borderNormal }]}
+          >
+            {this.props.buttonLayout.type === 'LEFT_AND_RIGHT'
+              ? this._renderLeftAndRightButtons(this.props)
+              : this._renderCenterButton(this.props)}
+          </View>
+        )}
+      </GetTheme>
     );
   }
 

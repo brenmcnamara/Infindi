@@ -10,7 +10,6 @@ import NetWorth from './NetWorth.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from './shared/TextButton.react';
-import Themes from '../design/themes';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
@@ -32,6 +31,7 @@ import { filterObject, isObjectEmpty } from '../common/obj-utils';
 import { getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload } from '../auth/state-utils';
 import { getNetWorth } from '../common/state-utils';
+import { GetTheme } from '../design/components/Theme.react';
 import { requestProviderSearch } from '../link/action';
 import { requestInfoModal } from '../actions/modal';
 import { viewAccountDetails } from '../actions/router';
@@ -42,6 +42,7 @@ import type { AccountLinkContainer } from '../reducers/accountLinks';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
+import type { Theme } from '../design/themes';
 
 export type Props = ReduxProps & ReduxStateProps;
 
@@ -68,18 +69,22 @@ type RowItem =
 class AccountsScreen extends Component<Props> {
   render() {
     return (
-      <Screen avoidNavBar={true} avoidTabBar={true}>
-        {/* CONTENT */}
-        {this._renderAccounts()}
-        {this._renderAccountsLoading()}
-        {this._renderNullState()}
-        {/* FOOTER */}
-        {this._renderAddAccountButton()}
-      </Screen>
+      <GetTheme>
+        {theme => (
+          <Screen avoidNavBar={true} avoidTabBar={true}>
+            {/* CONTENT */}
+            {this._renderAccounts(theme)}
+            {this._renderAccountsLoading(theme)}
+            {this._renderNullState(theme)}
+            {/* FOOTER */}
+            {this._renderAddAccountButton(theme)}
+          </Screen>
+        )}
+      </GetTheme>
     );
   }
 
-  _renderAccountsLoading() {
+  _renderAccountsLoading(theme: Theme) {
     const { isDownloading } = this.props;
     return (
       <If predicate={isDownloading}>
@@ -96,7 +101,7 @@ class AccountsScreen extends Component<Props> {
     );
   }
 
-  _renderAccounts() {
+  _renderAccounts(theme: Theme) {
     const { isDownloading, accounts } = this.props;
 
     return (
@@ -109,16 +114,17 @@ class AccountsScreen extends Component<Props> {
           <FlatList
             automaticallyAdjustContentInsets={false}
             data={this._getData()}
-            renderItem={({ item }) => this._renderRowItem(nullthrows(item))}
+            renderItem={({ item }) =>
+              this._renderRowItem(theme, nullthrows(item))
+            }
           />
         </Content>
       </If>
     );
   }
 
-  _renderNullState() {
+  _renderNullState(theme: Theme) {
     const { isDownloading, accounts } = this.props;
-    const theme = Themes.primary;
     return (
       <If predicate={!isDownloading && isObjectEmpty(accounts)}>
         <Content>
@@ -152,8 +158,7 @@ class AccountsScreen extends Component<Props> {
     );
   }
 
-  _renderAddAccountButton() {
-    const theme = Themes.primary;
+  _renderAddAccountButton(theme: Theme) {
     return (
       <If predicate={!this.props.isDownloading}>
         <Footer
@@ -171,7 +176,7 @@ class AccountsScreen extends Component<Props> {
     );
   }
 
-  _renderRowItem = (item: RowItem) => {
+  _renderRowItem = (theme: Theme, item: RowItem) => {
     switch (item.rowType) {
       case 'NET_WORTH': {
         return <NetWorth netWorth={item.netWorth} />;
@@ -183,7 +188,7 @@ class AccountsScreen extends Component<Props> {
             accountLinkContainer={this.props.accountLinkContainer}
             accounts={accounts}
             groupType={groupType}
-            onPressGroupInfo={() => this._onPressGroupInfo(groupType)}
+            onPressGroupInfo={() => this._onPressGroupInfo(theme, groupType)}
             onSelectAccount={this._onSelectAccount}
           />
         );
@@ -196,8 +201,7 @@ class AccountsScreen extends Component<Props> {
     this.props.dispatch(requestProviderSearch());
   };
 
-  _onPressGroupInfo = (groupType: AccountGroupType): void => {
-    const theme = Themes.primary;
+  _onPressGroupInfo = (theme: Theme, groupType: AccountGroupType): void => {
     const content = AccountGroupInfoContent[groupType];
     invariant(content, 'No info exists for group type: %s.', groupType);
     this.props.dispatch(

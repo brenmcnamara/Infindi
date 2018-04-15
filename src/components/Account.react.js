@@ -5,7 +5,6 @@ import Downloading, {
 } from './shared/Downloading.react';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
-import Themes from '../design/themes';
 
 import {
   Animated,
@@ -25,8 +24,10 @@ import {
   getCreditCardType,
   isCreditCardAccount,
 } from '../common/credit-card-utils';
+import { GetTheme } from '../design/components/Theme.react';
 
 import type { Account } from 'common/lib/models/Account';
+import type { Theme } from '../design/themes';
 
 export type Props = {
   account: Account,
@@ -59,7 +60,6 @@ export default class AccountComponent extends Component<Props> {
   }
 
   render() {
-    const theme = Themes.primary;
     const { account, showTopBorder } = this.props;
     const topBorder = !showTopBorder ? {} : { borderTopWidth: 1 };
     const downloadingStyles = [
@@ -74,46 +74,52 @@ export default class AccountComponent extends Component<Props> {
     ];
 
     return (
-      <TouchableOpacity onPress={this.props.onSelect}>
-        <View
-          style={[
-            styles.root,
-            topBorder,
-            { borderColor: theme.color.borderNormal },
-          ]}
-        >
-          <View style={styles.mainContent}>
-            <View style={styles.accountLoaderTop}>
-              {this._renderAccountName()}
-              <MoneyText
-                dollars={getBalance(account)}
-                textStyle={[
-                  styles.accountBalance,
-                  theme.getTextStyleNormalWithEmphasis(),
-                ]}
-              />
+      <GetTheme>
+        {theme => (
+          <TouchableOpacity onPress={this.props.onSelect}>
+            <View
+              style={[
+                styles.root,
+                topBorder,
+                { borderColor: theme.color.borderNormal },
+              ]}
+            >
+              <View style={styles.mainContent}>
+                <View style={styles.accountLoaderTop}>
+                  {this._renderAccountName(theme)}
+                  <MoneyText
+                    dollars={getBalance(account)}
+                    textStyle={[
+                      styles.accountBalance,
+                      theme.getTextStyleNormalWithEmphasis(),
+                    ]}
+                  />
+                </View>
+                <View style={styles.accountLoaderBottom}>
+                  <Text
+                    style={[
+                      styles.accountInstitution,
+                      theme.getTextStyleSmall(),
+                    ]}
+                  >
+                    {getInstitution(account)}
+                  </Text>
+                  <Text style={[styles.accountType, theme.getTextStyleSmall()]}>
+                    {getFormattedAccountType(account)}
+                  </Text>
+                </View>
+              </View>
+              <Animated.View style={downloadingStyles}>
+                <Downloading />
+              </Animated.View>
             </View>
-            <View style={styles.accountLoaderBottom}>
-              <Text
-                style={[styles.accountInstitution, theme.getTextStyleSmall()]}
-              >
-                {getInstitution(account)}
-              </Text>
-              <Text style={[styles.accountType, theme.getTextStyleSmall()]}>
-                {getFormattedAccountType(account)}
-              </Text>
-            </View>
-          </View>
-          <Animated.View style={downloadingStyles}>
-            <Downloading />
-          </Animated.View>
-        </View>
-      </TouchableOpacity>
+          </TouchableOpacity>
+        )}
+      </GetTheme>
     );
   }
 
-  _renderAccountName() {
-    const theme = Themes.primary;
+  _renderAccountName(theme: Theme) {
     const { account } = this.props;
     if (!isCreditCardAccount(account)) {
       return (

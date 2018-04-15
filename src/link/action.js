@@ -1,7 +1,6 @@
 /* @flow */
 
 import React from 'react';
-import Themes from '../design/themes';
 import YodleeLoginFormModal, {
   TransitionInMillis as YodleeLoginFormModalTransitionInMillis,
   TransitionOutMillis as YodleeLoginFormModalTransitionOutMillis,
@@ -10,6 +9,7 @@ import YodleeLoginFormModal, {
 import uuid from 'uuid/v4';
 
 import { dismissModal, requestInfoModal } from '../actions/modal';
+import { GetTheme } from '../design/components/Theme.react';
 import { Text } from 'react-native';
 
 import type { Action$RequestModal } from '../actions/modal';
@@ -74,7 +74,9 @@ export function unsupportedProvider(reason: string): Action$RequestModal {
     id: UNSUPPORTED_MODAL_ID,
     priority: 'USER_REQUESTED',
     render: () => (
-      <Text style={Themes.primary.getTextStyleNormal()}>{reason}</Text>
+      <GetTheme>
+        {theme => <Text style={theme.getTextStyleNormal()}>{reason}</Text>}
+      </GetTheme>
     ),
     title,
   });

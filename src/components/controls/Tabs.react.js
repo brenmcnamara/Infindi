@@ -4,7 +4,6 @@ import AccountDetailsScreen from '../AccountDetailsScreen.react';
 import AccountsScreen from '../AccountsScreen.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import Themes from '../../design/themes';
 
 import invariant from 'invariant';
 
@@ -18,6 +17,7 @@ import type { RouteNode } from '../../common/route-utils';
 
 export type Props = ReduxProps & {
   routeNode: RouteNode,
+  theme: Theme,
 };
 
 class Tabs extends Component<Props> {
@@ -45,7 +45,6 @@ class Tabs extends Component<Props> {
     if (didShowAccountDetails && !willShowAccountDetails) {
       this.refs.nav.pop();
     } else if (!didShowAccountDetails && willShowAccountDetails) {
-      const theme = Themes.primary;
       this._shouldAllowBackButton = false;
       // NOTE: We are doing this in order to prevent the user from hitting the
       // back button and popping this view before it has completed animated in.
@@ -53,7 +52,7 @@ class Tabs extends Component<Props> {
       // Would like to abstract this away at some point.
       setTimeout(() => (this._shouldAllowBackButton = true), 1000);
       this.refs.nav.push({
-        barTintColor: theme.color.backgroundApp,
+        barTintColor: this.props.theme.color.backgroundApp,
         component: AccountDetailsScreen,
         leftButtonIcon: Icons.LeftArrow,
         onLeftButtonPress: () => {
@@ -63,25 +62,24 @@ class Tabs extends Component<Props> {
         passProps: {
           accountID: getAccountDetailsAccountID(nextProps.routeNode),
         },
-        tintColor: theme.color.buttonNavBar,
+        tintColor: this.props.theme.color.buttonNavBar,
         title: '',
       });
     }
   }
 
   render() {
-    const theme = Themes.primary;
     const Component = AccountsScreen;
     const couldBeScrollable = this.props.routeNode.name === 'ACCOUNTS';
     return (
       <NavigatorIOS
         initialRoute={{
-          barTintColor: theme.color.backgroundApp,
+          barTintColor: this.props.theme.color.backgroundApp,
           component: Component,
           leftButtonIcon: Icons.List,
           onLeftButtonPress: this._onPressLeftButton,
           shadowHidden: !couldBeScrollable,
-          tintColor: theme.color.buttonNavBar,
+          tintColor: this.props.theme.color.buttonNavBar,
           title: '',
         }}
         ref="nav"

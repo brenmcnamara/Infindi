@@ -6,7 +6,8 @@ import Icons from '../design/icons';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from './shared/TextButton.react';
-import Themes from '../design/themes';
+
+import { GetTheme } from '../design/components/Theme.react';
 
 import invariant from 'invariant';
 
@@ -63,7 +64,6 @@ class LoginScreen extends Component<Props, State> {
   }
 
   render() {
-    const theme = Themes.primary;
     const animatedErrorStyles = {
       opacity: this.state.errorViewProgress,
       transform: [
@@ -77,67 +77,71 @@ class LoginScreen extends Component<Props, State> {
     };
 
     return (
-      <Screen avoidKeyboard={true}>
-        <Content>
-          <View style={styles.logoContainer}>
-            <Image
-              source={Icons.InfindiLogoSplash}
-              style={[styles.logo, { width: 50, height: 24 }]}
-            />
-          </View>
-          <View style={styles.loginForm}>
-            <TextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoFocus={true}
-              editable={this.props.loginType !== 'LOADING'}
-              keyboardType="email-address"
-              onChangeText={this._onChangeEmail}
-              onSubmitEditing={this._onSubmitEmail}
-              placeholder="Email"
-              returnKeyType="next"
-              style={[
-                styles.formInput,
-                { borderColor: theme.color.borderNormal },
-                theme.getTextStyleHeader3(),
-              ]}
-            />
-            <TextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={this.props.loginType !== 'LOADING'}
-              onChangeText={this._onChangePassword}
-              onSubmitEditing={this._onSubmitPassword}
-              placeholder="Password"
-              ref="passwordInputRef"
-              returnKeyType="done"
-              secureTextEntry={true}
-              style={[styles.formInput, theme.getTextStyleHeader3()]}
-            />
-          </View>
-          <Animated.View style={[styles.loginError, animatedErrorStyles]}>
-            <Text style={[theme.getTextStyleError(), styles.marginBottom8]}>
-              Login Failed.
-            </Text>
-            <Text style={theme.getTextStyleError()}>
-              Please check your credentials.
-            </Text>
-          </Animated.View>
-        </Content>
-        <Footer style={styles.footer}>
-          {this.props.loginType === 'LOADING' ? (
-            <ActivityIndicator size="small" />
-          ) : (
-            <TextButton
-              layoutType="FILL_PARENT"
-              onPress={this._onPressLogin}
-              size="LARGE"
-              text="LOGIN"
-              type="PRIMARY"
-            />
-          )}
-        </Footer>
-      </Screen>
+      <GetTheme>
+        {theme => (
+          <Screen avoidKeyboard={true}>
+            <Content>
+              <View style={styles.logoContainer}>
+                <Image
+                  source={Icons.InfindiLogoSplash}
+                  style={[styles.logo, { width: 50, height: 24 }]}
+                />
+              </View>
+              <View style={styles.loginForm}>
+                <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoFocus={true}
+                  editable={this.props.loginType !== 'LOADING'}
+                  keyboardType="email-address"
+                  onChangeText={this._onChangeEmail}
+                  onSubmitEditing={this._onSubmitEmail}
+                  placeholder="Email"
+                  returnKeyType="next"
+                  style={[
+                    styles.formInput,
+                    { borderColor: theme.color.borderNormal },
+                    theme.getTextStyleHeader3(),
+                  ]}
+                />
+                <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={this.props.loginType !== 'LOADING'}
+                  onChangeText={this._onChangePassword}
+                  onSubmitEditing={this._onSubmitPassword}
+                  placeholder="Password"
+                  ref="passwordInputRef"
+                  returnKeyType="done"
+                  secureTextEntry={true}
+                  style={[styles.formInput, theme.getTextStyleHeader3()]}
+                />
+              </View>
+              <Animated.View style={[styles.loginError, animatedErrorStyles]}>
+                <Text style={[theme.getTextStyleError(), styles.marginBottom8]}>
+                  Login Failed.
+                </Text>
+                <Text style={theme.getTextStyleError()}>
+                  Please check your credentials.
+                </Text>
+              </Animated.View>
+            </Content>
+            <Footer style={styles.footer}>
+              {this.props.loginType === 'LOADING' ? (
+                <ActivityIndicator size="small" />
+              ) : (
+                <TextButton
+                  layoutType="FILL_PARENT"
+                  onPress={this._onPressLogin}
+                  size="LARGE"
+                  text="LOGIN"
+                  type="PRIMARY"
+                />
+              )}
+            </Footer>
+          </Screen>
+        )}
+      </GetTheme>
     );
   }
 

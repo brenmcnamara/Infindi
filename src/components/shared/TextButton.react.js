@@ -1,8 +1,8 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import Themes from '../../design/themes';
 
+import { GetTheme } from '../../design/components/Theme.react';
 import { Text, TouchableOpacity } from 'react-native';
 
 export type ButtonType = 'PRIMARY' | 'NORMAL' | 'SPECIAL';
@@ -39,9 +39,53 @@ export default class TextButton extends Component<Props> {
   };
 
   render() {
-    const theme = Themes.primary;
-    const { isDisabled, layoutType, size, text, type } = this.props;
-    const buttonStyles = [
+    const { layoutType, text } = this.props;
+    const rootStyles =
+      layoutType === 'FILL_PARENT'
+        ? {
+            alignSelf: 'stretch',
+            flex: 1,
+            justifyContent: 'center',
+          }
+        : {
+            alignSelf: 'center',
+          };
+
+    // TODO: Inline text button is not really usable without the touchable
+    // opacity. Need to figure out how to add a touchable opacity without a
+    // view. Need to register on press down and press up events of text
+    // element, which the current api does not allow us to do.
+    return (
+      <GetTheme>
+        {theme =>
+          layoutType === 'INLINE' ? (
+            <Text onPress={this._onPress} style={this._getButtonStyles(theme)}>
+              {text}
+            </Text>
+          ) : (
+            <TouchableOpacity
+              disabled={this.props.isDisabled}
+              onPress={this._onPress}
+              style={rootStyles}
+            >
+              <Text style={this._getButtonStyles(theme)}>{text}</Text>
+            </TouchableOpacity>
+          )
+        }
+      </GetTheme>
+    );
+  }
+
+  _onPress = (): void => {
+    if (!this.props.isDisabled) {
+      this.props.onPress();
+    }
+  };
+
+  _getButtonStyles(theme: Theme) {
+    const { isDisabled, layoutType, size, type } = this.props;
+
+    return [
       layoutType === 'INLINE_BLOCK_CENTERED' || layoutType === 'FILL_PARENT'
         ? { textAlign: 'center' }
         : null,
@@ -61,39 +105,5 @@ export default class TextButton extends Component<Props> {
             : size === 'SMALL' ? theme.fontSize.small : theme.fontSize.normal,
       },
     ];
-    const rootStyles =
-      layoutType === 'FILL_PARENT'
-        ? {
-            alignSelf: 'stretch',
-            flex: 1,
-            justifyContent: 'center',
-          }
-        : {
-            alignSelf: 'center',
-          };
-
-    // TODO: Inline text button is not really usable without the touchable
-    // opacity. Need to figure out how to add a touchable opacity without a
-    // view. Need to register on press down and press up events of text
-    // element, which the current api does not allow us to do.
-    return layoutType === 'INLINE' ? (
-      <Text onPress={this._onPress} style={buttonStyles}>
-        {text}
-      </Text>
-    ) : (
-      <TouchableOpacity
-        disabled={this.props.isDisabled}
-        onPress={this._onPress}
-        style={rootStyles}
-      >
-        <Text style={buttonStyles}>{text}</Text>
-      </TouchableOpacity>
-    );
   }
-
-  _onPress = (): void => {
-    if (!this.props.isDisabled) {
-      this.props.onPress();
-    }
-  };
 }

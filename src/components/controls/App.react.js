@@ -10,7 +10,7 @@ import ProviderSearchScreen from '../../link/components/ProviderSearchScreen.rea
 import React, { Component } from 'react';
 import RecommendationScreen from '../RecommendationScreen.react';
 import Tabs from './Tabs.react';
-import Themes from '../../design/themes';
+import Theme, { GetTheme } from '../../design/components/Theme.react';
 
 import invariant from 'invariant';
 
@@ -45,7 +45,6 @@ class App extends Component<Props> {
   }
 
   render() {
-    const theme = Themes.primary;
     const { root } = this.props;
     let mainContent = null;
     switch (root.name) {
@@ -60,7 +59,11 @@ class App extends Component<Props> {
       }
 
       case 'MAIN': {
-        mainContent = <Tabs routeNode={forceGetNextNode(root)} />;
+        mainContent = (
+          <GetTheme>
+            {theme => <Tabs routeNode={forceGetNextNode(root)} theme={theme} />}
+          </GetTheme>
+        );
         break;
       }
 
@@ -87,36 +90,41 @@ class App extends Component<Props> {
       default:
         invariant(false, 'Unrecognized app root %s', root);
     }
-    const bottomAreaStyles = [
-      styles.bottomArea,
-      {
-        // NOTE: Need to add this back when we add the tab bar back.
-        // backgroundColor: root === 'MAIN' ? Colors.TAB_BAR : Colors.BACKGROUND,
-        backgroundColor: theme.color.backgroundApp,
-      },
-    ];
     // NOTE: The safe area view and keyboard avoiding view do not play well
     // together. Keyboard avoiding view should always be the parent of the
     // safe area view.
     return (
-      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-        <SafeAreaView
-          style={[
-            styles.safeArea,
-            { backgroundColor: theme.color.backgroundApp },
-          ]}
-        >
-          <View style={styles.main}>
-            {this.props.root.name === 'MAIN' ||
-            this.props.root.name === 'PROVIDER_SEARCH' ||
-            this.props.root.name === 'PROVIDER_LOGIN' ? (
-              <ModalManager />
-            ) : null}
-            {mainContent}
-          </View>
-          <View style={bottomAreaStyles} />
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+      <Theme themeName="primary">
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          <GetTheme>
+            {theme => (
+              <SafeAreaView
+                style={[
+                  styles.safeArea,
+                  {
+                    backgroundColor: theme.color.backgroundApp,
+                  },
+                ]}
+              >
+                <View style={styles.main}>
+                  {this.props.root.name === 'MAIN' ||
+                  this.props.root.name === 'PROVIDER_SEARCH' ||
+                  this.props.root.name === 'PROVIDER_LOGIN' ? (
+                    <ModalManager />
+                  ) : null}
+                  {mainContent}
+                </View>
+                <View
+                  style={[
+                    styles.bottomArea,
+                    { backgroundColor: theme.color.backgroundApp },
+                  ]}
+                />
+              </SafeAreaView>
+            )}
+          </GetTheme>
+        </KeyboardAvoidingView>
+      </Theme>
     );
   }
 }

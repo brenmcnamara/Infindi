@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 import TextButton from '../components/shared/TextButton.react';
-import Themes from '../design/themes';
 
 import { Animated, Easing, StyleSheet, View } from 'react-native';
+import { GetTheme } from '../design/components/Theme.react';
 
 export type Props = {
   callToActionText: string,
@@ -75,13 +75,18 @@ export default class Footer extends Component<Props, State> {
 
   render() {
     const props = this.state.transitionStage.props;
-    const theme = Themes.primary;
     return (
-      <View style={[styles.root, { borderColor: theme.color.borderNormal }]}>
-        {props.shouldShowCallToAction
-          ? this._renderButtonsWithCallToAction(props)
-          : this._renderButtonsWithoutCallToAction(props)}
-      </View>
+      <GetTheme>
+        {theme => (
+          <View
+            style={[styles.root, { borderColor: theme.color.borderNormal }]}
+          >
+            {props.shouldShowCallToAction
+              ? this._renderButtonsWithCallToAction(props)
+              : this._renderButtonsWithoutCallToAction(props)}
+          </View>
+        )}
+      </GetTheme>
     );
   }
 

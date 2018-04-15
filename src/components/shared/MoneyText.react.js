@@ -1,8 +1,8 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import Themes from '../../design/themes';
 
+import { GetTheme } from '../../design/components/Theme.react';
 import { Text } from 'react-native';
 
 import type { Dollars } from 'common/types/core';
@@ -15,17 +15,25 @@ export type Props = {
 
 export default class MoneyText extends Component<Props> {
   render() {
-    const theme = Themes.primary;
-    const style = [
-      this.props.textStyle,
-      {
-        color:
-          this.props.dollars > 0
-            ? theme.color.moneyTextPositive
-            : theme.color.moneyTextNeutral,
-      },
-    ];
-    return <Text style={style}>{this._getDollarsFormatted()}</Text>;
+    return (
+      <GetTheme>
+        {theme => (
+          <Text
+            style={[
+              this.props.textStyle,
+              {
+                color:
+                  this.props.dollars > 0
+                    ? theme.color.moneyTextPositive
+                    : theme.color.moneyTextNeutral,
+              },
+            ]}
+          >
+            {this._getDollarsFormatted()}
+          </Text>
+        )}
+      </GetTheme>
+    );
   }
 
   _getDollarsFormatted(): string {

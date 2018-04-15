@@ -5,34 +5,38 @@ import Icons from '../design/icons';
 import IfAuthenticated from './shared/IfAuthenticated.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import Themes from '../design/themes';
 
 import { connect } from 'react-redux';
+import { GetTheme } from '../design/components/Theme.react';
 import { getUserFirstName } from '../auth/state-utils';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { logout } from '../auth/actions';
 
-import { type ReduxProps } from '../typesDEPRECATED/redux';
-import { type State } from '../reducers/root';
+import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { State } from '../reducers/root';
+import type { Theme } from '../design/themes';
 
 export type Props = ReduxProps & { firstName: string };
 
 class SettingsScreen extends Component<Props> {
   render() {
     return (
-      <Screen theme="LIGHT">
-        <IfAuthenticated>
-          <Content>
-            {this._renderHeader()}
-            {this._renderLogout()}
-          </Content>
-        </IfAuthenticated>
-      </Screen>
+      <GetTheme>
+        {theme => (
+          <Screen theme="LIGHT">
+            <IfAuthenticated>
+              <Content>
+                {this._renderHeader(theme)}
+                {this._renderLogout(theme)}
+              </Content>
+            </IfAuthenticated>
+          </Screen>
+        )}
+      </GetTheme>
     );
   }
 
-  _renderHeader() {
-    const theme = Themes.primary;
+  _renderHeader(theme: Theme) {
     return (
       <View style={[styles.header, { borderColor: theme.color.borderNormal }]}>
         <Image
@@ -45,8 +49,7 @@ class SettingsScreen extends Component<Props> {
     );
   }
 
-  _renderLogout() {
-    const theme = Themes.primary;
+  _renderLogout(theme: Theme) {
     return (
       <TouchableOpacity onPress={this._onPressLogout} style={styles.listItem}>
         <Image

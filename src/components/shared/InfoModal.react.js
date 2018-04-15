@@ -6,10 +6,10 @@ import ModalTransition, {
 } from './ModalTransition.react';
 import React, { Component } from 'react';
 import TextButton from './TextButton.react';
-import Themes from '../../design/themes';
 
 import { connect } from 'react-redux';
 import { dismissModal } from '../../actions/modal';
+import { GetTheme } from '../../design/components/Theme.react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { ID } from 'common/types/core';
@@ -30,46 +30,49 @@ export const TransitionOutMillis = ModalTransitionOutMillis;
  */
 class InfoModal extends Component<Props> {
   render() {
-    const theme = Themes.primary;
     return (
-      <ModalTransition
-        onPressBackground={this._onPressBackground}
-        show={
-          this.props.transitionStage === 'IN' ||
-          this.props.transitionStage === 'TRANSITION_IN'
-        }
-      >
-        <View
-          style={[
-            styles.root,
-            {
-              backgroundColor: theme.color.backgroundApp,
-              borderColor: theme.color.borderNormal,
-            },
-          ]}
-        >
-          <View style={styles.header}>
-            <Text style={theme.getTextStyleNormalWithEmphasis()}>
-              {this.props.title}
-            </Text>
-          </View>
-          <View style={styles.content}>{this.props.children}</View>
-          <View
-            style={[
-              styles.buttonContainer,
-              { borderColor: theme.color.borderNormal },
-            ]}
+      <GetTheme>
+        {theme => (
+          <ModalTransition
+            onPressBackground={this._onPressBackground}
+            show={
+              this.props.transitionStage === 'IN' ||
+              this.props.transitionStage === 'TRANSITION_IN'
+            }
           >
-            <TextButton
-              layoutType="FILL_PARENT"
-              onPress={this._onPressDismiss}
-              size="SMALL"
-              text="Got it!"
-              type="PRIMARY"
-            />
-          </View>
-        </View>
-      </ModalTransition>
+            <View
+              style={[
+                styles.root,
+                {
+                  backgroundColor: theme.color.backgroundApp,
+                  borderColor: theme.color.borderNormal,
+                },
+              ]}
+            >
+              <View style={styles.header}>
+                <Text style={theme.getTextStyleNormalWithEmphasis()}>
+                  {this.props.title}
+                </Text>
+              </View>
+              <View style={styles.content}>{this.props.children}</View>
+              <View
+                style={[
+                  styles.buttonContainer,
+                  { borderColor: theme.color.borderNormal },
+                ]}
+              >
+                <TextButton
+                  layoutType="FILL_PARENT"
+                  onPress={this._onPressDismiss}
+                  size="SMALL"
+                  text="Got it!"
+                  type="PRIMARY"
+                />
+              </View>
+            </View>
+          </ModalTransition>
+        )}
+      </GetTheme>
     );
   }
 

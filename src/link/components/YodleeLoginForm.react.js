@@ -2,7 +2,6 @@
 
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import Themes from '../../design/themes';
 
 import invariant from 'invariant';
 
@@ -15,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { GetTheme } from '../../design/components/Theme.react';
 
 import type {
   LoginField,
@@ -75,29 +75,47 @@ export default class YodleeLoginForm extends Component<Props> {
       switch (item.field.type) {
         case 'text':
         case 'password':
-          return this._renderFieldTextOrPassword(
-            item.field,
-            item.row,
-            item.location,
+          return (
+            <GetTheme>
+              {theme =>
+                this._renderFieldTextOrPassword(
+                  theme,
+                  item.field,
+                  item.row,
+                  item.location,
+                )
+              }
+            </GetTheme>
           );
         case 'option':
-          return this._renderFieldOption(item.field, item.location);
+          return (
+            <GetTheme>
+              {theme =>
+                this._renderFieldOption(theme, item.field, item.location)
+              }
+            </GetTheme>
+          );
         default:
           invariant(false, 'Unhandled yodlee login field: %s', item.field.type);
       }
     } else if (item.type === 'FORGOT_PASSWORD') {
       invariant(false, 'FORGOT PASSWORD NOT YET SUPPORTED');
     } else if (item.type === 'HEADER') {
-      return this._renderHeader(item.title, item.subtitle);
+      return (
+        <GetTheme>
+          {theme => this._renderHeader(theme, item.title, item.subtitle)}
+        </GetTheme>
+      );
     } else if (item.type === 'SUBHEADER') {
-      return this._renderSubheader(item.label);
+      return (
+        <GetTheme>{theme => this._renderSubheader(theme, item.label)}</GetTheme>
+      );
     } else {
       invariant(false, 'Unrecognized data row: %s', item.type);
     }
   };
 
-  _renderHeader(title: string | null, subtitle: string | null) {
-    const theme = Themes.primary;
+  _renderHeader(theme: Theme, title: string | null, subtitle: string | null) {
     return (
       <View style={styles.formHeader}>
         {title ? (
@@ -119,8 +137,7 @@ export default class YodleeLoginForm extends Component<Props> {
     );
   }
 
-  _renderSubheader(label: string) {
-    const theme = Themes.primary;
+  _renderSubheader(theme: Theme, label: string) {
     return (
       <View style={styles.formSubheader}>
         <Text
@@ -136,11 +153,11 @@ export default class YodleeLoginForm extends Component<Props> {
   }
 
   _renderFieldTextOrPassword(
+    theme: Theme,
     field: LoginField$TextOrPassword,
     row: LoginRow,
     location: FieldLocation,
   ) {
-    const theme = Themes.primary;
     return (
       <TextInput
         autoCapitalize="none"
@@ -162,8 +179,11 @@ export default class YodleeLoginForm extends Component<Props> {
     );
   }
 
-  _renderFieldOption(field: LoginField$Option, location: FieldLocation) {
-    const theme = Themes.primary;
+  _renderFieldOption(
+    theme: Theme,
+    field: LoginField$Option,
+    location: FieldLocation,
+  ) {
     return (
       <View
         style={[

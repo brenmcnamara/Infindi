@@ -5,7 +5,6 @@ import Icons from '../design/icons';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import Themes from '../design/themes';
 import TransactionActions from '../data-model/actions/transactions';
 import TransactionState from '../data-model/state/transactions';
 
@@ -26,6 +25,7 @@ import {
   getCategory,
   getTitle,
 } from 'common/lib/models/Transaction';
+import { GetTheme } from '../design/components/Theme.react';
 import {
   getTransactionsForAccount,
   getTransactionLoadingStatus,
@@ -35,6 +35,7 @@ import { TransactionEmpty, TransactionLoadingError } from '../../content';
 import type { ID } from 'common/types/core';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
+import type { Theme } from '../design/themes';
 import type { Transaction } from 'common/lib/models/Transaction';
 import type { TransactionLoadingStatus } from '../reducers/transactionLoading';
 
@@ -57,13 +58,17 @@ class AccountDetailsScreen extends Component<Props> {
 
   render() {
     return (
-      <Screen>
-        <Content>{this._renderList()}</Content>
-      </Screen>
+      <GetTheme>
+        {theme => (
+          <Screen>
+            <Content>{this._renderList(theme)}</Content>
+          </Screen>
+        )}
+      </GetTheme>
     );
   }
 
-  _renderList() {
+  _renderList(theme: Theme) {
     return (
       <FlatList
         data={this._getListData()}
@@ -80,71 +85,82 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _renderTransactionHeader = () => {
-    const theme = Themes.primary;
     return (
-      <View
-        style={[
-          styles.transactionHeader,
-          { borderColor: theme.color.borderNormal },
-        ]}
-      >
-        <Text style={theme.getTextStyleNormal()}>Transactions</Text>
-      </View>
+      <GetTheme>
+        {theme => (
+          <View
+            style={[
+              styles.transactionHeader,
+              { borderColor: theme.color.borderNormal },
+            ]}
+          >
+            <Text style={theme.getTextStyleNormal()}>Transactions</Text>
+          </View>
+        )}
+      </GetTheme>
     );
   };
 
   _renderTransaction = (transaction: Transaction, showTopBorder: boolean) => {
-    const theme = Themes.primary;
     return (
-      <View
-        style={[
-          styles.transaction,
-          {
-            backgroundColor: theme.color.backgroundListItem,
-            borderColor: theme.color.borderNormal,
-            borderTopWidth: showTopBorder ? 1 : 0,
-          },
-        ]}
-      >
-        <View style={styles.transactionTop}>
-          <Text
-            ellipsizeMode="tail"
-            numberOfLines={1}
+      <GetTheme>
+        {theme => (
+          <View
             style={[
-              theme.getTextStyleNormalWithEmphasis(),
-              styles.transactionTitle,
+              styles.transaction,
+              {
+                backgroundColor: theme.color.backgroundListItem,
+                borderColor: theme.color.borderNormal,
+                borderTopWidth: showTopBorder ? 1 : 0,
+              },
             ]}
           >
-            {getTitle(transaction)}
-          </Text>
-          <MoneyText
-            dollars={getAmount(transaction)}
-            textStyle={[
-              styles.transactionAmount,
-              theme.getTextStyleNormalWithEmphasis(),
-            ]}
-          />
-        </View>
-        <View style={styles.transactionBottom}>
-          <Text style={[theme.getTextStyleSmall(), styles.transactionCategory]}>
-            {getCategory(transaction).toUpperCase()}
-          </Text>
-          <Text style={[theme.getTextStyleSmall(), styles.transactionDate]}>
-            {moment(transaction.transactionDate).format('l')}
-          </Text>
-        </View>
-      </View>
+            <View style={styles.transactionTop}>
+              <Text
+                ellipsizeMode="tail"
+                numberOfLines={1}
+                style={[
+                  theme.getTextStyleNormalWithEmphasis(),
+                  styles.transactionTitle,
+                ]}
+              >
+                {getTitle(transaction)}
+              </Text>
+              <MoneyText
+                dollars={getAmount(transaction)}
+                textStyle={[
+                  styles.transactionAmount,
+                  theme.getTextStyleNormalWithEmphasis(),
+                ]}
+              />
+            </View>
+            <View style={styles.transactionBottom}>
+              <Text
+                style={[theme.getTextStyleSmall(), styles.transactionCategory]}
+              >
+                {getCategory(transaction).toUpperCase()}
+              </Text>
+              <Text style={[theme.getTextStyleSmall(), styles.transactionDate]}>
+                {moment(transaction.transactionDate).format('l')}
+              </Text>
+            </View>
+          </View>
+        )}
+      </GetTheme>
     );
   };
 
   _renderTransactionEmpty = () => {
-    const theme = Themes.primary;
     return (
-      <View style={styles.listItemWithCenteredContent}>
-        <Text style={[theme.getTextStyleNormal(), styles.transactionEmpty]}>
-          {TransactionEmpty}
-        </Text>
-      </View>
+      <GetTheme>
+        {theme => (
+          <View style={styles.listItemWithCenteredContent}>
+            <Text style={[theme.getTextStyleNormal(), styles.transactionEmpty]}>
+              {TransactionEmpty}
+            </Text>
+          </View>
+        )}
+      </GetTheme>
     );
   };
 
@@ -157,18 +173,21 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _renderTransactionError = () => {
-    const theme = Themes.primary;
     return (
-      <View style={styles.listItemWithCenteredContent}>
-        <Text style={[theme.getTextStyleError(), styles.errorText]}>
-          {TransactionLoadingError}
-        </Text>
-        <Image
-          resizeMode="contain"
-          source={Icons.Error}
-          style={styles.errorIcon}
-        />
-      </View>
+      <GetTheme>
+        {theme => (
+          <View style={styles.listItemWithCenteredContent}>
+            <Text style={[theme.getTextStyleError(), styles.errorText]}>
+              {TransactionLoadingError}
+            </Text>
+            <Image
+              resizeMode="contain"
+              source={Icons.Error}
+              style={styles.errorIcon}
+            />
+          </View>
+        )}
+      </GetTheme>
     );
   };
 

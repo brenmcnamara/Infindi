@@ -1,8 +1,8 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import Themes from '../../design/themes';
 
+import { GetTheme } from '../../design/components/Theme.react';
 import { NavBarHeight, TabBarHeight } from '../../design/layout';
 import { StyleSheet, View } from 'react-native';
 
@@ -26,14 +26,22 @@ export default class Screen extends Component<Props> {
   };
 
   render() {
-    const theme = Themes.primary;
-    const rootStyles = [
-      styles.root,
-      this.props.avoidNavBar ? { paddingTop: NavBarHeight } : null,
-      this.props.avoidTabBar ? { paddingBottom: TabBarHeight } : null,
-      { backgroundColor: theme.color.backgroundApp },
-    ];
-    return <View style={rootStyles}>{this.props.children}</View>;
+    return (
+      <GetTheme>
+        {theme => (
+          <View
+            style={[
+              styles.root,
+              this.props.avoidNavBar ? { paddingTop: NavBarHeight } : null,
+              this.props.avoidTabBar ? { paddingBottom: TabBarHeight } : null,
+              { backgroundColor: theme.color.backgroundApp },
+            ]}
+          >
+            {this.props.children}
+          </View>
+        )}
+      </GetTheme>
+    );
   }
 }
 
