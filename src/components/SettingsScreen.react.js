@@ -1,12 +1,11 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Icons from '../design/icons';
 import IfAuthenticated from './shared/IfAuthenticated.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import { connect } from 'react-redux';
 import { getUserFirstName } from '../auth/state-utils';
@@ -33,19 +32,21 @@ class SettingsScreen extends Component<Props> {
   }
 
   _renderHeader() {
+    const theme = Themes.primary;
     return (
-      <View style={styles.header}>
+      <View style={[styles.header, { borderColor: theme.color.borderNormal }]}>
         <Image
           resizeMode="contain"
           source={Icons.UserMale}
           style={[styles.iconLarge, styles.iconToTextSpacing]}
         />
-        <Text style={TextDesign.header3}>{this.props.firstName}</Text>
+        <Text style={theme.getTextStyleHeader3()}>{this.props.firstName}</Text>
       </View>
     );
   }
 
   _renderLogout() {
+    const theme = Themes.primary;
     return (
       <TouchableOpacity onPress={this._onPressLogout} style={styles.listItem}>
         <Image
@@ -53,7 +54,7 @@ class SettingsScreen extends Component<Props> {
           source={Icons.Power}
           style={[styles.iconMedium, styles.iconToTextSpacing]}
         />
-        <Text style={TextDesign.normal}>Logout</Text>
+        <Text style={theme.getTextStyleNormal()}>Logout</Text>
       </TouchableOpacity>
     );
   }
@@ -76,7 +77,6 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: Colors.BORDER,
     flexDirection: 'row',
     height: 64,
     marginTop: 20, // Status bar height,

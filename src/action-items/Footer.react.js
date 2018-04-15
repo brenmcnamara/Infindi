@@ -1,8 +1,8 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import React, { Component } from 'react';
 import TextButton from '../components/shared/TextButton.react';
+import Themes from '../design/themes';
 
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 
@@ -10,11 +10,11 @@ export type Props = {
   callToActionText: string,
   onCallToAction: () => any,
   onDismiss: () => any,
-  shouldShowCallToAction: bool,
+  shouldShowCallToAction: boolean,
 };
 
 export type DefaultProps = {
-  shouldShowCallToAction: bool,
+  shouldShowCallToAction: boolean,
 };
 
 export type TransitionStage =
@@ -75,8 +75,9 @@ export default class Footer extends Component<Props, State> {
 
   render() {
     const props = this.state.transitionStage.props;
+    const theme = Themes.primary;
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { borderColor: theme.color.borderNormal }]}>
         {props.shouldShowCallToAction
           ? this._renderButtonsWithCallToAction(props)
           : this._renderButtonsWithoutCallToAction(props)}
@@ -142,7 +143,6 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    borderColor: Colors.BORDER,
     borderTopWidth: 1,
     height: 60,
     paddingHorizontal: 16,

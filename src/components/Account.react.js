@@ -1,12 +1,11 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import Downloading, {
   WIDTH as DOWNLOADING_WIDTH,
 } from './shared/Downloading.react';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import {
   Animated,
@@ -31,9 +30,9 @@ import type { Account } from 'common/lib/models/Account';
 
 export type Props = {
   account: Account,
-  isDownloading: bool,
+  isDownloading: boolean,
   onSelect: () => any,
-  showTopBorder: bool,
+  showTopBorder: boolean,
 };
 
 const DOWNLOADING_CONTAINER_WIDTH = DOWNLOADING_WIDTH + 8;
@@ -60,6 +59,7 @@ export default class AccountComponent extends Component<Props> {
   }
 
   render() {
+    const theme = Themes.primary;
     const { account, showTopBorder } = this.props;
     const topBorder = !showTopBorder ? {} : { borderTopWidth: 1 };
     const downloadingStyles = [
@@ -75,7 +75,13 @@ export default class AccountComponent extends Component<Props> {
 
     return (
       <TouchableOpacity onPress={this.props.onSelect}>
-        <View style={[styles.root, topBorder]}>
+        <View
+          style={[
+            styles.root,
+            topBorder,
+            { borderColor: theme.color.borderNormal },
+          ]}
+        >
           <View style={styles.mainContent}>
             <View style={styles.accountLoaderTop}>
               {this._renderAccountName()}
@@ -83,15 +89,17 @@ export default class AccountComponent extends Component<Props> {
                 dollars={getBalance(account)}
                 textStyle={[
                   styles.accountBalance,
-                  TextDesign.normalWithEmphasis,
+                  theme.getTextStyleNormalWithEmphasis(),
                 ]}
               />
             </View>
             <View style={styles.accountLoaderBottom}>
-              <Text style={[styles.accountInstitution, TextDesign.small]}>
+              <Text
+                style={[styles.accountInstitution, theme.getTextStyleSmall()]}
+              >
                 {getInstitution(account)}
               </Text>
-              <Text style={[styles.accountType, TextDesign.small]}>
+              <Text style={[styles.accountType, theme.getTextStyleSmall()]}>
                 {getFormattedAccountType(account)}
               </Text>
             </View>
@@ -105,10 +113,17 @@ export default class AccountComponent extends Component<Props> {
   }
 
   _renderAccountName() {
+    const theme = Themes.primary;
     const { account } = this.props;
     if (!isCreditCardAccount(account)) {
       return (
-        <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
+        <Text
+          style={[
+            styles.accountName,
+            { color: theme.color.moneyTextPositive },
+            theme.getTextStyleNormalWithEmphasis(),
+          ]}
+        >
           {getAccountName(account)}
         </Text>
       );
@@ -128,7 +143,9 @@ export default class AccountComponent extends Component<Props> {
             .join(' ');
     const numberFormatted = creditCardNumber.slice(-4);
     return (
-      <Text style={[styles.accountName, TextDesign.normalWithEmphasis]}>
+      <Text
+        style={[styles.accountName, theme.getTextStyleNormalWithEmphasis()]}
+      >
         {typeFormatted}
         {' ending in '}
         {numberFormatted}
@@ -161,7 +178,6 @@ const styles = StyleSheet.create({
   },
 
   accountName: {
-    color: Colors.MONEY_GOOD,
     flex: 1,
     textAlign: 'left',
   },
@@ -182,7 +198,6 @@ const styles = StyleSheet.create({
   root: {
     alignItems: 'center',
     backgroundColor: 'white',
-    borderColor: Colors.BORDER,
     flexDirection: 'row',
     paddingLeft: 8,
     paddingVertical: 8,

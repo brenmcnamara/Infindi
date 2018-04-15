@@ -1,11 +1,10 @@
 /* @flow */
 
 import AccountComponent from './Account.react';
-import Colors from '../design/colors';
 import InfoButton from './shared/InfoButton.react';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import { getBalance } from 'common/lib/models/Account';
 import { isLinking } from 'common/lib/models/AccountLink';
@@ -28,10 +27,16 @@ export type Props = {
 // TODO: Rename to AccountsGroup
 export default class AccountGroup extends Component<Props> {
   render() {
+    const theme = Themes.primary;
     return (
       <View style={styles.root}>
         {this._renderHeader()}
-        <View style={styles.accountsContainer}>
+        <View
+          style={[
+            styles.accountContainer,
+            { borderColor: theme.color.borderNormal },
+          ]}
+        >
           {mapObjectToArray(this.props.accounts, (account, _, i) =>
             this._renderAccount(account, i === 0),
           )}
@@ -41,21 +46,28 @@ export default class AccountGroup extends Component<Props> {
   }
 
   _renderHeader() {
+    const theme = Themes.primary;
     return (
-      <View style={styles.header}>
-        <Text style={[TextDesign.smallWithEmphasis, styles.groupType]}>
+      <View style={[styles.header, { borderColor: theme.color.borderNormal }]}>
+        <Text
+          style={[theme.getTextStyleNormalWithEmphasis(), styles.groupType]}
+        >
           {this._getFormattedGroupType()}
         </Text>
         <InfoButton onPress={this.props.onPressGroupInfo} />
         <MoneyText
           dollars={this._getGroupBalance()}
-          textStyle={[TextDesign.normalWithEmphasis, styles.groupBalance]}
+          textStyle={[
+            theme.getTextStyleNormalWithEmphasis(),
+            styles.groupBalance,
+            { color: theme.color.moneyTextPositive },
+          ]}
         />
       </View>
     );
   }
 
-  _renderAccount(account: Account, isFirst: bool) {
+  _renderAccount(account: Account, isFirst: boolean) {
     const { accountLinkContainer } = this.props;
     return (
       <AccountComponent
@@ -84,7 +96,7 @@ export default class AccountGroup extends Component<Props> {
 function isAccountDownloading(
   container: AccountLinkContainer,
   account: Account,
-): bool {
+): boolean {
   for (const accountLinkID in container) {
     if (container.hasOwnProperty(accountLinkID)) {
       const accountLink = container[accountLinkID];
@@ -100,14 +112,12 @@ function isAccountDownloading(
 }
 
 const styles = StyleSheet.create({
-  accountsContainer: {
-    borderColor: Colors.BORDER,
+  accountContainer: {
     borderWidth: 1,
     marginHorizontal: 4,
   },
 
   groupBalance: {
-    color: Colors.MONEY_GOOD,
     flex: 1,
     textAlign: 'right',
   },
@@ -119,7 +129,6 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: Colors.BORDER,
     flexDirection: 'row',
     marginBottom: 4,
     paddingBottom: 4,

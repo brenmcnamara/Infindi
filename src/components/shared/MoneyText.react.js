@@ -1,7 +1,7 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import React, { Component } from 'react';
+import Themes from '../../design/themes';
 
 import { Text } from 'react-native';
 
@@ -15,11 +15,14 @@ export type Props = {
 
 export default class MoneyText extends Component<Props> {
   render() {
+    const theme = Themes.primary;
     const style = [
       this.props.textStyle,
       {
         color:
-          this.props.dollars > 0 ? Colors.MONEY_GOOD : Colors.MONEY_NEUTRAL,
+          this.props.dollars > 0
+            ? theme.color.moneyTextPositive
+            : theme.color.moneyTextNeutral,
       },
     ];
     return <Text style={style}>{this._getDollarsFormatted()}</Text>;

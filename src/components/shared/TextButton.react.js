@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import TextDesign from '../../design/text';
+import Themes from '../../design/themes';
 
 import { Text, TouchableOpacity } from 'react-native';
 
@@ -39,26 +39,27 @@ export default class TextButton extends Component<Props> {
   };
 
   render() {
+    const theme = Themes.primary;
     const { isDisabled, layoutType, size, text, type } = this.props;
     const buttonStyles = [
       layoutType === 'INLINE_BLOCK_CENTERED' || layoutType === 'FILL_PARENT'
         ? { textAlign: 'center' }
         : null,
       {
+        color:
+          type === 'PRIMARY'
+            ? isDisabled
+              ? theme.color.textPrimaryDisabled
+              : theme.color.textPrimary
+            : type === 'SPECIAL'
+              ? theme.color.textSpecial
+              : isDisabled ? theme.color.textDisabled : theme.color.textNormal,
+        fontFamily: isDisabled ? theme.fontFamily.thin : theme.fontFamily.thick,
         fontSize:
           size === 'LARGE'
-            ? TextDesign.largeFontSize
-            : size === 'SMALL'
-              ? TextDesign.smallFontSize
-              : TextDesign.mediumFontSize,
+            ? theme.fontSize.header3
+            : size === 'SMALL' ? theme.fontSize.small : theme.fontSize.normal,
       },
-      type === 'PRIMARY'
-        ? isDisabled
-          ? TextDesign.primaryButtonDisabled
-          : TextDesign.primaryButton
-        : type === 'SPECIAL'
-          ? TextDesign.specialButton
-          : TextDesign.normalButton,
     ];
     const rootStyles =
       layoutType === 'FILL_PARENT'

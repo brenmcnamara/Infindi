@@ -1,10 +1,9 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import If from './shared/If.react';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -16,18 +15,25 @@ export type Props = {
 
 export default class NetWorth extends Component<Props> {
   render() {
+    const theme = Themes.primary;
+    const netWorthStyles = [
+      theme.getTextStyleHeader2(),
+      { color: theme.color.moneyTextPositive },
+    ];
     return (
       <View style={styles.root}>
-        <Text style={[TextDesign.header3, styles.header]}>NET WORTH</Text>
+        <Text style={[theme.getTextStyleHeader3(), styles.header]}>
+          NET WORTH
+        </Text>
         <If predicate={typeof this.props.netWorth === 'number'}>
           {/* GUARD AGAINST NaN Errors */}
           <MoneyText
             dollars={this.props.netWorth || 0}
-            textStyle={[TextDesign.header2, styles.netWorth]}
+            textStyle={netWorthStyles}
           />
         </If>
         <If predicate={typeof this.props.netWorth !== 'number'}>
-          <Text style={[TextDesign.header2, styles.netWorth]}>--</Text>
+          <Text style={netWorthStyles}>--</Text>
         </If>
       </View>
     );
@@ -37,10 +43,6 @@ export default class NetWorth extends Component<Props> {
 const styles = StyleSheet.create({
   header: {
     marginBottom: 8,
-  },
-
-  netWorth: {
-    color: Colors.MONEY_GOOD,
   },
 
   root: {

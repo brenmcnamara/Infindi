@@ -1,23 +1,21 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import React, { Component } from 'react';
+import Themes from '../../design/themes';
 
 import { NavBarHeight, TabBarHeight } from '../../design/layout';
 import { StyleSheet, View } from 'react-native';
 
 export type Props = {
-  avoidKeyboard: bool,
-  avoidNavbar: bool,
+  avoidKeyboard: boolean,
+  avoidNavbar: boolean,
   children?: ?any,
-  theme: 'LIGHT' | 'NORMAL' | 'DARK',
 };
 
 export type DefaultProps = {
-  avoidKeyboard: bool,
-  avoidNavbar: bool,
-  avoidTabBar: bool,
-  theme: 'LIGHT' | 'NORMAL' | 'DARK',
+  avoidKeyboard: boolean,
+  avoidNavbar: boolean,
+  avoidTabBar: boolean,
 };
 
 export default class Screen extends Component<Props> {
@@ -25,20 +23,15 @@ export default class Screen extends Component<Props> {
     avoidNavbar: false,
     avoidKeyboard: false,
     avoidTabBar: false,
-    theme: 'NORMAL',
   };
 
   render() {
+    const theme = Themes.primary;
     const rootStyles = [
       styles.root,
       this.props.avoidNavBar ? { paddingTop: NavBarHeight } : null,
       this.props.avoidTabBar ? { paddingBottom: TabBarHeight } : null,
-      {
-        backgroundColor:
-          this.props.theme === 'NORMAL'
-            ? Colors.BACKGROUND
-            : Colors.BACKGROUND_LIGHT,
-      },
+      { backgroundColor: theme.color.backgroundApp },
     ];
     return <View style={rootStyles}>{this.props.children}</View>;
   }

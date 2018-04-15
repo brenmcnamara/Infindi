@@ -1,9 +1,8 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import {
   Animated,
@@ -17,14 +16,14 @@ import {
 import { NavBarHeight } from '../design/layout';
 
 export type Props = {
-  canNavigateBack: bool,
+  canNavigateBack: boolean,
   onPressBack: () => any,
-  showHairline: bool,
+  showHairline: boolean,
   title: string,
 };
 
 type DefaultProps = {
-  showHairline: bool,
+  showHairline: boolean,
 };
 
 const BackButtonWidth = 18;
@@ -58,6 +57,7 @@ export default class Header extends Component<Props> {
   }
 
   render() {
+    const theme = Themes.primary;
     const contentStyles = [
       {
         transform: [
@@ -88,7 +88,7 @@ export default class Header extends Component<Props> {
     const rootStyles = [
       styles.root,
       this.props.showHairline
-        ? { borderBottomWidth: 1, borderColor: Colors.BORDER }
+        ? { borderBottomWidth: 1, borderColor: theme.color.borderNormal }
         : null,
     ];
 
@@ -96,7 +96,7 @@ export default class Header extends Component<Props> {
       <View style={rootStyles}>
         <Animated.View style={contentStyles}>
           <Animated.View style={titleContainerStyles}>
-            <Text style={TextDesign.normalWithEmphasis}>
+            <Text style={theme.getTextStyleNormalWithEmphasis()}>
               {this.props.title}
             </Text>
           </Animated.View>

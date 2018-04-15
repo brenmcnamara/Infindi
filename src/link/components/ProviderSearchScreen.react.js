@@ -1,13 +1,12 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import Content from '../../components/shared/Content.react';
 import Downloading from '../../components/shared/Downloading.react';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
-import TextDesign from '../../design/text';
+import Themes from '../../design/themes';
 
 import invariant from 'invariant';
 
@@ -77,8 +76,14 @@ class ProviderSearchScreen extends Component<Props> {
   }
 
   _renderHeader() {
+    const theme = Themes.primary;
     return (
-      <View style={styles.searchHeader}>
+      <View
+        style={[
+          styles.searchHeader,
+          { borderColor: theme.color.borderHairline },
+        ]}
+      >
         <Image
           resizeMode="contain"
           source={Icons.Search}
@@ -91,7 +96,13 @@ class ProviderSearchScreen extends Component<Props> {
           ref="searchInput"
           selectTextOnFocus={true}
           spellCheck={false}
-          style={styles.searchHeaderTextInput}
+          style={[
+            styles.searchHeaderTextInput,
+            {
+              fontFamily: theme.fontFamily.thick,
+              fontSize: theme.fontSize.header3,
+            },
+          ]}
         />
       </View>
     );
@@ -119,6 +130,7 @@ class ProviderSearchScreen extends Component<Props> {
   }
 
   _renderSearchError() {
+    const theme = Themes.primary;
     return (
       <View style={styles.searchErrorContainer}>
         <Image
@@ -126,7 +138,7 @@ class ProviderSearchScreen extends Component<Props> {
           source={Icons.Error}
           style={styles.searchErrorIcon}
         />
-        <Text style={[TextDesign.error, styles.searchErrorText]}>
+        <Text style={[theme.getTextStyleError(), styles.searchErrorText]}>
           {ProviderSearchError}
         </Text>
       </View>
@@ -134,12 +146,20 @@ class ProviderSearchScreen extends Component<Props> {
   }
 
   _renderProvider = ({ item }: { item: Provider }) => {
+    const theme = Themes.primary;
     const isFirst = this.props.providers[0] === item;
     const itemStyles = [
       styles.searchResultsItem,
+      {
+        backgroundColor: theme.color.backgroundListItem,
+        borderColor: theme.color.borderNormal,
+      },
       isFirst ? { marginTop: 4 } : null,
     ];
-    const nameStyles = [TextDesign.header3, styles.searchResultsItemName];
+    const nameStyles = [
+      theme.getTextStyleHeader3(),
+      styles.searchResultsItemName,
+    ];
     invariant(
       item.sourceOfTruth.type === 'YODLEE',
       'Expecting provider to come from YODLEE',
@@ -157,7 +177,7 @@ class ProviderSearchScreen extends Component<Props> {
         <View style={itemStyles}>
           <View style={styles.searchResultsItemContent}>
             <Text style={nameStyles}>{providerName}</Text>
-            <Text style={TextDesign.small}>{baseURL}</Text>
+            <Text style={theme.getTextStyleSmall()}>{baseURL}</Text>
           </View>
           {accountLink && isLinking(accountLink) ? <Downloading /> : null}
         </View>
@@ -237,7 +257,6 @@ const styles = StyleSheet.create({
   searchHeader: {
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: Colors.BORDER_HAIRLINE,
     flexDirection: 'row',
     // Add 1 since hairline border is not inclusive of width in normal nav bar.
     height: NavBarHeight + 1,
@@ -248,8 +267,6 @@ const styles = StyleSheet.create({
   },
 
   searchHeaderTextInput: {
-    fontFamily: TextDesign.thickFont,
-    fontSize: TextDesign.largeFontSize,
     marginLeft: 16,
   },
 
@@ -259,8 +276,6 @@ const styles = StyleSheet.create({
 
   searchResultsItem: {
     alignItems: 'center',
-    backgroundColor: Colors.BACKGROUND_LIGHT,
-    borderColor: Colors.BORDER_DARK,
     borderWidth: 1,
     flexDirection: 'row',
     marginBottom: 4,

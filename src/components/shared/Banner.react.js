@@ -1,8 +1,7 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import React, { Component } from 'react';
-import TextDesign from '../../design/text';
+import Themes from '../../design/themes';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
@@ -92,6 +91,7 @@ export default class Banner extends Component<Props, State> {
   }
 
   render() {
+    const theme = Themes.primary;
     const banner = this._getBanner();
     if (!banner) {
       return null;
@@ -111,13 +111,13 @@ export default class Banner extends Component<Props, State> {
       },
     ];
     const bannerContainerStyles = {
-      backgroundColor: Colors.BANNER_BACKGROUND[banner.bannerType],
+      backgroundColor: theme.getBackgroundColorForBannerType(banner.bannerType),
       height: this._height,
     };
     const textStyles = [
       styles.text,
-      TextDesign.smallWithEmphasis,
-      { color: Colors.BANNER_TEXT[banner.bannerType] },
+      theme.getTextStyleSmallWithEmphasis(),
+      { color: theme.getTextColorForBannerType(banner.bannerType) },
     ];
 
     return (
@@ -126,7 +126,10 @@ export default class Banner extends Component<Props, State> {
           <View style={styles.banner}>
             <Text style={textStyles}>{banner.text}</Text>
             {banner.showSpinner ? (
-              <ActivityIndicator color={Colors.BACKGROUND} size="small" />
+              <ActivityIndicator
+                color={theme.color.backgroundApp}
+                size="small"
+              />
             ) : null}
           </View>
         </Animated.View>

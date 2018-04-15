@@ -2,7 +2,6 @@
 
 import AccountGroup from './AccountGroup.react';
 import BannerManager from './shared/BannerManager.react';
-import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
@@ -11,7 +10,7 @@ import NetWorth from './NetWorth.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from './shared/TextButton.react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
@@ -119,6 +118,7 @@ class AccountsScreen extends Component<Props> {
 
   _renderNullState() {
     const { isDownloading, accounts } = this.props;
+    const theme = Themes.primary;
     return (
       <If predicate={!isDownloading && isObjectEmpty(accounts)}>
         <Content>
@@ -135,14 +135,14 @@ class AccountsScreen extends Component<Props> {
             <View style={styles.nullTextContainer}>
               <Text
                 style={[
-                  TextDesign.header3,
+                  theme.getTextStyleHeader3(),
                   styles.marginBottom16,
                   styles.textCenter,
                 ]}
               >
                 You Have No Accounts
               </Text>
-              <Text style={[TextDesign.normal, styles.textCenter]}>
+              <Text style={[theme.getTextStyleNormal(), styles.textCenter]}>
                 {AccountNullStateContent}
               </Text>
             </View>
@@ -153,9 +153,12 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderAddAccountButton() {
+    const theme = Themes.primary;
     return (
       <If predicate={!this.props.isDownloading}>
-        <Footer style={styles.footer}>
+        <Footer
+          style={[styles.footer, { borderColor: theme.color.borderHairline }]}
+        >
           <TextButton
             layoutType="FILL_PARENT"
             onPress={this._onPressAddAccount}
@@ -194,13 +197,14 @@ class AccountsScreen extends Component<Props> {
   };
 
   _onPressGroupInfo = (groupType: AccountGroupType): void => {
+    const theme = Themes.primary;
     const content = AccountGroupInfoContent[groupType];
     invariant(content, 'No info exists for group type: %s.', groupType);
     this.props.dispatch(
       requestInfoModal({
         id: `GROUP_INFO_${groupType}`,
         priority: 'USER_REQUESTED',
-        render: () => <Text style={TextDesign.normal}>{content}</Text>,
+        render: () => <Text style={theme.getTextStyleNormal()}>{content}</Text>,
         title: getFormattedGroupType(groupType),
       }),
     );
@@ -320,7 +324,6 @@ const styles = StyleSheet.create({
 
   footer: {
     alignItems: 'center',
-    borderColor: Colors.BORDER_HAIRLINE,
     borderTopWidth: 1,
     justifyContent: 'center',
   },

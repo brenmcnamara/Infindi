@@ -5,16 +5,16 @@ import type { PureAction } from '../typesDEPRECATED/redux';
 
 export type Toast = Toast$Banner;
 
-export type BannerType = 'INFO' | 'ERROR';
+export type BannerType = 'INFO' | 'ERROR' | 'SUCCESS';
 
 export type BannerChannel = string;
 
 export type Toast$Banner = {|
   +bannerChannel: BannerChannel,
-  +bannerType: 'INFO' | 'ERROR' | 'SUCCESS',
+  +bannerType: BannerType,
   +id: ID,
   +priority: 'LOW' | 'NORMAL' | 'HIGH',
-  +showSpinner: bool,
+  +showSpinner: boolean,
   +text: string,
   +toastType: 'BANNER',
 |};

@@ -1,12 +1,11 @@
 /* @flow */
 
 import Content from './shared/Content.react';
-import Colors from '../design/colors';
 import Icons from '../design/icons';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 import TransactionActions from '../data-model/actions/transactions';
 import TransactionState from '../data-model/state/transactions';
 
@@ -52,11 +51,9 @@ type ComputedProps = {
 };
 
 class AccountDetailsScreen extends Component<Props> {
-  _shouldAllowBackButton: bool = false;
+  _shouldAllowBackButton: boolean = false;
 
-  componentDidMount(): void {
-
-  }
+  componentDidMount(): void {}
 
   render() {
     return (
@@ -83,23 +80,40 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _renderTransactionHeader = () => {
+    const theme = Themes.primary;
     return (
-      <View style={styles.transactionHeader}>
-        <Text style={TextDesign.normal}>Transactions</Text>
+      <View
+        style={[
+          styles.transactionHeader,
+          { borderColor: theme.color.borderNormal },
+        ]}
+      >
+        <Text style={theme.getTextStyleNormal()}>Transactions</Text>
       </View>
     );
   };
 
-  _renderTransaction = (transaction: Transaction, showTopBorder: bool) => {
+  _renderTransaction = (transaction: Transaction, showTopBorder: boolean) => {
+    const theme = Themes.primary;
     return (
       <View
-        style={[styles.transaction, { borderTopWidth: showTopBorder ? 1 : 0 }]}
+        style={[
+          styles.transaction,
+          {
+            backgroundColor: theme.color.backgroundListItem,
+            borderColor: theme.color.borderNormal,
+            borderTopWidth: showTopBorder ? 1 : 0,
+          },
+        ]}
       >
         <View style={styles.transactionTop}>
           <Text
             ellipsizeMode="tail"
             numberOfLines={1}
-            style={[TextDesign.normalWithEmphasis, styles.transactionTitle]}
+            style={[
+              theme.getTextStyleNormalWithEmphasis(),
+              styles.transactionTitle,
+            ]}
           >
             {getTitle(transaction)}
           </Text>
@@ -107,15 +121,15 @@ class AccountDetailsScreen extends Component<Props> {
             dollars={getAmount(transaction)}
             textStyle={[
               styles.transactionAmount,
-              TextDesign.normalWithEmphasis,
+              theme.getTextStyleNormalWithEmphasis(),
             ]}
           />
         </View>
         <View style={styles.transactionBottom}>
-          <Text style={[TextDesign.small, styles.transactionCategory]}>
+          <Text style={[theme.getTextStyleSmall(), styles.transactionCategory]}>
             {getCategory(transaction).toUpperCase()}
           </Text>
-          <Text style={[TextDesign.small, styles.transactionDate]}>
+          <Text style={[theme.getTextStyleSmall(), styles.transactionDate]}>
             {moment(transaction.transactionDate).format('l')}
           </Text>
         </View>
@@ -124,9 +138,10 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _renderTransactionEmpty = () => {
+    const theme = Themes.primary;
     return (
       <View style={styles.listItemWithCenteredContent}>
-        <Text style={[TextDesign.normal, styles.transactionEmpty]}>
+        <Text style={[theme.getTextStyleNormal(), styles.transactionEmpty]}>
           {TransactionEmpty}
         </Text>
       </View>
@@ -142,9 +157,10 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _renderTransactionError = () => {
+    const theme = Themes.primary;
     return (
       <View style={styles.listItemWithCenteredContent}>
-        <Text style={[TextDesign.error, styles.errorText]}>
+        <Text style={[theme.getTextStyleError(), styles.errorText]}>
           {TransactionLoadingError}
         </Text>
         <Image
@@ -163,7 +179,9 @@ class AccountDetailsScreen extends Component<Props> {
         cursor,
         'Transactions must have cursor if loading status is "STEADY"',
       );
-      this.props.dispatch(TransactionActions.fetchTransactions(accountID, cursor));
+      this.props.dispatch(
+        TransactionActions.fetchTransactions(accountID, cursor),
+      );
     }
   };
 
@@ -245,9 +263,7 @@ const styles = StyleSheet.create({
   },
 
   transaction: {
-    backgroundColor: Colors.BACKGROUND_LIGHT,
     borderBottomWidth: 1,
-    borderColor: Colors.BORDER,
     borderLeftWidth: 1,
     borderRightWidth: 1,
     padding: 8,
@@ -271,7 +287,6 @@ const styles = StyleSheet.create({
   },
 
   transactionHeader: {
-    borderColor: Colors.BORDER,
     borderBottomWidth: 1,
     marginBottom: 4,
     paddingVertical: 4,

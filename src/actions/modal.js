@@ -13,7 +13,7 @@ import LeftPaneScreen, {
   TransitionOutMillis as LeftPaneTransitionOutMillis,
 } from '../components/LeftPaneScreen.react';
 import React from 'react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import { Text } from 'react-native';
 
@@ -126,7 +126,7 @@ export function requestUnimplementedModal(
   return requestInfoModal({
     id: `IMPLEMENT_ME(${featureName})`,
     render: () => (
-      <Text style={TextDesign.normal}>
+      <Text style={Themes.primary.getTextStyleNormal()}>
         This feature is not yet implemented, but should be ready soon! Thanks
         for your patience!
       </Text>

@@ -1,13 +1,12 @@
 /* @flow */
 
 import BannerManager from '../../components/shared/BannerManager.react';
-import Colors from '../../design/colors';
 import Content from '../../components/shared/Content.react';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
-import TextDesign from '../../design/text';
+import Themes from '../../design/themes';
 import YodleeLoginFormComponent from './YodleeLoginForm.react';
 
 import invariant from 'invariant';
@@ -87,6 +86,7 @@ class AccountLoginScreen extends Component<Props> {
   }
 
   _renderHeader() {
+    const theme = Themes.primary;
     const { provider } = this.props;
     invariant(
       provider.sourceOfTruth.type === 'YODLEE',
@@ -95,7 +95,12 @@ class AccountLoginScreen extends Component<Props> {
     const yodleeProvider = provider.sourceOfTruth.value;
 
     return (
-      <View style={styles.loginHeader}>
+      <View
+        style={[
+          styles.loginHeader,
+          { borderColor: theme.color.borderHairline },
+        ]}
+      >
         <TouchableOpacity onPress={this._onPressBack}>
           <Image
             resizeMode="contain"
@@ -103,7 +108,7 @@ class AccountLoginScreen extends Component<Props> {
             style={styles.headerLeftIcon}
           />
         </TouchableOpacity>
-        <Text style={[TextDesign.header3, styles.headerTitle]}>
+        <Text style={[theme.getTextStyleHeader3(), styles.headerTitle]}>
           {yodleeProvider.name}
         </Text>
         <View style={styles.headerRightIcon} />
@@ -213,7 +218,6 @@ const styles = StyleSheet.create({
   loginHeader: {
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: Colors.BORDER_HAIRLINE,
     flexDirection: 'row',
     height: NavBarHeight,
   },

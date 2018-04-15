@@ -1,9 +1,8 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import TextDesign from '../../design/text';
+import Themes from '../../design/themes';
 
 import invariant from 'invariant';
 
@@ -98,16 +97,20 @@ export default class YodleeLoginForm extends Component<Props> {
   };
 
   _renderHeader(title: string | null, subtitle: string | null) {
+    const theme = Themes.primary;
     return (
       <View style={styles.formHeader}>
         {title ? (
-          <Text style={[TextDesign.header3, styles.formHeaderTitle]}>
+          <Text style={[theme.getTextStyleHeader3(), styles.formHeaderTitle]}>
             {title}
           </Text>
         ) : null}
         {subtitle ? (
           <Text
-            style={[TextDesign.normalWithEmphasis, styles.formHeaderSubtitle]}
+            style={[
+              theme.getTextStyleNormalWithEmphasis(),
+              styles.formHeaderSubtitle,
+            ]}
           >
             {subtitle}
           </Text>
@@ -117,9 +120,15 @@ export default class YodleeLoginForm extends Component<Props> {
   }
 
   _renderSubheader(label: string) {
+    const theme = Themes.primary;
     return (
       <View style={styles.formSubheader}>
-        <Text style={[TextDesign.normalWithEmphasis, styles.formSubheaderText]}>
+        <Text
+          style={[
+            theme.getTextStyleNormalWithEmphasis(),
+            styles.formSubheaderText,
+          ]}
+        >
           {label}
         </Text>
       </View>
@@ -131,6 +140,7 @@ export default class YodleeLoginForm extends Component<Props> {
     row: LoginRow,
     location: FieldLocation,
   ) {
+    const theme = Themes.primary;
     return (
       <TextInput
         autoCapitalize="none"
@@ -140,24 +150,56 @@ export default class YodleeLoginForm extends Component<Props> {
         onChangeText={text => this._onChangeFormTextValue(location, text)}
         placeholder={row.label.length <= 15 ? row.label : ''}
         secureTextEntry={field.type === 'password'}
-        style={styles.fieldTextOrPassword}
+        style={[
+          styles.fieldTextOrPassword,
+          {
+            borderColor: theme.color.borderNormal,
+            fontFamily: theme.fontFamily.thick,
+            fontSize: theme.fontSize.header3,
+          },
+        ]}
       />
     );
   }
 
   _renderFieldOption(field: LoginField$Option, location: FieldLocation) {
+    const theme = Themes.primary;
     return (
-      <View style={styles.fieldOption}>
+      <View
+        style={[
+          styles.fieldOption,
+          {
+            backgroundColor: theme.color.backgroundListItem,
+            borderColor: theme.color.borderNormal,
+          },
+        ]}
+      >
         {field.option.map((option, index) => (
-          <View key={index} style={styles.fieldOptionItemContainer}>
+          <View
+            key={index}
+            style={[
+              styles.fieldOptionItemContainer,
+              { borderColor: theme.color.borderNormal },
+            ]}
+          >
             <TouchableOpacity
               key={index}
               onPress={() =>
                 this._onPressFieldOptionItem(field, location, index)
               }
             >
-              <View style={styles.fieldOptionItem}>
-                <Text style={[styles.fieldOptionItemText, TextDesign.normal]}>
+              <View
+                style={[
+                  styles.fieldOptionItem,
+                  { backgroundColor: theme.color.backgroundListItem },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.fieldOptionItemText,
+                    theme.getTextStyleNormal(),
+                  ]}
+                >
                   {option.displayText}
                 </Text>
                 {option.isSelected === 'true' ? (
@@ -276,8 +318,6 @@ const styles = StyleSheet.create({
   },
 
   fieldOption: {
-    backgroundColor: Colors.BACKGROUND_LIGHT,
-    borderColor: Colors.BORDER,
     borderTopWidth: 1,
     marginBottom: 16,
     marginHorizontal: 4,
@@ -285,7 +325,6 @@ const styles = StyleSheet.create({
 
   fieldOptionItem: {
     alignItems: 'center',
-    backgroundColor: Colors.BACKGROUND_LIGHT,
     flex: 1,
     flexDirection: 'row',
     height: 44,
@@ -293,7 +332,6 @@ const styles = StyleSheet.create({
   },
 
   fieldOptionItemContainer: {
-    borderColor: Colors.BORDER,
     borderBottomWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,
@@ -305,9 +343,6 @@ const styles = StyleSheet.create({
 
   fieldTextOrPassword: {
     borderBottomWidth: 1,
-    borderColor: Colors.BORDER,
-    fontFamily: TextDesign.thickFont,
-    fontSize: TextDesign.largeFontSize,
     marginBottom: 24,
     marginHorizontal: 24,
     paddingBottom: 4,

@@ -1,11 +1,10 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 
 import invariant from 'invariant';
 
@@ -28,7 +27,7 @@ import { logout } from '../auth/actions';
 import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
 
 export type Props = ReduxProps & {
-  show: bool,
+  show: boolean,
   userName: string,
 };
 
@@ -38,7 +37,7 @@ export const TransitionInMillis = 300;
 export const TransitionOutMillis = 300;
 
 class LeftPaneScreen extends Component<Props> {
-  _isTransitioning: bool = false;
+  _isTransitioning: boolean = false;
   _transitionProgress: Animated.Value;
 
   constructor(props: Props) {
@@ -83,12 +82,18 @@ class LeftPaneScreen extends Component<Props> {
   }
 
   _renderScreen() {
+    const theme = Themes.primary;
     // TODO: Set coloring themes for different types of screens. Would like
     // this screen to have a light background with adding a child element.
     return (
       <Screen>
         <Content>
-          <View style={styles.listContainer}>
+          <View
+            style={[
+              styles.listContainer,
+              { backgroundColor: theme.color.backgroundApp },
+            ]}
+          >
             <FlatList
               automaticallyAdjustContentInsets={false}
               data={this._getData()}
@@ -101,14 +106,26 @@ class LeftPaneScreen extends Component<Props> {
   }
 
   _renderUserProfile() {
+    const theme = Themes.primary;
     return (
-      <View key="user-profile" style={styles.userProfileRoot}>
+      <View
+        key="user-profile"
+        style={[
+          styles.userProfileRoot,
+          { borderColor: theme.color.borderNormal },
+        ]}
+      >
         <Image
           resizeMode="contain"
           source={Icons.UserMale}
           style={styles.userProfileIcon}
         />
-        <Text style={[TextDesign.normalWithEmphasis, styles.userProfileTitle]}>
+        <Text
+          style={[
+            theme.getTextStyleNormalWithEmphasis(),
+            styles.userProfileTitle,
+          ]}
+        >
           {this.props.userName}
         </Text>
       </View>
@@ -116,6 +133,7 @@ class LeftPaneScreen extends Component<Props> {
   }
 
   _renderSignOut() {
+    const theme = Themes.primary;
     return (
       <TouchableOpacity
         key="sign-out"
@@ -127,7 +145,9 @@ class LeftPaneScreen extends Component<Props> {
           source={Icons.Power}
           style={styles.signOutIcon}
         />
-        <Text style={[TextDesign.normal, styles.signOutTitle]}>Sign Out</Text>
+        <Text style={[theme.getTextStyleNormal(), styles.signOutTitle]}>
+          Sign Out
+        </Text>
       </TouchableOpacity>
     );
   }
@@ -164,7 +184,6 @@ const styles = StyleSheet.create({
   },
 
   listContainer: {
-    backgroundColor: Colors.BACKGROUND_LIGHT,
     flex: 1,
   },
 
@@ -196,7 +215,6 @@ const styles = StyleSheet.create({
 
   userProfileRoot: {
     alignItems: 'flex-end',
-    borderColor: Colors.BORDER,
     borderBottomWidth: 1,
     flexDirection: 'row',
     height: 70,

@@ -1,13 +1,12 @@
 /* @flow */
 
-import Colors from '../design/colors';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import TextDesign from '../design/text';
 import TextButton from './shared/TextButton.react';
+import Themes from '../design/themes';
 
 import invariant from 'invariant';
 
@@ -64,6 +63,7 @@ class LoginScreen extends Component<Props, State> {
   }
 
   render() {
+    const theme = Themes.primary;
     const animatedErrorStyles = {
       opacity: this.state.errorViewProgress,
       transform: [
@@ -96,7 +96,11 @@ class LoginScreen extends Component<Props, State> {
               onSubmitEditing={this._onSubmitEmail}
               placeholder="Email"
               returnKeyType="next"
-              style={[styles.formInput, TextDesign.header3]}
+              style={[
+                styles.formInput,
+                { borderColor: theme.color.borderNormal },
+                theme.getTextStyleHeader3(),
+              ]}
             />
             <TextInput
               autoCapitalize="none"
@@ -108,14 +112,16 @@ class LoginScreen extends Component<Props, State> {
               ref="passwordInputRef"
               returnKeyType="done"
               secureTextEntry={true}
-              style={[styles.formInput, TextDesign.header3]}
+              style={[styles.formInput, theme.getTextStyleHeader3()]}
             />
           </View>
           <Animated.View style={[styles.loginError, animatedErrorStyles]}>
-            <Text style={[TextDesign.error, styles.marginBottom8]}>
+            <Text style={[theme.getTextStyleError(), styles.marginBottom8]}>
               Login Failed.
             </Text>
-            <Text style={TextDesign.error}>Please check your credentials.</Text>
+            <Text style={theme.getTextStyleError()}>
+              Please check your credentials.
+            </Text>
           </Animated.View>
         </Content>
         <Footer style={styles.footer}>
@@ -180,11 +186,7 @@ function mapReduxStateToProps(state: StoreState) {
       break;
 
     default:
-      invariant(
-        false,
-        'LoginScreen does not handle auth status %s',
-        auth.type,
-      );
+      invariant(false, 'LoginScreen does not handle auth status %s', auth.type);
   }
   return { loginType };
 }
@@ -194,7 +196,6 @@ export default connect(mapReduxStateToProps)(LoginScreen);
 const styles = StyleSheet.create({
   formInput: {
     borderBottomWidth: 1,
-    borderColor: Colors.BORDER,
     marginBottom: 24,
     paddingBottom: 4,
   },

@@ -16,6 +16,21 @@ const WHITE = '#FFFFFF';
 const LYNCH = '#6C7A89';
 
 export default {
+  BLACK,
+  BLUE,
+  BLUE_DARK,
+  GRAY_1,
+  GRAY_2,
+  GRAY_3,
+  GRAY_4,
+  GRAY_5,
+  GREEN,
+  GREEN_DARK,
+  GREEN_LIGHT,
+  RED,
+  WHITE,
+  LYNCH,
+
   // TODO: Rename to BACKGROUND_NORMAL
   BACKGROUND: GRAY_1,
   BACKGROUND_LIGHT: WHITE,

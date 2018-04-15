@@ -1,11 +1,12 @@
 /* @flow */
 
 import React from 'react';
-import TextDesign from '../design/text';
+import Themes from '../design/themes';
 import YodleeLoginFormModal, {
   TransitionInMillis as YodleeLoginFormModalTransitionInMillis,
   TransitionOutMillis as YodleeLoginFormModalTransitionOutMillis,
 } from './components/YodleeLoginFormModal.react';
+
 import uuid from 'uuid/v4';
 
 import { dismissModal, requestInfoModal } from '../actions/modal';
@@ -72,7 +73,9 @@ export function unsupportedProvider(reason: string): Action$RequestModal {
   return requestInfoModal({
     id: UNSUPPORTED_MODAL_ID,
     priority: 'USER_REQUESTED',
-    render: () => <Text style={TextDesign.normal}>{reason}</Text>,
+    render: () => (
+      <Text style={Themes.primary.getTextStyleNormal()}>{reason}</Text>
+    ),
     title,
   });
 }

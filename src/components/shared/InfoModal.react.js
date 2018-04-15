@@ -1,13 +1,12 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import ModalTransition, {
   TransitionInMillis as ModalTransitionInMillis,
   TransitionOutMillis as ModalTransitionOutMillis,
 } from './ModalTransition.react';
 import React, { Component } from 'react';
 import TextButton from './TextButton.react';
-import TextDesign from '../../design/text';
+import Themes from '../../design/themes';
 
 import { connect } from 'react-redux';
 import { dismissModal } from '../../actions/modal';
@@ -31,6 +30,7 @@ export const TransitionOutMillis = ModalTransitionOutMillis;
  */
 class InfoModal extends Component<Props> {
   render() {
+    const theme = Themes.primary;
     return (
       <ModalTransition
         onPressBackground={this._onPressBackground}
@@ -39,14 +39,27 @@ class InfoModal extends Component<Props> {
           this.props.transitionStage === 'TRANSITION_IN'
         }
       >
-        <View style={styles.root}>
+        <View
+          style={[
+            styles.root,
+            {
+              backgroundColor: theme.color.backgroundApp,
+              borderColor: theme.color.borderNormal,
+            },
+          ]}
+        >
           <View style={styles.header}>
-            <Text style={TextDesign.normalWithEmphasis}>
+            <Text style={theme.getTextStyleNormalWithEmphasis()}>
               {this.props.title}
             </Text>
           </View>
           <View style={styles.content}>{this.props.children}</View>
-          <View style={styles.buttonContainer}>
+          <View
+            style={[
+              styles.buttonContainer,
+              { borderColor: theme.color.borderNormal },
+            ]}
+          >
             <TextButton
               layoutType="FILL_PARENT"
               onPress={this._onPressDismiss}
@@ -72,7 +85,6 @@ class InfoModal extends Component<Props> {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    borderColor: Colors.BORDER,
     borderTopWidth: 1,
     height: 40,
   },
@@ -87,8 +99,6 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    backgroundColor: Colors.BACKGROUND,
-    borderColor: Colors.BORDER,
     borderRadius: 2,
     borderWidth: 1,
     marginHorizontal: 8,

@@ -1,13 +1,12 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import ModalTransition, {
   TransitionInMillis as ModalTransitionInMillis,
   TransitionOutMillis as ModalTransitionOutMillis,
 } from '../../components/shared/ModalTransition.react';
 import React, { Component } from 'react';
 import TextButton from '../../components/shared/TextButton.react';
-import TextDesign from '../../design/text';
+import Themes from '../../design/themes';
 import YodleeLoginFormComponent from './YodleeLoginForm.react';
 
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -44,6 +43,7 @@ export const TransitionOutMillis = ModalTransitionOutMillis;
 
 class YodleeLoginFormModal extends Component<Props> {
   render() {
+    const theme = Themes.primary;
     return (
       <ModalTransition
         onPressBackground={EMPTY_FUNCTION}
@@ -52,9 +52,19 @@ class YodleeLoginFormModal extends Component<Props> {
           this.props.transitionStage === 'TRANSITION_IN'
         }
       >
-        <View style={styles.root}>
-          <View style={styles.header}>
-            <Text style={[TextDesign.header3, styles.headerText]}>
+        <View
+          style={[
+            styles.root,
+            {
+              backgroundColor: theme.color.backgroundApp,
+              borderColor: theme.color.borderNormal,
+            },
+          ]}
+        >
+          <View
+            style={[styles.header, { borderColor: theme.color.borderNormal }]}
+          >
+            <Text style={[theme.getTextStyleHeader3(), styles.headerText]}>
               {'Finish Login Process'}
             </Text>
           </View>
@@ -63,7 +73,9 @@ class YodleeLoginFormModal extends Component<Props> {
             loginForm={this.props.loginForm}
             onChangeLoginForm={this._onChangeLoginForm}
           />
-          <View style={styles.footer}>
+          <View
+            style={(styles.footer, { borderColor: theme.color.borderNormal })}
+          >
             {this.props.isLoading ? (
               <ActivityIndicator size="small" />
             ) : (
@@ -122,14 +134,12 @@ export default connect(mapReduxStateToProps)(YodleeLoginFormModal);
 
 const styles = StyleSheet.create({
   footer: {
-    borderColor: Colors.BORDER,
     borderTopWidth: 1,
     height: 40,
     justifyContent: 'center',
   },
 
   header: {
-    borderColor: Colors.BORDER,
     borderBottomWidth: 1,
     flexDirection: 'row',
     paddingVertical: 8,
@@ -143,8 +153,6 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    backgroundColor: Colors.BACKGROUND,
-    borderColor: Colors.BORDER,
     borderRadius: 2,
     borderWidth: 1,
     marginHorizontal: 4,

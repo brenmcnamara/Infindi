@@ -1,15 +1,22 @@
 /* @flow */
 
-import Colors from '../../design/colors';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
+import Themes from '../../design/themes';
 
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 export default class HomeScreen extends Component<{}> {
   render() {
+    const theme = Themes.primary;
+
     return (
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: theme.color.backgroundApp },
+        ]}
+      >
         <Image source={Icons.InfindiLogo} style={styles.logo} />
         <Text style={styles.header}>Coming Soon</Text>
       </View>
@@ -20,7 +27,6 @@ export default class HomeScreen extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: Colors.BACKGROUND,
     flex: 1,
     paddingTop: 40,
   },
