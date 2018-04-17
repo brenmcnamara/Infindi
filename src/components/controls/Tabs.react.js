@@ -14,6 +14,7 @@ import { requestLeftPane } from '../../actions/modal';
 
 import type { ReduxProps } from '../../typesDEPRECATED/redux';
 import type { RouteNode } from '../../common/route-utils';
+import type { Theme } from '../../design/themes';
 
 export type Props = ReduxProps & {
   routeNode: RouteNode,

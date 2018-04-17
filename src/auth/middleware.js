@@ -56,7 +56,7 @@ export default (store: Store) => (next: Function) => {
       }
 
       case 'LOGOUT_REQUEST': {
-        const {auth} = store.getState();
+        const { auth } = store.getState();
         const loginPayload = getLoginPayload(auth);
         invariant(
           loginPayload,
@@ -122,6 +122,7 @@ function genPerformLogout(
 
 async function genUserInfo(id: string): Promise<UserInfo> {
   // TODO: Look into what errors this may return.
+  // $FlowFixMe - Do not understand this flow error.
   const document = await Database.collection('UserInfo')
     .doc(id)
     .get();
@@ -129,10 +130,12 @@ async function genUserInfo(id: string): Promise<UserInfo> {
     document.exists,
     'Data Error: UserInfo is missing for logged in user',
   );
-  return document.data();
+  const userInfo: UserInfo = document.data();
+  return userInfo;
 }
 
 async function genLoginPayload(): Promise<?LoginPayload> {
+  // $FlowFixMe - This is fine.
   const firebaseUser: FirebaseUser = Auth.currentUser;
   if (!firebaseUser) {
     return null;
@@ -153,16 +156,10 @@ function getLoginPayload(auth: AuthStatus): ?LoginPayload {
   }
 }
 
-function canLogin(auth: AuthStatus): bool {
-  return (
-    auth.type === 'NOT_INITIALIZED' ||
-    auth.type === 'LOGIN_INITIALIZE'
-  );
+function canLogin(auth: AuthStatus): boolean {
+  return auth.type === 'NOT_INITIALIZED' || auth.type === 'LOGIN_INITIALIZE';
 }
 
-function canLogout(auth: AuthStatus): bool {
-  return (
-    auth.type === 'NOT_INITIALIZED' ||
-    auth.type === 'LOGOUT_INITIALIZE'
-  );
+function canLogout(auth: AuthStatus): boolean {
+  return auth.type === 'NOT_INITIALIZED' || auth.type === 'LOGOUT_INITIALIZE';
 }

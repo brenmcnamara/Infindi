@@ -24,6 +24,7 @@ import type {
   LoginForm,
   LoginRow,
 } from 'common/types/yodlee';
+import type { Theme } from '../../design/themes';
 
 export type Props = {
   enableInteraction: boolean,
@@ -71,48 +72,44 @@ export default class YodleeLoginForm extends Component<Props> {
   }
 
   _renderDataRow = ({ item }: { item: DataRow }) => {
-    if (item.type === 'LOGIN_FORM_FIELD') {
-      switch (item.field.type) {
-        case 'text':
-        case 'password':
-          return (
-            <GetTheme>
-              {theme =>
-                this._renderFieldTextOrPassword(
+    return (
+      <GetTheme>
+        {theme => {
+          if (item.type === 'LOGIN_FORM_FIELD') {
+            switch (item.field.type) {
+              case 'text':
+              case 'password':
+                return this._renderFieldTextOrPassword(
                   theme,
                   item.field,
                   item.row,
                   item.location,
-                )
-              }
-            </GetTheme>
-          );
-        case 'option':
-          return (
-            <GetTheme>
-              {theme =>
-                this._renderFieldOption(theme, item.field, item.location)
-              }
-            </GetTheme>
-          );
-        default:
-          invariant(false, 'Unhandled yodlee login field: %s', item.field.type);
-      }
-    } else if (item.type === 'FORGOT_PASSWORD') {
-      invariant(false, 'FORGOT PASSWORD NOT YET SUPPORTED');
-    } else if (item.type === 'HEADER') {
-      return (
-        <GetTheme>
-          {theme => this._renderHeader(theme, item.title, item.subtitle)}
-        </GetTheme>
-      );
-    } else if (item.type === 'SUBHEADER') {
-      return (
-        <GetTheme>{theme => this._renderSubheader(theme, item.label)}</GetTheme>
-      );
-    } else {
-      invariant(false, 'Unrecognized data row: %s', item.type);
-    }
+                );
+              case 'option':
+                return this._renderFieldOption(
+                  theme,
+                  item.field,
+                  item.location,
+                );
+              default:
+                invariant(
+                  false,
+                  'Unhandled yodlee login field: %s',
+                  item.field.type,
+                );
+            }
+          } else if (item.type === 'FORGOT_PASSWORD') {
+            invariant(false, 'FORGOT PASSWORD NOT YET SUPPORTED');
+          } else if (item.type === 'HEADER') {
+            return this._renderHeader(theme, item.title, item.subtitle);
+          } else if (item.type === 'SUBHEADER') {
+            return this._renderSubheader(theme, item.label);
+          } else {
+            return invariant(false, 'Unrecognized data row: %s', item.type);
+          }
+        }}
+      </GetTheme>
+    );
   };
 
   _renderHeader(theme: Theme, title: string | null, subtitle: string | null) {

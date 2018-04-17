@@ -124,6 +124,10 @@ export const AccountLinkBanner = {
     Download failed. Please try again.
   `),
 
+  'FAILURE / USER_INPUT_REQUEST_IN_BACKGROUND': cleanupWhitespace(`
+    Failed to refresh your accounts. Please login again.
+  `),
+
   'FAILURE / MFA_FAILURE': cleanupWhitespace(`
     Multi-Factor authenticated failed
   `),

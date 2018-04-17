@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { GetTheme } from '../../design/components/Theme.react';
 import { Text, TouchableOpacity } from 'react-native';
 
+import type { Theme } from '../../design/themes';
+
 export type ButtonType = 'PRIMARY' | 'NORMAL' | 'SPECIAL';
 export type ButtonSize = 'SMALL' | 'MEDIUM' | 'LARGE';
 export type LayoutType =
@@ -97,12 +99,16 @@ export default class TextButton extends Component<Props> {
               : theme.color.textPrimary
             : type === 'SPECIAL'
               ? theme.color.textSpecial
-              : isDisabled ? theme.color.textDisabled : theme.color.textNormal,
+              : isDisabled
+                ? theme.color.textDisabled
+                : theme.color.textNormal,
         fontFamily: isDisabled ? theme.fontFamily.thin : theme.fontFamily.thick,
         fontSize:
           size === 'LARGE'
             ? theme.fontSize.header3
-            : size === 'SMALL' ? theme.fontSize.small : theme.fontSize.normal,
+            : size === 'SMALL'
+              ? theme.fontSize.small
+              : theme.fontSize.normal,
       },
     ];
   }

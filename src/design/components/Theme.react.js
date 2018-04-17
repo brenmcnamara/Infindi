@@ -1,6 +1,7 @@
 /* @flow */
 
 import Themes from '../themes';
+// $FlowFixMe - { createContext } exists as of react version 16.3.1
 import React, { createContext } from 'react';
 
 import type { ThemeName } from '../themes';
@@ -17,7 +18,5 @@ export type Props = {
 export default (props: Props) => (
   <Provider value={Themes[props.themeName]}>{props.children}</Provider>
 );
-
-console.log(Consumer);
 
 export const GetTheme = Consumer;
