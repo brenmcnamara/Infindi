@@ -24,6 +24,7 @@ import {
 import { connect } from 'react-redux';
 import { login } from '../auth/actions';
 
+import type { ElementRef } from 'react';
 import type { LoginCredentials } from 'common/lib/models/Auth';
 import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as StoreState } from '../reducers/root';
@@ -45,6 +46,8 @@ class LoginScreen extends Component<Props, State> {
     },
     errorViewProgress: new Animated.Value(0),
   };
+
+  _passwordInputRef: ElementRef<typeof TextInput>;
 
   componentDidMount(): void {
     if (this.props.loginType === 'ERROR') {
@@ -111,10 +114,14 @@ class LoginScreen extends Component<Props, State> {
                   onChangeText={this._onChangePassword}
                   onSubmitEditing={this._onSubmitPassword}
                   placeholder="Password"
-                  ref="passwordInputRef"
+                  ref={this._setPasswordRef}
                   returnKeyType="done"
                   secureTextEntry={true}
-                  style={[styles.formInput, theme.getTextStyleHeader3()]}
+                  style={[
+                    styles.formInput,
+                    { borderColor: theme.color.borderNormal },
+                    theme.getTextStyleHeader3(),
+                  ]}
                 />
               </View>
               <Animated.View style={[styles.loginError, animatedErrorStyles]}>
@@ -158,7 +165,7 @@ class LoginScreen extends Component<Props, State> {
   };
 
   _onSubmitEmail = (): void => {
-    this.refs.passwordInputRef.focus();
+    this._passwordInputRef.focus();
   };
 
   _onSubmitPassword = (): void => {
@@ -167,6 +174,10 @@ class LoginScreen extends Component<Props, State> {
 
   _onPressLogin = (): void => {
     this.props.dispatch(login(this.state.credentials));
+  };
+
+  _setPasswordRef = (ref: ElementRef<typeof TextInput>) => {
+    this._passwordInputRef = ref;
   };
 }
 
@@ -200,6 +211,7 @@ export default connect(mapReduxStateToProps)(LoginScreen);
 const styles = StyleSheet.create({
   formInput: {
     borderBottomWidth: 1,
+    height: 24,
     marginBottom: 24,
     paddingBottom: 4,
   },
