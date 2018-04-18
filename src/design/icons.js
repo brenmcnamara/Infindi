@@ -11,6 +11,7 @@ import Download from '../../assets/icons/Download-30x30.png';
 import Error from '../../assets/icons/Error-20x20.png';
 import Home from '../../assets/icons/Home-28x28.png';
 import InfindiLogo from '../../assets/icons/InfindiLogo-59x28.png';
+import InfindiLogoDark from '../../assets/icons/InfindiLogoDark-32x15.png';
 import InfindiLogoNavBar from '../../assets/icons/InfindiLogo-33x16.png';
 import InfindiLogoSplash from '../../assets/icons/InfindiLogo-100x48.png';
 import Info from '../../assets/icons/Info-20x20.png';
@@ -55,6 +56,7 @@ export default {
   Error,
   Home,
   InfindiLogo,
+  InfindiLogoDark,
   InfindiLogoNavBar,
   InfindiLogoSplash,
   Info,

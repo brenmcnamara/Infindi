@@ -112,6 +112,10 @@ export function requestLeftPane(): Action$RequestModal {
   };
 }
 
+export function requestRightPane(): Action$RequestModal {
+  return requestUnimplementedModal('Admin Pane');
+}
+
 export function dismissLeftPane(): Action$DismissModal {
   return {
     modalID: LeftPaneModalID,

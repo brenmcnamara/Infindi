@@ -9,16 +9,23 @@ import invariant from 'invariant';
 
 import { connect } from 'react-redux';
 import { exitAccountDetails } from '../../actions/router';
+import { getIsAdmin } from '../../auth/state-utils';
 import { NavigatorIOS } from 'react-native';
-import { requestLeftPane } from '../../actions/modal';
+import { requestLeftPane, requestRightPane } from '../../actions/modal';
 
-import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../../typesDEPRECATED/redux';
 import type { RouteNode } from '../../common/route-utils';
 import type { Theme } from '../../design/themes';
 
-export type Props = ReduxProps & {
+export type Props = ReduxProps & ComponentProps & ComputedProps;
+
+type ComponentProps = {
   routeNode: RouteNode,
   theme: Theme,
+};
+
+type ComputedProps = {
+  isAdmin: boolean,
 };
 
 class Tabs extends Component<Props> {
@@ -70,6 +77,7 @@ class Tabs extends Component<Props> {
   }
 
   render() {
+    const { isAdmin } = this.props;
     const Component = AccountsScreen;
     const couldBeScrollable = this.props.routeNode.name === 'ACCOUNTS';
     return (
@@ -79,6 +87,8 @@ class Tabs extends Component<Props> {
           component: Component,
           leftButtonIcon: Icons.List,
           onLeftButtonPress: this._onPressLeftButton,
+          onRightButtonPress: isAdmin ? this._onPressRightButton : null,
+          rightButtonIcon: isAdmin ? Icons.InfindiLogoDark : null,
           shadowHidden: !couldBeScrollable,
           tintColor: this.props.theme.color.buttonNavBar,
           title: '',
@@ -91,6 +101,10 @@ class Tabs extends Component<Props> {
 
   _onPressLeftButton = (): void => {
     this.props.dispatch(requestLeftPane());
+  };
+
+  _onPressRightButton = (): void => {
+    this.props.dispatch(requestRightPane());
   };
 }
 
@@ -120,4 +134,10 @@ function getAccountDetailsAccountID(tabNode: RouteNode): string {
   return accountDetailsNode.payload.accountID;
 }
 
-export default connect()(Tabs);
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
+  return {
+    isAdmin: getIsAdmin(state),
+  };
+}
+
+export default connect(mapReduxStateToProps)(Tabs);
