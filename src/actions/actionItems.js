@@ -9,7 +9,7 @@ import React from 'react';
 import invariant from 'invariant';
 
 import type { ID } from 'common/types/core';
-import type { Dispatch, ReduxState } from '../typesDEPRECATED/redux';
+import type { PureDispatch, ReduxState } from '../typesDEPRECATED/redux';
 
 export type Action =
   | Action$DeleteActionItem
@@ -51,7 +51,7 @@ export type Action$SelectActionItem = {|
 |};
 
 export function selectActionItem(id: ID) {
-  return (dispatch: Dispatch, getState: () => ReduxState) => {
+  return (dispatch: PureDispatch, getState: () => ReduxState) => {
     // NOTE: The transition modal does the work of dispatching the selected
     // action item action once it is presented. The modal also dismisses
     // itself.
@@ -106,7 +106,7 @@ export type Action$UnselectCurrentActionItem = {|
 |};
 
 export function unselectCurrentActionItem() {
-  return (dispatch: Dispatch, getState: () => ReduxState) => {
+  return (dispatch: PureDispatch, getState: () => ReduxState) => {
     const id = getState().actionItems.selectedID;
     invariant(id, 'Trying to unselect action item when none is selected');
     // NOTE: The transition modal does the work of dispatching the unselect

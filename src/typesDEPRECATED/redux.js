@@ -35,10 +35,7 @@ export type PureAction =
   | Action$Toast
   | Action$ToastMiddleware;
 
-export type ThunkAction = (
-  dispatch: Dispatch,
-  getState: () => ReduxState,
-) => any;
+export type ThunkAction = (dispatch: PureDispatch, getState: GetState) => any;
 
 export type Action = PureAction | ThunkAction;
 
@@ -48,11 +45,15 @@ export type StoreSubscription = () => void;
 
 export type ReduxState = State;
 
+export type GetState = () => State;
+
 export type Store = {|
   +dispatch: Dispatch,
-  +getState: () => State,
+  +getState: GetState,
   +subscription: (cb: ChangeStoreCallback) => StoreSubscription,
 |};
+
+export type PureDispatch = (action: PureAction) => void;
 
 export type Dispatch = (action: Action) => void;
 
