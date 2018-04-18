@@ -31,6 +31,7 @@ import Solo from '../../assets/icons/Solo-50x33.png';
 import Switch from '../../assets/icons/Switch-50x33.png';
 import UserFemale from '../../assets/icons/UserFemale-22x22.png';
 import UserMale from '../../assets/icons/UserMale-22x22.png';
+import UserMaleLight from '../../assets/icons/UserMaleLight-22x22.png';
 import Visa from '../../assets/icons/Visa-50x33.png';
 import Wifi from '../../assets/icons/Wifi-133x100.png';
 
@@ -69,5 +70,6 @@ export default {
   Search,
   UserFemale,
   UserMale,
+  UserMaleLight,
   Wifi,
 };

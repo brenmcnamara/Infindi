@@ -4,6 +4,7 @@ import Content from './shared/Content.react';
 import Icons from '../design/icons';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
+import ThemeComponent, { GetTheme } from '../design/components/Theme.react';
 
 import invariant from 'invariant';
 
@@ -20,7 +21,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { dismissModal } from '../actions/modal';
-import { GetTheme } from '../design/components/Theme.react';
 import { getUserFullName } from '../auth/state-utils';
 import { logout } from '../auth/actions';
 
@@ -86,26 +86,28 @@ class LeftPaneScreen extends Component<Props> {
     // TODO: Set coloring themes for different types of screens. Would like
     // this screen to have a light background with adding a child element.
     return (
-      <GetTheme>
-        {theme => (
-          <Screen>
-            <Content>
-              <View
-                style={[
-                  styles.listContainer,
-                  { backgroundColor: theme.color.backgroundApp },
-                ]}
-              >
-                <FlatList
-                  automaticallyAdjustContentInsets={false}
-                  data={this._getData(theme)}
-                  renderItem={({ item }) => item}
-                />
-              </View>
-            </Content>
-          </Screen>
-        )}
-      </GetTheme>
+      <ThemeComponent themeName="dark">
+        <GetTheme>
+          {theme => (
+            <Screen>
+              <Content>
+                <View
+                  style={[
+                    styles.listContainer,
+                    { backgroundColor: theme.color.backgroundApp },
+                  ]}
+                >
+                  <FlatList
+                    automaticallyAdjustContentInsets={false}
+                    data={this._getData(theme)}
+                    renderItem={({ item }) => item}
+                  />
+                </View>
+              </Content>
+            </Screen>
+          )}
+        </GetTheme>
+      </ThemeComponent>
     );
   }
 
@@ -120,7 +122,7 @@ class LeftPaneScreen extends Component<Props> {
       >
         <Image
           resizeMode="contain"
-          source={Icons.UserMale}
+          source={Icons.UserMaleLight}
           style={styles.userProfileIcon}
         />
         <Text
@@ -147,7 +149,7 @@ class LeftPaneScreen extends Component<Props> {
           source={Icons.Power}
           style={styles.signOutIcon}
         />
-        <Text style={[theme.getTextStyleNormal(), styles.signOutTitle]}>
+        <Text style={[theme.getTextStyleError(), styles.signOutTitle]}>
           Sign Out
         </Text>
       </TouchableOpacity>
@@ -178,10 +180,10 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    shadowColor: 'black',
-    shadowOffset: { height: 1, width: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
+    // shadowColor: 'black',
+    // shadowOffset: { height: 1, width: 2 },
+    // shadowOpacity: 0.3,
+    // shadowRadius: 3,
     width: LEFT_PANE_WIDTH,
   },
 
@@ -220,7 +222,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: 'row',
     height: 70,
-    paddingBottom: 8,
+    paddingBottom: 16,
+    marginTop: 16,
   },
 
   userProfileTitle: {

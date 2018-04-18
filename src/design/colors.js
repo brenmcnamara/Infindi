@@ -3,11 +3,12 @@
 const BLACK = '#000000';
 const BLUE = '#6290C6';
 const BLUE_DARK = '#5F86AE';
-const GRAY_1 = '#EFEFEF';
-const GRAY_2 = '#DCDBDB';
-const GRAY_3 = '#CACACA';
-const GRAY_4 = '#9B9B9B';
-const GRAY_5 = '#4A4A4A';
+const GRAY_EF = '#EFEFEF';
+const GRAY_DC = '#DCDCDC';
+const GRAY_CA = '#CACACA';
+const GRAY_9B = '#9B9B9B';
+const GRAY_4A = '#4A4A4A';
+const GRAY_1C = '#1C1C1C';
 const GREEN = '#3BA68E';
 const GREEN_DARK = '#24826D';
 const GREEN_LIGHT = '#B2CDC7';
@@ -19,11 +20,12 @@ export default {
   BLACK,
   BLUE,
   BLUE_DARK,
-  GRAY_1,
-  GRAY_2,
-  GRAY_3,
-  GRAY_4,
-  GRAY_5,
+  GRAY_EF,
+  GRAY_DC,
+  GRAY_CA,
+  GRAY_9B,
+  GRAY_4A,
+  GRAY_1C,
   GREEN,
   GREEN_DARK,
   GREEN_LIGHT,
@@ -32,9 +34,9 @@ export default {
   LYNCH,
 
   // TODO: Rename to BACKGROUND_NORMAL
-  BACKGROUND: GRAY_1,
+  BACKGROUND: GRAY_EF,
   BACKGROUND_LIGHT: WHITE,
-  BACKGROUND_ACTION_ITEM_BANNER_ACTIVE: GRAY_1,
+  BACKGROUND_ACTION_ITEM_BANNER_ACTIVE: GRAY_EF,
   BACKGROUND_ACTION_ITEM_BANNER_INACTIVE: WHITE,
   BANNER_BACKGROUND: {
     ERROR: RED,
@@ -43,12 +45,12 @@ export default {
   },
   BANNER_LINE_ANIMATION: BLUE_DARK,
   BANNER_TEXT: {
-    ERROR: GRAY_1,
-    INFO: GRAY_1,
-    SUCCESS: GRAY_1,
+    ERROR: GRAY_EF,
+    INFO: GRAY_EF,
+    SUCCESS: GRAY_EF,
   },
-  BORDER: GRAY_2,
-  BORDER_DARK: GRAY_3,
+  BORDER: GRAY_DC,
+  BORDER_DARK: GRAY_CA,
   // TODO: This is my best guess of the default nav bar hairline color. Should
   // figure out what the color actually is.
   BORDER_HAIRLINE: '#C4C4C4',
@@ -58,8 +60,8 @@ export default {
   NAV_BAR_BUTTON: BLACK,
   SUCCESS: GREEN,
   TAB_BAR: '#F6F6F6',
-  TEXT_FAINT: GRAY_4,
-  TEXT_NORMAL: GRAY_5,
+  TEXT_FAINT: GRAY_9B,
+  TEXT_NORMAL: GRAY_4A,
   TEXT_PRIMARY: GREEN_DARK,
   TEXT_PRIMARY_DISABLED: GREEN_LIGHT,
   TEXT_SPECIAL: BLUE,

@@ -198,9 +198,9 @@ function getTextStyleError(constants: Theme$Constants): Object {
 }
 
 const Themes = {
-  primary: createTheme({
+  dark: createTheme({
     color: {
-      backgroundApp: Colors.GRAY_1,
+      backgroundApp: '#232E35',
       backgroundListItem: Colors.WHITE,
       backgroundTabBar: '#F6F6F6',
 
@@ -208,13 +208,13 @@ const Themes = {
       bannerBackgroundInfo: Colors.BLUE,
       bannerBackgroundSuccess: Colors.GREEN_DARK,
 
-      bannerTextError: Colors.GRAY_1,
-      bannerTextInfo: Colors.GRAY_1,
-      bannerTextSuccess: Colors.GRAY_1,
+      bannerTextError: Colors.GRAY_EF,
+      bannerTextInfo: Colors.GRAY_EF,
+      bannerTextSuccess: Colors.GRAY_EF,
 
-      borderDark: Colors.GRAY_3,
+      borderDark: Colors.GRAY_CA,
       borderHairline: '#C4C4C4',
-      borderNormal: Colors.GRAY_2,
+      borderNormal: '#4a5c66',
 
       buttonNavBar: Colors.BLACK,
 
@@ -222,10 +222,65 @@ const Themes = {
       moneyTextNeutral: Colors.LYNCH,
       moneyTextPositive: Colors.GREEN,
 
-      textDisabled: Colors.GRAY_3,
+      textDisabled: '#2D2D2D',
+      textError: '#c76278',
+      textFaint: '#4a5c66',
+      textNormal: '#B3B3B3',
+      textPrimary: Colors.GREEN_DARK,
+      textPrimaryDisabled: Colors.GREEN_LIGHT,
+      textSpecial: Colors.BLUE,
+    },
+
+    fontFamily: {
+      thin: 'Lato-Light',
+      thick: 'Lato-Regular',
+    },
+
+    fontLineHeight: {
+      header2: 26,
+      header3: 24,
+
+      normal: 22,
+      small: 22,
+    },
+
+    fontSize: {
+      header2: 22,
+      header3: 18,
+
+      normal: 16,
+      small: 14,
+    },
+  }),
+
+  primary: createTheme({
+    color: {
+      backgroundApp: Colors.GRAY_EF,
+      backgroundListItem: Colors.WHITE,
+      backgroundTabBar: '#F6F6F6',
+
+      bannerBackgroundError: Colors.RED,
+      bannerBackgroundInfo: Colors.BLUE,
+      bannerBackgroundSuccess: Colors.GREEN_DARK,
+
+      bannerTextError: Colors.GRAY_EF,
+      bannerTextInfo: Colors.GRAY_EF,
+      bannerTextSuccess: Colors.GRAY_EF,
+
+      borderDark: Colors.GRAY_CA,
+      borderHairline: '#C4C4C4',
+      borderNormal: Colors.GRAY_DC,
+
+      buttonNavBar: Colors.BLACK,
+
+      moneyTextNegative: Colors.RED,
+      moneyTextNeutral: Colors.LYNCH,
+      moneyTextPositive: Colors.GREEN,
+
+      textDisabled: Colors.GRAY_CA,
       textError: Colors.ERROR,
-      textFaint: Colors.GRAY_4,
-      textNormal: Colors.GRAY_5,
+      textFaint: Colors.GRAY_9B,
+      textNormal: Colors.GRAY_4A,
       textPrimary: Colors.GREEN_DARK,
       textPrimaryDisabled: Colors.GREEN_LIGHT,
       textSpecial: Colors.BLUE,
