@@ -20,7 +20,7 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { dismissModal } from '../actions/modal';
+import { dismissModal, LeftPaneModalID } from '../actions/modal';
 import { getUserFullName } from '../auth/state-utils';
 import { logout } from '../auth/actions';
 
@@ -158,14 +158,14 @@ class LeftPaneScreen extends Component<Props> {
 
   _onPressBackground = (): void => {
     if (!this._isTransitioning && this.props.show) {
-      this.props.dispatch(dismissModal('LEFT_PANE'));
+      this.props.dispatch(dismissModal(LeftPaneModalID));
     }
   };
 
   _onPressSignOut = (): void => {
     if (this.props.show) {
       this.props.dispatch(logout());
-      this.props.dispatch(dismissModal('LEFT_PANE'));
+      this.props.dispatch(dismissModal(LeftPaneModalID));
     }
   };
 

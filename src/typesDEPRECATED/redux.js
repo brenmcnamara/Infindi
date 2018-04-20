@@ -13,6 +13,7 @@ import type { Action as Action$ModalMiddleware } from '../middleware/modal';
 import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
+import type { Action as Action$WatchSession } from '../watch-session/actions';
 import type { State } from '../reducers/root';
 import type { Transaction } from 'common/lib/models/Transaction';
 
@@ -33,7 +34,8 @@ export type PureAction =
   | Action$ModalMiddleware
   | Action$Router
   | Action$Toast
-  | Action$ToastMiddleware;
+  | Action$ToastMiddleware
+  | Action$WatchSession;
 
 export type ThunkAction = (dispatch: PureDispatch, getState: GetState) => any;
 

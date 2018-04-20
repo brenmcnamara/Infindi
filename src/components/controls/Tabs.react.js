@@ -9,7 +9,8 @@ import invariant from 'invariant';
 
 import { connect } from 'react-redux';
 import { exitAccountDetails } from '../../actions/router';
-import { getIsAdmin } from '../../auth/state-utils';
+import { getActiveUserID } from '../../common/state-utils';
+import { getIsAdmin, getUserID } from '../../auth/state-utils';
 import { NavigatorIOS } from 'react-native';
 import { requestLeftPane, requestRightPane } from '../../actions/modal';
 
@@ -25,6 +26,7 @@ type ComponentProps = {
 };
 
 type ComputedProps = {
+  activeUserNameExcludingAuthenticated: string | null,
   isAdmin: boolean,
 };
 
@@ -135,7 +137,19 @@ function getAccountDetailsAccountID(tabNode: RouteNode): string {
 }
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
+  const activeUserID = getActiveUserID(state);
+  const authenticatedUserID = getUserID(state);
+  invariant(
+    activeUserID,
+    'Expecting user to be active in when rendering Tabs.react',
+  );
+  const userInfo = state.userInfo.container[activeUserID];
+  const activeUserNameExcludingAuthenticated =
+    userInfo && activeUserID !== authenticatedUserID
+      ? `${userInfo.firstName} ${userInfo.lastName}`
+      : null;
   return {
+    activeUserNameExcludingAuthenticated,
     isAdmin: getIsAdmin(state),
   };
 }

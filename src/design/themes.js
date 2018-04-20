@@ -52,6 +52,7 @@ type Theme$Constants = {
 
     +normal: number,
     +small: number,
+    +tiny: number,
   |},
 
   +fontSize: {|
@@ -60,6 +61,7 @@ type Theme$Constants = {
 
     +normal: number,
     +small: number,
+    +tiny: number,
   |},
 };
 
@@ -73,6 +75,7 @@ type Theme$Methods = {
   +getTextStyleNormalWithEmphasis: () => Object,
   +getTextStyleSmall: () => Object,
   +getTextStyleSmallWithEmphasis: () => Object,
+  +getTextStyleTiny: () => Object,
   +getTextStyleError: () => Object,
 };
 
@@ -98,6 +101,7 @@ function createTheme(constants: Theme$Constants): Theme {
       null,
       constants,
     ),
+    getTextStyleTiny: getTextStyleTiny.bind(null, constants),
     getTextStyleError: getTextStyleError.bind(null, constants),
   };
 }
@@ -188,6 +192,15 @@ function getTextStyleSmallWithEmphasis(constants: Theme$Constants): Object {
   };
 }
 
+function getTextStyleTiny(constants: Theme$Constants): Object {
+  return {
+    color: constants.color.textNormal,
+    fontFamily: constants.fontFamily.thin,
+    fontSize: constants.fontSize.tiny,
+    lineHeight: constants.fontLineHeight.tiny,
+  };
+}
+
 function getTextStyleError(constants: Theme$Constants): Object {
   return {
     color: constants.color.textError,
@@ -201,7 +214,7 @@ const Themes = {
   dark: createTheme({
     color: {
       backgroundApp: '#232E35',
-      backgroundListItem: Colors.WHITE,
+      backgroundListItem: '#4f6370',
       backgroundTabBar: '#F6F6F6',
 
       bannerBackgroundError: Colors.RED,
@@ -224,9 +237,9 @@ const Themes = {
 
       textDisabled: '#2D2D2D',
       textError: '#c76278',
-      textFaint: '#4a5c66',
+      textFaint: '#657a87',
       textNormal: '#B3B3B3',
-      textPrimary: Colors.GREEN_DARK,
+      textPrimary: '#4eccb8',
       textPrimaryDisabled: Colors.GREEN_LIGHT,
       textSpecial: Colors.BLUE,
     },
@@ -242,6 +255,7 @@ const Themes = {
 
       normal: 22,
       small: 22,
+      tiny: 22,
     },
 
     fontSize: {
@@ -250,6 +264,7 @@ const Themes = {
 
       normal: 16,
       small: 14,
+      tiny: 12,
     },
   }),
 
@@ -297,6 +312,7 @@ const Themes = {
 
       normal: 22,
       small: 22,
+      tiny: 22,
     },
 
     fontSize: {
@@ -305,6 +321,7 @@ const Themes = {
 
       normal: 16,
       small: 14,
+      tiny: 12,
     },
   }),
 };

@@ -13,6 +13,10 @@ import LeftPaneScreen, {
   TransitionOutMillis as LeftPaneTransitionOutMillis,
 } from '../components/LeftPaneScreen.react';
 import React from 'react';
+import RightPaneScreen, {
+  TransitionInMillis as RightPaneTransitionInMillis,
+  TransitionOutMillis as RightPaneTransitionOutMillis,
+} from '../components/RightPaneScreen.react';
 import Themes from '../design/themes';
 
 import { Text } from 'react-native';
@@ -21,6 +25,7 @@ import type { ID } from 'common/types/core';
 import type { Modal } from '../reducers/modalState';
 
 export const LeftPaneModalID = 'LEFT_PANE';
+export const RightPaneModalID = 'RIGHT_PANE';
 
 export type Action = Action$DismissModal | Action$RequestModal;
 
@@ -113,7 +118,21 @@ export function requestLeftPane(): Action$RequestModal {
 }
 
 export function requestRightPane(): Action$RequestModal {
-  return requestUnimplementedModal('Admin Pane');
+  return {
+    modal: {
+      id: RightPaneModalID,
+      modalType: 'REACT_WITH_TRANSITION',
+      priority: 'USER_REQUESTED',
+      renderIn: () => <RightPaneScreen show={true} />,
+      renderOut: () => <RightPaneScreen show={false} />,
+      renderTransitionIn: () => <RightPaneScreen show={true} />,
+      renderTransitionOut: () => <RightPaneScreen show={false} />,
+      transitionInMillis: RightPaneTransitionInMillis,
+      transitionOutMillis: RightPaneTransitionOutMillis,
+    },
+    shouldIgnoreRequestingExistingModal: false,
+    type: 'REQUEST_MODAL',
+  };
 }
 
 export function dismissLeftPane(): Action$DismissModal {

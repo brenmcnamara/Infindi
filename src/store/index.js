@@ -4,7 +4,6 @@ import accountLinks from '../middleware/accountLinks';
 import accountLinkFlow from '../link/middleware/accountLinkFlow';
 import accounts from '../middleware/accounts';
 import authentication from '../auth/middleware';
-import eagleView from '../eagle-view/middleware/eagle-view';
 import modal from '../middleware/modal';
 import providerLogin from '../link/middleware/providerLogin';
 import providers from '../data-model/middleware/providers';
@@ -13,6 +12,7 @@ import thunk from 'redux-thunk';
 import toast from '../middleware/toast';
 import transactions from '../middleware/transactions';
 import userInfo from '../data-model/middleware/userInfo';
+import watchSession from '../watch-session/middleware/watch-session';
 
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
@@ -26,7 +26,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    eagleView,
+    watchSession,
     userInfo,
     providers,
     accountLinks,
@@ -46,7 +46,7 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    eagleView,
+    watchSession,
     userInfo,
     providers,
     accountLinks,

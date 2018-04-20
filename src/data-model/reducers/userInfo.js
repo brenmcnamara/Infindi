@@ -6,7 +6,7 @@ import type { UserInfo } from 'common/lib/models/UserInfo';
 
 export type State = {
   container: ModelContainer<'UserInfo', UserInfo>,
-  loadStatus: 'STEADY' | 'FAILURE' | 'ERROR' | 'EMPTY' | 'LOADING',
+  loadStatus: 'STEADY' | 'FAILURE' | 'EMPTY' | 'LOADING',
 };
 
 const DEFAULT_STATE: State = {

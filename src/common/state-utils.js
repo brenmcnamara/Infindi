@@ -4,6 +4,7 @@ import invariant from 'invariant';
 
 import { getBalance } from 'common/lib/models/Account';
 import { getContainer } from '../datastore';
+import { getLoginPayload } from '../auth/state-utils';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
@@ -21,6 +22,14 @@ type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 // QUERY REDUX STATE
 //
 // -----------------------------------------------------------------------------
+
+export function getActiveUserID(state: State): ID | null {
+  const loginPayload = getLoginPayload(state);
+  if (!loginPayload) {
+    return null;
+  }
+  return state.watchSessionState.watchUserID || loginPayload.firebaseUser.uid;
+}
 
 export function getNetWorth(state: State): Dollars {
   const { accounts } = state;

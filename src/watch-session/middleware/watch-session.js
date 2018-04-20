@@ -13,7 +13,7 @@ import type {
   Store,
 } from '../../typesDEPRECATED/redux';
 
-class EagleViewMiddleware {
+class WatchSessionMiddleware {
   _adminStatus: 'ADMIN' | 'NOT_ADMIN' | 'UNKNOWN' = 'UNKNOWN';
 
   _next: Next | null = null;
@@ -82,6 +82,6 @@ class EagleViewMiddleware {
   }
 }
 
-const middleware = new EagleViewMiddleware();
+const middleware = new WatchSessionMiddleware();
 
 export default middleware.getMiddlewareHandle();
