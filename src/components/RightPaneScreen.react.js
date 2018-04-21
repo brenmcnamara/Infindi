@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { dismissModal, RightPaneModalID } from '../actions/modal';
+import { getActiveUserID } from '../common/state-utils';
 import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
@@ -34,6 +35,7 @@ type ComponentProps = {
 };
 
 type ComputedProps = {
+  activeUserID: ID,
   currentUserID: ID,
   userInfoContainer: UserInfoContainer,
   userInfoLoadStatus: LoadStatus,
@@ -156,10 +158,19 @@ class RightPaneScreen extends Component<Props> {
     return (
       <View
         key={`USER-${userInfo.id}`}
-        style={[styles.userInfoRoot, { borderColor: theme.color.borderNormal }]}
+        style={[
+          styles.listItemRoot,
+          {
+            backgroundColor:
+              this.props.activeUserID === userInfo.id
+                ? theme.color.backgroundListItem
+                : null,
+            borderColor: theme.color.borderNormal,
+          },
+        ]}
       >
         <TouchableOpacity onPress={() => this._onPressUserInfo(userInfo)}>
-          <View style={styles.userInfoContent}>
+          <View style={styles.listItemContent}>
             <View style={{ marginBottom: 6 }}>
               <Text style={theme.getTextStyleNormalWithEmphasis()}>
                 {`${userInfo.firstName} ${userInfo.lastName}`}
@@ -183,6 +194,20 @@ class RightPaneScreen extends Component<Props> {
     );
   }
 
+  _renderExitButton(theme: Theme) {
+    return (
+      <View key="EXIT" style={styles.listItemRoot}>
+        <TouchableOpacity>
+          <View style={styles.listItemContent}>
+            <Text style={theme.getTextStyleNormalWithEmphasis()}>
+              Exit Watch Session
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   _onPressBackground = (): void => {
     if (!this._isTransitioning && this.props.show) {
       this.props.dispatch(dismissModal(RightPaneModalID));
@@ -195,7 +220,13 @@ class RightPaneScreen extends Component<Props> {
   };
 
   _getData(theme: Theme) {
-    const { currentUserID, userInfoLoadStatus, userInfoContainer } = this.props;
+    const {
+      activeUserID,
+      currentUserID,
+      userInfoLoadStatus,
+      userInfoContainer,
+    } = this.props;
+
     const data = [this._renderHeader(theme)];
     if (userInfoLoadStatus === 'LOADING') {
       data.push(this._renderSpinner(theme));
@@ -209,6 +240,11 @@ class RightPaneScreen extends Component<Props> {
         }
       },
     );
+
+    if (activeUserID !== currentUserID) {
+      // Currently in watch session.
+      data.push(this._renderExitButton(theme));
+    }
 
     return data;
   }
@@ -234,6 +270,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  listItemContent: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+
+  listItemRoot: {
+    borderBottomWidth: 1,
+  },
+
   root: {
     flex: 1,
     flexDirection: 'row',
@@ -245,19 +290,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 8,
   },
-
-  userInfoContent: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-
-  userInfoRoot: {
-    borderBottomWidth: 1,
-  },
 });
 
 function mapReduxStateToProps(state: ReduxState) {
   return {
+    activeUserID: getActiveUserID(state),
     currentUserID: getUserID(state),
     userInfoContainer: state.userInfo.container,
     userInfoLoadStatus: state.userInfo.loadStatus,

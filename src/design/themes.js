@@ -214,7 +214,7 @@ const Themes = {
   dark: createTheme({
     color: {
       backgroundApp: '#232E35',
-      backgroundListItem: '#4f6370',
+      backgroundListItem: '#455662',
       backgroundTabBar: '#F6F6F6',
 
       bannerBackgroundError: Colors.RED,
