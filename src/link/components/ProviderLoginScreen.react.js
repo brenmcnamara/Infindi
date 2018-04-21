@@ -2,6 +2,7 @@
 
 import BannerManager from '../../components/shared/BannerManager.react';
 import Content from '../../components/shared/Content.react';
+import DataModelStateUtils from '../../data-model/state-utils';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
@@ -29,7 +30,6 @@ import {
   submitYodleeLoginFormForProviderID,
   updateLoginForm,
 } from '../action';
-import { getAccountLinkForProviderID } from '../../common/state-utils';
 import { GetTheme } from '../../design/components/Theme.react';
 import { isInMFA } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
@@ -177,7 +177,10 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   );
   const { providerID } = page;
   const loginForm = state.accountVerification.loginFormContainer[providerID];
-  const accountLink = getAccountLinkForProviderID(state, providerID);
+  const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
+    state,
+    providerID,
+  );
   invariant(
     loginForm,
     'Expecting login form to exist for providerID',

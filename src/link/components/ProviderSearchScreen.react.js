@@ -27,7 +27,7 @@ import {
   requestProviderLogin,
   updateProviderSearchText,
 } from '../action';
-import { getAccountLinkContainer } from '../../common/state-utils';
+import { getContainer } from '../../datastore';
 import { isLinking } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
@@ -222,7 +222,7 @@ class ProviderSearchScreen extends Component<Props> {
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const { didCompleteInitialSearch } = state.accountVerification;
   return {
-    accountLinkContainer: getAccountLinkContainer(state),
+    accountLinkContainer: getContainer(state.accountLinks) || {},
     didCompleteInitialSearch,
     enableInteraction: true,
     providerFetchStatus: state.providers.status,

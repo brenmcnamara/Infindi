@@ -1,8 +1,9 @@
 /* @flow */
 
+import DataModelStateUtils from '../data-model/state-utils';
+
 import invariant from 'invariant';
 
-import { getAccountLinkForProviderID } from '../common/state-utils';
 import { isLinkFailure, isLinkSuccess } from 'common/lib/models/AccountLink';
 
 import type { ID } from 'common/types/core';
@@ -98,7 +99,10 @@ export function calculateCanSubmitLoginFormForProviderID(
 ): boolean {
   const loginForm = state.accountVerification.loginFormContainer[providerID];
   const isFilledOut = calculateIsFormFilledOut(loginForm);
-  const accountLink = getAccountLinkForProviderID(state, providerID);
+  const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
+    state,
+    providerID,
+  );
   const pendingLoginRequest =
     state.accountVerification.providerPendingLoginRequestMap[providerID];
   return (

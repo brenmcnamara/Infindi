@@ -11,7 +11,7 @@ import {
 } from '../action';
 import { dismissToast, requestToast } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
-import { getAccountLinkContainer } from '../../common/state-utils';
+import { getContainer } from '../../datastore';
 import { isInMFA } from 'common/lib/models/AccountLink';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
@@ -69,7 +69,8 @@ class AccountLinkFlowManager {
 
     // STEP 1: GET THE UPDATED LOCAL STATE GIVEN THE CURRENT REDUX STATE.
 
-    const accountLinkContainer = getAccountLinkContainer(postActionState);
+    const accountLinkContainer =
+      getContainer(postActionState.accountLinks) || {};
     const accountVerificationPage = postActionState.accountVerification.page;
     const selectedProviderID =
       accountVerificationPage &&
@@ -235,7 +236,9 @@ function requestAccountLinkBanner(providerID: ID, status: AccountLinkStatus) {
     bannerChannel: id,
     bannerType: status.startsWith('FAILURE')
       ? 'ERROR'
-      : status.startsWith('SUCCESS') ? 'SUCCESS' : 'INFO',
+      : status.startsWith('SUCCESS')
+        ? 'SUCCESS'
+        : 'INFO',
     id,
     priority: 'LOW',
     showSpinner:

@@ -1,10 +1,11 @@
 /* @flow */
 
+import DataModelStateUtils from '../data-model/state-utils';
+
 import invariant from 'invariant';
 import uuid from 'uuid/v4';
 
 import { getTransactionCollection } from 'common/lib/models/Transaction';
-import { getTransactionsForAccount } from '../common/state-utils';
 import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
@@ -92,7 +93,7 @@ export default (store: Store) => (next: Next) => {
     switch (action.type) {
       case 'VIEW_ACCOUNT_DETAILS': {
         const { accountID } = action;
-        const transactions = getTransactionsForAccount(
+        const transactions = DataModelStateUtils.getTransactionsForAccount(
           store.getState(),
           accountID,
         );

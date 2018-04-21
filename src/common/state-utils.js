@@ -3,19 +3,12 @@
 import invariant from 'invariant';
 
 import { getBalance } from 'common/lib/models/Account';
-import { getContainer } from '../datastore';
 import { getLoginPayload } from '../auth/state-utils';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars, ID } from 'common/types/core';
 import type { Modal } from '../reducers/modalState';
-import type { ModelContainer } from '../datastore';
-import type { State } from '../reducers/root';
+import type { ReduxState } from '../store';
 import type { Toast } from '../reducers/toast';
-import type { Transaction } from 'common/lib/models/Transaction';
-import type { TransactionLoadingStatus } from '../data-model/types';
-
-type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 // -----------------------------------------------------------------------------
 //
@@ -23,7 +16,7 @@ type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 //
 // -----------------------------------------------------------------------------
 
-export function getActiveUserID(state: State): ID | null {
+export function getActiveUserID(state: ReduxState): ID | null {
   const loginPayload = getLoginPayload(state);
   if (!loginPayload) {
     return null;
@@ -31,7 +24,7 @@ export function getActiveUserID(state: State): ID | null {
   return state.watchSessionState.watchUserID || loginPayload.firebaseUser.uid;
 }
 
-export function getNetWorth(state: State): Dollars {
+export function getNetWorth(state: ReduxState): Dollars {
   const { accounts } = state;
   switch (accounts.type) {
     case 'DOWNLOADING':
@@ -56,72 +49,11 @@ export function getNetWorth(state: State): Dollars {
   }
 }
 
-export function getToast(state: State, toastID: ID): Toast | null {
+export function getToast(state: ReduxState, toastID: ID): Toast | null {
   return state.toast.bannerQueue.find(banner => banner.id === toastID) || null;
 }
 
-export function getAccountLinkContainer(state: State): AccountLinkContainer {
-  return state.accountLinks.type === 'STEADY'
-    ? state.accountLinks.container
-    : {};
-}
-
-export function getAccountLinkForProviderID(
-  state: State,
-  providerID: ID,
-): AccountLink | null {
-  const container = getAccountLinkContainer(state);
-  for (const id in container) {
-    if (
-      container.hasOwnProperty(id) &&
-      container[id].providerRef.refID === providerID
-    ) {
-      return container[id];
-    }
-  }
-  return null;
-}
-
-// NOTE: The order the transaction firebase query returns transactions must be
-// in sync with the ordering returned from the method getTransactionsForAccount,
-// or there will be paging issues.
-export function getTransactionsForAccount(
-  state: State,
-  accountID: ID,
-): Array<Transaction> {
-  const transactionContainer = getContainer(state.transactions);
-  if (!transactionContainer) {
-    return [];
-  }
-  const transactions = [];
-
-  for (const transactionID in transactionContainer) {
-    if (
-      transactionContainer.hasOwnProperty(transactionID) &&
-      transactionContainer[transactionID].accountRef.refID === accountID
-    ) {
-      transactions.push(transactionContainer[transactionID]);
-    }
-  }
-  transactions.sort((t1, t2) => {
-    const timeDiff =
-      t2.transactionDate.getTime() - t1.transactionDate.getTime();
-    if (timeDiff === 0) {
-      return t1.id < t2.id ? -1 : 1;
-    }
-    return timeDiff;
-  });
-  return transactions;
-}
-
-export function getTransactionLoadingStatus(
-  state: State,
-  accountID: ID,
-): TransactionLoadingStatus {
-  return state.transactionLoading.accountToLoadingStatus[accountID] || 'EMPTY';
-}
-
-export function getModalForID(state: State, modalID: ID): Modal | null {
+export function getModalForID(state: ReduxState, modalID: ID): Modal | null {
   return (
     state.modalState.modalQueue.find(modal => modal.id === modalID) || null
   );

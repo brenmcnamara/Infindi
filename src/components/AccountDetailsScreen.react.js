@@ -26,10 +26,6 @@ import {
   getTitle,
 } from 'common/lib/models/Transaction';
 import { GetTheme } from '../design/components/Theme.react';
-import {
-  getTransactionsForAccount,
-  getTransactionLoadingStatus,
-} from '../common/state-utils';
 import { TransactionEmpty, TransactionLoadingError } from '../../content';
 
 import type { ID } from 'common/types/core';
@@ -255,8 +251,14 @@ function mapReduxStateToProps(
 ): ComputedProps {
   return {
     cursor: DataModelStateUtils.getCursorForAccount(state, props.accountID),
-    loadingStatus: getTransactionLoadingStatus(state, props.accountID),
-    transactions: getTransactionsForAccount(state, props.accountID),
+    loadingStatus: DataModelStateUtils.getTransactionLoadingStatus(
+      state,
+      props.accountID,
+    ),
+    transactions: DataModelStateUtils.getTransactionsForAccount(
+      state,
+      props.accountID,
+    ),
   };
 }
 

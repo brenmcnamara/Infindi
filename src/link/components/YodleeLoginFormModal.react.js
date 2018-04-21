@@ -1,5 +1,6 @@
 /* @flow */
 
+import DataModelStateUtils from '../../data-model/state-utils';
 import ModalTransition, {
   TransitionInMillis as ModalTransitionInMillis,
   TransitionOutMillis as ModalTransitionOutMillis,
@@ -15,7 +16,6 @@ import {
   calculateCanSubmitLoginFormForProviderID,
 } from '../utils';
 import { connect } from 'react-redux';
-import { getAccountLinkForProviderID } from '../../common/state-utils';
 import { updateLoginForm, submitYodleeLoginFormForProviderID } from '../action';
 
 import type { ID } from 'common/types/core';
@@ -115,7 +115,10 @@ function mapReduxStateToProps(
     providerID,
   );
   const canSubmit = calculateCanSubmitLoginFormForProviderID(state, providerID);
-  const accountLink = getAccountLinkForProviderID(state, providerID);
+  const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
+    state,
+    providerID,
+  );
   const pendingLoginRequest =
     state.accountVerification.providerPendingLoginRequestMap[providerID];
   const isLoading =
