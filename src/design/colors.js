@@ -33,19 +33,19 @@ export default {
   WHITE,
   LYNCH,
 
-  // TODO: Rename to BACKGROUND_NORMAL
+  ALERT: RED,
   BACKGROUND: GRAY_EF,
   BACKGROUND_LIGHT: WHITE,
   BACKGROUND_ACTION_ITEM_BANNER_ACTIVE: GRAY_EF,
   BACKGROUND_ACTION_ITEM_BANNER_INACTIVE: WHITE,
   BANNER_BACKGROUND: {
-    ERROR: RED,
+    ALERT: RED,
     INFO: BLUE,
     SUCCESS: GREEN_DARK,
   },
   BANNER_LINE_ANIMATION: BLUE_DARK,
   BANNER_TEXT: {
-    ERROR: GRAY_EF,
+    ALERT: GRAY_EF,
     INFO: GRAY_EF,
     SUCCESS: GRAY_EF,
   },
@@ -54,7 +54,6 @@ export default {
   // TODO: This is my best guess of the default nav bar hairline color. Should
   // figure out what the color actually is.
   BORDER_HAIRLINE: '#C4C4C4',
-  ERROR: RED,
   MONEY_GOOD: GREEN_DARK,
   MONEY_NEUTRAL: LYNCH,
   NAV_BAR_BUTTON: BLACK,

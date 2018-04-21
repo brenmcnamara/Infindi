@@ -149,7 +149,7 @@ class LeftPaneScreen extends Component<Props> {
           source={Icons.Power}
           style={styles.signOutIcon}
         />
-        <Text style={[theme.getTextStyleError(), styles.signOutTitle]}>
+        <Text style={[theme.getTextStyleAlert(), styles.signOutTitle]}>
           Sign Out
         </Text>
       </TouchableOpacity>

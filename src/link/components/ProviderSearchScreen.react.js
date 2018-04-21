@@ -138,7 +138,7 @@ class ProviderSearchScreen extends Component<Props> {
           source={Icons.Error}
           style={styles.searchErrorIcon}
         />
-        <Text style={[theme.getTextStyleError(), styles.searchErrorText]}>
+        <Text style={[theme.getTextStyleAlert(), styles.searchErrorText]}>
           {ProviderSearchError}
         </Text>
       </View>

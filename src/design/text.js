@@ -35,7 +35,7 @@ const normalWithEmphasis = {
 // TODO: Rename to mediumWithCriticalEmphasis
 const normalWithCriticalEmphasis = {
   ...normal,
-  color: Colors.ERROR,
+  color: Colors.ALERT,
   fontFamily: thickFont,
 };
 
@@ -59,7 +59,7 @@ const primary = {
 };
 
 const error = {
-  color: Colors.ERROR,
+  color: Colors.ALERT,
   fontFamily: thickFont,
   fontSize: 16,
 };

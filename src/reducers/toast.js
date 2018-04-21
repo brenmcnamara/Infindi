@@ -5,7 +5,7 @@ import type { PureAction } from '../store';
 
 export type Toast = Toast$Banner;
 
-export type BannerType = 'INFO' | 'ERROR' | 'SUCCESS';
+export type BannerType = 'INFO' | 'ALERT' | 'SUCCESS';
 
 export type BannerChannel = string;
 

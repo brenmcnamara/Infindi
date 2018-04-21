@@ -235,7 +235,7 @@ function requestAccountLinkBanner(providerID: ID, status: AccountLinkStatus) {
   return requestToast({
     bannerChannel: id,
     bannerType: status.startsWith('FAILURE')
-      ? 'ERROR'
+      ? 'ALERT'
       : status.startsWith('SUCCESS')
         ? 'SUCCESS'
         : 'INFO',

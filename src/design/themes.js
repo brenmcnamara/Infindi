@@ -14,11 +14,11 @@ type Theme$Constants = {
     +backgroundListItem: string,
     +backgroundTabBar: string,
 
-    +bannerBackgroundError: string,
+    +bannerBackgroundAlert: string,
     +bannerBackgroundInfo: string,
     +bannerBackgroundSuccess: string,
 
-    +bannerTextError: string,
+    +bannerTextAlert: string,
     +bannerTextInfo: string,
     +bannerTextSuccess: string,
 
@@ -33,7 +33,7 @@ type Theme$Constants = {
     +moneyTextPositive: string,
 
     +textDisabled: string,
-    +textError: string,
+    +textAlert: string,
     +textFaint: string,
     +textNormal: string,
     +textPrimary: string,
@@ -76,7 +76,7 @@ type Theme$Methods = {
   +getTextStyleSmall: () => Object,
   +getTextStyleSmallWithEmphasis: () => Object,
   +getTextStyleTiny: () => Object,
-  +getTextStyleError: () => Object,
+  +getTextStyleAlert: () => Object,
 };
 
 function createTheme(constants: Theme$Constants): Theme {
@@ -102,7 +102,7 @@ function createTheme(constants: Theme$Constants): Theme {
       constants,
     ),
     getTextStyleTiny: getTextStyleTiny.bind(null, constants),
-    getTextStyleError: getTextStyleError.bind(null, constants),
+    getTextStyleAlert: getTextStyleAlert.bind(null, constants),
   };
 }
 
@@ -111,8 +111,8 @@ function getBackgroundColorForBannerType(
   bannerType: BannerType,
 ): string {
   switch (bannerType) {
-    case 'ERROR':
-      return constants.color.bannerBackgroundError;
+    case 'ALERT':
+      return constants.color.bannerBackgroundAlert;
     case 'INFO':
       return constants.color.bannerBackgroundInfo;
     case 'SUCCESS':
@@ -127,8 +127,8 @@ function getTextColorForBannerType(
   bannerType: BannerType,
 ): string {
   switch (bannerType) {
-    case 'ERROR':
-      return constants.color.bannerTextError;
+    case 'ALERT':
+      return constants.color.bannerTextAlert;
     case 'INFO':
       return constants.color.bannerTextInfo;
     case 'SUCCESS':
@@ -201,9 +201,9 @@ function getTextStyleTiny(constants: Theme$Constants): Object {
   };
 }
 
-function getTextStyleError(constants: Theme$Constants): Object {
+function getTextStyleAlert(constants: Theme$Constants): Object {
   return {
-    color: constants.color.textError,
+    color: constants.color.textAlert,
     fontFamily: constants.fontFamily.thick,
     fontSize: constants.fontSize.normal,
     lineHeight: constants.fontLineHeight.normal,
@@ -217,11 +217,11 @@ const Themes = {
       backgroundListItem: '#455662',
       backgroundTabBar: '#F6F6F6',
 
-      bannerBackgroundError: Colors.RED,
+      bannerBackgroundAlert: Colors.RED,
       bannerBackgroundInfo: Colors.BLUE,
       bannerBackgroundSuccess: Colors.GREEN_DARK,
 
-      bannerTextError: Colors.GRAY_EF,
+      bannerTextAlert: Colors.GRAY_EF,
       bannerTextInfo: Colors.GRAY_EF,
       bannerTextSuccess: Colors.GRAY_EF,
 
@@ -236,7 +236,7 @@ const Themes = {
       moneyTextPositive: Colors.GREEN,
 
       textDisabled: '#2D2D2D',
-      textError: '#c76278',
+      textAlert: '#c76278',
       textFaint: '#657a87',
       textNormal: '#B3B3B3',
       textPrimary: '#4eccb8',
@@ -274,11 +274,11 @@ const Themes = {
       backgroundListItem: Colors.WHITE,
       backgroundTabBar: '#F6F6F6',
 
-      bannerBackgroundError: Colors.RED,
+      bannerBackgroundAlert: Colors.RED,
       bannerBackgroundInfo: Colors.BLUE,
       bannerBackgroundSuccess: Colors.GREEN_DARK,
 
-      bannerTextError: Colors.GRAY_EF,
+      bannerTextAlert: Colors.GRAY_EF,
       bannerTextInfo: Colors.GRAY_EF,
       bannerTextSuccess: Colors.GRAY_EF,
 
@@ -293,7 +293,7 @@ const Themes = {
       moneyTextPositive: Colors.GREEN,
 
       textDisabled: Colors.GRAY_CA,
-      textError: Colors.ERROR,
+      textAlert: Colors.ALERT,
       textFaint: Colors.GRAY_9B,
       textNormal: Colors.GRAY_4A,
       textPrimary: Colors.GREEN_DARK,
