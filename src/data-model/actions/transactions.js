@@ -10,14 +10,10 @@ type Action$TransactionsFetch = {|
   +type: 'TRANSACTIONS_FETCH',
 |};
 
-function fetchTransactions(accountID: ID, cursor: Object) {
+export function fetchTransactions(accountID: ID, cursor: Object) {
   return {
     accountID,
     cursor,
     type: 'TRANSACTIONS_FETCH',
   };
 }
-
-export default {
-  fetchTransactions,
-};

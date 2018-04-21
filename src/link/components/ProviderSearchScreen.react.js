@@ -1,6 +1,7 @@
 /* @flow */
 
 import Content from '../../components/shared/Content.react';
+import DataModelStateUtils from '../../data-model/state-utils';
 import Downloading from '../../components/shared/Downloading.react';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
@@ -27,7 +28,6 @@ import {
   updateProviderSearchText,
 } from '../action';
 import { getAccountLinkContainer } from '../../common/state-utils';
-import { getProviders } from '../../data-model/state/providers';
 import { isLinking } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
@@ -226,7 +226,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     didCompleteInitialSearch,
     enableInteraction: true,
     providerFetchStatus: state.providers.status,
-    providers: getProviders(state),
+    providers: DataModelStateUtils.getProviders(state),
     searchText: state.accountVerification.providerSearchText,
   };
 }

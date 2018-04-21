@@ -1,12 +1,12 @@
 /* @flow */
 
 import Content from './shared/Content.react';
+import DataModelActions from '../data-model/actions';
+import DataModelStateUtils from '../data-model/state-utils';
 import Icons from '../design/icons';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
-import TransactionActions from '../data-model/actions/transactions';
-import TransactionState from '../data-model/state/transactions';
 
 import invariant from 'invariant';
 import moment from 'moment';
@@ -199,7 +199,7 @@ class AccountDetailsScreen extends Component<Props> {
         'Transactions must have cursor if loading status is "STEADY"',
       );
       this.props.dispatch(
-        TransactionActions.fetchTransactions(accountID, cursor),
+        DataModelActions.fetchTransactions(accountID, cursor),
       );
     }
   };
@@ -254,7 +254,7 @@ function mapReduxStateToProps(
   props: ComponentProps,
 ): ComputedProps {
   return {
-    cursor: TransactionState.getCursorForAccount(state, props.accountID),
+    cursor: DataModelStateUtils.getCursorForAccount(state, props.accountID),
     loadingStatus: getTransactionLoadingStatus(state, props.accountID),
     transactions: getTransactionsForAccount(state, props.accountID),
   };
