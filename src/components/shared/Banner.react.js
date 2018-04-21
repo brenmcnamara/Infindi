@@ -137,7 +137,7 @@ export default class Banner extends Component<Props, State> {
                 </Text>
                 {banner.showSpinner ? (
                   <ActivityIndicator
-                    color={theme.color.backgroundApp}
+                    color={theme.color.backgroundMain}
                     size="small"
                   />
                 ) : null}

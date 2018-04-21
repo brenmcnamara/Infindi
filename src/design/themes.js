@@ -10,8 +10,8 @@ export type Theme = Theme$Constants & Theme$Methods;
 
 type Theme$Constants = {
   +color: {|
-    +backgroundApp: string,
     +backgroundListItem: string,
+    +backgroundMain: string,
     +backgroundTabBar: string,
 
     +bannerBackgroundAlert: string,
@@ -213,8 +213,8 @@ function getTextStyleAlert(constants: Theme$Constants): Object {
 const Themes = {
   dark: createTheme({
     color: {
-      backgroundApp: '#232E35',
       backgroundListItem: '#455662',
+      backgroundMain: '#232E35',
       backgroundTabBar: '#F6F6F6',
 
       bannerBackgroundAlert: Colors.RED,
@@ -270,8 +270,8 @@ const Themes = {
 
   primary: createTheme({
     color: {
-      backgroundApp: Colors.GRAY_EF,
       backgroundListItem: Colors.WHITE,
+      backgroundMain: Colors.GRAY_EF,
       backgroundTabBar: '#F6F6F6',
 
       bannerBackgroundAlert: Colors.RED,

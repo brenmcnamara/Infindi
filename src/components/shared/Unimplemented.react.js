@@ -14,7 +14,7 @@ export default class HomeScreen extends Component<{}> {
           <View
             style={[
               styles.container,
-              { backgroundColor: theme.color.backgroundApp },
+              { backgroundColor: theme.color.backgroundMain },
             ]}
           >
             <Image source={Icons.InfindiLogo} style={styles.logo} />

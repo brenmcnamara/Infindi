@@ -104,7 +104,7 @@ class RightPaneScreen extends Component<Props> {
                 <View
                   style={[
                     styles.listContainer,
-                    { backgroundColor: theme.color.backgroundApp },
+                    { backgroundColor: theme.color.backgroundMain },
                   ]}
                 >
                   <FlatList

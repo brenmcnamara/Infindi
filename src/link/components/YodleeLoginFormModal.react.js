@@ -56,7 +56,7 @@ class YodleeLoginFormModal extends Component<Props> {
           style={[
             styles.root,
             {
-              backgroundColor: theme.color.backgroundApp,
+              backgroundColor: theme.color.backgroundMain,
               borderColor: theme.color.borderNormal,
             },
           ]}

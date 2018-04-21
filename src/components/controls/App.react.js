@@ -102,7 +102,7 @@ class App extends Component<Props> {
                 style={[
                   styles.safeArea,
                   {
-                    backgroundColor: theme.color.backgroundApp,
+                    backgroundColor: theme.color.backgroundMain,
                   },
                 ]}
               >
@@ -117,7 +117,7 @@ class App extends Component<Props> {
                 <View
                   style={[
                     styles.bottomArea,
-                    { backgroundColor: theme.color.backgroundApp },
+                    { backgroundColor: theme.color.backgroundMain },
                   ]}
                 />
               </SafeAreaView>

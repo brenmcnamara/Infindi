@@ -62,7 +62,7 @@ class Tabs extends Component<Props> {
       // Would like to abstract this away at some point.
       setTimeout(() => (this._shouldAllowBackButton = true), 1000);
       this.refs.nav.push({
-        barTintColor: this.props.theme.color.backgroundApp,
+        barTintColor: this.props.theme.color.backgroundMain,
         component: AccountDetailsScreen,
         leftButtonIcon: Icons.LeftArrow,
         onLeftButtonPress: () => {
@@ -85,7 +85,7 @@ class Tabs extends Component<Props> {
     return (
       <NavigatorIOS
         initialRoute={{
-          barTintColor: this.props.theme.color.backgroundApp,
+          barTintColor: this.props.theme.color.backgroundMain,
           component: Component,
           leftButtonIcon: Icons.List,
           onLeftButtonPress: this._onPressLeftButton,

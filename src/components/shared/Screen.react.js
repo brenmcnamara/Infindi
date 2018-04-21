@@ -34,7 +34,7 @@ export default class Screen extends Component<Props> {
               styles.root,
               this.props.avoidNavBar ? { paddingTop: NavBarHeight } : null,
               this.props.avoidTabBar ? { paddingBottom: TabBarHeight } : null,
-              { backgroundColor: theme.color.backgroundApp },
+              { backgroundColor: theme.color.backgroundMain },
             ]}
           >
             {this.props.children}
