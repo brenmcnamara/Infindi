@@ -7,7 +7,6 @@ import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
-import Themes from '../../design/themes';
 
 import invariant from 'invariant';
 
@@ -28,6 +27,7 @@ import {
   updateProviderSearchText,
 } from '../action';
 import { getContainer } from '../../datastore';
+import { GetTheme } from '../../design/components/Theme.react';
 import { isLinking } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
@@ -76,35 +76,37 @@ class ProviderSearchScreen extends Component<Props> {
   }
 
   _renderHeader() {
-    const theme = Themes.primary;
     return (
-      <View
-        style={[
-          styles.searchHeader,
-          { borderColor: theme.color.borderHairline },
-        ]}
-      >
-        <Image
-          resizeMode="contain"
-          source={Icons.Search}
-          style={styles.searchHeaderIcon}
-        />
-        <TextInput
-          editable={this.props.enableInteraction}
-          onChangeText={this._onChangeSearch}
-          placeholder="Search for Institutions..."
-          ref="searchInput"
-          selectTextOnFocus={true}
-          spellCheck={false}
-          style={[
-            styles.searchHeaderTextInput,
-            {
-              fontFamily: theme.fontFamily.thick,
-              fontSize: theme.fontSize.header3,
-            },
-          ]}
-        />
-      </View>
+      <GetTheme>
+        {theme => (
+          <View
+            style={[
+              styles.searchHeader,
+              { borderColor: theme.color.borderHairline },
+            ]}
+          >
+            <Image
+              resizeMode="contain"
+              source={Icons.Search}
+              style={styles.searchHeaderIcon}
+            />
+            <TextInput
+              editable={this.props.enableInteraction}
+              onChangeText={this._onChangeSearch}
+              placeholder="Search for Institutions..."
+              selectTextOnFocus={true}
+              spellCheck={false}
+              style={[
+                styles.searchHeaderTextInput,
+                {
+                  fontFamily: theme.fontFamily.thick,
+                  fontSize: theme.fontSize.header3,
+                },
+              ]}
+            />
+          </View>
+        )}
+      </GetTheme>
     );
   }
 
@@ -130,36 +132,26 @@ class ProviderSearchScreen extends Component<Props> {
   }
 
   _renderSearchError() {
-    const theme = Themes.primary;
     return (
-      <View style={styles.searchErrorContainer}>
-        <Image
-          resizeMode="contain"
-          source={Icons.Error}
-          style={styles.searchErrorIcon}
-        />
-        <Text style={[theme.getTextStyleAlert(), styles.searchErrorText]}>
-          {ProviderSearchError}
-        </Text>
-      </View>
+      <GetTheme>
+        {theme => (
+          <View style={styles.searchErrorContainer}>
+            <Image
+              resizeMode="contain"
+              source={Icons.Error}
+              style={styles.searchErrorIcon}
+            />
+            <Text style={[theme.getTextStyleAlert(), styles.searchErrorText]}>
+              {ProviderSearchError}
+            </Text>
+          </View>
+        )}
+      </GetTheme>
     );
   }
 
   _renderProvider = ({ item }: { item: Provider }) => {
-    const theme = Themes.primary;
     const isFirst = this.props.providers[0] === item;
-    const itemStyles = [
-      styles.searchResultsItem,
-      {
-        backgroundColor: theme.color.backgroundListItem,
-        borderColor: theme.color.borderNormal,
-      },
-      isFirst ? { marginTop: 4 } : null,
-    ];
-    const nameStyles = [
-      theme.getTextStyleHeader3(),
-      styles.searchResultsItemName,
-    ];
     invariant(
       item.sourceOfTruth.type === 'YODLEE',
       'Expecting provider to come from YODLEE',
@@ -169,19 +161,39 @@ class ProviderSearchScreen extends Component<Props> {
     const providerName = yodleeProvider.name;
     const baseURL = yodleeProvider.baseUrl;
     return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.enableInteraction && this._onSelectProvider(item)
-        }
-      >
-        <View style={itemStyles}>
-          <View style={styles.searchResultsItemContent}>
-            <Text style={nameStyles}>{providerName}</Text>
-            <Text style={theme.getTextStyleSmall()}>{baseURL}</Text>
-          </View>
-          {accountLink && isLinking(accountLink) ? <Downloading /> : null}
-        </View>
-      </TouchableOpacity>
+      <GetTheme>
+        {theme => (
+          <TouchableOpacity
+            onPress={() =>
+              this.props.enableInteraction && this._onSelectProvider(item)
+            }
+          >
+            <View
+              style={[
+                styles.searchResultsItem,
+                {
+                  backgroundColor: theme.color.backgroundListItem,
+                  borderColor: theme.color.borderNormal,
+                },
+                isFirst ? { marginTop: 4 } : null,
+              ]}
+            >
+              <View style={styles.searchResultsItemContent}>
+                <Text
+                  style={[
+                    theme.getTextStyleHeader3(),
+                    styles.searchResultsItemName,
+                  ]}
+                >
+                  {providerName}
+                </Text>
+                <Text style={theme.getTextStyleSmall()}>{baseURL}</Text>
+              </View>
+              {accountLink && isLinking(accountLink) ? <Downloading /> : null}
+            </View>
+          </TouchableOpacity>
+        )}
+      </GetTheme>
     );
   };
 

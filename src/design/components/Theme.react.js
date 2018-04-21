@@ -7,7 +7,7 @@ import React, { createContext } from 'react';
 import type { ThemeName } from '../themes';
 
 const { Consumer, Provider } = createContext({
-  theme: Themes.primary,
+  theme: Themes.light,
 });
 
 export type Props = {

@@ -268,7 +268,7 @@ const Themes = {
     },
   }),
 
-  primary: createTheme({
+  light: createTheme({
     color: {
       backgroundListItem: Colors.WHITE,
       backgroundMain: Colors.GRAY_EF,

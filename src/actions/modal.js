@@ -17,8 +17,8 @@ import RightPaneScreen, {
   TransitionInMillis as RightPaneTransitionInMillis,
   TransitionOutMillis as RightPaneTransitionOutMillis,
 } from '../components/RightPaneScreen.react';
-import Themes from '../design/themes';
 
+import { GetTheme } from '../design/components/Theme.react';
 import { Text } from 'react-native';
 
 import type { ID } from 'common/types/core';
@@ -149,10 +149,14 @@ export function requestUnimplementedModal(
   return requestInfoModal({
     id: `IMPLEMENT_ME(${featureName})`,
     render: () => (
-      <Text style={Themes.primary.getTextStyleNormal()}>
-        This feature is not yet implemented, but should be ready soon! Thanks
-        for your patience!
-      </Text>
+      <GetTheme>
+        {theme => (
+          <Text style={theme.getTextStyleNormal()}>
+            This feature is not yet implemented, but should be ready soon!
+            Thanks for your patience!
+          </Text>
+        )}
+      </GetTheme>
     ),
     title: featureName,
   });

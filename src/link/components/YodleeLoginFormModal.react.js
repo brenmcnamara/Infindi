@@ -7,7 +7,6 @@ import ModalTransition, {
 } from '../../components/shared/ModalTransition.react';
 import React, { Component } from 'react';
 import TextButton from '../../components/shared/TextButton.react';
-import Themes from '../../design/themes';
 import YodleeLoginFormComponent from './YodleeLoginForm.react';
 
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -16,6 +15,7 @@ import {
   calculateCanSubmitLoginFormForProviderID,
 } from '../utils';
 import { connect } from 'react-redux';
+import { GetTheme } from '../../design/components/Theme.react';
 import { updateLoginForm, submitYodleeLoginFormForProviderID } from '../action';
 
 import type { ID } from 'common/types/core';
@@ -43,54 +43,62 @@ export const TransitionOutMillis = ModalTransitionOutMillis;
 
 class YodleeLoginFormModal extends Component<Props> {
   render() {
-    const theme = Themes.primary;
     return (
-      <ModalTransition
-        onPressBackground={EMPTY_FUNCTION}
-        show={
-          this.props.transitionStage === 'IN' ||
-          this.props.transitionStage === 'TRANSITION_IN'
-        }
-      >
-        <View
-          style={[
-            styles.root,
-            {
-              backgroundColor: theme.color.backgroundMain,
-              borderColor: theme.color.borderNormal,
-            },
-          ]}
-        >
-          <View
-            style={[styles.header, { borderColor: theme.color.borderNormal }]}
+      <GetTheme>
+        {theme => (
+          <ModalTransition
+            onPressBackground={EMPTY_FUNCTION}
+            show={
+              this.props.transitionStage === 'IN' ||
+              this.props.transitionStage === 'TRANSITION_IN'
+            }
           >
-            <Text style={[theme.getTextStyleHeader3(), styles.headerText]}>
-              {'Finish Login Process'}
-            </Text>
-          </View>
-          <YodleeLoginFormComponent
-            enableInteraction={true}
-            loginForm={this.props.loginForm}
-            onChangeLoginForm={this._onChangeLoginForm}
-          />
-          <View
-            style={(styles.footer, { borderColor: theme.color.borderNormal })}
-          >
-            {this.props.isLoading ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <TextButton
-                isDisabled={!this.props.canSubmit}
-                layoutType="FILL_PARENT"
-                onPress={this._onPressSubmit}
-                size="SMALL"
-                text={this.props.callToAction}
-                type="PRIMARY"
+            <View
+              style={[
+                styles.root,
+                {
+                  backgroundColor: theme.color.backgroundMain,
+                  borderColor: theme.color.borderNormal,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.header,
+                  { borderColor: theme.color.borderNormal },
+                ]}
+              >
+                <Text style={[theme.getTextStyleHeader3(), styles.headerText]}>
+                  {'Finish Login Process'}
+                </Text>
+              </View>
+              <YodleeLoginFormComponent
+                enableInteraction={true}
+                loginForm={this.props.loginForm}
+                onChangeLoginForm={this._onChangeLoginForm}
               />
-            )}
-          </View>
-        </View>
-      </ModalTransition>
+              <View
+                style={
+                  (styles.footer, { borderColor: theme.color.borderNormal })
+                }
+              >
+                {this.props.isLoading ? (
+                  <ActivityIndicator size="small" />
+                ) : (
+                  <TextButton
+                    isDisabled={!this.props.canSubmit}
+                    layoutType="FILL_PARENT"
+                    onPress={this._onPressSubmit}
+                    size="SMALL"
+                    text={this.props.callToAction}
+                    type="PRIMARY"
+                  />
+                )}
+              </View>
+            </View>
+          </ModalTransition>
+        )}
+      </GetTheme>
     );
   }
 

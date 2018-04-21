@@ -94,7 +94,7 @@ class App extends Component<Props> {
     // together. Keyboard avoiding view should always be the parent of the
     // safe area view.
     return (
-      <Theme themeName="primary">
+      <Theme themeName="light">
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <GetTheme>
             {theme => (
