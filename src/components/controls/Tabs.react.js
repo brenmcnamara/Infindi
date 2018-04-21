@@ -14,7 +14,7 @@ import { getIsAdmin, getUserID } from '../../auth/state-utils';
 import { NavigatorIOS } from 'react-native';
 import { requestLeftPane, requestRightPane } from '../../actions/modal';
 
-import type { ReduxProps, ReduxState } from '../../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../../store';
 import type { RouteNode } from '../../common/route-utils';
 import type { Theme } from '../../design/themes';
 

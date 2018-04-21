@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { ID } from 'common/types/core';
-import type { PureAction } from '../../typesDEPRECATED/redux';
+import type { PureAction } from '../../store';
 
 export type State = {
   +watchUserID: ID | null,

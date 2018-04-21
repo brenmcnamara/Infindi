@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { PureAction } from '../typesDEPRECATED/redux';
+import type { PureAction } from '../store';
 
 export type EnvStatus = 'ENV_LOADING' | 'ENV_READY' | 'ENV_FAILURE';
 

@@ -27,7 +27,7 @@ import {
 import { ActionItemCardSize, ActionItemCardSpacing } from '../design/layout';
 
 import type { ID } from 'common/types/core';
-import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../store';
 
 type ComputedProps = {
   +focusedActionItemID: ID | 'EMPTY',
@@ -51,7 +51,7 @@ type DeleteTransitionStage =
 
 type State = {
   deleteStage: DeleteTransitionStage,
-  isScrolling: bool,
+  isScrolling: boolean,
   actionItemIDs: Array<ID>,
 };
 
@@ -72,7 +72,7 @@ const PAGER_INSET = {
 };
 
 class ActionItemPager extends Component<Props, State> {
-  _canHandleScrolling: bool = false;
+  _canHandleScrolling: boolean = false;
   _cards: { [id: ID]: any } = {}; // TODO: Better typing.
   _deleteFadeTransition = new Animated.Value(0);
   _deleteShiftTransition = new Animated.Value(0);
@@ -264,7 +264,9 @@ class ActionItemPager extends Component<Props, State> {
     const newIndex =
       actionItemIDs.length === 1
         ? null
-        : actionItemIDs.length - 1 === index ? index - 1 : index;
+        : actionItemIDs.length - 1 === index
+          ? index - 1
+          : index;
 
     // Delete page and clean up the state.
     const newActionItemIDs = this.state.actionItemIDs.slice();
@@ -365,7 +367,9 @@ class ActionItemPager extends Component<Props, State> {
         const initialPadding =
           this.state.actionItemIDs.length === 2
             ? SPACE_TO_CENTER
-            : deleteStage.pageIndex === 0 ? HalfActionItemCardSpacing : 0;
+            : deleteStage.pageIndex === 0
+              ? HalfActionItemCardSpacing
+              : 0;
         return deleteStage.pageIndex + 1 === index
           ? {
               paddingLeft: this._deleteShiftTransition.interpolate({
@@ -400,8 +404,8 @@ export default connect(mapReduxStateToProps)(ActionItemPager);
 
 type PageProps = {
   children: ?any,
-  isFirst: bool,
-  isOnly: bool,
+  isFirst: boolean,
+  isOnly: boolean,
   style: any,
 };
 
@@ -413,7 +417,9 @@ const Page = (props: PageProps) => {
       ? {
           marginLeft: SPACE_TO_CENTER,
         }
-      : props.isFirst ? { marginLeft: ActionItemCardSpacing } : null,
+      : props.isFirst
+        ? { marginLeft: ActionItemCardSpacing }
+        : null,
   ];
   return <Animated.View style={style}>{props.children}</Animated.View>;
 };

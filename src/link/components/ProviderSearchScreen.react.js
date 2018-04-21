@@ -35,7 +35,7 @@ import { ProviderSearchError } from '../../../content/index';
 import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
-import type { ReduxProps, ReduxState } from '../../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../../store';
 
 export type Props = ComponentProps & ComputedProps & ReduxProps;
 

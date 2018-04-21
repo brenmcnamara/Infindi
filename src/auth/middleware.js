@@ -6,7 +6,7 @@ import invariant from 'invariant';
 
 import { initialize as initializeBackend } from '../backend';
 
-import type { Action as AllActions, Store } from '../typesDEPRECATED/redux';
+import type { Action as AllActions, Store } from '../store';
 import type { AuthStatus } from './types';
 import type { User as FirebaseUser } from 'common/types/firebase';
 import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';

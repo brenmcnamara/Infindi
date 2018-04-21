@@ -36,7 +36,7 @@ import { NavBarHeight } from '../../design/layout';
 
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
-import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { ReduxProps } from '../../store';
 import type { State as ReduxState } from '../../reducers/root';
 
 export type Props = ReduxProps & ComputedProps & ComponentProps;

@@ -3,7 +3,7 @@
 import invariant from 'invariant';
 
 import type { Modal } from '../reducers/modalState';
-import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
+import type { Next, PureAction, Store } from '../store';
 
 export type Action = Action$UpdateModalStack;
 

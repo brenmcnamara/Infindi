@@ -24,7 +24,7 @@ import { dismissModal, LeftPaneModalID } from '../actions/modal';
 import { getUserFullName } from '../auth/state-utils';
 import { logout } from '../auth/actions';
 
-import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../store';
 import type { Theme } from '../design/themes';
 
 export type Props = ReduxProps & {

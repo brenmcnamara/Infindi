@@ -12,7 +12,7 @@ import { getUserFirstName } from '../auth/state-utils';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { logout } from '../auth/actions';
 
-import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { ReduxProps } from '../store';
 import type { State } from '../reducers/root';
 import type { Theme } from '../design/themes';
 

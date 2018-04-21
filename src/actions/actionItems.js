@@ -9,7 +9,7 @@ import React from 'react';
 import invariant from 'invariant';
 
 import type { ID } from 'common/types/core';
-import type { PureDispatch, ReduxState } from '../typesDEPRECATED/redux';
+import type { PureDispatch, ReduxState } from '../store';
 
 export type Action =
   | Action$DeleteActionItem

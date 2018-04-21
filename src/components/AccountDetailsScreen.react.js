@@ -33,7 +33,7 @@ import {
 import { TransactionEmpty, TransactionLoadingError } from '../../content';
 
 import type { ID } from 'common/types/core';
-import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
 import type { Theme } from '../design/themes';
 import type { Transaction } from 'common/lib/models/Transaction';

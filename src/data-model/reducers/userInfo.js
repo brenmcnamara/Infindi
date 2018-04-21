@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { ModelContainer } from '../../datastore';
-import type { PureAction } from '../../typesDEPRECATED/redux';
+import type { PureAction } from '../../store';
 import type { UserInfo } from 'common/lib/models/UserInfo';
 
 export type State = {

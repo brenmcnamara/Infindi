@@ -4,7 +4,7 @@ import invariant from 'invariant';
 
 import { genYodleeSubmitProviderLoginForm } from '../../backend';
 
-import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
+import type { PureAction, Next, Store } from '../../store';
 
 export default (store: Store) => (next: Next) => {
   return (action: PureAction) => {

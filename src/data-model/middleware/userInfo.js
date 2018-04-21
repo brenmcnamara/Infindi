@@ -3,7 +3,7 @@
 import Firebase from 'react-native-firebase';
 
 import type { ID } from 'common/types/core';
-import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
+import type { PureAction, Next, Store } from '../../store';
 import type { UserInfo } from 'common/lib/models/UserInfo';
 
 export default (store: Store) => (next: Next) => {

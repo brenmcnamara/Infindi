@@ -9,7 +9,7 @@ import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../datastore';
-import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
+import type { PureAction, Next, Store } from '../store';
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 

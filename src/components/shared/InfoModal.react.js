@@ -13,7 +13,7 @@ import { GetTheme } from '../../design/components/Theme.react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { ID } from 'common/types/core';
-import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { ReduxProps } from '../../store';
 
 export type Props = ReduxProps & {
   children?: ?any,

@@ -24,7 +24,7 @@ import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
 import type { LoadStatus, UserInfoContainer } from '../data-model/types';
-import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../store';
 import type { Theme } from '../design/themes';
 import type { UserInfo } from 'common/lib/models/UserInfo';
 

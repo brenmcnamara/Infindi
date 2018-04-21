@@ -5,12 +5,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getIsAuthenticated } from '../../auth/state-utils';
 
-import { type ReduxProps } from '../../typesDEPRECATED/redux';
+import { type ReduxProps } from '../../store';
 import { type State } from '../../reducers/root';
 
 type Props = ReduxProps & {
   children?: ?any,
-  isAuthenticated: bool,
+  isAuthenticated: boolean,
 };
 
 function mapReduxStateToProps(state: State) {

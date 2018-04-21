@@ -16,7 +16,7 @@ import {
 
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
-import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../store';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
@@ -27,8 +27,8 @@ export type ComputedProps = {
 
 export type ComponentProps = {
   +actionItemID: ID,
-  +dismissAfterTransitioningOut: bool,
-  +show: bool,
+  +dismissAfterTransitioningOut: boolean,
+  +show: boolean,
   +transitionType: 'HOME_TO_ACTION_ITEM' | 'ACTION_ITEM_TO_HOME',
 };
 

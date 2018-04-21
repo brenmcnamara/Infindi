@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import type { BannerChannel, Toast$Banner } from '../../reducers/toast';
-import type { ReduxProps, ReduxState } from '../../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../../store';
 
 type ComponentProps = {
   channels: Array<BannerChannel>,

@@ -6,12 +6,7 @@ import invariant from 'invariant';
 
 import { getIsAuthenticated, getLoginPayload } from '../../auth/state-utils';
 
-import type {
-  PureAction,
-  Next,
-  ReduxState,
-  Store,
-} from '../../typesDEPRECATED/redux';
+import type { PureAction, Next, ReduxState, Store } from '../../store';
 
 class WatchSessionMiddleware {
   _adminStatus: 'ADMIN' | 'NOT_ADMIN' | 'UNKNOWN' = 'UNKNOWN';

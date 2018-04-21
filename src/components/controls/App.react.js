@@ -24,7 +24,7 @@ import {
   View,
 } from 'react-native';
 
-import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { ReduxProps } from '../../store';
 import type { RouteNode } from '../../common/route-utils';
 import type { State as ReduxState } from '../../reducers/root';
 

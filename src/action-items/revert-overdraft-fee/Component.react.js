@@ -13,7 +13,7 @@ import { requestUnimplementedModal } from '../../actions/modal';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { ActionItemComponentProps } from '..';
-import type { ReduxProps } from '../../typesDEPRECATED/redux';
+import type { ReduxProps } from '../../store';
 
 export type Props = ReduxProps & ActionItemComponentProps;
 

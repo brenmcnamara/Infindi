@@ -5,7 +5,7 @@ import uuid from 'uuid/v4';
 import { genQueryProviders } from '../../backend';
 
 import type { Provider } from 'common/lib/models/Provider';
-import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
+import type { PureAction, Next, Store } from '../../store';
 
 export default (store: Store) => (next: Next) => {
   return (action: PureAction) => {

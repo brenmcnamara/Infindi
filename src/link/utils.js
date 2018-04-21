@@ -8,7 +8,7 @@ import { isLinkFailure, isLinkSuccess } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
 import type { Provider } from 'common/lib/models/Provider';
-import type { ReduxState } from '../typesDEPRECATED/redux';
+import type { ReduxState } from '../store';
 
 export type SupportType =
   | {|

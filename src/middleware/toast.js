@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import type { Next, PureAction, Store } from '../typesDEPRECATED/redux';
+import type { Next, PureAction, Store } from '../store';
 import type { Toast$Banner } from '../reducers/toast';
 
 export type Action = Action$UpdateBannerQueue;
@@ -87,7 +87,7 @@ const PriorityToNum = {
 function hasHigherPriority(
   banner1: Toast$Banner,
   banner2: Toast$Banner,
-): bool {
+): boolean {
   const num1 = PriorityToNum[banner1.priority];
   const num2 = PriorityToNum[banner2.priority];
   return num1 > num2;

@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { ReduxState } from '../typesDEPRECATED/redux';
+import type { ReduxState } from '../store';
 
 function getIsInWatchSession(state: ReduxState): boolean {
   return Boolean(state.watchSessionState.watchUserID);

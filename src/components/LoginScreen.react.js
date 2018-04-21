@@ -26,7 +26,7 @@ import { login } from '../auth/actions';
 
 import type { ElementRef } from 'react';
 import type { LoginCredentials } from 'common/lib/models/Auth';
-import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { ReduxProps } from '../store';
 import type { State as StoreState } from '../reducers/root';
 
 export type Props = ReduxProps & {

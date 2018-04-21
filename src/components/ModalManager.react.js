@@ -13,7 +13,7 @@ import type {
   Modal$ReactWithTransition,
   TransitionStage,
 } from '../reducers/modalState';
-import type { ReduxProps, ReduxState } from '../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../store';
 
 /**
  * This component is in charge of displaying all modals that exist in Infindi.

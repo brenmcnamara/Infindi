@@ -16,7 +16,7 @@ import { isInMFA } from 'common/lib/models/AccountLink';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
-import type { PureAction, Next, Store } from '../../typesDEPRECATED/redux';
+import type { PureAction, Next, Store } from '../../store';
 import type { State as ReduxState } from '../../reducers/root';
 
 const ACTION_BLACKLIST = [];

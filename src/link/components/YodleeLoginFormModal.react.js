@@ -20,7 +20,7 @@ import { updateLoginForm, submitYodleeLoginFormForProviderID } from '../action';
 
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
-import type { ReduxProps, ReduxState } from '../../typesDEPRECATED/redux';
+import type { ReduxProps, ReduxState } from '../../store';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 

@@ -3,7 +3,7 @@
 import invariant from 'invariant';
 
 import type { ID, ModelStub } from 'common/types/core';
-import type { PureAction, Reducer } from './typesDEPRECATED/redux';
+import type { PureAction, Reducer } from './store';
 
 // TODO: Port this from Infindi-Backend
 type InfindiError = { errorCode: string, errorMessage: string };
@@ -74,7 +74,7 @@ export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
       +modelID: ID,
       +modelName: TName,
       +operationID: ID,
-      +shouldPersist: bool,
+      +shouldPersist: boolean,
       +type: 'MODEL_REMOVE',
     |};
 

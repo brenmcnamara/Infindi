@@ -9,7 +9,7 @@ import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../datastore';
-import type { PureAction, Next, Store } from '../typesDEPRECATED/redux';
+import type { PureAction, Next, Store } from '../store';
 import type { Transaction } from 'common/lib/models/Transaction';
 
 type TransactionContainer = ModelContainer<'Transaction', Transaction>;

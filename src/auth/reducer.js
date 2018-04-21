@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { AuthStatus } from './types';
-import type { PureAction } from '../typesDEPRECATED/redux';
+import type { PureAction } from '../store';
 
 export type State = AuthStatus;
 

@@ -3,7 +3,7 @@
 import { DEFAULT_TAB_NAME } from '../common/route-utils';
 
 import type { ID } from 'common/types/core';
-import type { PureAction } from '../typesDEPRECATED/redux';
+import type { PureAction } from '../store';
 import type { TabName } from '../common/route-utils';
 
 export type State = {

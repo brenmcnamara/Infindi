@@ -41,7 +41,7 @@ import type { Account, AccountGroupType } from 'common/lib/models/Account';
 import type { AccountContainer } from '../reducers/accounts';
 import type { AccountLinkContainer } from '../reducers/accountLinks';
 import type { Dollars } from 'common/types/core';
-import type { ReduxProps } from '../typesDEPRECATED/redux';
+import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
 import type { Theme } from '../design/themes';
 
