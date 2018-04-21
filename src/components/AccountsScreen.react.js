@@ -10,6 +10,7 @@ import NetWorth from './NetWorth.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from './shared/TextButton.react';
+import WatchSessionStateUtils from '../watch-session/state-utils';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
@@ -44,12 +45,13 @@ import type { ReduxProps } from '../typesDEPRECATED/redux';
 import type { State as ReduxState } from '../reducers/root';
 import type { Theme } from '../design/themes';
 
-export type Props = ReduxProps & ReduxStateProps;
+export type Props = ReduxProps & ComputedProps;
 
-type ReduxStateProps = {
+type ComputedProps = {
   accountLinkContainer: AccountLinkContainer,
   accounts: AccountContainer,
   isDownloading: boolean,
+  isInWatchSession: boolean,
   netWorth: number,
 };
 
@@ -160,7 +162,7 @@ class AccountsScreen extends Component<Props> {
 
   _renderAddAccountButton(theme: Theme) {
     return (
-      <If predicate={!this.props.isDownloading}>
+      <If predicate={!this.props.isDownloading && !this.props.isInWatchSession}>
         <Footer
           style={[styles.footer, { borderColor: theme.color.borderHairline }]}
         >
@@ -302,7 +304,7 @@ class AccountsScreen extends Component<Props> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const { accountLinks, accounts } = state;
   const loginPayload = getLoginPayload(state);
   invariant(
@@ -312,6 +314,7 @@ function mapReduxStateToProps(state: ReduxState): ReduxStateProps {
   return {
     accounts: accounts.type === 'STEADY' ? accounts.container : {},
     isDownloading: accounts.type === 'DOWNLOADING',
+    isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(state),
     netWorth: getNetWorth(state),
     accountLinkContainer:
       accountLinks.type === 'STEADY' ? accountLinks.container : {},
