@@ -196,9 +196,12 @@ class RightPaneScreen extends Component<Props> {
 
   _renderExitButton(theme: Theme) {
     return (
-      <View key="EXIT" style={styles.listItemRoot}>
-        <TouchableOpacity>
-          <View style={styles.listItemContent}>
+      <View
+        key="EXIT"
+        style={[styles.listItemRoot, { borderColor: theme.color.borderNormal }]}
+      >
+        <TouchableOpacity onPress={this._onPressExitWatchSession}>
+          <View style={styles.listItemContentLarge}>
             <Text style={theme.getTextStyleNormalWithEmphasis()}>
               Exit Watch Session
             </Text>
@@ -216,6 +219,11 @@ class RightPaneScreen extends Component<Props> {
 
   _onPressUserInfo = (userInfo: UserInfo): void => {
     this.props.dispatch(WatchSessionActions.enterWatchSession(userInfo.id));
+    this.props.dispatch(dismissModal(RightPaneModalID));
+  };
+
+  _onPressExitWatchSession = (): void => {
+    this.props.dispatch(WatchSessionActions.exitWatchSession());
     this.props.dispatch(dismissModal(RightPaneModalID));
   };
 
@@ -273,6 +281,11 @@ const styles = StyleSheet.create({
   listItemContent: {
     paddingHorizontal: 12,
     paddingVertical: 4,
+  },
+
+  listItemContentLarge: {
+    paddingHorizontal: 12,
+    paddingVertical: 16,
   },
 
   listItemRoot: {
