@@ -12,8 +12,10 @@ import { mapObjectToArray, reduceObject } from '../common/obj-utils';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Account, AccountGroupType } from 'common/lib/models/Account';
-import type { AccountLinkContainer } from '../reducers/accountLinks';
-import type { AccountContainer } from '../reducers/accounts';
+import type {
+  AccountContainer,
+  AccountLinkContainer,
+} from '../data-model/types';
 import type { Dollars } from 'common/types/core';
 import type { Theme } from '../design/themes';
 

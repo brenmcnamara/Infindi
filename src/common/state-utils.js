@@ -13,7 +13,7 @@ import type { ModelContainer } from '../datastore';
 import type { State } from '../reducers/root';
 import type { Toast } from '../reducers/toast';
 import type { Transaction } from 'common/lib/models/Transaction';
-import type { TransactionLoadingStatus } from '../reducers/transactionLoading';
+import type { TransactionLoadingStatus } from '../data-model/types';
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 

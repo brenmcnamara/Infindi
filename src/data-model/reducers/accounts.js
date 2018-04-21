@@ -1,9 +1,9 @@
 /* @flow */
 
-import { createModelContainerReducer } from '../datastore';
+import { createModelContainerReducer } from '../../datastore';
 
 import type { Account } from 'common/lib/models/Account';
-import type { ModelContainer, ModelState } from '../datastore';
+import type { ModelContainer, ModelState } from '../../datastore';
 
 export type AccountContainer = ModelContainer<'Account', Account>;
 

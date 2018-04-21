@@ -1,7 +1,7 @@
 /* @flow */
 
-import accountLinks from './accountLinks';
-import accounts from './accounts';
+import accountLinks from '../data-model/reducers/accountLinks';
+import accounts from '../data-model/reducers/accounts';
 import accountVerification from '../link/reducers/accountVerification';
 import actionItems from './actionItems';
 import auth from '../auth/reducer';
@@ -10,15 +10,15 @@ import modalState from './modalState';
 import providers from '../data-model/reducers/providers';
 import routeState from './routeState';
 import toast from './toast';
-import transactionLoading from './transactionLoading';
-import transactions from './transactions';
+import transactionLoading from '../data-model/reducers/transactionLoading';
+import transactions from '../data-model/reducers/transactions';
 import userInfo from '../data-model/reducers/userInfo';
 import watchSessionState from '../watch-session/reducers/watchSessionState';
 
 import { combineReducers } from 'redux';
 
-import type { State as State$AccountLinks } from './accountLinks';
-import type { State as State$Accounts } from './accounts';
+import type { State as State$AccountLinks } from '../data-model/reducers/accountLinks';
+import type { State as State$Accounts } from '../data-model/reducers/accounts';
 import type { State as State$AccountVerification } from '../link/reducers/accountVerification';
 import type { State as State$ActionItems } from './actionItems';
 import type { State as State$Auth } from '../auth/reducer';
@@ -27,8 +27,8 @@ import type { State as State$ModalState } from './modalState';
 import type { State as State$Providers } from '../data-model/reducers/providers';
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
-import type { State as State$TransactionLoading } from './transactionLoading';
-import type { State as State$Transactions } from './transactions';
+import type { State as State$TransactionLoading } from '../data-model/reducers/transactionLoading';
+import type { State as State$Transactions } from '../data-model/reducers/transactions';
 import type { State as State$UserInfo } from '../data-model/reducers/userInfo';
 import type { State as State$WatchSession } from '../watch-session/reducers/watchSessionState';
 

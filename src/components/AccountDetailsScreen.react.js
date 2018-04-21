@@ -37,7 +37,7 @@ import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
 import type { Theme } from '../design/themes';
 import type { Transaction } from 'common/lib/models/Transaction';
-import type { TransactionLoadingStatus } from '../reducers/transactionLoading';
+import type { TransactionLoadingStatus } from '../data-model/types';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
