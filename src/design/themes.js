@@ -5,6 +5,7 @@ import Colors from './colors';
 import invariant from 'invariant';
 
 import type { BannerType } from '../reducers/toast';
+import type { ID } from 'common/types/core';
 
 export type Theme = Theme$Constants & Theme$Methods;
 
@@ -63,6 +64,8 @@ type Theme$Constants = {
     +small: number,
     +tiny: number,
   |},
+
+  +uniqueID: ID,
 };
 
 type Theme$Methods = {
@@ -266,6 +269,8 @@ const Themes = {
       small: 14,
       tiny: 12,
     },
+
+    uniqueID: 'dark',
   }),
 
   light: createTheme({
@@ -323,6 +328,67 @@ const Themes = {
       small: 14,
       tiny: 12,
     },
+
+    uniqueID: 'light',
+  }),
+
+  lightInverted: createTheme({
+    color: {
+      backgroundListItem: '#F4F4F4',
+      backgroundMain: '#FFFFFF',
+      backgroundTabBar: '#F6F6F6',
+
+      bannerBackgroundAlert: Colors.RED,
+      bannerBackgroundInfo: Colors.BLUE,
+      bannerBackgroundSuccess: Colors.GREEN_DARK,
+
+      bannerTextAlert: Colors.GRAY_EF,
+      bannerTextInfo: Colors.GRAY_EF,
+      bannerTextSuccess: Colors.GRAY_EF,
+
+      borderDark: Colors.GRAY_CA,
+      borderHairline: '#C4C4C4',
+      borderNormal: '#CCCCCC',
+
+      buttonNavBar: Colors.BLACK,
+
+      moneyTextNegative: Colors.RED,
+      moneyTextNeutral: Colors.LYNCH,
+      moneyTextPositive: Colors.GREEN_DARK,
+
+      textDisabled: Colors.GRAY_CA,
+      textAlert: Colors.ALERT,
+      textFaint: Colors.GRAY_9B,
+      textNormal: Colors.GRAY_4A,
+      textPrimary: Colors.GREEN_DARK,
+      textPrimaryDisabled: Colors.GREEN_LIGHT,
+      textSpecial: Colors.BLUE,
+    },
+
+    fontFamily: {
+      thin: 'Lato-Light',
+      thick: 'Lato-Regular',
+    },
+
+    fontLineHeight: {
+      header2: 26,
+      header3: 24,
+
+      normal: 22,
+      small: 22,
+      tiny: 22,
+    },
+
+    fontSize: {
+      header2: 22,
+      header3: 18,
+
+      normal: 16,
+      small: 14,
+      tiny: 12,
+    },
+
+    uniqueID: 'lightInverted',
   }),
 };
 

@@ -11,6 +11,7 @@ import React, { Component } from 'react';
 import RecommendationScreen from '../RecommendationScreen.react';
 import Tabs from './Tabs.react';
 import Theme, { GetTheme } from '../../design/components/Theme.react';
+import WatchSessionStateUtils from '../../watch-session/state-utils';
 
 import invariant from 'invariant';
 
@@ -28,7 +29,10 @@ import type { ReduxProps } from '../../store';
 import type { RouteNode } from '../../common/route-utils';
 import type { State as ReduxState } from '../../reducers/root';
 
-export type Props = ReduxProps & {
+export type Props = ReduxProps & ComputedProps;
+
+type ComputedProps = {
+  isInWatchSession: boolean,
   root: RouteNode,
 };
 
@@ -45,7 +49,7 @@ class App extends Component<Props> {
   }
 
   render() {
-    const { root } = this.props;
+    const { isInWatchSession, root } = this.props;
     let mainContent = null;
     switch (root.name) {
       case 'AUTH': {
@@ -94,7 +98,7 @@ class App extends Component<Props> {
     // together. Keyboard avoiding view should always be the parent of the
     // safe area view.
     return (
-      <Theme themeName="light">
+      <Theme themeName={isInWatchSession ? 'lightInverted' : 'light'}>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <GetTheme>
             {theme => (
@@ -149,7 +153,10 @@ const styles = StyleSheet.create({
 });
 
 function mapReduxStateToProps(state: ReduxState) {
-  return { root: createRoute(state) };
+  return {
+    isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(state),
+    root: createRoute(state),
+  };
 }
 
 export default connect(mapReduxStateToProps)(App);

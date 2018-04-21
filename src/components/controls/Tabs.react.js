@@ -4,6 +4,7 @@ import AccountDetailsScreen from '../AccountDetailsScreen.react';
 import AccountsScreen from '../AccountsScreen.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
+import WatchSessionStateUtils from '../../watch-session/state-utils';
 
 import invariant from 'invariant';
 
@@ -28,6 +29,7 @@ type ComponentProps = {
 type ComputedProps = {
   activeUserNameExcludingAuthenticated: string | null,
   isAdmin: boolean,
+  isInWatchSession: boolean,
 };
 
 class Tabs extends Component<Props> {
@@ -95,6 +97,7 @@ class Tabs extends Component<Props> {
           tintColor: this.props.theme.color.buttonNavBar,
           title: '',
         }}
+        key={this.props.theme.uniqueID}
         ref="nav"
         style={{ flex: 1 }}
       />
@@ -151,6 +154,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   return {
     activeUserNameExcludingAuthenticated,
     isAdmin: getIsAdmin(state),
+    isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(state),
   };
 }
 

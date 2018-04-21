@@ -81,7 +81,10 @@ export default class AccountComponent extends Component<Props> {
               style={[
                 styles.root,
                 topBorder,
-                { borderColor: theme.color.borderNormal },
+                {
+                  backgroundColor: theme.color.backgroundListItem,
+                  borderColor: theme.color.borderNormal,
+                },
               ]}
             >
               <View style={styles.mainContent}>
@@ -203,7 +206,6 @@ const styles = StyleSheet.create({
 
   root: {
     alignItems: 'center',
-    backgroundColor: 'white',
     flexDirection: 'row',
     paddingLeft: 8,
     paddingVertical: 8,
