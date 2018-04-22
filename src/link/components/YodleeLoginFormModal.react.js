@@ -79,9 +79,10 @@ class YodleeLoginFormModal extends Component<Props> {
                 onChangeLoginForm={this._onChangeLoginForm}
               />
               <View
-                style={
-                  (styles.footer, { borderColor: theme.color.borderNormal })
-                }
+                style={[
+                  styles.footer,
+                  { borderColor: theme.color.borderNormal },
+                ]}
               >
                 {this.props.isLoading ? (
                   <ActivityIndicator size="small" />
