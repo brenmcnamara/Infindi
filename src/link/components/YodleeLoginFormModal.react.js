@@ -47,6 +47,7 @@ class YodleeLoginFormModal extends Component<Props> {
       <GetTheme>
         {theme => (
           <ModalTransition
+            animateOnMount={true}
             onPressBackground={EMPTY_FUNCTION}
             show={
               this.props.transitionStage === 'IN' ||

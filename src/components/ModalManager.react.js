@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import invariant from 'invariant';
 
@@ -137,8 +137,10 @@ class ModalManager extends Component<Props, State> {
         );
     }
     return (
-      <ModalView animationType="none" show={transitionState} transparent={true}>
-        <AddKey key={transitionState.modal.id}>{content}</AddKey>
+      <ModalView animationType="none" transparent={true} visible={true}>
+        {transitionState.type !== 'OUT' && (
+          <Fragment key={transitionState.modal.id}>{content}</Fragment>
+        )}
       </ModalView>
     );
   }
@@ -176,11 +178,13 @@ class ModalManager extends Component<Props, State> {
           this._timeoutIDs.splice(index, 1);
         }
 
-        if (shouldTransitionToNull) {
-          this.setState({ transitionState: null }, resolve);
-        } else {
-          resolve();
-        }
+        this.setState({ transitionState: { modal, type: 'OUT' } }, () => {
+          if (shouldTransitionToNull) {
+            this.setState({ transitionState: null }, resolve);
+          } else {
+            resolve();
+          }
+        });
       }, modal.transitionOutMillis);
       this._timeoutIDs.push(timeoutID);
     });
@@ -234,7 +238,3 @@ function castToNativeModal(modal: Modal | null): Modal$Native {
   );
   return modal;
 }
-
-const AddKey = (props: { children?: ?any }) => {
-  return React.Children.only(props.children);
-};

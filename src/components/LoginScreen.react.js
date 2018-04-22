@@ -28,6 +28,7 @@ import type { ElementRef } from 'react';
 import type { LoginCredentials } from 'common/lib/models/Auth';
 import type { ReduxProps } from '../store';
 import type { State as StoreState } from '../reducers/root';
+import type { Theme } from '../design/themes';
 
 export type Props = ReduxProps & {
   loginType: 'NORMAL' | 'ERROR' | 'LOADING',
@@ -81,7 +82,7 @@ class LoginScreen extends Component<Props, State> {
 
     return (
       <GetTheme>
-        {theme => (
+        {(theme: Theme) => (
           <Screen avoidKeyboard={true}>
             <Content>
               <View style={styles.logoContainer}>
@@ -125,10 +126,10 @@ class LoginScreen extends Component<Props, State> {
                 />
               </View>
               <Animated.View style={[styles.loginError, animatedErrorStyles]}>
-                <Text style={[theme.getTextStyleError(), styles.marginBottom8]}>
+                <Text style={[theme.getTextStyleAlert(), styles.marginBottom8]}>
                   Login Failed.
                 </Text>
-                <Text style={theme.getTextStyleError()}>
+                <Text style={theme.getTextStyleAlert()}>
                   Please check your credentials.
                 </Text>
               </Animated.View>

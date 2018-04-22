@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 export type Props = {
+  animateOnMount: boolean,
   children?: ?any,
   onPressBackground: () => any,
   show: boolean,
@@ -29,10 +30,26 @@ const VERTICAL_OFFSET = 30;
  */
 export default class ModalTransition extends Component<Props> {
   _isTransitioning: boolean = false;
-  _transitionProgress: Animated.Value;
+  _transitionProgress = new Animated.Value(0);
 
   componentWillMount(): void {
-    this._transitionProgress = new Animated.Value(this.props.show ? 1 : 0);
+    if (this.props.show && !this.props.animateOnMount) {
+      this._transitionProgress.setValue(1);
+    }
+  }
+
+  componentDidMount(): void {
+    if (this.props.show && this.props.animateOnMount) {
+      this._isTransitioning = true;
+      Animated.timing(this._transitionProgress, {
+        duration: TransitionInMillis,
+        easing: Easing.out(Easing.cubic),
+        toValue: 1,
+        useNativeDriver: true,
+      }).start(() => {
+        this._isTransitioning = false;
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -42,9 +59,7 @@ export default class ModalTransition extends Component<Props> {
         duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
         easing: Easing.out(Easing.cubic),
         toValue: nextProps.show ? 1 : 0,
-        // TODO: This is causing some wierd animation flash when the component
-        // is unmounted. Need to look further into this.
-        // useNativeDriver: true,
+        useNativeDriver: true,
       }).start(() => {
         this._isTransitioning = false;
       });

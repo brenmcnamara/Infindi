@@ -34,6 +34,7 @@ class InfoModal extends Component<Props> {
       <GetTheme>
         {theme => (
           <ModalTransition
+            animateOnMount={true}
             onPressBackground={this._onPressBackground}
             show={
               this.props.transitionStage === 'IN' ||

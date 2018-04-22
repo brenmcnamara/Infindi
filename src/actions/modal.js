@@ -105,10 +105,14 @@ export function requestLeftPane(): Action$RequestModal {
       id: LeftPaneModalID,
       modalType: 'REACT_WITH_TRANSITION',
       priority: 'USER_REQUESTED',
-      renderIn: () => <LeftPaneScreen show={true} />,
-      renderOut: () => <LeftPaneScreen show={false} />,
-      renderTransitionIn: () => <LeftPaneScreen show={true} />,
-      renderTransitionOut: () => <LeftPaneScreen show={false} />,
+      renderIn: () => <LeftPaneScreen animateOnMount={true} show={true} />,
+      renderOut: () => <LeftPaneScreen animateOnMount={true} show={false} />,
+      renderTransitionIn: () => (
+        <LeftPaneScreen animateOnMount={true} show={true} />
+      ),
+      renderTransitionOut: () => (
+        <LeftPaneScreen animateOnMount={true} show={false} />
+      ),
       transitionInMillis: LeftPaneTransitionInMillis,
       transitionOutMillis: LeftPaneTransitionOutMillis,
     },
@@ -123,10 +127,14 @@ export function requestRightPane(): Action$RequestModal {
       id: RightPaneModalID,
       modalType: 'REACT_WITH_TRANSITION',
       priority: 'USER_REQUESTED',
-      renderIn: () => <RightPaneScreen show={true} />,
-      renderOut: () => <RightPaneScreen show={false} />,
-      renderTransitionIn: () => <RightPaneScreen show={true} />,
-      renderTransitionOut: () => <RightPaneScreen show={false} />,
+      renderIn: () => <RightPaneScreen animateOnMount={true} show={true} />,
+      renderOut: () => <RightPaneScreen animateOnMount={true} show={false} />,
+      renderTransitionIn: () => (
+        <RightPaneScreen animateOnMount={true} show={true} />
+      ),
+      renderTransitionOut: () => (
+        <RightPaneScreen animateOnMount={true} show={false} />
+      ),
       transitionInMillis: RightPaneTransitionInMillis,
       transitionOutMillis: RightPaneTransitionOutMillis,
     },

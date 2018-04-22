@@ -27,8 +27,14 @@ import { logout } from '../auth/actions';
 import type { ReduxProps, ReduxState } from '../store';
 import type { Theme } from '../design/themes';
 
-export type Props = ReduxProps & {
+export type Props = ReduxProps & ComponentProps & ComputedProps;
+
+type ComponentProps = {
+  animateOnMount: boolean,
   show: boolean,
+};
+
+type ComputedProps = {
   userName: string,
 };
 
@@ -39,11 +45,26 @@ export const TransitionOutMillis = 300;
 
 class LeftPaneScreen extends Component<Props> {
   _isTransitioning: boolean = false;
-  _transitionProgress: Animated.Value;
+  _transitionProgress = new Animated.Value(0);
 
-  constructor(props: Props) {
-    super(props);
-    this._transitionProgress = new Animated.Value(props.show ? 1 : 0);
+  componentWillMount(): void {
+    if (this.props.show && !this.props.animateOnMount) {
+      this._transitionProgress.setValue(1.0);
+    }
+  }
+
+  componentDidMount(): void {
+    if (this.props.show && this.props.animateOnMount) {
+      this._isTransitioning = true;
+      Animated.timing(this._transitionProgress, {
+        duration: TransitionInMillis,
+        easing: Easing.out(Easing.cubic),
+        toValue: 1.0,
+        useNativeDriver: true,
+      }).start(() => {
+        this._isTransitioning = false;
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -54,6 +75,7 @@ class LeftPaneScreen extends Component<Props> {
         duration: nextProps.show ? TransitionInMillis : TransitionOutMillis,
         easing: Easing.out(Easing.cubic),
         toValue: nextProps.show ? 1.0 : 0.0,
+        useNativeDriver: true,
       }).start(() => {
         this._isTransitioning = false;
       });
@@ -63,10 +85,14 @@ class LeftPaneScreen extends Component<Props> {
   render() {
     const contentStyles = [
       {
-        marginLeft: this._transitionProgress.interpolate({
-          inputRange: [0, 1],
-          outputRange: [-LEFT_PANE_WIDTH, 0],
-        }),
+        transform: [
+          {
+            translateX: this._transitionProgress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-LEFT_PANE_WIDTH, 0],
+            }),
+          },
+        ],
       },
       styles.content,
     ];
@@ -231,7 +257,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapReduxStateToProps(state: ReduxState) {
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const userName = getUserFullName(state);
   invariant(userName, 'User must have login payload for left pane to show');
   return {
