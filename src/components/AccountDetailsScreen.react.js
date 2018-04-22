@@ -55,7 +55,7 @@ class AccountDetailsScreen extends Component<Props> {
   render() {
     return (
       <GetTheme>
-        {theme => (
+        {(theme: Theme) => (
           <Screen>
             <Content>{this._renderList(theme)}</Content>
           </Screen>
@@ -83,7 +83,7 @@ class AccountDetailsScreen extends Component<Props> {
   _renderTransactionHeader = () => {
     return (
       <GetTheme>
-        {theme => (
+        {(theme: Theme) => (
           <View
             style={[
               styles.transactionHeader,
@@ -100,7 +100,7 @@ class AccountDetailsScreen extends Component<Props> {
   _renderTransaction = (transaction: Transaction, showTopBorder: boolean) => {
     return (
       <GetTheme>
-        {theme => (
+        {(theme: Theme) => (
           <View
             style={[
               styles.transaction,
@@ -149,7 +149,7 @@ class AccountDetailsScreen extends Component<Props> {
   _renderTransactionEmpty = () => {
     return (
       <GetTheme>
-        {theme => (
+        {(theme: Theme) => (
           <View style={styles.listItemWithCenteredContent}>
             <Text style={[theme.getTextStyleNormal(), styles.transactionEmpty]}>
               {TransactionEmpty}
@@ -171,9 +171,9 @@ class AccountDetailsScreen extends Component<Props> {
   _renderTransactionError = () => {
     return (
       <GetTheme>
-        {theme => (
+        {(theme: Theme) => (
           <View style={styles.listItemWithCenteredContent}>
-            <Text style={[theme.getTextStyleError(), styles.errorText]}>
+            <Text style={[theme.getTextStyleAlert(), styles.errorText]}>
               {TransactionLoadingError}
             </Text>
             <Image

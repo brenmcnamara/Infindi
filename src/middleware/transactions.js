@@ -2,11 +2,9 @@
 
 import DataModelStateUtils from '../data-model/state-utils';
 
-import invariant from 'invariant';
 import uuid from 'uuid/v4';
 
 import { getTransactionCollection } from 'common/lib/models/Transaction';
-import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../datastore';
@@ -30,11 +28,7 @@ export default (store: Store) => (next: Next) => {
       type: 'CONTAINER_DOWNLOAD_START',
     });
 
-    const userID = getUserID(store.getState());
-    invariant(userID, 'Trying to fetch transactions when no user is logged in');
-
     let query = getTransactionCollection()
-      .where('userRef.refID', '==', userID)
       .where('accountRef.refID', '==', accountID)
       .orderBy('transactionDate', 'desc')
       // NOTE: Sorting by id so that all results have a deterministic order.
