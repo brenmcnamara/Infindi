@@ -51,7 +51,6 @@ class YodleeLoginFormModal extends Component<Props> {
   render() {
     const { callToAction, canSubmit, loginForm } = this.props;
     invariant(loginForm, 'Trying to re-render without a login form');
-    console.log('rendering', loginForm);
     return (
       <GetTheme>
         {theme => (
