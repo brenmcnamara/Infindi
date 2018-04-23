@@ -18,7 +18,6 @@ import {
 } from '../utils';
 import { connect } from 'react-redux';
 import { GetTheme } from '../../design/components/Theme.react';
-import { isInMFA } from 'common/lib/models/AccountLink';
 import { updateLoginForm, submitYodleeLoginFormForProviderID } from '../action';
 
 import type { ID } from 'common/types/core';
@@ -31,7 +30,7 @@ type ComputedProps = {
   callToAction: string,
   canSubmit: boolean,
   isLoading: boolean,
-  loginForm: YodleeLoginForm,
+  loginForm: YodleeLoginForm | null,
 };
 
 type ComponentProps = {
@@ -45,7 +44,14 @@ export const TransitionInMillis = ModalTransitionInMillis;
 export const TransitionOutMillis = ModalTransitionOutMillis;
 
 class YodleeLoginFormModal extends Component<Props> {
+  shouldComponentUpdate(nextProps: Props): boolean {
+    return Boolean(nextProps.loginForm);
+  }
+
   render() {
+    const { callToAction, canSubmit, loginForm } = this.props;
+    invariant(loginForm, 'Trying to re-render without a login form');
+    console.log('rendering', loginForm);
     return (
       <GetTheme>
         {theme => (
@@ -78,7 +84,7 @@ class YodleeLoginFormModal extends Component<Props> {
               </View>
               <YodleeLoginFormComponent
                 enableInteraction={true}
-                loginForm={this.props.loginForm}
+                loginForm={loginForm}
                 onChangeLoginForm={this._onChangeLoginForm}
               />
               <View
@@ -91,11 +97,11 @@ class YodleeLoginFormModal extends Component<Props> {
                   <ActivityIndicator size="small" />
                 ) : (
                   <TextButton
-                    isDisabled={!this.props.canSubmit}
+                    isDisabled={!canSubmit}
                     layoutType="FILL_PARENT"
                     onPress={this._onPressSubmit}
                     size="SMALL"
-                    text={this.props.callToAction}
+                    text={callToAction}
                     type="PRIMARY"
                   />
                 )}
@@ -122,17 +128,14 @@ function mapReduxStateToProps(
   props: ComponentProps,
 ): ComputedProps {
   const { providerID } = props;
-  const loginForm = state.accountVerification.loginFormContainer[providerID];
-  invariant(
-    loginForm,
-    'Expecting loginForm to exist for provider id: %s',
-    providerID,
-  );
-  const callToAction = calculateLoginFormCallToActionForProviderID(
-    state,
-    providerID,
-  );
-  const canSubmit = calculateCanSubmitLoginFormForProviderID(state, providerID);
+  const loginForm =
+    state.accountVerification.loginFormContainer[providerID] || null;
+  const callToAction = loginForm
+    ? calculateLoginFormCallToActionForProviderID(state, providerID)
+    : '';
+  const canSubmit =
+    Boolean(loginForm) &&
+    calculateCanSubmitLoginFormForProviderID(state, providerID);
   const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
     state,
     providerID,
@@ -146,20 +149,12 @@ function mapReduxStateToProps(
   return {
     callToAction,
     canSubmit,
-    loginForm,
     isLoading,
+    loginForm,
   };
 }
 
-const YodleeLoginFormModalRedux = connect(mapReduxStateToProps)(
-  YodleeLoginFormModal,
-);
-
-export default (props: ComponentProps) => (
-  <LockMFARedux providerID={props.providerID}>
-    <YodleeLoginFormModalRedux {...props} />
-  </LockMFARedux>
-);
+export default connect(mapReduxStateToProps)(YodleeLoginFormModal);
 
 const styles = StyleSheet.create({
   footer: {
@@ -187,41 +182,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
 });
-
-/**
- * This component ensures that the modal does not re-render when exiting MFA
- * mode for the account link.
- */
-
-type LockMFAProps = ReduxProps & LockMFAComponentProps & LockMFAComputedProps;
-
-type LockMFAComponentProps = {
-  children?: ?any,
-  providerID: ID,
-};
-
-type LockMFAComputedProps = {
-  isInMFA: boolean,
-};
-
-class LockMFA extends Component<LockMFAProps> {
-  shouldComponentUpdate(nextProps: LockMFAProps): boolean {
-    return nextProps.isInMFA;
-  }
-
-  render() {
-    return this.props.children;
-  }
-}
-
-const LockMFARedux = connect(
-  (state: ReduxState, props: LockMFAComponentProps) => {
-    const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
-      state,
-      props.providerID,
-    );
-    return {
-      isInMFA: Boolean(accountLink && isInMFA(accountLink)),
-    };
-  },
-)(LockMFA);
