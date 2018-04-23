@@ -110,7 +110,8 @@ class AccountLinkFlowManager {
         accountLink.status === 'IN_PROGRESS / DOWNLOADING_DATA';
     });
 
-    // STEP 2: PERFORM THE UPDATES GOING FROM THE PREVIOUS STATE TO THE NEXT STATE.
+    // STEP 2: PERFORM THE UPDATES GOING FROM THE PREVIOUS STATE TO THE NEXT
+    // STATE.
 
     // Loop through the provider states that were updated / created.
     forEachObject(providerStateMap, (toProviderState, providerID) => {
