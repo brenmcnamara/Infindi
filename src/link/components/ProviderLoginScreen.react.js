@@ -102,13 +102,7 @@ class AccountLoginScreen extends Component<Props> {
               { borderColor: theme.color.borderHairline },
             ]}
           >
-            <TouchableOpacity onPress={this._onPressBack}>
-              <Image
-                resizeMode="contain"
-                source={Icons.LeftArrow}
-                style={styles.headerLeftIcon}
-              />
-            </TouchableOpacity>
+            {this._renderBackButton()}
             <Text style={[theme.getTextStyleHeader3(), styles.headerTitle]}>
               {yodleeProvider.name}
             </Text>
@@ -124,10 +118,31 @@ class AccountLoginScreen extends Component<Props> {
     return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
-  _onPressBack = (): void => {
-    if (this.props.enableInteraction) {
-      this.props.dispatch(requestProviderSearch());
+  _renderBackButton() {
+    const canGoBack = this.props.enableInteraction && this.props.canExit;
+    const content = (
+      <Image
+        resizeMode="contain"
+        source={Icons.LeftArrow}
+        style={[styles.headerLeftIcon, canGoBack ? null : { opacity: 0.3 }]}
+      />
+    );
+    if (canGoBack) {
+      return (
+        <TouchableOpacity onPress={this._onPressBack}>
+          {content}
+        </TouchableOpacity>
+      );
     }
+    return content;
+  }
+
+  _onPressBack = (): void => {
+    invariant(
+      !(this.props.enableInteraction && this.props.canExit),
+      'Trying to process back button when it should be disabled',
+    );
+    this.props.dispatch(requestProviderSearch());
   };
 
   _onPressForgotPassword = (url: string): void => {
