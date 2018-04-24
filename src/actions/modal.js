@@ -21,6 +21,7 @@ import RightPaneScreen, {
 import { GetTheme } from '../design/components/Theme.react';
 import { Text } from 'react-native';
 
+import type { GetState, PureDispatch } from '../store';
 import type { ID } from 'common/types/core';
 import type { Modal } from '../reducers/modalState';
 
@@ -47,55 +48,62 @@ export type InfoModalPayload = {
   title: string,
 };
 
-export function requestInfoModal(
-  payload: InfoModalPayload,
-): Action$RequestModal {
-  return {
-    modal: {
-      id: payload.id,
-      modalType: 'REACT_WITH_TRANSITION',
-      priority: 'USER_REQUESTED',
-      renderIn: () => (
-        <InfoModal
-          modalID={payload.id}
-          title={payload.title}
-          transitionStage="IN"
-        >
-          {payload.render()}
-        </InfoModal>
-      ),
-      renderOut: () => (
-        <InfoModal
-          modalID={payload.id}
-          title={payload.title}
-          transitionStage="OUT"
-        >
-          {payload.render()}
-        </InfoModal>
-      ),
-      renderTransitionIn: () => (
-        <InfoModal
-          modalID={payload.id}
-          title={payload.title}
-          transitionStage="TRANSITION_IN"
-        >
-          {payload.render()}
-        </InfoModal>
-      ),
-      renderTransitionOut: () => (
-        <InfoModal
-          modalID={payload.id}
-          title={payload.title}
-          transitionStage="TRANSITION_OUT"
-        >
-          {payload.render()}
-        </InfoModal>
-      ),
-      transitionInMillis: InfoModalTransitionInMillis,
-      transitionOutMillis: InfoModalTransitionOutMillis,
-    },
-    shouldIgnoreRequestingExistingModal: false,
-    type: 'REQUEST_MODAL',
+export function requestInfoModal(payload: InfoModalPayload) {
+  return (dispatch: PureDispatch, getState: GetState) => {
+    const alreadyHasInfoModal = getState().modalState.modalQueue.some(
+      modal => modal.id === payload.id,
+    );
+    if (alreadyHasInfoModal) {
+      return;
+    }
+
+    dispatch({
+      modal: {
+        id: payload.id,
+        modalType: 'REACT_WITH_TRANSITION',
+        priority: 'USER_REQUESTED',
+        renderIn: () => (
+          <InfoModal
+            modalID={payload.id}
+            title={payload.title}
+            transitionStage="IN"
+          >
+            {payload.render()}
+          </InfoModal>
+        ),
+        renderOut: () => (
+          <InfoModal
+            modalID={payload.id}
+            title={payload.title}
+            transitionStage="OUT"
+          >
+            {payload.render()}
+          </InfoModal>
+        ),
+        renderTransitionIn: () => (
+          <InfoModal
+            modalID={payload.id}
+            title={payload.title}
+            transitionStage="TRANSITION_IN"
+          >
+            {payload.render()}
+          </InfoModal>
+        ),
+        renderTransitionOut: () => (
+          <InfoModal
+            modalID={payload.id}
+            title={payload.title}
+            transitionStage="TRANSITION_OUT"
+          >
+            {payload.render()}
+          </InfoModal>
+        ),
+        transitionInMillis: InfoModalTransitionInMillis,
+        transitionOutMillis: InfoModalTransitionOutMillis,
+      },
+      shouldIgnoreRequestingExistingModal: false,
+      type: 'REQUEST_MODAL',
+    });
   };
 }
 
@@ -151,9 +159,7 @@ export function dismissLeftPane(): Action$DismissModal {
   };
 }
 
-export function requestUnimplementedModal(
-  featureName: string,
-): Action$RequestModal {
+export function requestUnimplementedModal(featureName: string) {
   return requestInfoModal({
     id: `IMPLEMENT_ME(${featureName})`,
     render: () => (
