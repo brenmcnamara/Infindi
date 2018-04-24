@@ -239,13 +239,17 @@ class RightPaneScreen extends Component<Props> {
   };
 
   _onPressUserInfo = (userInfo: UserInfo): void => {
-    this.props.dispatch(WatchSessionActions.enterWatchSession(userInfo.id));
-    this.props.dispatch(dismissModal(RightPaneModalID));
+    if (this.props.show) {
+      this.props.dispatch(WatchSessionActions.enterWatchSession(userInfo.id));
+      this.props.dispatch(dismissModal(RightPaneModalID));
+    }
   };
 
   _onPressExitWatchSession = (): void => {
-    this.props.dispatch(WatchSessionActions.exitWatchSession());
-    this.props.dispatch(dismissModal(RightPaneModalID));
+    if (this.props.show) {
+      this.props.dispatch(WatchSessionActions.exitWatchSession());
+      this.props.dispatch(dismissModal(RightPaneModalID));
+    }
   };
 
   _getData(theme: Theme) {
