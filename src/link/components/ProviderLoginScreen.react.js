@@ -139,7 +139,7 @@ class AccountLoginScreen extends Component<Props> {
 
   _onPressBack = (): void => {
     invariant(
-      !(this.props.enableInteraction && this.props.canExit),
+      this.props.enableInteraction && this.props.canExit,
       'Trying to process back button when it should be disabled',
     );
     this.props.dispatch(requestProviderSearch());
