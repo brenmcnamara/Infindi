@@ -6,10 +6,6 @@ platform :ios, '9.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'Infindi' do
-
-  # Linking react native firebase here.
-  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
-
   # Dependencies for react native firebase. Refer to this documentation:
   # https://rnfirebase.io/docs/v2.2.*/installation-ios#2.1)-Add-the-required-pods
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
