@@ -91,6 +91,7 @@ class ProviderSearchScreen extends Component<Props> {
               style={styles.searchHeaderIcon}
             />
             <TextInput
+              defaultValue={this.props.searchText}
               editable={this.props.enableInteraction}
               onChangeText={this._onChangeSearch}
               placeholder="Search for Institutions..."
