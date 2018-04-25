@@ -10,6 +10,7 @@ import Screen from '../../components/shared/Screen.react';
 import YodleeLoginFormComponent from './YodleeLoginForm.react';
 
 import invariant from 'invariant';
+import nullthrows from 'nullthrows';
 
 import {
   ActivityIndicator,
@@ -46,17 +47,17 @@ type ComponentProps = {
 };
 
 type ComputedProps = {
-  callToAction: string,
+  callToAction: string | null,
   canExit: boolean,
   canSubmit: boolean,
   isLoadingLoginForm: boolean,
-  loginForm: YodleeLoginForm,
-  provider: Provider,
+  loginForm: YodleeLoginForm | null,
+  provider: Provider | null,
 };
 
 const LEFT_ARROW_WIDTH = 18;
 
-class AccountLoginScreen extends Component<Props> {
+class ProviderLoginScreen extends Component<Props> {
   render() {
     return (
       <Screen>
@@ -71,7 +72,7 @@ class AccountLoginScreen extends Component<Props> {
             ) : (
               <YodleeLoginFormComponent
                 enableInteraction={this.props.enableInteraction}
-                loginForm={this.props.loginForm}
+                loginForm={nullthrows(this.props.loginForm)}
                 onChangeLoginForm={this._onChangeLoginForm}
               />
             )}
@@ -88,10 +89,11 @@ class AccountLoginScreen extends Component<Props> {
   _renderHeader() {
     const { provider } = this.props;
     invariant(
-      provider.sourceOfTruth.type === 'YODLEE',
+      !provider || provider.sourceOfTruth.type === 'YODLEE',
       'Expecting provider to come from YODLEE',
     );
-    const yodleeProvider = provider.sourceOfTruth.value;
+    // Move this functionality to 'common'.
+    const providerName = provider ? provider.sourceOfTruth.value.name : '';
 
     return (
       <GetTheme>
@@ -104,7 +106,7 @@ class AccountLoginScreen extends Component<Props> {
           >
             {this._renderBackButton()}
             <Text style={[theme.getTextStyleHeader3(), styles.headerTitle]}>
-              {yodleeProvider.name}
+              {providerName}
             </Text>
             <View style={styles.headerRightIcon} />
           </View>
@@ -114,7 +116,8 @@ class AccountLoginScreen extends Component<Props> {
   }
 
   _renderBanner() {
-    const channels = [`PROVIDERS/${this.props.provider.id}`];
+    const { provider } = this.props;
+    const channels = provider ? [`PROVIDERS/${provider.id}`] : [];
     return <BannerManager channels={channels} managerKey="BANER_MANAGER" />;
   }
 
@@ -151,24 +154,34 @@ class AccountLoginScreen extends Component<Props> {
   };
 
   _onChangeLoginForm = (loginForm: YodleeLoginForm): void => {
-    this.props.dispatch(updateLoginForm(this.props.provider.id, loginForm));
+    const { provider } = this.props;
+    invariant(provider, 'Cannot update login form when there is no provider');
+    this.props.dispatch(updateLoginForm(provider.id, loginForm));
   };
 
   _onFooterButtonPress = (button: 'LEFT' | 'RIGHT' | 'CENTER'): void => {
-    if (this._isCancelButton(button)) {
+    if (this._isExitButton(button)) {
       this.props.dispatch(exitAccountVerification());
       return;
     }
     const { provider } = this.props;
+    invariant(
+      provider,
+      'Cannot render non-exit button on ProviderLoginScreen when there is no provider',
+    );
     this.props.dispatch(submitYodleeLoginFormForProviderID(provider.id));
   };
 
   _getFooterButtonLayout() {
     const { callToAction, canExit, canSubmit, enableInteraction } = this.props;
-    invariant(
-      callToAction,
-      'Expecting call to action to exist when page is type LOGIN',
-    );
+    if (!callToAction) {
+      return {
+        centerButtonText: 'EXIT',
+        isCenterButtonDisabled: !enableInteraction || !canExit,
+        type: 'CENTER',
+      };
+    }
+
     return {
       isLeftButtonDisabled: !enableInteraction || !canExit,
       isRightButtonDisabled: !enableInteraction || !canSubmit,
@@ -178,7 +191,7 @@ class AccountLoginScreen extends Component<Props> {
     };
   }
 
-  _isCancelButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {
+  _isExitButton(button: 'LEFT' | 'RIGHT' | 'CENTER') {
     return button === 'CENTER' || button === 'LEFT';
   }
 }
@@ -191,24 +204,29 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     page && page.type,
   );
   const { providerID } = page;
-  const loginForm = state.accountVerification.loginFormContainer[providerID];
+  const loginForm =
+    state.accountVerification.loginFormContainer[providerID] || null;
   const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
     state,
     providerID,
   );
   invariant(
-    loginForm,
-    'Expecting login form to exist for providerID',
+    loginForm ||
+      state.providers.status === 'EMPTY' ||
+      state.providers.status === 'LOADING',
+    'Expecting login form to either be loading or to exist for providerID: %s',
     providerID,
   );
-  const callToAction = calculateLoginFormCallToActionForProviderID(
-    state,
-    providerID,
-  );
-  const canSubmit = calculateCanSubmitLoginFormForProviderID(state, providerID);
+  const callToAction = loginForm
+    ? calculateLoginFormCallToActionForProviderID(state, providerID)
+    : null;
+  const canSubmit = loginForm
+    ? calculateCanSubmitLoginFormForProviderID(state, providerID)
+    : false;
 
   const isLoadingLoginForm = Boolean(
-    accountLink && accountLink.status === 'MFA / WAITING_FOR_LOGIN_FORM',
+    !loginForm ||
+      (accountLink && accountLink.status === 'MFA / WAITING_FOR_LOGIN_FORM'),
   );
   const pendingLoginRequest =
     state.accountVerification.providerPendingLoginRequestMap[providerID];
@@ -225,7 +243,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   };
 }
 
-export default connect(mapReduxStateToProps)(AccountLoginScreen);
+export default connect(mapReduxStateToProps)(ProviderLoginScreen);
 
 const styles = StyleSheet.create({
   activityIndicatorContainer: {

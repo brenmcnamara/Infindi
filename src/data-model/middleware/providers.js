@@ -12,7 +12,8 @@ export default (store: Store) => (next: Next) => {
     next(action);
 
     switch (action.type) {
-      case 'REQUEST_PROVIDER_SEARCH': {
+      case 'REQUEST_PROVIDER_SEARCH':
+      case 'REQUEST_PROVIDER_LOGIN': {
         const state = store.getState();
         if (state.providers.status === 'EMPTY') {
           runSearch(state.accountVerification.providerSearchText, next);
