@@ -1,6 +1,7 @@
 /* @flow */
 
 import AccountGroup from './AccountGroup.react';
+import AccountLinkGroup from './AccountLinkGroup.react';
 import BannerManager from './shared/BannerManager.react';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
@@ -33,7 +34,12 @@ import { getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload } from '../auth/state-utils';
 import { getNetWorth } from '../common/state-utils';
 import { GetTheme } from '../design/components/Theme.react';
-import { requestProviderSearch } from '../link/action';
+import {
+  isInMFA,
+  isLinking,
+  isLinkFailure,
+} from 'common/lib/models/AccountLink';
+import { requestProviderLogin, requestProviderSearch } from '../link/action';
 import { requestInfoModal } from '../actions/modal';
 import { viewAccountDetails } from '../actions/router';
 
@@ -42,6 +48,7 @@ import type {
   AccountContainer,
   AccountLinkContainer,
 } from '../data-model/types';
+import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
@@ -68,6 +75,11 @@ type RowItem =
       +groupType: AccountGroupType,
       +key: string,
       +rowType: 'ACCOUNTS',
+    |}
+  | {|
+      +accountLinks: Array<AccountLink>,
+      +key: string,
+      +rowType: 'ACCOUNT_LINKS',
     |};
 
 class AccountsScreen extends Component<Props> {
@@ -185,6 +197,14 @@ class AccountsScreen extends Component<Props> {
       case 'NET_WORTH': {
         return <NetWorth netWorth={item.netWorth} />;
       }
+      case 'ACCOUNT_LINKS': {
+        return (
+          <AccountLinkGroup
+            accountLinks={item.accountLinks}
+            onSelectAccountLink={this._onSelectAccountLink}
+          />
+        );
+      }
       case 'ACCOUNTS': {
         const { accounts, groupType } = item;
         return (
@@ -222,7 +242,12 @@ class AccountsScreen extends Component<Props> {
     this.props.dispatch(viewAccountDetails(account.id));
   };
 
+  _onSelectAccountLink = (accountLink: AccountLink): void => {
+    this.props.dispatch(requestProviderLogin(accountLink.providerRef.refID));
+  };
+
   _getData() {
+    const accountLinks = this._getAccountLinksRequiringAttention();
     const { accounts } = this.props;
     const availableCashGroup = filterObject(
       accounts,
@@ -254,6 +279,13 @@ class AccountsScreen extends Component<Props> {
         netWorth: this.props.netWorth,
         rowType: 'NET_WORTH',
       },
+      accountLinks.length > 0
+        ? {
+            key: 'ACCOUNT_LINKS',
+            accountLinks,
+            rowType: 'ACCOUNT_LINKS',
+          }
+        : null,
       isObjectEmpty(availableCashGroup)
         ? null
         : {
@@ -304,6 +336,23 @@ class AccountsScreen extends Component<Props> {
           },
     ].filter(truthy => truthy);
   }
+
+  _getAccountLinksRequiringAttention(): Array<AccountLink> {
+    const container = this.props.accountLinkContainer;
+    const accountLinks = [];
+    // $FlowFixMe - This is correct.
+    Object.values(container).forEach((accountLink: AccountLink) => {
+      // Put all linking account links at the beginning of the array.
+      if (isLinking(accountLink) || isInMFA(accountLink)) {
+        accountLinks.unshift(accountLink);
+      }
+      // Put all failed account links at the end of the array.
+      if (isLinkFailure(accountLink)) {
+        accountLinks.push(accountLink);
+      }
+    });
+    return accountLinks;
+  }
 }
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
@@ -314,12 +363,12 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     'Trying to render account data when no user is logged in',
   );
   return {
+    accountLinkContainer:
+      accountLinks.type === 'STEADY' ? accountLinks.container : {},
     accounts: accounts.type === 'STEADY' ? accounts.container : {},
     isDownloading: accounts.type === 'DOWNLOADING',
     isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(state),
     netWorth: getNetWorth(state),
-    accountLinkContainer:
-      accountLinks.type === 'STEADY' ? accountLinks.container : {},
   };
 }
 
