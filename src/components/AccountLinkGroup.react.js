@@ -70,7 +70,7 @@ export default class AccountLinkGroup extends Component<Props> {
           <View style={styles.accountLinkContent}>
             <View style={styles.accountLinkLeft}>
               <Text style={theme.getTextStyleNormalWithEmphasis()}>
-                Name Coming Soon
+                {accountLink.providerName}
               </Text>
               {this._renderAccountLinkNotice(theme, accountLink)}
             </View>
