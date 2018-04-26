@@ -86,7 +86,7 @@ function genPerformLogin(
   return promise
     .then(() => {
       const { email, password } = loginCredentials;
-      return Auth.signInWithEmailAndPassword(email, password);
+      return Auth.signInAndRetrieveDataWithEmailAndPassword(email, password);
     })
     .catch(error => {
       // TODO: Error could be of different format. Need to perform error transform.
