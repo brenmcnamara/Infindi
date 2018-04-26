@@ -100,14 +100,6 @@ export const ActionItemPagerNullState = cleanupWhitespace(`
 `);
 
 /**
- * Displayed in a banner at the top of the accounts screen when the user's
- * accounts are downloading.
- */
-export const AccountsDownloadingBanner = cleanupWhitespace(`
-  Downloading accounts...
-`);
-
-/**
  * During the account link process, banners will show indicating the phases
  * of account login to the user.
  */

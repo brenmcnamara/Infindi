@@ -2,14 +2,14 @@
 
 import invariant from 'invariant';
 
-import { AccountsDownloadingBanner, AccountLinkBanner } from '../../../content';
+import { AccountLinkBanner } from '../../../content';
 import {
   clearLoginForm,
   dismissLoginFormModal,
   exitAccountVerification,
   requestLoginFormModal,
 } from '../action';
-import { dismissToast, requestToast } from '../../actions/toast';
+import { requestToast } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
 import { getContainer } from '../../datastore';
 import { isInMFA } from 'common/lib/models/AccountLink';
@@ -20,7 +20,6 @@ import type { PureAction, Next, Store } from '../../store';
 import type { State as ReduxState } from '../../reducers/root';
 
 const ACTION_BLACKLIST = [];
-const REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID = 'YODLEE_ACCOUNTS_DOWNLOADING';
 
 type ProviderState = {|
   +isViewingLoginScreen: boolean,
@@ -34,7 +33,6 @@ type ProviderState = {|
 class AccountLinkFlowManager {
   static _instance: AccountLinkFlowManager | null = null;
 
-  _hasDownloadingAccounts: boolean = false;
   _next: Next | null = null;
   _providerStateMap: { [providerID: ID]: ProviderState } = {};
   _store: Store | null = null;
@@ -81,7 +79,6 @@ class AccountLinkFlowManager {
     } = postActionState.accountVerification;
 
     const providerStateMap = {};
-    let hasDownloadingAccounts = false;
 
     // Loop through providers. There could be providers that do not have
     // account links.
@@ -105,9 +102,6 @@ class AccountLinkFlowManager {
         shouldShowLoginFormModal: !isViewingLoginScreen && isInMFA(accountLink),
         status: accountLink.status,
       };
-      hasDownloadingAccounts =
-        hasDownloadingAccounts ||
-        accountLink.status === 'IN_PROGRESS / DOWNLOADING_DATA';
     });
 
     // STEP 2: PERFORM THE UPDATES GOING FROM THE PREVIOUS STATE TO THE NEXT
@@ -130,15 +124,8 @@ class AccountLinkFlowManager {
       }
     });
 
-    if (!this._hasDownloadingAccounts && hasDownloadingAccounts) {
-      this._callNext(requestAccountsDownloadingBanner());
-    } else if (this._hasDownloadingAccounts && !hasDownloadingAccounts) {
-      this._callNext(dismissAccountsDownloadingBanner());
-    }
-
     // STEP 3: UPDATE THE LOCAL STATE.
     this._providerStateMap = providerStateMap;
-    this._hasDownloadingAccounts = hasDownloadingAccounts;
   }
 
   _handleProviderStateChange(
@@ -213,22 +200,6 @@ function calculateDerivedAccountLinkStatus(
   }
 
   return providerState.status;
-}
-
-function requestAccountsDownloadingBanner() {
-  return requestToast({
-    bannerChannel: 'ACCOUNTS',
-    bannerType: 'INFO',
-    id: REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID,
-    priority: 'LOW',
-    showSpinner: true,
-    text: AccountsDownloadingBanner,
-    toastType: 'BANNER',
-  });
-}
-
-function dismissAccountsDownloadingBanner() {
-  return dismissToast(REFRESH_ACCOUNTS_DOWNLOADING_TOAST_ID);
 }
 
 function requestAccountLinkBanner(providerID: ID, status: AccountLinkStatus) {
