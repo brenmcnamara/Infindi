@@ -227,9 +227,9 @@ class LoginScreen extends Component<Props, State> {
 }
 
 const PRECISION = 15;
-const AMPLITUDE = 6;
-const NUMBER_OF_SHAKES = 2.5;
-const WIGGLE_DURATION_MILLIS = 300;
+const AMPLITUDE = 7;
+const NUMBER_OF_SHAKES = 3;
+const WIGGLE_DURATION_MILLIS = 350;
 
 function wiggleFunction(x: number): number {
   return AMPLITUDE * Math.sin(x * Math.PI * 2 * NUMBER_OF_SHAKES);
