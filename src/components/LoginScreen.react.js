@@ -36,7 +36,7 @@ export type Props = ReduxProps & {
 
 type State = {
   credentials: LoginCredentials,
-  errorViewProgress: Animated.Value,
+  isShowingLoginError: boolean,
 };
 
 class LoginScreen extends Component<Props, State> {
@@ -45,34 +45,63 @@ class LoginScreen extends Component<Props, State> {
       email: '',
       password: '',
     },
-    errorViewProgress: new Animated.Value(0),
+    isShowingLoginError: false,
   };
 
+  _errorFadeTransition = new Animated.Value(0);
+  _errorWiggleAnimation = new Animated.Value(0);
+  _isAnimating: boolean = false;
   _passwordInputRef: ElementRef<typeof TextInput>;
 
   componentDidMount(): void {
     if (this.props.loginType === 'ERROR') {
-      this.state.errorViewProgress.setValue(1);
+      this._errorFadeTransition.setValue(1);
     }
+  }
+
+  componentWillUnmount(): void {
+    this._isAnimating = false;
   }
 
   componentWillReceiveProps(nextProps: Props): void {
     if (nextProps.loginType === 'ERROR') {
-      Animated.timing(this.state.errorViewProgress, {
-        duration: 400,
-        easing: Easing.out(Easing.cubic),
-        toValue: 1,
-        useNativeDriver: true,
-      }).start();
+      this._isAnimating = true;
+      if (this.state.isShowingLoginError) {
+        this._errorWiggleAnimation.setValue(1);
+        this._isAnimating = true;
+        Animated.timing(this._errorWiggleAnimation, {
+          duration: WIGGLE_DURATION_MILLIS,
+          toValue: 0,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }).start(() => {
+          this._isAnimating = false;
+        });
+      } else {
+        Animated.timing(this._errorFadeTransition, {
+          duration: 400,
+          easing: Easing.out(Easing.cubic),
+          toValue: 1,
+          useNativeDriver: true,
+        }).start(() => {
+          if (this._isAnimating) {
+            this.setState({ isShowingLoginError: true });
+          }
+          this._isAnimating = false;
+        });
+      }
     }
   }
 
   render() {
     const animatedErrorStyles = {
-      opacity: this.state.errorViewProgress,
+      opacity: this._errorFadeTransition,
       transform: [
         {
-          translateY: this.state.errorViewProgress.interpolate({
+          translateX: this._getWiggleAnimatedValue(),
+        },
+        {
+          translateY: this._errorFadeTransition.interpolate({
             inputRange: [0, 1],
             outputRange: [20, 0],
           }),
@@ -180,6 +209,30 @@ class LoginScreen extends Component<Props, State> {
   _setPasswordRef = (ref: ElementRef<typeof TextInput>) => {
     this._passwordInputRef = ref;
   };
+
+  _getWiggleAnimatedValue() {
+    // Want the interpolation to follow a wave defined by a function.
+    const inputRange = [];
+    const outputRange = [];
+    for (let i = 0; i < PRECISION; ++i) {
+      const x = i / PRECISION;
+      inputRange.push(x);
+      outputRange.push(wiggleFunction(x));
+    }
+    return this._errorWiggleAnimation.interpolate({
+      inputRange,
+      outputRange,
+    });
+  }
+}
+
+const PRECISION = 15;
+const AMPLITUDE = 6;
+const NUMBER_OF_SHAKES = 2.5;
+const WIGGLE_DURATION_MILLIS = 300;
+
+function wiggleFunction(x: number): number {
+  return AMPLITUDE * Math.sin(x * Math.PI * 2 * NUMBER_OF_SHAKES);
 }
 
 function mapReduxStateToProps(state: StoreState) {
