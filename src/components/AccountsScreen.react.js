@@ -243,7 +243,26 @@ class AccountsScreen extends Component<Props> {
   };
 
   _onSelectAccountLink = (accountLink: AccountLink): void => {
-    this.props.dispatch(requestProviderLogin(accountLink.providerRef.refID));
+    if (this.props.isInWatchSession) {
+      this.props.dispatch(
+        requestInfoModal({
+          id: 'PREVENT_ROUTING_TO_PROVIDER_LOGIN',
+          priority: 'USER_REQUESTED',
+          render: () => (
+            <GetTheme>
+              {(theme: Theme) => (
+                <Text
+                  style={theme.getTextStyleNormal()}
+                >{`Cannot view the institution login page for someone else's account`}</Text>
+              )}
+            </GetTheme>
+          ),
+          title: 'OFF LIMITS',
+        }),
+      );
+    } else {
+      this.props.dispatch(requestProviderLogin(accountLink.providerRef.refID));
+    }
   };
 
   _getData() {
