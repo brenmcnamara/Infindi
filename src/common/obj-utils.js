@@ -120,7 +120,7 @@ export function getValues<V>(obj: Obj<*, V>): Array<V> {
   return values;
 }
 
-export function isObjectEmpty(obj: Obj<*, *>): bool {
+export function isObjectEmpty(obj: Obj<*, *>): boolean {
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
       return false;

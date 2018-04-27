@@ -1,7 +1,9 @@
 /* @flow */
 
-import AccountGroup from './AccountGroup.react';
-import AccountLinkGroup from './AccountLinkGroup.react';
+import AccountGroupHeader from './AccountGroupHeader.react';
+import AccountItem from './AccountItem.react';
+import AccountLinkGroupHeader from './AccountLinkGroupHeader.react';
+import AccountLinkItem from './AccountLinkItem.react';
 import BannerManager from './shared/BannerManager.react';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
@@ -29,8 +31,8 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { filterObject, isObjectEmpty } from '../common/obj-utils';
-import { getGroupType } from 'common/lib/models/Account';
+import { filterObject, isObjectEmpty, reduceObject } from '../common/obj-utils';
+import { getBalance, getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload } from '../auth/state-utils';
 import { getNetWorth } from '../common/state-utils';
 import { GetTheme } from '../design/components/Theme.react';
@@ -49,6 +51,7 @@ import type {
   AccountLinkContainer,
 } from '../data-model/types';
 import type { AccountLink } from 'common/lib/models/AccountLink';
+import type { ComponentType } from 'react';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
@@ -64,23 +67,10 @@ type ComputedProps = {
   netWorth: number,
 };
 
-type RowItem =
-  | {|
-      +key: string,
-      +netWorth: Dollars | null,
-      +rowType: 'NET_WORTH',
-    |}
-  | {|
-      +accounts: AccountContainer,
-      +groupType: AccountGroupType,
-      +key: string,
-      +rowType: 'ACCOUNTS',
-    |}
-  | {|
-      +accountLinks: Array<AccountLink>,
-      +key: string,
-      +rowType: 'ACCOUNT_LINKS',
-    |};
+type RowItem = {|
+  +Comp: ComponentType<any>,
+  +key: string,
+|};
 
 class AccountsScreen extends Component<Props> {
   render() {
@@ -193,39 +183,15 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderRowItem = (theme: Theme, item: RowItem) => {
-    switch (item.rowType) {
-      case 'NET_WORTH': {
-        return <NetWorth netWorth={item.netWorth} />;
-      }
-      case 'ACCOUNT_LINKS': {
-        return (
-          <AccountLinkGroup
-            accountLinks={item.accountLinks}
-            onSelectAccountLink={this._onSelectAccountLink}
-          />
-        );
-      }
-      case 'ACCOUNTS': {
-        const { accounts, groupType } = item;
-        return (
-          <AccountGroup
-            accountLinkContainer={this.props.accountLinkContainer}
-            accounts={accounts}
-            groupType={groupType}
-            onPressGroupInfo={() => this._onPressGroupInfo(theme, groupType)}
-            onSelectAccount={this._onSelectAccount}
-          />
-        );
-      }
-    }
-    invariant(false, 'Unrecognized item type: %s', item.rowType);
+    const { Comp } = item;
+    return <Comp />;
   };
 
   _onPressAddAccount = (): void => {
     this.props.dispatch(requestProviderSearch());
   };
 
-  _onPressGroupInfo = (theme: Theme, groupType: AccountGroupType): void => {
+  _onSelectGroupInfo = (theme: Theme, groupType: AccountGroupType): void => {
     const content = AccountGroupInfoContent[groupType];
     invariant(content, 'No info exists for group type: %s.', groupType);
     this.props.dispatch(
@@ -268,92 +234,123 @@ class AccountsScreen extends Component<Props> {
   _getData() {
     const accountLinks = this._getAccountLinksRequiringAttention();
     const { accounts } = this.props;
-    const availableCashGroup = filterObject(
-      accounts,
-      account => getGroupType(account) === 'AVAILABLE_CASH',
-    );
-    const shortTermDebtGroup = filterObject(
-      accounts,
-      account => getGroupType(account) === 'CREDIT_CARD_DEBT',
-    );
-    const longTermDebtGroup = filterObject(
-      accounts,
-      account => getGroupType(account) === 'DEBT',
-    );
-    const shortTermInvestmentsGroup = filterObject(
-      accounts,
-      account => getGroupType(account) === 'LIQUID_INVESTMENTS',
-    );
-    const longTermInvestmentsGroup = filterObject(
-      accounts,
-      account => getGroupType(account) === 'NON_LIQUID_INVESTMENTS',
-    );
-    const otherGroup = filterObject(
-      accounts,
-      account => getGroupType(account) === 'OTHER',
-    );
-    return [
+    const groupList = [
       {
-        key: '1',
-        netWorth: this.props.netWorth,
-        rowType: 'NET_WORTH',
+        container: filterObject(
+          accounts,
+          account => getGroupType(account) === 'AVAILABLE_CASH',
+        ),
+        type: 'AVAILABLE_CASH',
       },
-      accountLinks.length > 0
-        ? {
-            key: 'ACCOUNT_LINKS',
-            accountLinks,
-            rowType: 'ACCOUNT_LINKS',
-          }
-        : null,
-      isObjectEmpty(availableCashGroup)
-        ? null
-        : {
-            accounts: availableCashGroup,
-            groupType: 'AVAILABLE_CASH',
-            key: 'AVAILABLE_CASH',
-            rowType: 'ACCOUNTS',
-          },
-      isObjectEmpty(shortTermDebtGroup)
-        ? null
-        : {
-            accounts: shortTermDebtGroup,
-            groupType: 'CREDIT_CARD_DEBT',
-            key: 'CREDIT_CARD_DEBT',
-            rowType: 'ACCOUNTS',
-          },
-      isObjectEmpty(longTermDebtGroup)
-        ? null
-        : {
-            accounts: longTermDebtGroup,
-            groupType: 'DEBT',
-            key: 'DEBT',
-            rowType: 'ACCOUNTS',
-          },
-      isObjectEmpty(shortTermInvestmentsGroup)
-        ? null
-        : {
-            accounts: shortTermInvestmentsGroup,
-            groupType: 'LIQUID_INVESTMENTS',
-            key: 'LIQUID_INVESTMENTS',
-            rowType: 'ACCOUNTS',
-          },
-      isObjectEmpty(longTermInvestmentsGroup)
-        ? null
-        : {
-            accounts: longTermInvestmentsGroup,
-            groupType: 'NON_LIQUID_INVESTMENTS',
-            key: 'NON_LIQUID_INVESTMENTS',
-            rowType: 'ACCOUNTS',
-          },
-      isObjectEmpty(otherGroup)
-        ? null
-        : {
-            accounts: otherGroup,
-            groupType: 'OTHER',
-            key: 'OTHER',
-            rowType: 'ACCOUNTS',
-          },
-    ].filter(truthy => truthy);
+      {
+        container: filterObject(
+          accounts,
+          account => getGroupType(account) === 'CREDIT_CARD_DEBT',
+        ),
+        type: 'CREDIT_CARD_DEBT',
+      },
+      {
+        container: filterObject(
+          accounts,
+          account => getGroupType(account) === 'DEBT',
+        ),
+        type: 'DEBT',
+      },
+      {
+        container: filterObject(
+          accounts,
+          account => getGroupType(account) === 'LIQUID_INVESTMENTS',
+        ),
+        type: 'LIQUID_INVESTMENTS',
+      },
+      {
+        container: filterObject(
+          accounts,
+          account => getGroupType(account) === 'NON_LIQUID_INVESTMENTS',
+        ),
+        type: 'NON_LIQUID_INVESTMENTS',
+      },
+      {
+        container: filterObject(
+          accounts,
+          account => getGroupType(account) === 'OTHER',
+        ),
+        type: 'OTHER',
+      },
+    ];
+
+    const rows = [
+      {
+        Comp: () => <NetWorth netWorth={this.props.netWorth} />,
+        key: '1',
+      },
+    ];
+
+    if (accountLinks.length > 0) {
+      rows.push({
+        Comp: AccountLinkGroupHeader,
+        key: 'LINK_HEADER',
+      });
+      accountLinks.forEach((accountLink, index: number) => {
+        rows.push({
+          Comp: () => (
+            <AccountLinkItem
+              accountLink={accountLink}
+              isFirst={index === 0}
+              onSelectAccountLink={() => this._onSelectAccountLink(accountLink)}
+            />
+          ),
+          key: accountLink.id,
+        });
+      });
+    }
+
+    groupList.forEach(group => {
+      if (isObjectEmpty(group.container)) {
+        return;
+      }
+      const balance = getTotalBalanceForAccountContainer(group.container);
+      rows.push({
+        Comp: () => (
+          <GetTheme>
+            {(theme: Theme) => (
+              <AccountGroupHeader
+                balance={balance}
+                groupType={group.type}
+                onSelectInfo={() => this._onSelectGroupInfo(theme, group.type)}
+              />
+            )}
+          </GetTheme>
+        ),
+        key: `ACCOUNT_GROUP_HEADER / ${group.type}`,
+      });
+
+      const { accountLinkContainer } = this.props;
+      Object.values(group.container).forEach(
+        // $FlowFixMe - This is correct.
+        (account: Account, index: number) => {
+          const accountLink =
+            accountLinkContainer[account.accountLinkRef.refID] || null;
+          const isDownloading = Boolean(
+            accountLink && (isLinking(accountLink) || isInMFA(accountLink)),
+          );
+
+          rows.push({
+            Comp: () => (
+              <AccountItem
+                account={account}
+                isDownloading={isDownloading}
+                isFirst={index === 0}
+                onSelect={() => this._onSelectAccount(account)}
+              />
+            ),
+            key: `ACCOUNT / ${account.id}`,
+          });
+        },
+      );
+    });
+
+    return rows;
   }
 
   _getAccountLinksRequiringAttention(): Array<AccountLink> {
@@ -438,5 +435,13 @@ export function getFormattedGroupType(groupType: AccountGroupType): string {
       // Capitalize first letter only.
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ')
+  );
+}
+
+function getTotalBalanceForAccountContainer(group: AccountContainer): Dollars {
+  return reduceObject(
+    group,
+    (total, account) => total + getBalance(account),
+    0,
   );
 }

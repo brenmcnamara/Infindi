@@ -32,13 +32,13 @@ import type { Theme } from '../design/themes';
 export type Props = {
   account: Account,
   isDownloading: boolean,
+  isFirst: boolean,
   onSelect: () => any,
-  showTopBorder: boolean,
 };
 
 const DOWNLOADING_CONTAINER_WIDTH = DOWNLOADING_WIDTH + 8;
 
-export default class AccountComponent extends Component<Props> {
+export default class AccountItem extends Component<Props> {
   _downloadingTransition: Animated.Value;
 
   constructor(props: Props) {
@@ -60,8 +60,8 @@ export default class AccountComponent extends Component<Props> {
   }
 
   render() {
-    const { account, showTopBorder } = this.props;
-    const topBorder = !showTopBorder ? {} : { borderTopWidth: 1 };
+    const { account, isFirst } = this.props;
+    const topBorder = isFirst ? { borderTopWidth: 1 } : {};
     const downloadingStyles = [
       {
         opacity: this._downloadingTransition,
@@ -206,7 +206,11 @@ const styles = StyleSheet.create({
 
   root: {
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
     flexDirection: 'row',
+    marginHorizontal: 4,
     paddingLeft: 8,
     paddingVertical: 8,
   },
