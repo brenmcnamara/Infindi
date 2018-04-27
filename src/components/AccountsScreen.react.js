@@ -9,6 +9,7 @@ import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
 import If from './shared/If.react';
+import List from '../list-ui/List.react';
 import NetWorth from './NetWorth.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
@@ -16,20 +17,12 @@ import TextButton from './shared/TextButton.react';
 import WatchSessionStateUtils from '../watch-session/state-utils';
 
 import invariant from 'invariant';
-import nullthrows from 'nullthrows';
 
 import {
   AccountGroupInfo as AccountGroupInfoContent,
   AccountNullState as AccountNullStateContent,
 } from '../../content';
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import { filterObject, isObjectEmpty, reduceObject } from '../common/obj-utils';
 import { getBalance, getGroupType } from 'common/lib/models/Account';
@@ -51,7 +44,6 @@ import type {
   AccountLinkContainer,
 } from '../data-model/types';
 import type { AccountLink } from 'common/lib/models/AccountLink';
-import type { ComponentType } from 'react';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
@@ -66,11 +58,6 @@ type ComputedProps = {
   isInWatchSession: boolean,
   netWorth: number,
 };
-
-type RowItem = {|
-  +Comp: ComponentType<any>,
-  +key: string,
-|};
 
 class AccountsScreen extends Component<Props> {
   render() {
@@ -117,13 +104,7 @@ class AccountsScreen extends Component<Props> {
             channels={['CORE', 'ACCOUNTS']}
             managerKey="ACCOUNTS"
           />
-          <FlatList
-            automaticallyAdjustContentInsets={false}
-            data={this._getData()}
-            renderItem={({ item }) =>
-              this._renderRowItem(theme, nullthrows(item))
-            }
-          />
+          <List data={this._getData()} />
         </Content>
       </If>
     );
@@ -181,11 +162,6 @@ class AccountsScreen extends Component<Props> {
       </If>
     );
   }
-
-  _renderRowItem = (theme: Theme, item: RowItem) => {
-    const { Comp } = item;
-    return <Comp />;
-  };
 
   _onPressAddAccount = (): void => {
     this.props.dispatch(requestProviderSearch());
