@@ -282,7 +282,7 @@ class AccountsScreen extends Component<Props> {
     const rows = [
       {
         Comp: () => <NetWorth netWorth={this.props.netWorth} />,
-        key: '1',
+        key: 'NET_WORTH',
       },
     ];
 
