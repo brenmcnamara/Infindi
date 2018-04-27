@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: 'row',
     marginBottom: 4,
-    marginTop: 16,
+    marginTop: 12,
     paddingBottom: 4,
     paddingHorizontal: 8,
   },

@@ -104,7 +104,7 @@ class AccountsScreen extends Component<Props> {
             channels={['CORE', 'ACCOUNTS']}
             managerKey="ACCOUNTS"
           />
-          <List data={this._getData()} />
+          <List data={this._getData()} initialNumToRender={20} />
         </Content>
       </If>
     );
@@ -302,28 +302,30 @@ class AccountsScreen extends Component<Props> {
       });
 
       const { accountLinkContainer } = this.props;
-      Object.values(group.container).forEach(
-        // $FlowFixMe - This is correct.
-        (account: Account, index: number) => {
-          const accountLink =
-            accountLinkContainer[account.accountLinkRef.refID] || null;
-          const isDownloading = Boolean(
-            accountLink && (isLinking(accountLink) || isInMFA(accountLink)),
-          );
 
-          rows.push({
-            Comp: () => (
-              <AccountItem
-                account={account}
-                isDownloading={isDownloading}
-                isFirst={index === 0}
-                onSelect={() => this._onSelectAccount(account)}
-              />
-            ),
-            key: `ACCOUNT / ${account.id}`,
-          });
-        },
-      );
+      // $FlowFixMe - This is correct.
+      const accounts: Array<Account> = Object.values(group.container);
+
+      accounts.forEach((account: Account, index: number) => {
+        const accountLink =
+          accountLinkContainer[account.accountLinkRef.refID] || null;
+        const isDownloading = Boolean(
+          accountLink && (isLinking(accountLink) || isInMFA(accountLink)),
+        );
+
+        rows.push({
+          Comp: () => (
+            <AccountItem
+              account={account}
+              isDownloading={isDownloading}
+              isFirst={index === 0}
+              isLast={index === accounts.length - 1}
+              onSelect={() => this._onSelectAccount(account)}
+            />
+          ),
+          key: `ACCOUNT / ${account.id}`,
+        });
+      });
     });
 
     return rows;

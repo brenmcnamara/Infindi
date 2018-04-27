@@ -33,6 +33,7 @@ export type Props = {
   account: Account,
   isDownloading: boolean,
   isFirst: boolean,
+  isLast: boolean,
   onSelect: () => any,
 };
 
@@ -60,8 +61,10 @@ export default class AccountItem extends Component<Props> {
   }
 
   render() {
-    const { account, isFirst } = this.props;
+    const { account, isFirst, isLast } = this.props;
     const topBorder = isFirst ? { borderTopWidth: 1 } : {};
+    const bottomPadding = isLast ? {marginBottom: 4} : {};
+
     const downloadingStyles = [
       {
         opacity: this._downloadingTransition,
@@ -81,6 +84,7 @@ export default class AccountItem extends Component<Props> {
               style={[
                 styles.root,
                 topBorder,
+                bottomPadding,
                 {
                   backgroundColor: theme.color.backgroundListItem,
                   borderColor: theme.color.borderNormal,

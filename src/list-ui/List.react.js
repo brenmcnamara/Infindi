@@ -14,6 +14,7 @@ export type ListItemData = {
 };
 
 export type Props = {
+  initialNumToRender: number,
   data: Array<ListItemData>,
 };
 
@@ -29,6 +30,7 @@ export default class List extends Component<Props> {
       <FlatList
         automaticallyAdjustContentInsets={false}
         data={this.props.data}
+        initialNumToRender={20}
         renderItem={this._renderRowItem}
       />
     );
