@@ -23,6 +23,8 @@ export type Props = {
   onSelectAccountLink: () => any,
 };
 
+export const HEIGHT = 65;
+
 export default class AccountLinkItem extends Component<Props> {
   render() {
     const { accountLink, isFirst } = this.props;
@@ -41,7 +43,10 @@ export default class AccountLinkItem extends Component<Props> {
               },
             ]}
           >
-            <TouchableOpacity onPress={this.props.onSelectAccountLink}>
+            <TouchableOpacity
+              onPress={this.props.onSelectAccountLink}
+              style={{ flex: 1 }}
+            >
               <View style={styles.content}>
                 <View style={styles.contentLeft}>
                   <Text style={theme.getTextStyleNormalWithEmphasis()}>
@@ -89,17 +94,13 @@ export default class AccountLinkItem extends Component<Props> {
         break;
     }
     return (
-      <Text style={[styles.notice, theme.getTextStyleSmall()]}>
-        {message}
-      </Text>
+      <Text style={[styles.notice, theme.getTextStyleSmall()]}>{message}</Text>
     );
   }
 
   _renderAccountLinkStatusIndicator(theme: Theme, accountLink: AccountLink) {
     if (isLinkFailure(accountLink)) {
-      return (
-        <Image source={Icons.Error} style={styles.statusIndicator} />
-      );
+      return <Image source={Icons.Error} style={styles.statusIndicator} />;
     }
     return <ActivityIndicator size="small" />;
   }
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,
+    height: 65,
     marginHorizontal: 4,
   },
 

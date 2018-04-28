@@ -17,6 +17,8 @@ export type Props = {
   onSelectInfo: () => any,
 };
 
+export const HEIGHT = 30;
+
 export default class AccountGroupHeader extends Component<Props> {
   render() {
     return (
@@ -64,6 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     flexDirection: 'row',
+    height: HEIGHT,
     marginBottom: 4,
     marginTop: 12,
     paddingBottom: 4,

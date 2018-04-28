@@ -1,7 +1,7 @@
 /* @flow */
 
+import ListAnimationManager from './ListAnimationManager';
 import ListItem from './ListItem.react';
-import ListItemAnimationManager from './ListItemAnimationManager';
 import React, { Component } from 'react';
 
 import { FlatList } from 'react-native';
@@ -10,6 +10,7 @@ import type { ComponentType } from 'react';
 
 export type ListItemData = {
   Comp: ComponentType<*>,
+  height: number,
   key: string,
 };
 
@@ -19,7 +20,7 @@ export type Props = {
 };
 
 export default class List extends Component<Props> {
-  _animationManager = new ListItemAnimationManager();
+  _animationManager = new ListAnimationManager();
 
   componentDidMount(): void {
     this._animationManager.listDidMount();
@@ -30,7 +31,7 @@ export default class List extends Component<Props> {
       <FlatList
         automaticallyAdjustContentInsets={false}
         data={this.props.data}
-        initialNumToRender={20}
+        initialNumToRender={this.props.initialNumToRender}
         removeClippedSubviews={false}
         renderItem={this._renderRowItem}
       />
@@ -38,9 +39,13 @@ export default class List extends Component<Props> {
   }
 
   _renderRowItem = ({ index, item }) => {
-    const { Comp } = item;
+    const { Comp, height } = item;
     return (
-      <ListItem animationManager={this._animationManager} index={index}>
+      <ListItem
+        animationManager={this._animationManager}
+        height={height}
+        index={index}
+      >
         <Comp />
       </ListItem>
     );

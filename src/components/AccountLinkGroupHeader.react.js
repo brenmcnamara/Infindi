@@ -9,6 +9,8 @@ import type { Theme } from '../design/themes';
 
 export type Props = {};
 
+export const HEIGHT = 30;
+
 export default class AccountLinkGroupHeader extends Component<Props> {
   render() {
     return (
@@ -30,6 +32,7 @@ export default class AccountLinkGroupHeader extends Component<Props> {
 const styles = StyleSheet.create({
   root: {
     borderBottomWidth: 1,
+    height: HEIGHT,
     marginBottom: 4,
     marginTop: 16,
     paddingBottom: 4,

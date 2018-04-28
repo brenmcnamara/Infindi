@@ -1,16 +1,22 @@
 /* @flow */
 
-import AccountGroupHeader from './AccountGroupHeader.react';
-import AccountItem from './AccountItem.react';
-import AccountLinkGroupHeader from './AccountLinkGroupHeader.react';
-import AccountLinkItem from './AccountLinkItem.react';
+import AccountGroupHeader, {
+  HEIGHT as AccountGroupHeaderHeight,
+} from './AccountGroupHeader.react';
+import AccountItem, { HEIGHT as AccountItemHeight } from './AccountItem.react';
+import AccountLinkGroupHeader, {
+  HEIGHT as AccountLinkGroupHeaderHeight,
+} from './AccountLinkGroupHeader.react';
+import AccountLinkItem, {
+  HEIGHT as AccountLinkItemHeight,
+} from './AccountLinkItem.react';
 import BannerManager from './shared/BannerManager.react';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
 import If from './shared/If.react';
 import List from '../list-ui/List.react';
-import NetWorth from './NetWorth.react';
+import NetWorth, { HEIGHT as NetWorthHeight } from './NetWorth.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from './shared/TextButton.react';
@@ -258,6 +264,7 @@ class AccountsScreen extends Component<Props> {
     const rows = [
       {
         Comp: () => <NetWorth netWorth={this.props.netWorth} />,
+        height: NetWorthHeight,
         key: 'NET_WORTH',
       },
     ];
@@ -265,6 +272,7 @@ class AccountsScreen extends Component<Props> {
     if (accountLinks.length > 0) {
       rows.push({
         Comp: AccountLinkGroupHeader,
+        height: AccountLinkGroupHeaderHeight,
         key: 'LINK_HEADER',
       });
       accountLinks.forEach((accountLink, index: number) => {
@@ -276,6 +284,7 @@ class AccountsScreen extends Component<Props> {
               onSelectAccountLink={() => this._onSelectAccountLink(accountLink)}
             />
           ),
+          height: AccountLinkItemHeight,
           key: accountLink.id,
         });
       });
@@ -298,6 +307,7 @@ class AccountsScreen extends Component<Props> {
             )}
           </GetTheme>
         ),
+        height: AccountGroupHeaderHeight,
         key: `ACCOUNT_GROUP_HEADER / ${group.type}`,
       });
 
@@ -323,6 +333,7 @@ class AccountsScreen extends Component<Props> {
               onSelect={() => this._onSelectAccount(account)}
             />
           ),
+          height: AccountItemHeight,
           key: `ACCOUNT / ${account.id}`,
         });
       });

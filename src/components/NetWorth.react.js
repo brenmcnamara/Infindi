@@ -13,6 +13,8 @@ export type Props = {
   netWorth: Dollars | null,
 };
 
+export const HEIGHT = 80;
+
 export default class NetWorth extends Component<Props> {
   render() {
     return (
@@ -56,6 +58,7 @@ const styles = StyleSheet.create({
 
   root: {
     alignItems: 'center',
+    height: HEIGHT,
     paddingTop: 16,
   },
 });

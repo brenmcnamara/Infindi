@@ -6,13 +6,14 @@ import invariant from 'invariant';
 
 import { Animated } from 'react-native';
 
-import type ListItemAnimationManager from './ListItemAnimationManager';
+import type ListAnimationManager from './ListAnimationManager';
 
 import type { ID } from 'common/types/core';
 
 export type Props = {
-  animationManager: ListItemAnimationManager,
+  animationManager: ListAnimationManager,
   children?: ?any,
+  height: number,
   index: number,
 };
 
@@ -20,7 +21,12 @@ export default class ListItem extends Component<Props> {
   _id: ID;
 
   componentWillMount(): void {
-    this._id = this.props.animationManager.register(this, this.props.index);
+    const { animationManager, height, index } = this.props;
+    this._id = animationManager.register(this, index, height);
+  }
+
+  componentDidMount(): void {
+    this.props.animationManager.itemDidMount(this._id);
   }
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -49,9 +55,16 @@ export default class ListItem extends Component<Props> {
       ],
     };
 
+    const transitionValue = animationManager.getTransitionValue(this._id);
+    const transitionStyles = {
+      opacity: transitionValue,
+    };
+
     return (
       <Animated.View style={mountingStyles}>
-        {this.props.children}
+        <Animated.View style={transitionStyles}>
+          {this.props.children}
+        </Animated.View>
       </Animated.View>
     );
   }

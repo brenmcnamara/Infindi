@@ -39,6 +39,8 @@ export type Props = {
 
 const DOWNLOADING_CONTAINER_WIDTH = DOWNLOADING_WIDTH + 8;
 
+export const HEIGHT = 65;
+
 export default class AccountItem extends Component<Props> {
   _downloadingTransition: Animated.Value;
 
@@ -214,6 +216,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     borderRightWidth: 1,
     flexDirection: 'row',
+    height: HEIGHT,
     marginHorizontal: 4,
     paddingLeft: 8,
     paddingVertical: 8,
