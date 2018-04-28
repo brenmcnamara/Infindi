@@ -133,6 +133,8 @@ export default class AccountItem extends Component<Props> {
     if (!isCreditCardAccount(account)) {
       return (
         <Text
+          ellipsizeMode="tail"
+          numberOfLines={1}
           style={[
             styles.accountName,
             { color: theme.color.moneyTextPositive },
@@ -194,6 +196,7 @@ const styles = StyleSheet.create({
 
   accountName: {
     flex: 1,
+    paddingRight: 8,
     textAlign: 'left',
   },
 
