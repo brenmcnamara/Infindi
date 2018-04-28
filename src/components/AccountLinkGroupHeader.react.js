@@ -9,7 +9,7 @@ import type { Theme } from '../design/themes';
 
 export type Props = {};
 
-export const HEIGHT = 40;
+export const HEIGHT = 50;
 
 export default class AccountLinkGroupHeader extends Component<Props> {
   render() {

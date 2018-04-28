@@ -17,7 +17,7 @@ export type Props = {
   onSelectInfo: () => any,
 };
 
-export const HEIGHT = 44;
+export const HEIGHT = 50;
 
 export default class AccountGroupHeader extends Component<Props> {
   render() {
