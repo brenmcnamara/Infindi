@@ -31,6 +31,7 @@ export default class List extends Component<Props> {
         automaticallyAdjustContentInsets={false}
         data={this.props.data}
         initialNumToRender={20}
+        removeClippedSubviews={false}
         renderItem={this._renderRowItem}
       />
     );
