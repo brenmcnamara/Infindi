@@ -69,7 +69,6 @@ export default class ListAnimationManager {
       duration: this._options.transitionDurationPerItemMillis,
       easing: Easing.out(Easing.cubic),
       toValue: 1,
-      useNativeDriver: true,
     }).start();
   }
 

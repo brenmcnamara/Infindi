@@ -9,19 +9,26 @@ import type { Theme } from '../design/themes';
 
 export type Props = {};
 
-export const HEIGHT = 30;
+export const HEIGHT = 40;
 
 export default class AccountLinkGroupHeader extends Component<Props> {
   render() {
     return (
       <GetTheme>
         {(theme: Theme) => (
-          <View
-            style={[styles.root, { borderColor: theme.color.borderNormal }]}
-          >
-            <Text style={[styles.text, theme.getTextStyleNormalWithEmphasis()]}>
-              ACCOUNT LINKS
-            </Text>
+          <View style={styles.root}>
+            <View
+              style={[
+                styles.content,
+                { borderColor: theme.color.borderNormal },
+              ]}
+            >
+              <Text
+                style={[styles.text, theme.getTextStyleNormalWithEmphasis()]}
+              >
+                ACCOUNT LINKS
+              </Text>
+            </View>
           </View>
         )}
       </GetTheme>
@@ -30,13 +37,16 @@ export default class AccountLinkGroupHeader extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
-  root: {
+  content: {
     borderBottomWidth: 1,
-    height: HEIGHT,
     marginBottom: 4,
-    marginTop: 16,
     paddingBottom: 4,
     paddingHorizontal: 8,
+  },
+
+  root: {
+    height: HEIGHT,
+    justifyContent: 'flex-end',
   },
 
   text: {},

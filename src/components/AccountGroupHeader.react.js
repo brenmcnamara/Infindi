@@ -17,30 +17,38 @@ export type Props = {
   onSelectInfo: () => any,
 };
 
-export const HEIGHT = 30;
+export const HEIGHT = 44;
 
 export default class AccountGroupHeader extends Component<Props> {
   render() {
     return (
       <GetTheme>
         {(theme: Theme) => (
-          <View
-            style={[styles.root, { borderColor: theme.color.borderNormal }]}
-          >
-            <Text
-              style={[theme.getTextStyleNormalWithEmphasis(), styles.groupType]}
-            >
-              {this._getFormattedGroupType()}
-            </Text>
-            <InfoButton onPress={this.props.onSelectInfo} />
-            <MoneyText
-              dollars={this.props.balance}
-              textStyle={[
-                theme.getTextStyleNormalWithEmphasis(),
-                styles.groupBalance,
-                { color: theme.color.moneyTextPositive },
+          <View style={styles.root}>
+            <View
+              style={[
+                styles.content,
+                { borderColor: theme.color.borderNormal },
               ]}
-            />
+            >
+              <Text
+                style={[
+                  theme.getTextStyleNormalWithEmphasis(),
+                  styles.groupType,
+                ]}
+              >
+                {this._getFormattedGroupType()}
+              </Text>
+              <InfoButton onPress={this.props.onSelectInfo} />
+              <MoneyText
+                dollars={this.props.balance}
+                textStyle={[
+                  theme.getTextStyleNormalWithEmphasis(),
+                  styles.groupBalance,
+                  { color: theme.color.moneyTextPositive },
+                ]}
+              />
+            </View>
           </View>
         )}
       </GetTheme>
@@ -53,6 +61,15 @@ export default class AccountGroupHeader extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
+  content: {
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    marginBottom: 4,
+    paddingBottom: 4,
+    paddingHorizontal: 8,
+  },
+
   groupBalance: {
     flex: 1,
     textAlign: 'right',
@@ -63,13 +80,7 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    flexDirection: 'row',
     height: HEIGHT,
-    marginBottom: 4,
-    marginTop: 12,
-    paddingBottom: 4,
-    paddingHorizontal: 8,
+    justifyContent: 'flex-end',
   },
 });

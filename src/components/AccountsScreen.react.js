@@ -110,7 +110,11 @@ class AccountsScreen extends Component<Props> {
             channels={['CORE', 'ACCOUNTS']}
             managerKey="ACCOUNTS"
           />
-          <List data={this._getData()} initialNumToRender={20} />
+          <List
+            contentInset={{ bottom: 4, left: 0, right: 0, top: 0 }}
+            data={this._getData()}
+            initialNumToRender={20}
+          />
         </Content>
       </If>
     );

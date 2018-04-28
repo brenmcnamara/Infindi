@@ -63,9 +63,8 @@ export default class AccountItem extends Component<Props> {
   }
 
   render() {
-    const { account, isFirst, isLast } = this.props;
+    const { account, isFirst } = this.props;
     const topBorder = isFirst ? { borderTopWidth: 1 } : {};
-    const bottomPadding = isLast ? {marginBottom: 4} : {};
 
     const downloadingStyles = [
       {
@@ -86,7 +85,6 @@ export default class AccountItem extends Component<Props> {
               style={[
                 styles.root,
                 topBorder,
-                bottomPadding,
                 {
                   backgroundColor: theme.color.backgroundListItem,
                   borderColor: theme.color.borderNormal,

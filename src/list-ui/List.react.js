@@ -8,6 +8,13 @@ import { FlatList } from 'react-native';
 
 import type { ComponentType } from 'react';
 
+export type Inset = {
+  bottom: number,
+  left: number,
+  right: number,
+  top: number,
+};
+
 export type ListItemData = {
   Comp: ComponentType<*>,
   height: number,
@@ -15,6 +22,7 @@ export type ListItemData = {
 };
 
 export type Props = {
+  contentInset: Inset,
   initialNumToRender: number,
   data: Array<ListItemData>,
 };
@@ -30,6 +38,7 @@ export default class List extends Component<Props> {
     return (
       <FlatList
         automaticallyAdjustContentInsets={false}
+        contentInset={this.props.contentInset}
         data={this.props.data}
         initialNumToRender={this.props.initialNumToRender}
         removeClippedSubviews={false}

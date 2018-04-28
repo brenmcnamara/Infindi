@@ -57,6 +57,10 @@ export default class ListItem extends Component<Props> {
 
     const transitionValue = animationManager.getTransitionValue(this._id);
     const transitionStyles = {
+      height: transitionValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, this.props.height],
+      }),
       opacity: transitionValue,
     };
 
