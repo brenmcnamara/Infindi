@@ -30,6 +30,7 @@ import {
 } from '../../content';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
+import { EMPTY_OBJ } from '../constants';
 import { filterObject, isObjectEmpty, reduceObject } from '../common/obj-utils';
 import { getBalance, getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload } from '../auth/state-utils';
@@ -373,8 +374,8 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   );
   return {
     accountLinkContainer:
-      accountLinks.type === 'STEADY' ? accountLinks.container : {},
-    accounts: accounts.type === 'STEADY' ? accounts.container : {},
+      accountLinks.type === 'STEADY' ? accountLinks.container : EMPTY_OBJ,
+    accounts: accounts.type === 'STEADY' ? accounts.container : EMPTY_OBJ,
     isDownloading: accounts.type === 'DOWNLOADING',
     isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(state),
     netWorth: getNetWorth(state),

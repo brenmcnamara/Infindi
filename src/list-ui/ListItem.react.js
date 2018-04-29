@@ -2,73 +2,94 @@
 
 import React, { Component } from 'react';
 
-import invariant from 'invariant';
-
-import { Animated } from 'react-native';
-
-import type ListAnimationManager from './ListAnimationManager';
-
-import type { ID } from 'common/types/core';
+import { Animated, Easing } from 'react-native';
 
 export type Props = {
-  animationManager: ListAnimationManager,
   children?: ?any,
   height: number,
   index: number,
+  initializeStart: number,
+  initializeTransition: Animated.Value,
+  isListInitializing: boolean,
+  onAddTransitionComplete: () => void,
+  onRemoveTransitionComplete: () => void,
 };
 
+const TRANSITION_INSERT_OR_REMOVE_DURATION_MS = 500;
+const TRANSITION_INSERT_OR_REMOVE_EASING = Easing.out(Easing.cubic);
+
 export default class ListItem extends Component<Props> {
-  _id: ID;
+  _addOrRemoveTransition = new Animated.Value(0);
 
   componentWillMount(): void {
-    const { animationManager, height, index } = this.props;
-    this._id = animationManager.register(this, index, height);
+    if (this.props.isListInitializing) {
+      this._addOrRemoveTransition.setValue(1);
+    }
   }
 
   componentDidMount(): void {
-    this.props.animationManager.itemDidMount(this._id);
+    if (!this.props.isListInitializing) {
+      // TODO: Not sure why I need to defer the animation with this timeout,
+      // but I should probably submit an issue to react native.
+      setTimeout(() => {
+        Animated.timing(this._addOrRemoveTransition, {
+          duration: TRANSITION_INSERT_OR_REMOVE_DURATION_MS,
+          easing: TRANSITION_INSERT_OR_REMOVE_EASING,
+          toValue: 1,
+        }).start(this.props.onAddTransitionComplete);
+      }, 0);
+    }
   }
 
   componentWillReceiveProps(nextProps: Props): void {
-    invariant(
-      this.props.animationManager === nextProps.animationManager,
-      'Cannot change the animation manager of a list item',
-    );
+    if (React.Children.count(nextProps.children) === 0) {
+      Animated.timing(this._addOrRemoveTransition, {
+        duration: TRANSITION_INSERT_OR_REMOVE_DURATION_MS,
+        easing: TRANSITION_INSERT_OR_REMOVE_EASING,
+        toValue: 0,
+      }).start(nextProps.onRemoveTransitionComplete);
+    }
   }
 
   render() {
-    const { animationManager } = this.props;
-    const mountingValue = animationManager.getMountingAnimatedValue();
-    const delayRatio = animationManager.getMountingDelayRatio(this._id);
-    const mountingStyles = {
-      opacity: mountingValue.interpolate({
-        inputRange: [0, delayRatio, 1],
+    const { initializeStart, initializeTransition } = this.props;
+    const outerStyles = {
+      opacity: initializeTransition.interpolate({
+        inputRange: [0, initializeStart, 1],
         outputRange: [0, 0, 1],
       }),
       transform: [
         {
-          translateY: mountingValue.interpolate({
-            inputRange: [0, delayRatio, 1],
-            outputRange: [20, 20, 0],
+          translateY: initializeTransition.interpolate({
+            inputRange: [0, initializeStart, 1],
+            outputRange: [-20, -20, 0],
           }),
         },
       ],
     };
 
-    const transitionValue = animationManager.getTransitionValue(this._id);
-    const transitionStyles = {
-      height: transitionValue.interpolate({
+    const innerStyles = {
+      height: this._addOrRemoveTransition.interpolate({
         inputRange: [0, 1],
         outputRange: [0, this.props.height],
       }),
-      opacity: transitionValue,
+      opacity: this._addOrRemoveTransition.interpolate({
+        inputRange: [0, 0.3, 1],
+        outputRange: [0, 0, 1],
+      }),
+      transform: [
+        {
+          translateX: this._addOrRemoveTransition.interpolate({
+            inputRange: [0, 1],
+            outputRange: [-40, 0],
+          }),
+        },
+      ],
     };
 
     return (
-      <Animated.View style={mountingStyles}>
-        <Animated.View style={transitionStyles}>
-          {this.props.children}
-        </Animated.View>
+      <Animated.View style={outerStyles}>
+        <Animated.View style={innerStyles}>{this.props.children}</Animated.View>
       </Animated.View>
     );
   }

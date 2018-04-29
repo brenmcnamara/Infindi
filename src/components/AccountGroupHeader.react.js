@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
 
   root: {
-    height: HEIGHT,
+    flex: 1,
     justifyContent: 'flex-end',
   },
 });

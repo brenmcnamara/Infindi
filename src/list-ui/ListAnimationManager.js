@@ -64,12 +64,14 @@ export default class ListAnimationManager {
     if (!this._isListMounted) {
       return;
     }
-    const {transitionValue} = this._getPayload(id);
-    Animated.timing(transitionValue, {
-      duration: this._options.transitionDurationPerItemMillis,
-      easing: Easing.out(Easing.cubic),
-      toValue: 1,
-    }).start();
+    const { transitionValue } = this._getPayload(id);
+    setTimeout(() => {
+      Animated.timing(transitionValue, {
+        duration: this._options.transitionDurationPerItemMillis,
+        easing: Easing.out(Easing.cubic),
+        toValue: 1,
+      }).start();
+    }, 0);
   }
 
   listDidMount(): void {
@@ -91,6 +93,10 @@ export default class ListAnimationManager {
 
   getTransitionValue(id: ID): Animated.Value {
     return this._getPayload(id).transitionValue;
+  }
+
+  getIsListMounted(): boolean {
+    return this._isListMounted;
   }
 
   getMountingDelayRatio(id: ID): number {

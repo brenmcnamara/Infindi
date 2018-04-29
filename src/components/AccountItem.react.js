@@ -80,7 +80,7 @@ export default class AccountItem extends Component<Props> {
     return (
       <GetTheme>
         {theme => (
-          <TouchableOpacity onPress={this.props.onSelect}>
+          <TouchableOpacity onPress={this.props.onSelect} style={{ flex: 1 }}>
             <View
               style={[
                 styles.root,
@@ -216,8 +216,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,
+    flex: 1,
     flexDirection: 'row',
-    height: HEIGHT,
     marginHorizontal: 4,
     paddingLeft: 8,
     paddingVertical: 8,
