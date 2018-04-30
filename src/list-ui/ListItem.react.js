@@ -55,13 +55,13 @@ export default class ListItem extends Component<Props> {
     const { initializeStart, initializeTransition } = this.props;
     const outerStyles = {
       opacity: initializeTransition.interpolate({
-        inputRange: [0, initializeStart, 1],
+        inputRange: [0, Math.min(1, initializeStart), 1],
         outputRange: [0, 0, 1],
       }),
       transform: [
         {
           translateY: initializeTransition.interpolate({
-            inputRange: [0, initializeStart, 1],
+            inputRange: [0, Math.min(1, initializeStart), 1],
             outputRange: [-20, -20, 0],
           }),
         },
