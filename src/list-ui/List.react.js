@@ -26,6 +26,7 @@ export type Props = {
   contentInset: Inset,
   initialNumToRender: number,
   data: Array<ListItemData>,
+  keyboardShouldPersistTaps?: 'always',
 };
 
 export type ListItemChange =
@@ -48,7 +49,7 @@ const ITEM_CHANGE_REMOVE = { type: 'REMOVE' };
 const ITEM_CHANGE_NONE = { type: 'NONE' };
 
 const TRANSITION_INITIALIZE_DURATION_PER_ITEM_MS = 200;
-const TRANSITION_INITIALIZE_DELAY_PER_ITEM_MS = 40;
+const TRANSITION_INITIALIZE_DELAY_PER_ITEM_MS = 30;
 const TRANSITION_INITIALIZE_EASING = Easing.out(Easing.poly(5));
 
 type State = {
@@ -95,6 +96,7 @@ export default class List extends Component<Props, State> {
         contentInset={this.props.contentInset}
         data={this.state.itemOrdering}
         initialNumToRender={this.props.initialNumToRender}
+        keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
         keyExtractor={this._keyExtractor}
         removeClippedSubviews={false}
         renderItem={this._renderRowItem}

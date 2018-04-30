@@ -5,6 +5,7 @@ import DataModelStateUtils from '../../data-model/state-utils';
 import Downloading from '../../components/shared/Downloading.react';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
+import List from '../../list-ui/List.react';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
 
@@ -12,7 +13,6 @@ import invariant from 'invariant';
 
 import {
   ActivityIndicator,
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -51,6 +51,9 @@ type ComputedProps = {
 };
 
 type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
+
+const LIST_CONTENT_INSET = { bottom: 4, left: 0, right: 0, top: 0 };
+const PROVIDER_ITEM_HEIGHT = 65;
 
 class ProviderSearchScreen extends Component<Props> {
   render() {
@@ -121,12 +124,12 @@ class ProviderSearchScreen extends Component<Props> {
 
   _renderSearchResults() {
     return (
-      <View style={styles.searchResults}>
-        <FlatList
-          data={this.props.providers}
-          keyExtractor={provider => provider.id}
+      <View style={styles.providerListContainer}>
+        <List
+          contentInset={LIST_CONTENT_INSET}
+          data={this._getData()}
           keyboardShouldPersistTaps="always"
-          renderItem={this._renderProvider}
+          initialNumToRender={20}
         />
       </View>
     );
@@ -151,14 +154,13 @@ class ProviderSearchScreen extends Component<Props> {
     );
   }
 
-  _renderProvider = ({ item }: { item: Provider }) => {
-    const isFirst = this.props.providers[0] === item;
+  _renderProvider = (provider: Provider) => {
     invariant(
-      item.sourceOfTruth.type === 'YODLEE',
+      provider.sourceOfTruth.type === 'YODLEE',
       'Expecting provider to come from YODLEE',
     );
-    const yodleeProvider = item.sourceOfTruth.value;
-    const accountLink = this._getAccountLinkForProvider(item);
+    const yodleeProvider = provider.sourceOfTruth.value;
+    const accountLink = this._getAccountLinkForProvider(provider);
     const providerName = yodleeProvider.name;
     const baseURL = yodleeProvider.baseUrl;
     return (
@@ -166,31 +168,30 @@ class ProviderSearchScreen extends Component<Props> {
         {theme => (
           <TouchableOpacity
             onPress={() =>
-              this.props.enableInteraction && this._onSelectProvider(item)
+              this.props.enableInteraction && this._onSelectProvider(provider)
             }
+            style={{ flex: 1 }}
           >
-            <View
-              style={[
-                styles.searchResultsItem,
-                {
-                  backgroundColor: theme.color.backgroundListItem,
-                  borderColor: theme.color.borderNormal,
-                },
-                isFirst ? { marginTop: 4 } : null,
-              ]}
-            >
-              <View style={styles.searchResultsItemContent}>
-                <Text
-                  style={[
-                    theme.getTextStyleHeader3(),
-                    styles.searchResultsItemName,
-                  ]}
-                >
-                  {providerName}
-                </Text>
-                <Text style={theme.getTextStyleSmall()}>{baseURL}</Text>
+            <View style={styles.providerRoot}>
+              <View
+                style={[
+                  styles.providerContent,
+                  {
+                    backgroundColor: theme.color.backgroundListItem,
+                    borderColor: theme.color.borderNormal,
+                  },
+                ]}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={[theme.getTextStyleHeader3(), styles.providerName]}
+                  >
+                    {providerName}
+                  </Text>
+                  <Text style={theme.getTextStyleSmall()}>{baseURL}</Text>
+                </View>
+                {accountLink && isLinking(accountLink) ? <Downloading /> : null}
               </View>
-              {accountLink && isLinking(accountLink) ? <Downloading /> : null}
             </View>
           </TouchableOpacity>
         )}
@@ -230,6 +231,14 @@ class ProviderSearchScreen extends Component<Props> {
       type: 'CENTER',
     };
   }
+
+  _getData() {
+    return this.props.providers.map((provider, index) => ({
+      Comp: () => this._renderProvider(provider),
+      height: PROVIDER_ITEM_HEIGHT,
+      key: provider.id,
+    }));
+  }
 }
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
@@ -250,6 +259,28 @@ const styles = StyleSheet.create({
   loadingResults: {
     alignItems: 'center',
     marginTop: 24,
+  },
+
+  providerContent: {
+    alignItems: 'center',
+    borderWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 4,
+    padding: 8,
+  },
+
+  providerListContainer: {
+    flex: 1,
+  },
+
+  providerName: {
+    marginBottom: 2,
+  },
+
+  providerRoot: {
+    flex: 1,
+    marginHorizontal: 4,
   },
 
   searchErrorContainer: {
@@ -281,26 +312,5 @@ const styles = StyleSheet.create({
 
   searchHeaderTextInput: {
     marginLeft: 16,
-  },
-
-  searchResults: {
-    flex: 1,
-  },
-
-  searchResultsItem: {
-    alignItems: 'center',
-    borderWidth: 1,
-    flexDirection: 'row',
-    marginBottom: 4,
-    marginHorizontal: 4,
-    padding: 8,
-  },
-
-  searchResultsItemContent: {
-    flex: 1,
-  },
-
-  searchResultsItemName: {
-    marginBottom: 2,
   },
 });
