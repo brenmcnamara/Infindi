@@ -1,8 +1,8 @@
 /* @flow */
 
-import invariant from 'invariant';
+import Backend from '../../backend';
 
-import { genQueryProviders } from '../../backend';
+import invariant from 'invariant';
 
 import type { Provider } from 'common/lib/models/Provider';
 
@@ -77,7 +77,7 @@ export default class ProviderSearchManager {
     return Promise.resolve()
       .then(() => {
         this._currentSearch = search;
-        return genQueryProviders(search, LIMIT, this._nextPage);
+        return Backend.genQueryProviders(search, LIMIT, this._nextPage);
       })
       .then(payload => {
         this._lastSuccessfulSearch = search;

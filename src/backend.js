@@ -36,7 +36,7 @@ export type QueryProvidersPayload = {|
   +data: Array<Provider>,
 |};
 
-export async function genQueryProviders(
+async function genQueryProviders(
   query: string,
   limit: number,
   page: number,
@@ -56,7 +56,7 @@ export async function genQueryProviders(
 
 export type YodleeProviderSubmitLoginFormPayload = Pointer<'AccountLink'>;
 
-export async function genYodleeSubmitProviderLoginForm(
+async function genYodleeSubmitProviderLoginForm(
   providerID: ID,
   loginForm: YodleeLoginForm,
 ): Promise<YodleeProviderSubmitLoginFormPayload> {
@@ -136,3 +136,8 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
 function createURI(path: string): string {
   return `${Environment.getHostname()}${path}`;
 }
+
+export default {
+  genQueryProviders,
+  genYodleeSubmitProviderLoginForm,
+};

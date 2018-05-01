@@ -1,8 +1,8 @@
 /* @flow */
 
-import uuid from 'uuid/v4';
+import Backend from '../../backend';
 
-import { genQueryProviders } from '../../backend';
+import uuid from 'uuid/v4';
 
 import type { Provider } from 'common/lib/models/Provider';
 import type { PureAction, Next, Store } from '../../store';
@@ -38,7 +38,7 @@ async function runSearch(searchText: string, next: Next): Promise<void> {
   });
   let providers: Array<Provider>;
   try {
-    const response = await genQueryProviders(searchText, 100, 0);
+    const response = await Backend.genQueryProviders(searchText, 100, 0);
     providers = response.data;
   } catch (error) {
     next({

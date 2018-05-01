@@ -1,8 +1,8 @@
 /* @flow */
 
-import invariant from 'invariant';
+import Backend from '../../backend';
 
-import { genYodleeSubmitProviderLoginForm } from '../../backend';
+import invariant from 'invariant';
 
 import type { PureAction, Next, Store } from '../../store';
 
@@ -20,7 +20,7 @@ export default (store: Store) => (next: Next) => {
           'Expecting login form to exist for provider id: %s',
           providerID,
         );
-        genYodleeSubmitProviderLoginForm(providerID, loginForm)
+        Backend.genYodleeSubmitProviderLoginForm(providerID, loginForm)
           .then(response => {
             next({
               operationID,
