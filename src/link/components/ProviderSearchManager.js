@@ -18,7 +18,7 @@ const LIMIT = 20;
 export default class ProviderSearchManager {
   _callback: ResultCallback | null = null;
   _currentSearch: string | null = null;
-  _didFailLastRun: bool = false;
+  _didFailLastRun: boolean = false;
   _lastSuccessfulSearch: string | null = null;
   _nextPage: number = 0;
   _providersByPage: Array<Array<Provider>> = [];

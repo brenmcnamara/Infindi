@@ -33,6 +33,7 @@ import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
 
 import type { AccountLink } from 'common/lib/models/AccountLink';
+import type { ElementRef } from 'react';
 import type { ModelContainer } from '../../datastore';
 import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps, ReduxState } from '../../store';
@@ -56,6 +57,8 @@ const LIST_CONTENT_INSET = { bottom: 4, left: 0, right: 0, top: 0 };
 const PROVIDER_ITEM_HEIGHT = 65;
 
 class ProviderSearchScreen extends Component<Props> {
+  _searchRef: ElementRef<typeof TextInput> | null = null;
+
   render() {
     const { didCompleteInitialSearch, providerFetchStatus } = this.props;
     const shouldShowError = providerFetchStatus === 'FAILURE';
@@ -88,16 +91,19 @@ class ProviderSearchScreen extends Component<Props> {
               { borderColor: theme.color.borderHairline },
             ]}
           >
-            <Image
-              resizeMode="contain"
-              source={Icons.Search}
-              style={styles.searchHeaderIcon}
-            />
+            <TouchableOpacity onPress={this._onPressSearchIcon}>
+              <Image
+                resizeMode="contain"
+                source={Icons.Search}
+                style={styles.searchHeaderIcon}
+              />
+            </TouchableOpacity>
             <TextInput
               defaultValue={this.props.searchText}
               editable={this.props.enableInteraction}
               onChangeText={this._onChangeSearch}
               placeholder="Search for Institutions..."
+              ref={ref => (this._searchRef = ref)}
               selectTextOnFocus={true}
               spellCheck={false}
               style={[
@@ -197,6 +203,13 @@ class ProviderSearchScreen extends Component<Props> {
         )}
       </GetTheme>
     );
+  };
+
+  _onPressSearchIcon = (): void => {
+    if (!this._searchRef) {
+      return;
+    }
+    this._searchRef.focus();
   };
 
   _onChangeSearch = (text: string): void => {
@@ -311,6 +324,8 @@ const styles = StyleSheet.create({
   },
 
   searchHeaderTextInput: {
-    marginLeft: 16,
+    flex: 1,
+    paddingLeft: 16,
+    paddingVertical: 4,
   },
 });
