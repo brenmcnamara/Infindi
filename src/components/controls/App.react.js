@@ -1,8 +1,8 @@
 /* @flow */
 
+import AuthNavigator from './AuthNavigator.react';
 import Environment from '../../modules/Environment';
 import LoadingScreen from '../LoadingScreen.react';
-import LoginScreen from '../LoginScreen.react';
 import ModalManager from '../ModalManager.react';
 import NoInternetScreen from '../NoInternetScreen.react';
 import ProviderLoginScreen from '../../link/components/ProviderLoginScreen.react';
@@ -10,7 +10,7 @@ import ProviderSearchScreen from '../../link/components/ProviderSearchScreen.rea
 import React, { Component } from 'react';
 import RecommendationScreen from '../RecommendationScreen.react';
 import Tabs from './Tabs.react';
-import Theme, { GetTheme } from '../../design/components/Theme.react';
+import ThemeProvider, { GetTheme } from '../../design/components/Theme.react';
 import WatchSessionStateUtils from '../../watch-session/state-utils';
 
 import invariant from 'invariant';
@@ -28,6 +28,7 @@ import {
 import type { ReduxProps } from '../../store';
 import type { RouteNode } from '../../common/route-utils';
 import type { State as ReduxState } from '../../reducers/root';
+import type { Theme } from '../../design/themes';
 
 export type Props = ReduxProps & ComputedProps;
 
@@ -53,7 +54,11 @@ class App extends Component<Props> {
     let mainContent = null;
     switch (root.name) {
       case 'AUTH': {
-        mainContent = <LoginScreen />;
+        mainContent = (
+          <GetTheme>
+            {(theme: Theme) => <AuthNavigator routeNode={root} theme={theme} />}
+          </GetTheme>
+        );
         break;
       }
 
@@ -98,7 +103,7 @@ class App extends Component<Props> {
     // together. Keyboard avoiding view should always be the parent of the
     // safe area view.
     return (
-      <Theme themeName={isInWatchSession ? 'lightInverted' : 'light'}>
+      <ThemeProvider themeName={isInWatchSession ? 'lightInverted' : 'light'}>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <GetTheme>
             {theme => (
@@ -128,7 +133,7 @@ class App extends Component<Props> {
             )}
           </GetTheme>
         </KeyboardAvoidingView>
-      </Theme>
+      </ThemeProvider>
     );
   }
 }

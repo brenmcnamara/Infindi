@@ -8,11 +8,13 @@ import type { TabName } from '../common/route-utils';
 
 export type State = {
   +accountDetailsID: ID | null,
+  +shouldShowSignUpScreen: boolean,
   +tabName: TabName,
 };
 
 const DEFAULT_STATE: State = {
   accountDetailsID: null,
+  shouldShowSignUpScreen: false,
   tabName: DEFAULT_TAB_NAME,
 };
 
@@ -26,6 +28,9 @@ export default function routeState(
         ...state,
         accountDetailsID: null,
       };
+
+    case 'SET_SHOULD_SHOW_SIGN_UP_SCREEN':
+      return { ...state, shouldShowSignUpScreen: action.show };
 
     case 'VIEW_TAB':
       return { ...state, tabName: action.tabName };

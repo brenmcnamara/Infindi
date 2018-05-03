@@ -39,11 +39,21 @@ export type TabName = 'ACCOUNTS';
 
 export function createRoute(state: ReduxState): Route {
   const rootName = calculateRootName(state);
-  if (rootName !== 'MAIN') {
-    return { name: rootName, next: null };
-  }
+  switch (rootName) {
+    case 'AUTH': {
+      const signUpNode = state.routeState.shouldShowSignUpScreen
+        ? { name: 'SIGN_UP', next: null }
+        : null;
+      return { name: 'AUTH', next: signUpNode };
+    }
 
-  return { name: 'MAIN', next: createAccounts(state) };
+    case 'MAIN': {
+      return { name: 'MAIN', next: createAccounts(state) };
+    }
+
+    default:
+      return { name: rootName, next: null };
+  }
 }
 
 function createAccounts(state: ReduxState): RouteNode {

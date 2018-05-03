@@ -8,19 +8,19 @@ import { StyleSheet, View } from 'react-native';
 
 export type Props = {
   avoidKeyboard: boolean,
-  avoidNavbar: boolean,
+  avoidNavBar: boolean,
   children?: ?any,
 };
 
 export type DefaultProps = {
   avoidKeyboard: boolean,
-  avoidNavbar: boolean,
+  avoidNavBar: boolean,
   avoidTabBar: boolean,
 };
 
 export default class Screen extends Component<Props> {
   static defaultProps: DefaultProps = {
-    avoidNavbar: false,
+    avoidNavBar: false,
     avoidKeyboard: false,
     avoidTabBar: false,
   };

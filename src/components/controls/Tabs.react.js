@@ -64,7 +64,7 @@ class Tabs extends Component<Props> {
       // Would like to abstract this away at some point.
       setTimeout(() => (this._shouldAllowBackButton = true), 1000);
       this.refs.nav.push({
-        barTintColor: this.props.theme.color.backgroundMain,
+        barTintColor: nextProps.theme.color.backgroundMain,
         component: AccountDetailsScreen,
         leftButtonIcon: Icons.LeftArrow,
         onLeftButtonPress: () => {
@@ -74,7 +74,7 @@ class Tabs extends Component<Props> {
         passProps: {
           accountID: getAccountDetailsAccountID(nextProps.routeNode),
         },
-        tintColor: this.props.theme.color.buttonNavBar,
+        tintColor: nextProps.theme.color.buttonNavBar,
         title: '',
       });
     }

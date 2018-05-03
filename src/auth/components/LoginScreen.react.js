@@ -1,13 +1,14 @@
 /* @flow */
 
-import Content from './shared/Content.react';
-import Footer from './shared/Footer.react';
-import Icons from '../design/icons';
+import Content from '../../components/shared/Content.react';
+import Footer from '../../components/shared/Footer.react';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
-import TextButton from './shared/TextButton.react';
+import Screen from '../../components/shared/Screen.react';
+import TextButton from '../../components/shared/TextButton.react';
 
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
+import { setShouldShowSignUpScreen } from '../../actions/router';
 
 import invariant from 'invariant';
 
@@ -22,13 +23,13 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { login } from '../auth/actions';
+import { login } from '../../auth/actions';
 
 import type { ElementRef } from 'react';
 import type { LoginCredentials } from 'common/lib/models/Auth';
-import type { ReduxProps } from '../store';
-import type { State as StoreState } from '../reducers/root';
-import type { Theme } from '../design/themes';
+import type { ReduxProps } from '../../store';
+import type { State as StoreState } from '../../reducers/root';
+import type { Theme } from '../../design/themes';
 
 export type Props = ReduxProps & {
   loginType: 'NORMAL' | 'ERROR' | 'LOADING',
@@ -112,7 +113,7 @@ class LoginScreen extends Component<Props, State> {
     return (
       <GetTheme>
         {(theme: Theme) => (
-          <Screen avoidKeyboard={true}>
+          <Screen avoidKeyboard={true} avoidNavBar={true}>
             <Content>
               <View style={styles.logoContainer}>
                 <Image
@@ -152,6 +153,14 @@ class LoginScreen extends Component<Props, State> {
                     { borderColor: theme.color.borderNormal },
                     theme.getTextStyleHeader3(),
                   ]}
+                />
+              </View>
+              <View style={styles.createAccountContainer}>
+                <TextButton
+                  onPress={this._onPressCreateAccount}
+                  size="MEDIUM"
+                  text="Create a New Account"
+                  type="SPECIAL"
                 />
               </View>
               <Animated.View style={[styles.loginError, animatedErrorStyles]}>
@@ -200,6 +209,10 @@ class LoginScreen extends Component<Props, State> {
 
   _onSubmitPassword = (): void => {
     this.props.dispatch(login(this.state.credentials));
+  };
+
+  _onPressCreateAccount = (): void => {
+    this.props.dispatch(setShouldShowSignUpScreen(true));
   };
 
   _onPressLogin = (): void => {
@@ -263,6 +276,11 @@ function mapReduxStateToProps(state: StoreState) {
 export default connect(mapReduxStateToProps)(LoginScreen);
 
 const styles = StyleSheet.create({
+  createAccountContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+  },
+
   formInput: {
     borderBottomWidth: 1,
     height: 24,
