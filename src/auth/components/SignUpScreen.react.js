@@ -1,5 +1,6 @@
 /* @flow */
 
+import BannerManager from '../../components/shared/BannerManager.react';
 import Content from '../../components/shared/Content.react';
 import FooterWithButton from '../../components/shared/FooterWithButtons.react';
 import React, { Component } from 'react';
@@ -9,10 +10,17 @@ import invariant from 'invariant';
 
 import { connect } from 'react-redux';
 import { GetTheme } from '../../design/components/Theme.react';
-import { StyleSheet, View } from 'react-native';
+import {
+  removeSignUpValidationError,
+  showSignUpValidationError,
+} from '../actions';
+import { StyleSheet, TextInput, View } from 'react-native';
 
-import type { ReduxProps, ReduxState } from '../../store';
+import type { ElementRef } from 'react';
+import type { ReduxProps } from '../../store';
 import type { Theme } from '../../design/themes';
+
+type TextInputRef = ElementRef<typeof TextInput>;
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
@@ -20,19 +28,47 @@ type ComponentProps = {};
 
 type ComputedProps = {};
 
-class SignUpScreen extends Component<Props> {
+type State = {
+  confirmPassword: string,
+  email: string,
+  firstName: string,
+  lastName: string,
+  password: string,
+};
+
+type Validation = { isValid: true } | { isValid: false, reason: string };
+
+class SignUpScreen extends Component<Props, State> {
+  state: State = {
+    confirmPassword: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    password: '',
+  };
+
+  _confirmPasswordInputRef: TextInputRef | null = null;
+  _emailInputRef: TextInputRef | null = null;
+  _firstNameInputRef: TextInputRef | null = null;
+  _lastNameInputRef: TextInputRef | null = null;
+  _passwordInputRef: TextInputRef | null = null;
+
   render() {
     return (
       <GetTheme>
         {(theme: Theme) => (
-          <Screen avoidKeyboard={true} avoidNavbar={true}>
+          <Screen avoidKeyboard={true} avoidNavBar={true}>
             <Content>
-              <View style={styles.root} />
+              <BannerManager
+                channels={['SIGN_UP']}
+                managerKey="SIGN_UP_SCREEN"
+              />
+              {this._renderForm(theme)}
             </Content>
             <FooterWithButton
               buttonLayout={{
                 centerButtonText: 'CREATE ACCOUNT',
-                isCenterButtonDisabled: true,
+                isCenterButtonDisabled: false,
                 type: 'CENTER',
               }}
               onPress={this._onPressFooterButton}
@@ -43,22 +79,225 @@ class SignUpScreen extends Component<Props> {
     );
   }
 
+  _renderForm(theme: Theme) {
+    return (
+      <View style={styles.form}>
+        <TextInput
+          autoCapitalize="words"
+          autoFocus={true}
+          onChangeText={this._onChangeFirstName}
+          onSubmitEditing={this._onSubmitFirstName}
+          placeholder="First Name"
+          ref={this._setFirstNameInputRef}
+          returnKeyType="next"
+          style={[
+            styles.textInput,
+            { borderColor: theme.color.borderNormal },
+            theme.getTextStyleHeader3(),
+          ]}
+        />
+        <TextInput
+          autoCapitalize="words"
+          placeholder="Last Name"
+          onChangeText={this._onChangeLastName}
+          onSubmitEditing={this._onSubmitLastName}
+          ref={this._setLastNameInputRef}
+          returnKeyType="next"
+          style={[
+            styles.textInput,
+            { borderColor: theme.color.borderNormal },
+            theme.getTextStyleHeader3(),
+          ]}
+        />
+        <TextInput
+          autoCapitalize="none"
+          keyboardType="email-address"
+          onChangeText={this._onChangeEmail}
+          onSubmitEditing={this._onSubmitEmail}
+          placeholder="Email"
+          ref={this._setEmailInputRef}
+          returnKeyType="next"
+          style={[
+            styles.textInput,
+            { borderColor: theme.color.borderNormal },
+            theme.getTextStyleHeader3(),
+          ]}
+        />
+        <TextInput
+          autoCapitalize="none"
+          onChangeText={this._onChangePassword}
+          onSubmitEditing={this._onSubmitPassword}
+          placeholder="Password"
+          ref={this._setPasswordInputRef}
+          returnKeyType="next"
+          secureTextEntry={true}
+          style={[
+            styles.textInput,
+            { borderColor: theme.color.borderNormal },
+            theme.getTextStyleHeader3(),
+          ]}
+        />
+        <TextInput
+          autoCapitalize="none"
+          onChangeText={this._onChangeConfirmPassword}
+          onSubmitEditing={this._onSubmitConfirmPassword}
+          placeholder="Confirm Password"
+          ref={this._setConfirmPasswordInputRef}
+          returnKeyType="done"
+          secureTextEntry={true}
+          style={[
+            styles.textInput,
+            { borderColor: theme.color.borderNormal },
+            theme.getTextStyleHeader3(),
+          ]}
+        />
+      </View>
+    );
+  }
+
   _onPressFooterButton = (button: *): void => {
     invariant(
       button === 'CENTER',
       'Expecting pressed button to be in the center',
     );
+
+    const validation = this._calculateFormValidation();
+    if (!validation.isValid) {
+      this.props.dispatch(showSignUpValidationError(validation.reason));
+    } else {
+      this.props.dispatch(removeSignUpValidationError());
+    }
   };
+
+  _onChangeFirstName = (firstName: string): void => {
+    this.setState({ firstName });
+  };
+
+  _onChangeLastName = (lastName: string): void => {
+    this.setState({ lastName });
+  };
+
+  _onChangeEmail = (email: string): void => {
+    this.setState({ email });
+  };
+
+  _onChangePassword = (password: string): void => {
+    this.setState({ password });
+  };
+
+  _onChangeConfirmPassword = (confirmPassword: string): void => {
+    this.setState({ confirmPassword });
+  };
+
+  _onSubmitFirstName = (): void => {
+    this._lastNameInputRef && this._lastNameInputRef.focus();
+  };
+
+  _onSubmitLastName = (): void => {
+    this._emailInputRef && this._emailInputRef.focus();
+  };
+
+  _onSubmitEmail = (): void => {
+    this._passwordInputRef && this._passwordInputRef.focus();
+  };
+
+  _onSubmitPassword = (): void => {
+    this._confirmPasswordInputRef && this._confirmPasswordInputRef.focus();
+  };
+
+  _onSubmitConfirmPassword = (): void => {};
+
+  _setFirstNameInputRef = (ref: TextInputRef): void => {
+    this._firstNameInputRef = ref;
+  };
+
+  _setLastNameInputRef = (ref: TextInputRef): void => {
+    this._lastNameInputRef = ref;
+  };
+
+  _setEmailInputRef = (ref: TextInputRef): void => {
+    this._emailInputRef = ref;
+  };
+
+  _setPasswordInputRef = (ref: TextInputRef): void => {
+    this._passwordInputRef = ref;
+  };
+
+  _setConfirmPasswordInputRef = (ref: TextInputRef): void => {
+    this._confirmPasswordInputRef = ref;
+  };
+
+  _calculateFormValidation(): Validation {
+    const { state } = this;
+    if (state.firstName.length < 2) {
+      return {
+        isValid: false,
+        reason: 'First Name must be at least 2 characters',
+      };
+    }
+
+    if (state.lastName.length < 2) {
+      return {
+        isValid: false,
+        reason: 'Last Name must be at least 2 characters',
+      };
+    }
+
+    if (!/[^@]@[^@]/.test(state.email)) {
+      return {
+        isValid: false,
+        reason: 'Invalid email address',
+      };
+    }
+
+    if (state.password.length < 6) {
+      return {
+        isValid: false,
+        reason: 'Password must be at least 6 characters',
+      };
+    }
+
+    if (!/[0-9]/.test(state.password)) {
+      return {
+        isValid: false,
+        reason: 'Password must contain a number',
+      };
+    }
+
+    if (!/[A-Z]/.test(state.password)) {
+      return {
+        isValid: false,
+        reason: 'Password must contain an upper case letter',
+      };
+    }
+
+    if (state.confirmPassword !== state.password) {
+      return {
+        isValid: false,
+        reason: 'Password does not match password confirmation',
+      };
+    }
+
+    return { isValid: true };
+  }
 }
 
-function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  return {};
-}
-
-export default connect(mapReduxStateToProps)(SignUpScreen);
+export default connect()(SignUpScreen);
 
 const styles = StyleSheet.create({
+  form: {
+    marginHorizontal: 40,
+    marginVertical: 16,
+  },
+
   root: {
     flex: 1,
+  },
+
+  textInput: {
+    borderBottomWidth: 1,
+    height: 24,
+    marginBottom: 24,
+    paddingBottom: 4,
   },
 });

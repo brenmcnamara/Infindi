@@ -18,12 +18,17 @@ export function requestToast(toast: Toast): Action$RequestToast {
 }
 
 export type Action$DismissToast = {|
+  +shouldThrowOnDismissingNonExistantToast: boolean,
   +toastID: ID,
   +type: 'DISMISS_TOAST',
 |};
 
-export function dismissToast(toastID: ID): Action$DismissToast {
+export function dismissToast(
+  toastID: ID,
+  shouldThrowOnDismissingNonExistantToast: boolean = true,
+): Action$DismissToast {
   return {
+    shouldThrowOnDismissingNonExistantToast,
     toastID,
     type: 'DISMISS_TOAST',
   };
