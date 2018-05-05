@@ -287,7 +287,7 @@ export default connect()(SignUpScreen);
 const styles = StyleSheet.create({
   form: {
     marginHorizontal: 40,
-    marginVertical: 16,
+    marginVertical: 24,
   },
 
   root: {

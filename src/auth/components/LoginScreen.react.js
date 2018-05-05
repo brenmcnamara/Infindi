@@ -52,6 +52,7 @@ class LoginScreen extends Component<Props, State> {
   _errorFadeTransition = new Animated.Value(0);
   _errorWiggleAnimation = new Animated.Value(0);
   _isAnimating: boolean = false;
+  _isWaitingForLoginResult: boolean = false;
   _passwordInputRef: ElementRef<typeof TextInput>;
 
   componentDidMount(): void {
@@ -65,7 +66,8 @@ class LoginScreen extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props): void {
-    if (nextProps.loginType === 'ERROR') {
+    if (this._isWaitingForLoginResult && nextProps.loginType === 'ERROR') {
+      this._isWaitingForLoginResult = false;
       this._isAnimating = true;
       if (this.state.isShowingLoginError) {
         this._errorWiggleAnimation.setValue(1);
@@ -216,6 +218,7 @@ class LoginScreen extends Component<Props, State> {
   };
 
   _onPressLogin = (): void => {
+    this._isWaitingForLoginResult = true;
     this.props.dispatch(login(this.state.credentials));
   };
 
@@ -295,6 +298,7 @@ const styles = StyleSheet.create({
 
   loginError: {
     alignItems: 'center',
+    marginTop: 24,
   },
 
   loginForm: {
@@ -305,8 +309,8 @@ const styles = StyleSheet.create({
 
   logoContainer: {
     alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 24,
+    marginTop: 8,
+    marginBottom: 16,
   },
 
   marginBottom8: {
