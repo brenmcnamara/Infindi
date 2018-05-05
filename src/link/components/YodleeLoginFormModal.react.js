@@ -21,7 +21,7 @@ import { GetTheme } from '../../design/components/Theme.react';
 import { updateLoginForm, submitYodleeLoginFormForProviderID } from '../action';
 
 import type { ID } from 'common/types/core';
-import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
+import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { ReduxProps, ReduxState } from '../../store';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;

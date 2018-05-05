@@ -11,7 +11,7 @@ import Environment from './modules/Environment';
 import invariant from 'invariant';
 
 import type { ID, Pointer } from 'common/types/core';
-import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
+import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { LoginPayload } from 'common/lib/models/Auth';
 import type { Provider } from 'common/lib/models/Provider';
 

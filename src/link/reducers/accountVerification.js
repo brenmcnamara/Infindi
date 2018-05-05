@@ -7,7 +7,7 @@ import { isSameLoginForm } from '../utils';
 
 import type { AccountVerificationPage, LoginFormContainer } from '../types';
 import type { ID } from 'common/types/core';
-import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee';
+import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { Provider } from 'common/lib/models/Provider';
 import type { PureAction } from '../../store';
 

@@ -23,7 +23,7 @@ import type {
   LoginField$TextOrPassword,
   LoginForm,
   LoginRow,
-} from 'common/types/yodlee';
+} from 'common/types/yodlee-v1.0';
 import type { Theme } from '../../design/themes';
 
 export type Props = {
