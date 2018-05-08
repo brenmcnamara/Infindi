@@ -1,15 +1,20 @@
 /* @flow */
 
+import Backend from '../backend';
 import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
 
-import { initialize as initializeBackend } from '../backend';
+import { dismissToast, requestToast } from '../actions/toast';
 
-import type { Action as AllActions, Store } from '../store';
 import type { AuthStatus } from './types';
+import type { Next, PureAction, Store } from '../store';
 import type { User as FirebaseUser } from 'common/types/firebase';
-import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';
+import type {
+  LoginCredentials,
+  LoginPayload,
+  SignUpForm,
+} from 'common/lib/models/Auth';
 import type { UserInfo } from 'common/lib/models/UserInfo';
 
 const Auth = Firebase.auth();
@@ -23,7 +28,7 @@ type ChangeStatus = (auth: AuthStatus) => *;
 //
 // -----------------------------------------------------------------------------
 
-export default (store: Store) => (next: Function) => {
+export default (store: Store) => (next: Next) => {
   // Convenience function.
   const changeStatus = (status: AuthStatus) => {
     return next({ type: 'AUTH_STATUS_CHANGE', status });
@@ -35,9 +40,10 @@ export default (store: Store) => (next: Function) => {
     const loginPayload: ?LoginPayload = await genLoginPayload();
 
     if (canLogin(auth) && loginPayload) {
-      initializeBackend(loginPayload);
+      Backend.setLoginPayload(loginPayload);
       changeStatus({ loginPayload, type: 'LOGGED_IN' });
     } else if (canLogout(auth) && !loginPayload) {
+      Backend.clearLoginPayload();
       changeStatus({ type: 'LOGGED_OUT' });
     }
   });
@@ -45,7 +51,7 @@ export default (store: Store) => (next: Function) => {
   // Handle the stream of actions that are coming in. Watch for any
   // authentication-related actions that require some authentication trigger
   // to get called.
-  return (action: AllActions) => {
+  return (action: PureAction) => {
     next(action);
 
     switch (action.type) {
@@ -63,6 +69,11 @@ export default (store: Store) => (next: Function) => {
           'Requesting logout of a user that is not logged in',
         );
         genPerformLogout(loginPayload, changeStatus);
+        break;
+      }
+
+      case 'SIGN_UP_REQUEST': {
+        genPerformSignUp(changeStatus, next, action.signUpForm);
         break;
       }
     }
@@ -114,6 +125,43 @@ function genPerformLogout(
     });
 }
 
+function genPerformSignUp(
+  changeStatus: ChangeStatus,
+  next: Next,
+  signUpForm: SignUpForm,
+): Promise<void> {
+  return Promise.resolve()
+    .then(() => {
+      changeStatus({ signUpForm, type: 'SIGN_UP_INITIALIZE' });
+      next(
+        dismissToast(
+          'SIGN_UP_REQUEST_ERROR',
+          /* shouldThrowOnDismissingNonExistantToast */ false,
+        ),
+      );
+      return Backend.genCreateUser(signUpForm);
+    })
+    .then(() => {
+      const { email, password } = signUpForm;
+      return Auth.signInAndRetrieveDataWithEmailAndPassword(email, password);
+    })
+    .catch(error => {
+      const errorMessage = error.errorMessage || error.toString();
+      changeStatus({ errorMessage, signUpForm, type: 'SIGN_UP_FAILURE' });
+      next(
+        requestToast({
+          bannerChannel: 'SIGN_UP',
+          bannerType: 'ALERT',
+          id: 'SIGN_UP_REQUEST_ERROR',
+          priority: 'NORMAL',
+          showSpinner: false,
+          text: errorMessage,
+          toastType: 'BANNER',
+        }),
+      );
+    });
+}
+
 // -----------------------------------------------------------------------------
 //
 // UTILITIES
@@ -157,7 +205,11 @@ function getLoginPayload(auth: AuthStatus): ?LoginPayload {
 }
 
 function canLogin(auth: AuthStatus): boolean {
-  return auth.type === 'NOT_INITIALIZED' || auth.type === 'LOGIN_INITIALIZE';
+  return (
+    auth.type === 'NOT_INITIALIZED' ||
+    auth.type === 'LOGIN_INITIALIZE' ||
+    auth.type === 'SIGN_UP_INITIALIZE'
+  );
 }
 
 function canLogout(auth: AuthStatus): boolean {

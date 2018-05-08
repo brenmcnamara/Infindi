@@ -12,18 +12,43 @@ import invariant from 'invariant';
 
 import type { ID, Pointer } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
-import type { LoginPayload } from 'common/lib/models/Auth';
+import type { LoginPayload, SignUpForm } from 'common/lib/models/Auth';
 import type { Provider } from 'common/lib/models/Provider';
 
-let loginPayload: ?LoginPayload = null;
+let loginPayload: LoginPayload | null = null;
 
 export type ErrorPayload = {|
   +errorCode: string,
   +errorMessage: string,
 |};
 
-export function initialize(_loginPayload: LoginPayload): void {
+function setLoginPayload(_loginPayload: LoginPayload): void {
   loginPayload = _loginPayload;
+}
+
+function clearLoginPayload(): void {
+  loginPayload = null;
+}
+
+// -----------------------------------------------------------------------------
+//
+// CREATE USER
+//
+// -----------------------------------------------------------------------------
+
+export type CreateUserPayload = {|
+  +data: Pointer<'User'>,
+|};
+
+async function genCreateUser(signUpForm: SignUpForm): Promise<Pointer<'User'>> {
+  await Environment.genLazyLoad();
+  const uri = createURI('/users');
+  const response: CreateUserPayload = await genPostRequest(
+    uri,
+    { signUpForm },
+    'DO_NOT_AUTHORIZE',
+  );
+  return response.data;
 }
 
 // -----------------------------------------------------------------------------
@@ -81,14 +106,21 @@ function getLoginPayload(): LoginPayload {
 async function genPostRequest<T: Object>(
   uri: string,
   body: Object,
+  auth: 'AUTHORIZE' | 'DO_NOT_AUTHORIZE' = 'AUTHORIZE',
 ): Promise<T> {
-  const { idToken } = getLoginPayload();
+  const headers =
+    auth === 'AUTHORIZE'
+      ? {
+          Accept: 'application/json',
+          Authorization: getLoginPayload().idToken,
+          'Content-Type': 'application/json',
+        }
+      : {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        };
   const response = await fetch(uri, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: idToken,
-      'Content-Type': 'application/json',
-    },
+    headers,
     method: 'POST',
     body: JSON.stringify(body),
   });
@@ -138,6 +170,9 @@ function createURI(path: string): string {
 }
 
 export default {
+  clearLoginPayload,
+  genCreateUser,
   genQueryProviders,
   genYodleeSubmitProviderLoginForm,
+  setLoginPayload,
 };

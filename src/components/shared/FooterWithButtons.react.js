@@ -5,10 +5,13 @@ import TextButton from '../../components/shared/TextButton.react';
 
 import invariant from 'invariant';
 
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { GetTheme } from '../../design/components/Theme.react';
-import { StyleSheet, View } from 'react-native';
 
-type ButtonLayout = ButtonLayout$LeftAndRight | ButtonLayout$Center;
+type ButtonLayout =
+  | ButtonLayout$LeftAndRight
+  | ButtonLayout$Center
+  | ButtonLayout$Loading;
 
 type ButtonLayout$LeftAndRight = {|
   +isLeftButtonDisabled?: boolean,
@@ -22,6 +25,10 @@ type ButtonLayout$Center = {|
   +centerButtonText: string,
   +isCenterButtonDisabled?: boolean,
   +type: 'CENTER',
+|};
+
+type ButtonLayout$Loading = {|
+  +type: 'LOADING',
 |};
 
 export type Props = {
@@ -43,7 +50,9 @@ export default class Footer extends Component<Props> {
           >
             {this.props.buttonLayout.type === 'LEFT_AND_RIGHT'
               ? this._renderLeftAndRightButtons(this.props)
-              : this._renderCenterButton(this.props)}
+              : this.props.buttonLayout.type === 'LOADING'
+                ? this._renderLoading()
+                : this._renderCenterButton(this.props)}
           </View>
         )}
       </GetTheme>
@@ -90,6 +99,16 @@ export default class Footer extends Component<Props> {
           text={buttonLayout.centerButtonText}
           type="NORMAL"
         />
+      </View>
+    );
+  }
+
+  _renderLoading() {
+    const { buttonLayout } = this.props;
+    invariant(buttonLayout.type === 'LOADING', 'Incorrect button layout type');
+    return (
+      <View style={[styles.container, { justifyContent: 'center' }]}>
+        <ActivityIndicator size="small" />
       </View>
     );
   }

@@ -116,7 +116,9 @@ function calculateRootName(state: ReduxState): RootName {
     case 'LOGIN_FAILURE':
     case 'LOGOUT_INITIALIZE':
     case 'LOGOUT_FAILURE':
-    case 'LOGGED_OUT': {
+    case 'LOGGED_OUT':
+    case 'SIGN_UP_FAILURE':
+    case 'SIGN_UP_INITIALIZE': {
       // The user can only see the login page if they have internet.
       return 'AUTH';
     }

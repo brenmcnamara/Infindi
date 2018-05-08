@@ -9,13 +9,19 @@ import { connect } from 'react-redux';
 import { NavigatorIOS } from 'react-native';
 import { setShouldShowSignUpScreen } from '../../actions/router';
 
-import type { ReduxProps } from '../../store';
+import type { ReduxProps, ReduxState } from '../../store';
 import type { RouteNode } from '../../common/route-utils';
 import type { Theme } from '../../design/themes';
 
-export type Props = ReduxProps & {
+export type Props = ReduxProps & ComponentProps & ComputedProps;
+
+type ComponentProps = {
   routeNode: RouteNode,
   theme: Theme,
+};
+
+type ComputedProps = {
+  shouldStayOnSignUpScreen: boolean,
 };
 
 class AuthNavigator extends Component<Props> {
@@ -38,6 +44,7 @@ class AuthNavigator extends Component<Props> {
         component: SignUpScreen,
         leftButtonIcon: Icons.LeftArrow,
         onLeftButtonPress: () => {
+          !this.props.shouldStayOnSignUpScreen &&
           this._shouldAllowBackButton &&
             this.props.dispatch(setShouldShowSignUpScreen(false));
         },
@@ -65,7 +72,13 @@ class AuthNavigator extends Component<Props> {
   }
 }
 
-export default connect()(AuthNavigator);
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
+  return {
+    shouldStayOnSignUpScreen: state.auth.type === 'SIGN_UP_INITIALIZE',
+  };
+}
+
+export default connect(mapReduxStateToProps)(AuthNavigator);
 
 function shouldShowSignUpScreen(props: Props): boolean {
   return Boolean(

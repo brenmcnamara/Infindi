@@ -3,12 +3,25 @@
 import { dismissToast, requestToast } from '../actions/toast';
 
 import type { AuthStatus } from './types';
-import type { LoginCredentials } from 'common/lib/models/Auth';
+import type { LoginCredentials, SignUpForm } from 'common/lib/models/Auth';
 
 export type Action =
   | Action$AuthStatusChange
   | Action$LoginRequest
-  | Action$LogoutRequest;
+  | Action$LogoutRequest
+  | Action$SignUpRequest;
+
+type Action$SignUpRequest = {|
+  +signUpForm: SignUpForm,
+  +type: 'SIGN_UP_REQUEST',
+|};
+
+export function signUp(signUpForm: SignUpForm) {
+  return {
+    signUpForm,
+    type: 'SIGN_UP_REQUEST',
+  };
+}
 
 type Action$LoginRequest = {|
   +loginCredentials: LoginCredentials,

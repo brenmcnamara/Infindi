@@ -1,6 +1,10 @@
 /* @flow */
 
-import type { LoginCredentials, LoginPayload } from 'common/lib/models/Auth';
+import type {
+  LoginCredentials,
+  LoginPayload,
+  SignUpForm,
+} from 'common/lib/models/Auth';
 
 // https://rnfirebase.io/docs/v3.1.*/auth/reference/auth#signInWithEmailAndPassword
 export type LoginErrorCode =
@@ -52,7 +56,6 @@ export type VerificationPayload = {|
   +type: 'EMAIL',
 |};
 
-
 export type AuthStatus =
   | {|
       +type: 'LOGOUT_INITIALIZE',
@@ -78,6 +81,15 @@ export type AuthStatus =
   | {|
       +errorCode: LoginErrorCode,
       +type: 'LOGIN_FAILURE',
+    |}
+  | {|
+      +signUpForm: SignUpForm,
+      +type: 'SIGN_UP_INITIALIZE',
+    |}
+  | {|
+      +errorMessage: string,
+      +signUpForm: SignUpForm,
+      +type: 'SIGN_UP_FAILURE',
     |};
 
 export type AuthStatusType =
@@ -87,4 +99,6 @@ export type AuthStatusType =
   | 'NOT_INITIALIZED'
   | 'LOGIN_INITIALIZE'
   | 'LOGGED_IN'
-  | 'LOGIN_FAILURE';
+  | 'LOGIN_FAILURE'
+  | 'SIGN_UP_FAILURE'
+  | 'SIGN_UP_INITIALIZE';

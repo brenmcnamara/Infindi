@@ -13,11 +13,13 @@ import { GetTheme } from '../../design/components/Theme.react';
 import {
   removeSignUpValidationError,
   showSignUpValidationError,
+  signUp,
 } from '../actions';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import type { ElementRef } from 'react';
-import type { ReduxProps } from '../../store';
+import type { ReduxProps, ReduxState } from '../../store';
+import type { SignUpForm } from 'common/lib/models/Auth';
 import type { Theme } from '../../design/themes';
 
 type TextInputRef = ElementRef<typeof TextInput>;
@@ -26,14 +28,13 @@ export type Props = ReduxProps & ComponentProps & ComputedProps;
 
 type ComponentProps = {};
 
-type ComputedProps = {};
+type ComputedProps = {
+  isWaitingForSignUp: boolean,
+};
 
 type State = {
   confirmPassword: string,
-  email: string,
-  firstName: string,
-  lastName: string,
-  password: string,
+  signUpForm: SignUpForm,
 };
 
 type Validation = { isValid: true } | { isValid: false, reason: string };
@@ -41,10 +42,13 @@ type Validation = { isValid: true } | { isValid: false, reason: string };
 class SignUpScreen extends Component<Props, State> {
   state: State = {
     confirmPassword: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
+    signUpForm: {
+      email: '',
+      firstName: '',
+      isTestUser: false,
+      lastName: '',
+      password: '',
+    },
   };
 
   _confirmPasswordInputRef: TextInputRef | null = null;
@@ -66,11 +70,17 @@ class SignUpScreen extends Component<Props, State> {
               {this._renderForm(theme)}
             </Content>
             <FooterWithButton
-              buttonLayout={{
-                centerButtonText: 'CREATE ACCOUNT',
-                isCenterButtonDisabled: false,
-                type: 'CENTER',
-              }}
+              buttonLayout={
+                this.props.isWaitingForSignUp
+                  ? {
+                      type: 'LOADING',
+                    }
+                  : {
+                      centerButtonText: 'CREATE ACCOUNT',
+                      isCenterButtonDisabled: false,
+                      type: 'CENTER',
+                    }
+              }
               onPress={this._onPressFooterButton}
             />
           </Screen>
@@ -85,6 +95,7 @@ class SignUpScreen extends Component<Props, State> {
         <TextInput
           autoCapitalize="words"
           autoFocus={true}
+          editable={!this.props.isWaitingForSignUp}
           onChangeText={this._onChangeFirstName}
           onSubmitEditing={this._onSubmitFirstName}
           placeholder="First Name"
@@ -98,6 +109,7 @@ class SignUpScreen extends Component<Props, State> {
         />
         <TextInput
           autoCapitalize="words"
+          editable={!this.props.isWaitingForSignUp}
           placeholder="Last Name"
           onChangeText={this._onChangeLastName}
           onSubmitEditing={this._onSubmitLastName}
@@ -111,6 +123,7 @@ class SignUpScreen extends Component<Props, State> {
         />
         <TextInput
           autoCapitalize="none"
+          editable={!this.props.isWaitingForSignUp}
           keyboardType="email-address"
           onChangeText={this._onChangeEmail}
           onSubmitEditing={this._onSubmitEmail}
@@ -125,6 +138,7 @@ class SignUpScreen extends Component<Props, State> {
         />
         <TextInput
           autoCapitalize="none"
+          editable={!this.props.isWaitingForSignUp}
           onChangeText={this._onChangePassword}
           onSubmitEditing={this._onSubmitPassword}
           placeholder="Password"
@@ -139,6 +153,7 @@ class SignUpScreen extends Component<Props, State> {
         />
         <TextInput
           autoCapitalize="none"
+          editable={!this.props.isWaitingForSignUp}
           onChangeText={this._onChangeConfirmPassword}
           onSubmitEditing={this._onSubmitConfirmPassword}
           placeholder="Confirm Password"
@@ -166,23 +181,24 @@ class SignUpScreen extends Component<Props, State> {
       this.props.dispatch(showSignUpValidationError(validation.reason));
     } else {
       this.props.dispatch(removeSignUpValidationError());
+      this.props.dispatch(signUp(this.state.signUpForm));
     }
   };
 
   _onChangeFirstName = (firstName: string): void => {
-    this.setState({ firstName });
+    this.setState({ signUpForm: { ...this.state.signUpForm, firstName } });
   };
 
   _onChangeLastName = (lastName: string): void => {
-    this.setState({ lastName });
+    this.setState({ signUpForm: { ...this.state.signUpForm, lastName } });
   };
 
   _onChangeEmail = (email: string): void => {
-    this.setState({ email });
+    this.setState({ signUpForm: { ...this.state.signUpForm, email } });
   };
 
   _onChangePassword = (password: string): void => {
-    this.setState({ password });
+    this.setState({ signUpForm: { ...this.state.signUpForm, password } });
   };
 
   _onChangeConfirmPassword = (confirmPassword: string): void => {
@@ -228,50 +244,50 @@ class SignUpScreen extends Component<Props, State> {
   };
 
   _calculateFormValidation(): Validation {
-    const { state } = this;
-    if (state.firstName.length < 2) {
+    const { confirmPassword, signUpForm } = this.state;
+    if (signUpForm.firstName.length < 2) {
       return {
         isValid: false,
         reason: 'First Name must be at least 2 characters',
       };
     }
 
-    if (state.lastName.length < 2) {
+    if (signUpForm.lastName.length < 2) {
       return {
         isValid: false,
         reason: 'Last Name must be at least 2 characters',
       };
     }
 
-    if (!/[^@]@[^@]/.test(state.email)) {
+    if (!/[^@]@[^@]/.test(signUpForm.email)) {
       return {
         isValid: false,
         reason: 'Invalid email address',
       };
     }
 
-    if (state.password.length < 6) {
+    if (signUpForm.password.length < 6) {
       return {
         isValid: false,
         reason: 'Password must be at least 6 characters',
       };
     }
 
-    if (!/[0-9]/.test(state.password)) {
+    if (!/[0-9]/.test(signUpForm.password)) {
       return {
         isValid: false,
         reason: 'Password must contain a number',
       };
     }
 
-    if (!/[A-Z]/.test(state.password)) {
+    if (!/[A-Z]/.test(signUpForm.password)) {
       return {
         isValid: false,
         reason: 'Password must contain an upper case letter',
       };
     }
 
-    if (state.confirmPassword !== state.password) {
+    if (confirmPassword !== signUpForm.password) {
       return {
         isValid: false,
         reason: 'Password does not match password confirmation',
@@ -282,7 +298,13 @@ class SignUpScreen extends Component<Props, State> {
   }
 }
 
-export default connect()(SignUpScreen);
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
+  return {
+    isWaitingForSignUp: state.auth.type === 'SIGN_UP_INITIALIZE',
+  };
+}
+
+export default connect(mapReduxStateToProps)(SignUpScreen);
 
 const styles = StyleSheet.create({
   form: {
