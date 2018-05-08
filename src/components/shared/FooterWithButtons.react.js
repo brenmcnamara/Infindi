@@ -33,7 +33,8 @@ type ButtonLayout$Loading = {|
 
 export type Props = {
   buttonLayout: ButtonLayout,
-  onPress: (button: 'LEFT' | 'RIGHT' | 'CENTER') => any,
+  onLongPress?: (button: 'LEFT' | 'RIGHT' | 'CENTER') => void,
+  onPress: (button: 'LEFT' | 'RIGHT' | 'CENTER') => void,
 };
 
 export type DefaultProps = {
@@ -69,6 +70,7 @@ export default class Footer extends Component<Props> {
       <View style={styles.container}>
         <TextButton
           isDisabled={buttonLayout.isLeftButtonDisabled || false}
+          onLongPress={() => props.onLongPress && props.onLongPress('LEFT')}
           onPress={() => props.onPress('LEFT')}
           size="LARGE"
           text={buttonLayout.leftButtonText}
@@ -77,7 +79,8 @@ export default class Footer extends Component<Props> {
         <View style={styles.buttonSpacer} />
         <TextButton
           isDisabled={buttonLayout.isRightButtonDisabled || false}
-          onPress={() => props.onPress('RIGHT')}
+          onLongPress={() => props.onLongPress && props.onLongPress('RIGHT')}
+          onPress={() =>  props.onPress('RIGHT')}
           size="LARGE"
           text={buttonLayout.rightButtonText}
           type="PRIMARY"
@@ -94,6 +97,7 @@ export default class Footer extends Component<Props> {
         <TextButton
           isDisabled={buttonLayout.isCenterButtonDisabled || false}
           layoutType="FILL_PARENT"
+          onLongPress={() => props.onLongPress && props.onLongPress('CENTER')}
           onPress={() => props.onPress('CENTER')}
           size="LARGE"
           text={buttonLayout.centerButtonText}

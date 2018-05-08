@@ -19,7 +19,8 @@ export type Props = {
   // TODO: Change this to "isEnabled"
   isDisabled: boolean,
   layoutType: LayoutType,
-  onPress: () => any,
+  onPress: () => void,
+  onLongPress?: () => void,
   size: 'LARGE' | 'MEDIUM' | 'SMALL',
   text: string,
   type: 'PRIMARY' | 'NORMAL' | 'SPECIAL',
@@ -61,12 +62,13 @@ export default class TextButton extends Component<Props> {
       <GetTheme>
         {theme =>
           layoutType === 'INLINE' ? (
-            <Text onPress={this._onPress} style={this._getButtonStyles(theme)}>
+            <Text style={this._getButtonStyles(theme)}>
               {text}
             </Text>
           ) : (
             <TouchableOpacity
               disabled={this.props.isDisabled}
+              onLongPress={this._onLongPress}
               onPress={this._onPress}
               style={rootStyles}
             >
@@ -77,6 +79,12 @@ export default class TextButton extends Component<Props> {
       </GetTheme>
     );
   }
+
+  _onLongPress = (): void => {
+    if (!this.props.isDisabled && this.props.onLongPress) {
+      this.props.onLongPress();
+    }
+  };
 
   _onPress = (): void => {
     if (!this.props.isDisabled) {

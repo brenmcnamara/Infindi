@@ -58,6 +58,8 @@ class SignUpScreen extends Component<Props, State> {
   _passwordInputRef: TextInputRef | null = null;
 
   render() {
+    const { isWaitingForSignUp } = this.props;
+    const { signUpForm } = this.state;
     return (
       <GetTheme>
         {(theme: Theme) => (
@@ -71,16 +73,19 @@ class SignUpScreen extends Component<Props, State> {
             </Content>
             <FooterWithButton
               buttonLayout={
-                this.props.isWaitingForSignUp
+                isWaitingForSignUp
                   ? {
                       type: 'LOADING',
                     }
                   : {
-                      centerButtonText: 'CREATE ACCOUNT',
+                      centerButtonText: signUpForm.isTestUser
+                        ? 'CREATE TEST ACCOUNT'
+                        : 'CREATE ACCOUNT',
                       isCenterButtonDisabled: false,
                       type: 'CENTER',
                     }
               }
+              onLongPress={this._onLongPressFooterButton}
               onPress={this._onPressFooterButton}
             />
           </Screen>
@@ -169,6 +174,18 @@ class SignUpScreen extends Component<Props, State> {
       </View>
     );
   }
+
+  _onLongPressFooterButton = (button: *): void => {
+    invariant(
+      button === 'CENTER',
+      'Expecting pressed button to be in the center',
+    );
+
+    const { signUpForm } = this.state;
+    this.setState({
+      signUpForm: { ...signUpForm, isTestUser: !signUpForm.isTestUser },
+    });
+  };
 
   _onPressFooterButton = (button: *): void => {
     invariant(
