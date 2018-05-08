@@ -7,6 +7,7 @@ import SignUpScreen from '../../auth/components/SignUpScreen.react';
 
 import { connect } from 'react-redux';
 import { NavigatorIOS } from 'react-native';
+import { removeSignUpValidationError } from '../../auth/actions';
 import { setShouldShowSignUpScreen } from '../../actions/router';
 
 import type { ReduxProps, ReduxState } from '../../store';
@@ -43,10 +44,16 @@ class AuthNavigator extends Component<Props> {
         barTintColor: nextProps.theme.color.backgroundMain,
         component: SignUpScreen,
         leftButtonIcon: Icons.LeftArrow,
+        // TODO: Inversion of control, put this function in SignUpScreen.
         onLeftButtonPress: () => {
-          !this.props.shouldStayOnSignUpScreen &&
-          this._shouldAllowBackButton &&
-            this.props.dispatch(setShouldShowSignUpScreen(false));
+          if (
+            this.props.shouldStayOnSignUpScreen ||
+            !this._shouldAllowBackButton
+          ) {
+            return;
+          }
+          this.props.dispatch(setShouldShowSignUpScreen(false));
+          this.props.dispatch(removeSignUpValidationError());
         },
         shadowHidden: true,
         tintColor: nextProps.theme.color.buttonNavBar,
