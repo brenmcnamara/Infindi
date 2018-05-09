@@ -9,7 +9,7 @@ import {
   exitAccountVerification,
   requestLoginFormModal,
 } from '../action';
-import { requestToast } from '../../actions/toast';
+import { requestMultipleToasts } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
 import { getContainer } from '../../datastore';
 import { isInMFA } from 'common/lib/models/AccountLink';
@@ -18,6 +18,7 @@ import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
 import type { PureAction, Next, Store } from '../../store';
 import type { State as ReduxState } from '../../reducers/root';
+import type { Toast$Banner } from '../../reducers/toast';
 
 const ACTION_BLACKLIST = [];
 
@@ -33,6 +34,7 @@ type ProviderState = {|
 class AccountLinkFlowManager {
   static _instance: AccountLinkFlowManager | null = null;
 
+  _bannerBuffer: Array<Toast$Banner> = [];
   _next: Next | null = null;
   _providerStateMap: { [providerID: ID]: ProviderState } = {};
   _store: Store | null = null;
@@ -124,6 +126,12 @@ class AccountLinkFlowManager {
       }
     });
 
+    // Batch update any banners.
+    if (this._bannerBuffer.length > 0) {
+      this._callNext(requestMultipleToasts(this._bannerBuffer));
+    }
+    this._bannerBuffer = [];
+
     // STEP 3: UPDATE THE LOCAL STATE.
     this._providerStateMap = providerStateMap;
   }
@@ -146,7 +154,7 @@ class AccountLinkFlowManager {
         'Expecting toProviderState to exist: %s',
         providerID,
       );
-      this._callNext(requestAccountLinkBanner(providerID, toStatus));
+      this._bannerBuffer.push(createAccountLinkBanner(providerID, toStatus));
       if (toStatus === 'IN_PROGRESS / DOWNLOADING_DATA') {
         if (toProviderState.isViewingLoginScreen) {
           this._callNext(exitAccountVerification());
@@ -202,9 +210,9 @@ function calculateDerivedAccountLinkStatus(
   return providerState.status;
 }
 
-function requestAccountLinkBanner(providerID: ID, status: AccountLinkStatus) {
+function createAccountLinkBanner(providerID: ID, status: AccountLinkStatus) {
   const id = `PROVIDERS/${providerID}`;
-  return requestToast({
+  return {
     bannerChannel: id,
     bannerType: status.startsWith('FAILURE')
       ? 'ALERT'
@@ -218,5 +226,5 @@ function requestAccountLinkBanner(providerID: ID, status: AccountLinkStatus) {
       status === 'MFA / WAITING_FOR_LOGIN_FORM',
     text: AccountLinkBanner[status],
     toastType: 'BANNER',
-  });
+  };
 }

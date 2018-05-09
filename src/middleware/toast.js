@@ -35,6 +35,27 @@ export default (store: Store) => (next: Next) => {
         break;
       }
 
+      case 'REQUEST_MULTIPLE_TOASTS': {
+        const { toasts } = action;
+        if (toasts.length === 0) {
+          break;
+        }
+        let newQueue = bannerQueue;
+        toasts.forEach(toast => {
+          invariant(
+            toast.toastType === 'BANNER',
+            'Toast middleware only supports banners: %s',
+            toast.toastType,
+          );
+          newQueue = addBannerToPriorityQueue(toast, newQueue);
+        });
+        next({
+          bannerQueue: newQueue,
+          type: 'UPDATE_BANNER_QUEUE',
+        });
+        break;
+      }
+
       case 'DISMISS_TOAST': {
         const { toastID } = action;
 
