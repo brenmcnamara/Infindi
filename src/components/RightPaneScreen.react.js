@@ -170,12 +170,16 @@ class RightPaneScreen extends Component<Props> {
 
   _renderUserInfo(theme: Theme, userInfo: UserInfo, isFirst: boolean) {
     const userGroups = [];
-    if (userInfo.isTestUser) {
-      userGroups.push('TEST USER');
-    }
     if (userInfo.isAdmin) {
       userGroups.push('ADMIN');
     }
+    if (userInfo.isTestUser) {
+      userGroups.push('TEST USER');
+    }
+    if (userGroups.length === 0) {
+      userGroups.push('NORMAL USER');
+    }
+
     return (
       <View
         key={`USER-${userInfo.id}`}
