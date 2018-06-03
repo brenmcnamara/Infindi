@@ -2,10 +2,10 @@
 
 import type { ModelContainer } from '../../datastore';
 import type { PureAction } from '../../store';
-import type { UserInfo } from 'common/lib/models/UserInfo';
+import type { UserInfoRaw } from 'common/lib/models/UserInfo';
 
 export type State = {
-  container: ModelContainer<'UserInfo', UserInfo>,
+  container: ModelContainer<'UserInfo', UserInfoRaw>,
   loadStatus: 'STEADY' | 'FAILURE' | 'EMPTY' | 'LOADING',
 };
 

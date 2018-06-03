@@ -26,7 +26,7 @@ import type { ID } from 'common/types/core';
 import type { LoadStatus, UserInfoContainer } from '../data-model/types';
 import type { ReduxProps, ReduxState } from '../store';
 import type { Theme } from '../design/themes';
-import type { UserInfo } from 'common/lib/models/UserInfo';
+import type { UserInfoRaw } from 'common/lib/models/UserInfo';
 
 export type Props = ReduxProps & ComputedProps & ComponentProps;
 
@@ -168,7 +168,7 @@ class RightPaneScreen extends Component<Props> {
     );
   }
 
-  _renderUserInfo(theme: Theme, userInfo: UserInfo, isFirst: boolean) {
+  _renderUserInfo(theme: Theme, userInfo: UserInfoRaw, isFirst: boolean) {
     const userGroups = [];
     if (userInfo.isAdmin) {
       userGroups.push('ADMIN');
@@ -242,7 +242,7 @@ class RightPaneScreen extends Component<Props> {
     }
   };
 
-  _onPressUserInfo = (userInfo: UserInfo): void => {
+  _onPressUserInfo = (userInfo: UserInfoRaw): void => {
     if (this.props.show) {
       this.props.dispatch(WatchSessionActions.enterWatchSession(userInfo.id));
       this.props.dispatch(dismissModal(RightPaneModalID));

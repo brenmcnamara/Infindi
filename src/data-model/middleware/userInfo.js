@@ -4,7 +4,7 @@ import Firebase from 'react-native-firebase';
 
 import type { ID } from 'common/types/core';
 import type { PureAction, Next, Store } from '../../store';
-import type { UserInfo } from 'common/lib/models/UserInfo';
+import type { UserInfoRaw } from 'common/lib/models/UserInfo';
 
 export default (store: Store) => (next: Next) => {
   return (action: PureAction) => {
@@ -40,7 +40,7 @@ async function genFetchAllUsers(next: Next, operationID: ID): Promise<void> {
   const container = {};
   snapshot.docs.forEach(doc => {
     if (doc.exists) {
-      const userInfo: UserInfo = doc.data();
+      const userInfo: UserInfoRaw = doc.data();
       container[userInfo.id] = userInfo;
     }
   });

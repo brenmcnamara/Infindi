@@ -15,7 +15,7 @@ import type {
   LoginPayload,
   SignUpForm,
 } from 'common/lib/models/Auth';
-import type { UserInfo } from 'common/lib/models/UserInfo';
+import type { UserInfoRaw } from 'common/lib/models/UserInfo';
 
 const Auth = Firebase.auth();
 const Database = Firebase.firestore();
@@ -168,7 +168,7 @@ function genPerformSignUp(
 //
 // -----------------------------------------------------------------------------
 
-async function genUserInfo(id: string): Promise<UserInfo> {
+async function genUserInfo(id: string): Promise<UserInfoRaw> {
   // TODO: Look into what errors this may return.
   // $FlowFixMe - Do not understand this flow error.
   const document = await Database.collection('UserInfo')
@@ -178,7 +178,7 @@ async function genUserInfo(id: string): Promise<UserInfo> {
     document.exists,
     'Data Error: UserInfo is missing for logged in user',
   );
-  const userInfo: UserInfo = document.data();
+  const userInfo: UserInfoRaw = document.data();
   return userInfo;
 }
 

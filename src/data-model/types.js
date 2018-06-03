@@ -5,7 +5,7 @@ import type { AccountRaw } from 'common/lib/models/Account';
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../datastore';
 import type { Provider } from 'common/lib/models/Provider';
-import type { UserInfo } from 'common/lib/models/UserInfo';
+import type { UserInfoRaw } from 'common/lib/models/UserInfo';
 
 export type LoadStatus = 'STEADY' | 'FAILURE' | 'LOADING' | 'EMPTY';
 
@@ -17,7 +17,7 @@ export type AccountContainer = ModelContainer<'Account', AccountRaw>;
 
 export type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
-export type UserInfoContainer = { [userInfoID: ID]: UserInfo };
+export type UserInfoContainer = { [userInfoID: ID]: UserInfoRaw };
 
 export type TransactionLoadingStatus =
   | 'EMPTY'
