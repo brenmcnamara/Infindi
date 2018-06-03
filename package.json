@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "common": "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git",
+    "immutable": "^3.8.2",
     "invariant": "^2.2.4",
     "moment": "^2.22.1",
     "nullthrows": "^1.0.1",

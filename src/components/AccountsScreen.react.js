@@ -1,5 +1,6 @@
 /* @flow */
 
+import Account from 'common/lib/models/Account';
 import AccountGroupHeader, {
   HEIGHT as AccountGroupHeaderHeight,
 } from './AccountGroupHeader.react';
@@ -32,7 +33,6 @@ import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import { EMPTY_OBJ } from '../constants';
 import { filterObject, isObjectEmpty, reduceObject } from '../common/obj-utils';
-import { getBalance, getGroupType } from 'common/lib/models/Account';
 import { getLoginPayload } from '../auth/state-utils';
 import { getNetWorth } from '../common/state-utils';
 import { GetTheme } from '../design/components/Theme.react';
@@ -45,7 +45,7 @@ import { requestProviderLogin, requestProviderSearch } from '../link/action';
 import { requestInfoModal } from '../actions/modal';
 import { viewAccountDetails } from '../actions/router';
 
-import type { Account, AccountGroupType } from 'common/lib/models/Account';
+import type { AccountGroupType, AccountRaw } from 'common/lib/models/Account';
 import type {
   AccountContainer,
   AccountLinkContainer,
@@ -191,7 +191,7 @@ class AccountsScreen extends Component<Props> {
     );
   };
 
-  _onSelectAccount = (account: Account): void => {
+  _onSelectAccount = (account: AccountRaw): void => {
     this.props.dispatch(viewAccountDetails(account.id));
   };
 
@@ -225,42 +225,44 @@ class AccountsScreen extends Component<Props> {
       {
         container: filterObject(
           accounts,
-          account => getGroupType(account) === 'AVAILABLE_CASH',
+          account => Account.fromRaw(account).groupType === 'AVAILABLE_CASH',
         ),
         type: 'AVAILABLE_CASH',
       },
       {
         container: filterObject(
           accounts,
-          account => getGroupType(account) === 'CREDIT_CARD_DEBT',
+          account => Account.fromRaw(account).groupType === 'CREDIT_CARD_DEBT',
         ),
         type: 'CREDIT_CARD_DEBT',
       },
       {
         container: filterObject(
           accounts,
-          account => getGroupType(account) === 'DEBT',
+          account => Account.fromRaw(account).groupType === 'DEBT',
         ),
         type: 'DEBT',
       },
       {
         container: filterObject(
           accounts,
-          account => getGroupType(account) === 'LIQUID_INVESTMENTS',
+          account =>
+            Account.fromRaw(account).groupType === 'LIQUID_INVESTMENTS',
         ),
         type: 'LIQUID_INVESTMENTS',
       },
       {
         container: filterObject(
           accounts,
-          account => getGroupType(account) === 'NON_LIQUID_INVESTMENTS',
+          account =>
+            Account.fromRaw(account).groupType === 'NON_LIQUID_INVESTMENTS',
         ),
         type: 'NON_LIQUID_INVESTMENTS',
       },
       {
         container: filterObject(
           accounts,
-          account => getGroupType(account) === 'OTHER',
+          account => Account.fromRaw(account).groupType === 'OTHER',
         ),
         type: 'OTHER',
       },
@@ -319,9 +321,9 @@ class AccountsScreen extends Component<Props> {
       const { accountLinkContainer } = this.props;
 
       // $FlowFixMe - This is correct.
-      const accounts: Array<Account> = Object.values(group.container);
+      const accounts: Array<AccountRaw> = Object.values(group.container);
 
-      accounts.forEach((account: Account, index: number) => {
+      accounts.forEach((account: AccountRaw, index: number) => {
         const accountLink =
           accountLinkContainer[account.accountLinkRef.refID] || null;
         const isDownloading = Boolean(
@@ -435,7 +437,7 @@ export function getFormattedGroupType(groupType: AccountGroupType): string {
 function getTotalBalanceForAccountContainer(group: AccountContainer): Dollars {
   return reduceObject(
     group,
-    (total, account) => total + getBalance(account),
+    (total, account) => total + Account.fromRaw(account).balance,
     0,
   );
 }

@@ -1,17 +1,18 @@
 /* @flow */
 
+import Account from 'common/lib/models/Account';
+
 import uuid from 'uuid/v4';
 
-import { getAccountCollection } from 'common/lib/models/Account';
 import { getActiveUserID } from '../common/state-utils';
 
-import type { Account } from 'common/lib/models/Account';
+import type { AccountRaw } from 'common/lib/models/Account';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { ID } from 'common/types/core';
 import type { ModelContainer } from '../datastore';
 import type { PureAction, Next, Store } from '../store';
 
-type AccountContainer = ModelContainer<'Account', Account>;
+type AccountContainer = ModelContainer<'Account', AccountRaw>;
 
 export default (store: Store) => (next: Next) => {
   let accountSubscription: ?EmitterSubscription = null;
@@ -45,13 +46,10 @@ export default (store: Store) => (next: Next) => {
   };
 };
 
-function listenForAccounts(
-  userID: ID,
-  next: Next,
-): EmitterSubscription {
+function listenForAccounts(userID: ID, next: Next): EmitterSubscription {
   let operationID = uuid();
   next({ modelName: 'Account', operationID, type: 'CONTAINER_DOWNLOAD_START' });
-  const remove = getAccountCollection()
+  const remove = Account.FirebaseCollectionUNSAFE
     .where('canDisplay', '==', true)
     .where('sourceOfTruth.type', '==', 'YODLEE')
     .where('userRef.refID', '==', userID)
@@ -61,7 +59,7 @@ function listenForAccounts(
         if (!doc.exists) {
           return;
         }
-        const account: Account = doc.data();
+        const account: AccountRaw = doc.data();
         container[account.id] = account;
       });
       next({

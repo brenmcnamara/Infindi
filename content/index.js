@@ -128,6 +128,10 @@ export const AccountLinkBanner = {
     Download in progress
   `),
 
+  'IN_PROGRESS / DOWNLOADING_FROM_SOURCE': cleanupWhitespace(`
+    Almost done syncing
+  `),
+
   'IN_PROGRESS / INITIALIZING': cleanupWhitespace(`
     Initializing your link
   `),

@@ -1641,8 +1641,10 @@ commander@~2.13.0:
 
 "common@git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git":
   version "1.0.0"
-  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#dd681efcb13e9e787d60f4710390465bc2d0b23f"
+  resolved "git+https://86f8b449cd778036c88467e637378b2e328bf08a@github.com/brenmcnamara/infindi-common.git#bdb13113467b8092b012debdf10c6420c32958fb"
   dependencies:
+    flow-bin "^0.73.0"
+    immutable "^3.8.2"
     uuid "^3.1.0"
 
 commondir@^1.0.1:
@@ -2424,6 +2426,10 @@ flow-bin@^0.67.1:
   version "0.67.1"
   resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.67.1.tgz#eabb7197cce870ac9442cfd04251c7ddc30377db"
 
+flow-bin@^0.73.0:
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.73.0.tgz#da1b90a02b0ef9c439f068c2fc14968db83be425"
+
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -2829,6 +2835,10 @@ ignore@^3.3.3:
 image-size@^0.6.0:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.6.1.tgz#98122a562d59dcc097ef1b2c8191866eb8f5d663"
+
+immutable@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
 
 imurmurhash@^0.1.4:
   version "0.1.4"

@@ -1,4 +1,6 @@
 [ignore]
+.*/node_modules/immutable/.*
+
 ; We fork some components by platform
 .*/*[.]android.js
 

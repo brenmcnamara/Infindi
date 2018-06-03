@@ -1,5 +1,6 @@
 /* @flow */
 
+import Account from 'common/lib/models/Account';
 import Downloading, {
   WIDTH as DOWNLOADING_WIDTH,
 } from './shared/Downloading.react';
@@ -14,23 +15,17 @@ import {
   View,
 } from 'react-native';
 import {
-  getAccountName,
-  getAccountType,
-  getBalance,
-  getInstitution,
-} from 'common/lib/models/Account';
-import {
   getCreditCardNumber,
   getCreditCardType,
   isCreditCardAccount,
 } from '../common/credit-card-utils';
 import { GetTheme } from '../design/components/Theme.react';
 
-import type { Account } from 'common/lib/models/Account';
+import type { AccountRaw } from 'common/lib/models/Account';
 import type { Theme } from '../design/themes';
 
 export type Props = {
-  account: Account,
+  account: AccountRaw,
   isDownloading: boolean,
   isFirst: boolean,
   isLast: boolean,
@@ -63,7 +58,8 @@ export default class AccountItem extends Component<Props> {
   }
 
   render() {
-    const { account, isFirst } = this.props;
+    const account = Account.fromRaw(this.props.account);
+    const { isFirst } = this.props;
     const topBorder = isFirst ? { borderTopWidth: 1 } : {};
 
     const downloadingStyles = [
@@ -95,7 +91,7 @@ export default class AccountItem extends Component<Props> {
                 <View style={styles.accountLoaderTop}>
                   {this._renderAccountName(theme)}
                   <MoneyText
-                    dollars={getBalance(account)}
+                    dollars={account.balance}
                     textStyle={[
                       styles.accountBalance,
                       theme.getTextStyleNormalWithEmphasis(),
@@ -109,10 +105,10 @@ export default class AccountItem extends Component<Props> {
                       theme.getTextStyleSmall(),
                     ]}
                   >
-                    {getInstitution(account)}
+                    {account.institution}
                   </Text>
                   <Text style={[styles.accountType, theme.getTextStyleSmall()]}>
-                    {getFormattedAccountType(account)}
+                    {getFormattedAccountType(account.toRaw())}
                   </Text>
                 </View>
               </View>
@@ -127,7 +123,7 @@ export default class AccountItem extends Component<Props> {
   }
 
   _renderAccountName(theme: Theme) {
-    const { account } = this.props;
+    const {account} = this.props;
     if (!isCreditCardAccount(account)) {
       return (
         <Text
@@ -139,7 +135,7 @@ export default class AccountItem extends Component<Props> {
             theme.getTextStyleNormalWithEmphasis(),
           ]}
         >
-          {getAccountName(account)}
+          {Account.fromRaw(account).name}
         </Text>
       );
     }
@@ -169,8 +165,8 @@ export default class AccountItem extends Component<Props> {
   }
 }
 
-function getFormattedAccountType(account: Account): string {
-  return getAccountType(account).replace(/_/g, ' ');
+function getFormattedAccountType(account: AccountRaw): string {
+  return Account.fromRaw(account).accountType.replace(/_/g, ' ');
 }
 
 const styles = StyleSheet.create({

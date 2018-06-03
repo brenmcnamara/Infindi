@@ -17,8 +17,8 @@ import watchSession from '../watch-session/middleware/watch-session';
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 
-import type { Account } from 'common/lib/models/Account';
 import type { AccountLink } from 'common/lib/models/AccountLink';
+import type { AccountRaw } from 'common/lib/models/Account';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../auth/actions';
 import type { Action as Action$Config } from '../actions/config';
@@ -43,7 +43,7 @@ export type PureAction =
   | Action$Auth
   | Action$Config
   | Action$DataModel
-  | Action$Datastore<'Account', Account>
+  | Action$Datastore<'Account', AccountRaw>
   | Action$Datastore<'AccountLink', AccountLink>
   | Action$Datastore<'Transaction', Transaction>
   | Action$Link
@@ -84,7 +84,6 @@ export type Reducer<TState> = (state: TState, action: PureAction) => TState;
 export type CombineReducers<TState: Object> = (reducerMap: {
   [key: string]: Reducer<*>,
 }) => Reducer<TState>;
-
 
 let middleware;
 
