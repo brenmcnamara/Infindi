@@ -28,14 +28,14 @@ import {
 } from '../action';
 import { getContainer } from '../../datastore';
 import { GetTheme } from '../../design/components/Theme.react';
-import { isLinking } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
+import type AccountLink from 'common/lib/models/AccountLink';
+import type Provider from 'common/lib/models/Provider';
+
+import type { AccountLinkContainer } from '../../data-model/types';
 import type { ElementRef } from 'react';
-import type { ModelContainer } from '../../datastore';
-import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps, ReduxState } from '../../store';
 
 export type Props = ComponentProps & ComputedProps & ReduxProps;
@@ -50,8 +50,6 @@ type ComputedProps = {
   providers: Array<Provider>,
   searchText: string,
 };
-
-type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 const LIST_CONTENT_INSET = { bottom: 4, left: 0, right: 0, top: 0 };
 const PROVIDER_ITEM_HEIGHT = 65;
@@ -196,7 +194,7 @@ class ProviderSearchScreen extends Component<Props> {
                   </Text>
                   <Text style={theme.getTextStyleSmall()}>{baseURL}</Text>
                 </View>
-                {accountLink && isLinking(accountLink) ? <Downloading /> : null}
+                {accountLink && accountLink.isLinking ? <Downloading /> : null}
               </View>
             </View>
           </TouchableOpacity>

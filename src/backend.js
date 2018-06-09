@@ -7,13 +7,14 @@
  */
 
 import Environment from './modules/Environment';
+import Provider from 'common/lib/models/Provider';
 
 import invariant from 'invariant';
 
 import type { ID, Pointer } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { LoginPayload, SignUpForm } from 'common/lib/models/Auth';
-import type { Provider } from 'common/lib/models/Provider';
+import type { ProviderRaw } from 'common/lib/models/Provider';
 
 let loginPayload: LoginPayload | null = null;
 
@@ -57,20 +58,21 @@ async function genCreateUser(signUpForm: SignUpForm): Promise<Pointer<'User'>> {
 //
 // -----------------------------------------------------------------------------
 
-export type QueryProvidersPayload = {|
-  +data: Array<Provider>,
+type QueryProvidersPayload = {|
+  +data: Array<ProviderRaw>,
 |};
 
 async function genQueryProviders(
   query: string,
   limit: number,
   page: number,
-): Promise<QueryProvidersPayload> {
+): Promise<Array<Provider>> {
   await Environment.genLazyLoad();
   const uri = createURI(
     `/yodlee/providers/search?query=${query}&limit=${limit}&page=${page}`,
   );
-  return await genGetRequest(uri);
+  const response: QueryProvidersPayload = await genGetRequest(uri);
+  return response.data.map(p => Provider.fromRaw(p));
 }
 
 // -----------------------------------------------------------------------------

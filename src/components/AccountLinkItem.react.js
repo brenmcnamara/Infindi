@@ -12,9 +12,9 @@ import {
   View,
 } from 'react-native';
 import { GetTheme } from '../design/components/Theme.react';
-import { isLinkFailure } from 'common/lib/models/AccountLink';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
+import type AccountLink from 'common/lib/models/AccountLink';
+
 import type { Theme } from '../design/themes';
 
 export type Props = {
@@ -99,7 +99,7 @@ export default class AccountLinkItem extends Component<Props> {
   }
 
   _renderAccountLinkStatusIndicator(theme: Theme, accountLink: AccountLink) {
-    if (isLinkFailure(accountLink)) {
+    if (accountLink.isLinkFailure) {
       return <Image source={Icons.Error} style={styles.statusIndicator} />;
     }
     return <ActivityIndicator size="small" />;

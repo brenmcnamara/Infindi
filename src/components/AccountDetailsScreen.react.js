@@ -20,19 +20,15 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  getAmount,
-  getCategory,
-  getTitle,
-} from 'common/lib/models/Transaction';
 import { GetTheme } from '../design/components/Theme.react';
 import { TransactionEmpty, TransactionLoadingError } from '../../content';
+
+import type Transaction from 'common/lib/models/Transaction';
 
 import type { ID } from 'common/types/core';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
 import type { Theme } from '../design/themes';
-import type { Transaction } from 'common/lib/models/Transaction';
 import type { TransactionLoadingStatus } from '../data-model/types';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
@@ -120,10 +116,10 @@ class AccountDetailsScreen extends Component<Props> {
                   styles.transactionTitle,
                 ]}
               >
-                {getTitle(transaction)}
+                {transaction.title}
               </Text>
               <MoneyText
-                dollars={getAmount(transaction)}
+                dollars={transaction.amount}
                 textStyle={[
                   styles.transactionAmount,
                   theme.getTextStyleNormalWithEmphasis(),
@@ -134,7 +130,7 @@ class AccountDetailsScreen extends Component<Props> {
               <Text
                 style={[theme.getTextStyleSmall(), styles.transactionCategory]}
               >
-                {getCategory(transaction).toUpperCase()}
+                {transaction.category.toUpperCase()}
               </Text>
               <Text style={[theme.getTextStyleSmall(), styles.transactionDate]}>
                 {moment(transaction.transactionDate).format('l')}

@@ -36,21 +36,17 @@ import { filterObject, isObjectEmpty, reduceObject } from '../common/obj-utils';
 import { getLoginPayload } from '../auth/state-utils';
 import { getNetWorth } from '../common/state-utils';
 import { GetTheme } from '../design/components/Theme.react';
-import {
-  isInMFA,
-  isLinking,
-  isLinkFailure,
-} from 'common/lib/models/AccountLink';
 import { requestProviderLogin, requestProviderSearch } from '../link/action';
 import { requestInfoModal } from '../actions/modal';
 import { viewAccountDetails } from '../actions/router';
+
+import type AccountLink from 'common/lib/models/AccountLink';
 
 import type { AccountGroupType, AccountRaw } from 'common/lib/models/Account';
 import type {
   AccountContainer,
   AccountLinkContainer,
 } from '../data-model/types';
-import type { AccountLink } from 'common/lib/models/AccountLink';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
@@ -327,7 +323,7 @@ class AccountsScreen extends Component<Props> {
         const accountLink =
           accountLinkContainer[account.accountLinkRef.refID] || null;
         const isDownloading = Boolean(
-          accountLink && (isLinking(accountLink) || isInMFA(accountLink)),
+          accountLink && (accountLink.isLinking || accountLink.isInMFA),
         );
 
         rows.push({
@@ -355,11 +351,11 @@ class AccountsScreen extends Component<Props> {
     // $FlowFixMe - This is correct.
     Object.values(container).forEach((accountLink: AccountLink) => {
       // Put all linking account links at the beginning of the array.
-      if (isLinking(accountLink) || isInMFA(accountLink)) {
+      if (accountLink.isLinking || accountLink.isInMFA) {
         accountLinks.unshift(accountLink);
       }
       // Put all failed account links at the end of the array.
-      if (isLinkFailure(accountLink)) {
+      if (accountLink.isLinkFailure) {
         accountLinks.push(accountLink);
       }
     });
@@ -435,9 +431,5 @@ export function getFormattedGroupType(groupType: AccountGroupType): string {
 }
 
 function getTotalBalanceForAccountContainer(group: AccountContainer): Dollars {
-  return reduceObject(
-    group,
-    (total, account) => total + Account.fromRaw(account).balance,
-    0,
-  );
+  return reduceObject(group, (total, account) => total + account.balance, 0);
 }

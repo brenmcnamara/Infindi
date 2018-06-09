@@ -1,17 +1,13 @@
 /* @flow */
 
 import DataModelStateUtils from '../data-model/state-utils';
+import Transaction from 'common/lib/models/Transaction';
 
 import uuid from 'uuid/v4';
 
-import { getTransactionCollection } from 'common/lib/models/Transaction';
-
 import type { ID } from 'common/types/core';
-import type { ModelContainer } from '../datastore';
 import type { PureAction, Next, Store } from '../store';
-import type { Transaction } from 'common/lib/models/Transaction';
-
-type TransactionContainer = ModelContainer<'Transaction', Transaction>;
+import type { TransactionContainer } from '../data-model/types';
 
 const TRANSACTIONS_PER_PAGE = 20;
 
@@ -28,8 +24,11 @@ export default (store: Store) => (next: Next) => {
       type: 'CONTAINER_DOWNLOAD_START',
     });
 
-    let query = getTransactionCollection()
-      .where('accountRef.refID', '==', accountID)
+    let query = Transaction.FirebaseCollectionUNSAFE.where(
+      'accountRef.refID',
+      '==',
+      accountID,
+    )
       .orderBy('transactionDate', 'desc')
       // NOTE: Sorting by id so that all results have a deterministic order.
       // Because transaction dates are rounded to the nearest day, there are
@@ -62,7 +61,7 @@ export default (store: Store) => (next: Next) => {
       if (!doc.exists) {
         return;
       }
-      const transaction = doc.data();
+      const transaction: Transaction = Transaction.fromRaw(doc.data());
       container[transaction.id] = transaction;
     });
 

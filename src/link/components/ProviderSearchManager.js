@@ -4,7 +4,7 @@ import Backend from '../../backend';
 
 import invariant from 'invariant';
 
-import type { Provider } from 'common/lib/models/Provider';
+import type Provider from 'common/lib/models/Provider';
 
 export type ResultCallback = () => any;
 export type Subscription = () => void;
@@ -79,9 +79,9 @@ export default class ProviderSearchManager {
         this._currentSearch = search;
         return Backend.genQueryProviders(search, LIMIT, this._nextPage);
       })
-      .then(payload => {
+      .then(providers => {
         this._lastSuccessfulSearch = search;
-        this._providersByPage[currentPage] = payload.data;
+        this._providersByPage[currentPage] = providers;
         this._callback && this._callback();
       })
       .catch(error => {

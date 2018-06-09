@@ -1,11 +1,10 @@
 /* @flow */
 
-import type { ModelContainer } from '../../datastore';
 import type { PureAction } from '../../store';
-import type { UserInfoRaw } from 'common/lib/models/UserInfo';
+import type { UserInfoContainer } from '../types';
 
 export type State = {
-  container: ModelContainer<'UserInfo', UserInfoRaw>,
+  container: UserInfoContainer,
   loadStatus: 'STEADY' | 'FAILURE' | 'EMPTY' | 'LOADING',
 };
 

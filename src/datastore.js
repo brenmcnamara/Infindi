@@ -3,6 +3,7 @@
 import invariant from 'invariant';
 
 import type { ID, ModelStub } from 'common/types/core';
+import type { Model } from 'common/lib/models/Model';
 import type { PureAction, Reducer } from './store';
 
 // TODO: Port this from Infindi-Backend
@@ -18,16 +19,24 @@ export type ContainerUpdateStrategy =
   | 'REPLACE_CURRENT_CONTAINER'
   | 'MERGE_WITH_CURRENT_CONTAINER';
 
-export type ModelContainer<TName: string, TModel: ModelStub<TName>> = {
+export type ModelContainer<
+  TName: string,
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+> = {
   [id: ID]: TModel,
 };
 
-export type ModelState<TName: string, TModel: ModelStub<TName>> =
+export type ModelState<
+  TName: string,
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+> =
   | {|
       +type: 'EMPTY',
     |}
   | {|
-      +container: ModelContainer<TName, TModel> | null,
+      +container: ModelContainer<TName, TRaw, TModel> | null,
       +type: 'DOWNLOADING',
     |}
   | {|
@@ -35,16 +44,21 @@ export type ModelState<TName: string, TModel: ModelStub<TName>> =
       +type: 'DOWNLOAD_FAILED',
     |}
   | {|
-      +container: ModelContainer<TName, TModel>,
+      +container: ModelContainer<TName, TRaw, TModel>,
       +type: 'STEADY',
     |};
 
 export type Action<
   TName: string,
-  TModel: ModelStub<TName>,
-> = Action$ModelContainer<TName, TModel>;
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+> = Action$ModelContainer<TName, TRaw, TModel>;
 
-export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
+export type Action$ModelContainer<
+  TName: string,
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+> =
   | {|
       +downloadInfo?: any,
       +modelName: TName,
@@ -52,7 +66,7 @@ export type Action$ModelContainer<TName: string, TModel: ModelStub<TName>> =
       +type: 'CONTAINER_DOWNLOAD_START',
     |}
   | {|
-      +container: ModelContainer<TName, TModel>,
+      +container: ModelContainer<TName, TRaw, TModel>,
       +downloadInfo?: any,
       +modelName: TName,
       +operationID: ID,
@@ -87,10 +101,11 @@ const DEFAULT_STATE = {
  */
 export function createModelContainerReducer<
   TName: string,
-  TModel: ModelStub<TName>,
->(modelName: TName): Reducer<ModelState<TName, TModel>> {
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+>(modelName: TName): Reducer<ModelState<TName, TRaw, TModel>> {
   return (
-    state: ModelState<TName, TModel> = DEFAULT_STATE,
+    state: ModelState<TName, TRaw, TModel> = DEFAULT_STATE,
     action: PureAction,
   ) => {
     switch (action.type) {
@@ -115,8 +130,9 @@ export function createModelContainerReducer<
           // different types. However, we are operating under the assunmption
           // that model names are always mutually exclusive, so we know better
           // than flow here.
-          // $FlowFixMe - See above explanation
-          const container: ModelContainer<TName, TModel> = action.container;
+          const container: ModelContainer<TName, TRaw, TModel> =
+            // $FlowFixMe - See above explanation
+            action.container;
           return mergeContainerWithState(
             modelName,
             state,
@@ -157,9 +173,13 @@ export function createModelContainerReducer<
 //
 // -----------------------------------------------------------------------------
 
-export function getContainer<TName: string, TModel: ModelStub<TName>>(
-  state: ModelState<TName, TModel>,
-): ModelContainer<TName, TModel> | null {
+export function getContainer<
+  TName: string,
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+>(
+  state: ModelState<TName, TRaw, TModel>,
+): ModelContainer<TName, TRaw, TModel> | null {
   switch (state.type) {
     case 'EMPTY':
     case 'DOWNLOAD_FAILED': {
@@ -176,12 +196,16 @@ export function getContainer<TName: string, TModel: ModelStub<TName>>(
   }
 }
 
-function mergeContainerWithState<TName: string, TModel: ModelStub<TName>>(
+function mergeContainerWithState<
+  TName: string,
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+>(
   modelName: TName,
-  state: ModelState<TName, TModel>,
-  container: ModelContainer<TName, TModel>,
+  state: ModelState<TName, TRaw, TModel>,
+  container: ModelContainer<TName, TRaw, TModel>,
   updateStrategy: ContainerUpdateStrategy,
-): ModelState<TName, TModel> {
+): ModelState<TName, TRaw, TModel> {
   switch (updateStrategy) {
     case 'REPLACE_CURRENT_CONTAINER': {
       return { container, type: 'STEADY' };
@@ -202,11 +226,15 @@ function mergeContainerWithState<TName: string, TModel: ModelStub<TName>>(
   }
 }
 
-function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(
+function mergeDownloadFailureWithState<
+  TName: string,
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+>(
   modelName: TName,
-  state: ModelState<TName, TModel>,
+  state: ModelState<TName, TRaw, TModel>,
   error: InfindiError,
-): ModelState<TName, TModel> {
+): ModelState<TName, TRaw, TModel> {
   invariant(
     state.type === 'DOWNLOADING',
     '[%s Container State]: Cannot merge with a download error %s with state %s',
@@ -217,10 +245,14 @@ function mergeDownloadFailureWithState<TName: string, TModel: ModelStub<TName>>(
   return { error, type: 'DOWNLOAD_FAILED' };
 }
 
-function removeModel<TName: string, TModel: ModelStub<TName>>(
+function removeModel<
+  TName: string,
+  TRaw: ModelStub<TName>,
+  TModel: Model<TName, TRaw>,
+>(
   modelID: ID,
-  state: ModelState<TName, TModel>,
-): ModelState<TName, TModel> {
+  state: ModelState<TName, TRaw, TModel>,
+): ModelState<TName, TRaw, TModel> {
   // TODO: May want to throw if trying to delete a model that does not exist.
   if (state.type !== 'STEADY') {
     return state;

@@ -2,15 +2,13 @@
 
 import { createModelContainerReducer } from '../../datastore';
 
-import type { AccountRaw } from 'common/lib/models/Account';
-import type { ModelContainer, ModelState } from '../../datastore';
+import type Account, { AccountRaw } from 'common/lib/models/Account';
 
-export type AccountContainer = ModelContainer<'Account', AccountRaw>;
+import type { ModelState } from '../../datastore';
+import type { Reducer } from '../../store';
 
-export type State = ModelState<'Account', AccountRaw>;
+export type State = ModelState<'Account', AccountRaw, Account>;
 
-const accounts: (state: State, action: *) => * = createModelContainerReducer(
-  'Account',
-);
+const accounts: Reducer<State> = createModelContainerReducer('Account');
 
 export default accounts;

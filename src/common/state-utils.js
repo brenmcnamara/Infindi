@@ -1,7 +1,5 @@
 /* @flow */
 
-import Account from 'common/lib/models/Account';
-
 import invariant from 'invariant';
 
 import { getLoginPayload } from '../auth/state-utils';
@@ -39,7 +37,7 @@ export function getNetWorth(state: ReduxState): Dollars {
       let total = 0;
       for (const id in container) {
         if (container.hasOwnProperty(id)) {
-          total += Account.fromRaw(container[id]).balance;
+          total += container[id].balance;
         }
       }
       return total;

@@ -32,11 +32,11 @@ import {
   updateLoginForm,
 } from '../action';
 import { GetTheme } from '../../design/components/Theme.react';
-import { isInMFA } from 'common/lib/models/AccountLink';
 import { NavBarHeight } from '../../design/layout';
 
+import type Provider from 'common/lib/models/Provider';
+
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
-import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxProps } from '../../store';
 import type { State as ReduxState } from '../../reducers/root';
 
@@ -210,6 +210,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     state,
     providerID,
   );
+  // TODO: Properly handle provider loading failure.
   invariant(
     loginForm ||
       state.providers.status === 'EMPTY' ||
@@ -231,7 +232,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const pendingLoginRequest =
     state.accountVerification.providerPendingLoginRequestMap[providerID];
   const canExit =
-    !pendingLoginRequest && (!accountLink || !isInMFA(accountLink));
+    !pendingLoginRequest && (!accountLink || !accountLink.isInMFA);
 
   return {
     callToAction,

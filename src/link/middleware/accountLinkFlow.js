@@ -12,7 +12,6 @@ import {
 import { requestMultipleToasts } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
 import { getContainer } from '../../datastore';
-import { isInMFA } from 'common/lib/models/AccountLink';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
@@ -101,7 +100,7 @@ class AccountLinkFlowManager {
         isViewingLoginScreen,
         pendingRequest: providerPendingLoginRequestMap[providerID] || null,
         providerID,
-        shouldShowLoginFormModal: !isViewingLoginScreen && isInMFA(accountLink),
+        shouldShowLoginFormModal: !isViewingLoginScreen && accountLink.isInMFA,
         status: accountLink.status,
       };
     });

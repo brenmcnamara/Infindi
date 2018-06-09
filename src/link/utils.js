@@ -4,11 +4,10 @@ import DataModelStateUtils from '../data-model/state-utils';
 
 import invariant from 'invariant';
 
-import { isLinkFailure, isLinkSuccess } from 'common/lib/models/AccountLink';
+import type Provider from 'common/lib/models/Provider';
 
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
-import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxState } from '../store';
 
 export type SupportType =
@@ -109,8 +108,8 @@ export function calculateCanSubmitLoginFormForProviderID(
     !pendingLoginRequest &&
     Boolean(loginForm && isFilledOut) &&
     (!accountLink ||
-      isLinkSuccess(accountLink) ||
-      isLinkFailure(accountLink) ||
+      accountLink.isLinkSuccess ||
+      accountLink.isLinkFailure ||
       accountLink.status === 'MFA / PENDING_USER_INPUT')
   );
 }

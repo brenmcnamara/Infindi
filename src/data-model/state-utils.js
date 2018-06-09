@@ -2,11 +2,12 @@
 
 import { getContainer } from '../datastore';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
+import type AccountLink from 'common/lib/models/AccountLink';
+import type Provider from 'common/lib/models/Provider';
+import type Transaction from 'common/lib/models/Transaction';
+
 import type { ID } from 'common/types/core';
-import type { Provider } from 'common/lib/models/Provider';
 import type { ReduxState } from '../store';
-import type { Transaction } from 'common/lib/models/Transaction';
 import type { TransactionLoadingStatus } from '../data-model/types';
 
 function getProviders(state: ReduxState): Array<Provider> {

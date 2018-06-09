@@ -1,17 +1,15 @@
 /* @flow */
 
+import AccountLink from 'common/lib/models/AccountLink';
+
 import uuid from 'uuid/v4';
 
-import { getAccountLinkCollection } from 'common/lib/models/AccountLink';
 import { getActiveUserID } from '../common/state-utils';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
+import type { AccountLinkContainer } from '../data-model/types';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { ID } from 'common/types/core';
-import type { ModelContainer } from '../datastore';
 import type { PureAction, Next, Store } from '../store';
-
-type AccountLinkContainer = ModelContainer<'AccountLink', AccountLink>;
 
 export default (store: Store) => (next: Next) => {
   let isInitialLoad = true;
@@ -51,26 +49,28 @@ function listenForAccountLink(userID: ID, next: Next): EmitterSubscription {
     operationID,
     type: 'CONTAINER_DOWNLOAD_START',
   });
-  const remove = getAccountLinkCollection()
-    .where('userRef.refID', '==', userID)
-    .onSnapshot(snapshot => {
-      const container: AccountLinkContainer = {};
-      snapshot.docs.forEach(doc => {
-        if (!doc.exists) {
-          return;
-        }
-        const accountLink: AccountLink = doc.data();
-        container[accountLink.id] = accountLink;
-      });
-      next({
-        container,
-        modelName: 'AccountLink',
-        operationID,
-        type: 'CONTAINER_DOWNLOAD_FINISHED',
-        updateStrategy: 'REPLACE_CURRENT_CONTAINER',
-      });
-      operationID = uuid();
+  const remove = AccountLink.FirebaseCollectionUNSAFE.where(
+    'userRef.refID',
+    '==',
+    userID,
+  ).onSnapshot(snapshot => {
+    const container: AccountLinkContainer = {};
+    snapshot.docs.forEach(doc => {
+      if (!doc.exists) {
+        return;
+      }
+      const accountLink: AccountLink = AccountLink.fromRaw(doc.data());
+      container[accountLink.id] = accountLink;
     });
+    next({
+      container,
+      modelName: 'AccountLink',
+      operationID,
+      type: 'CONTAINER_DOWNLOAD_FINISHED',
+      updateStrategy: 'REPLACE_CURRENT_CONTAINER',
+    });
+    operationID = uuid();
+  });
   return { remove };
 }
 

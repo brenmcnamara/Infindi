@@ -1,10 +1,10 @@
 /* @flow */
 
 import Backend from '../../backend';
+import Provider from 'common/lib/models/Provider';
 
 import uuid from 'uuid/v4';
 
-import type { Provider } from 'common/lib/models/Provider';
 import type { PureAction, Next, Store } from '../../store';
 
 export default (store: Store) => (next: Next) => {
@@ -38,8 +38,7 @@ async function runSearch(searchText: string, next: Next): Promise<void> {
   });
   let providers: Array<Provider>;
   try {
-    const response = await Backend.genQueryProviders(searchText, 100, 0);
-    providers = response.data;
+    providers = await Backend.genQueryProviders(searchText, 100, 0);
   } catch (error) {
     next({
       operationID,

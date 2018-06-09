@@ -17,8 +17,14 @@ import watchSession from '../watch-session/middleware/watch-session';
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 
-import type { AccountLink } from 'common/lib/models/AccountLink';
-import type { AccountRaw } from 'common/lib/models/Account';
+import type Account, { AccountRaw } from 'common/lib/models/Account';
+import type AccountLink, {
+  AccountLinkRaw,
+} from 'common/lib/models/AccountLink';
+import type Transaction, {
+  TransactionRaw,
+} from 'common/lib/models/Transaction';
+
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../auth/actions';
 import type { Action as Action$Config } from '../actions/config';
@@ -32,7 +38,6 @@ import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
 import type { Action as Action$WatchSession } from '../watch-session/actions';
 import type { State } from '../reducers/root';
-import type { Transaction } from 'common/lib/models/Transaction';
 
 export type ReduxProps = {
   +dispatch: Dispatch,
@@ -43,9 +48,9 @@ export type PureAction =
   | Action$Auth
   | Action$Config
   | Action$DataModel
-  | Action$Datastore<'Account', AccountRaw>
-  | Action$Datastore<'AccountLink', AccountLink>
-  | Action$Datastore<'Transaction', Transaction>
+  | Action$Datastore<'Account', AccountRaw, Account>
+  | Action$Datastore<'AccountLink', AccountLinkRaw, AccountLink>
+  | Action$Datastore<'Transaction', TransactionRaw, Transaction>
   | Action$Link
   | Action$Modal
   | Action$ModalMiddleware
