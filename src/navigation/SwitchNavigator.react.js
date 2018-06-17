@@ -2,44 +2,43 @@
 
 import * as React from 'react';
 
+import invariant from 'invariant';
+
 import { connect } from 'react-redux';
 
 import type { ReduxState, ReduxProps } from '../store';
+import type { ScreenPayload } from './types';
 
-export type Props<TRenderProps: Object> = ComponentProps<TRenderProps> &
-  ComputedProps<TRenderProps> &
-  ReduxProps;
+export type Props = ComponentProps & ComputedProps & ReduxProps;
 
-type ComponentProps<TRenderProps: Object> = {
-  children: (renderProps: TRenderProps) => React.Element<*>,
-  mapReduxStateToProps: (state: ReduxState) => TRenderProps,
+type ComponentProps = {
+  calculateScreenForState: (state: ReduxState) => string,
+  screens: Array<ScreenPayload>,
 };
-type ComputedProps<TRenderProps: Object> = {
-  currentRenderProps: TRenderProps,
-};
-type State<TRenderProps: Object> = {
-  prevRenderProps: TRenderProps | null,
+type ComputedProps = {
+  screen: string,
 };
 
-class SwitchNavigator<TRenderProps: Object> extends React.Component<
-  Props<TRenderProps>,
-  State<TRenderProps>,
-> {
-  state: State<TRenderProps> = {
-    prevRenderProps: null,
-  };
-
+class SwitchNavigator extends React.Component<Props> {
   render() {
-    return this.props.children(this.props.currentRenderProps);
+    const Component = this._getComponent(this.props.screen);
+    return <Component />;
+  }
+
+  _getComponent(screen: string) {
+    const { screens } = this.props;
+    const payload = screens.find(payload => payload.screen === screen);
+    invariant(payload, 'No component found for screen %s', screen);
+    return payload.component;
   }
 }
 
-function mapReduxStateToProps<TRenderProps: Object>(
+function mapReduxStateToProps(
   state: ReduxState,
-  props: ComponentProps<TRenderProps>,
-): ComputedProps<TRenderProps> {
+  props: ComponentProps,
+): ComputedProps {
   return {
-    currentRenderProps: props.mapReduxStateToProps(state),
+    screen: props.calculateScreenForState(state),
   };
 }
 
