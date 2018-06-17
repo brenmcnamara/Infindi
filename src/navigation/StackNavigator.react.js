@@ -22,6 +22,7 @@ export type Props = ThemeProps & ReduxProps & ComponentProps & ComputedProps;
 type ComponentProps = {
   calculateBackAction: (prevScreen: string, currentScreen: string) => Action,
   calculateStackForState: (state: ReduxState) => ScreenStack,
+  isBarShadowShowing?: boolean,
   screens: Array<ScreenPayload>,
 };
 type ComputedProps = {
@@ -66,7 +67,7 @@ class StackNavigator extends React.Component<Props> {
         component,
         leftButtonIcon: Icons.LeftArrow,
         onLeftButtonPress: this._onBack,
-        shadowHidden: true,
+        shadowHidden: !this.props.isBarShadowShowing,
         tintColor: this.props.theme.color.buttonNavBar,
         title: '',
       });
@@ -79,7 +80,7 @@ class StackNavigator extends React.Component<Props> {
         initialRoute={{
           barTintColor: this.props.theme.color.backgroundMain,
           component: this._getInitialComponent(),
-          shadowHidden: true,
+          shadowHidden: !this.props.isBarShadowShowing,
           tintColor: this.props.theme.color.buttonNavBar,
           title: '',
         }}

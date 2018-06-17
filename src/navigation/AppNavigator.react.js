@@ -3,6 +3,7 @@
 import * as React from 'react';
 import AuthNavigator from './AuthNavigator.react';
 import LoadingScreen from '../core/LoadingScreen.react';
+import MainNavigator from './MainNavigator.react';
 import SwitchNavigator from './SwitchNavigator.react';
 
 import invariant from 'invariant';
@@ -40,15 +41,6 @@ export default class AppNavigator extends React.Component<Props> {
       }
 
       case 'LOGGED_IN': {
-        return 'Auth';
-        const accountVerificationPage = state.accountVerification.page;
-        if (!accountVerificationPage) {
-          // return actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
-          return 'Main';
-        }
-        // return accountVerificationPage.type === 'SEARCH'
-        //   ? 'PROVIDER_SEARCH'
-        //   : 'PROVIDER_LOGIN';
         return 'Main';
       }
 
@@ -71,4 +63,8 @@ const Screens = [
     component: LoadingScreen,
     screen: 'Loading',
   },
+  {
+    component: MainNavigator,
+    screen: 'Main',
+  }
 ];
