@@ -4,9 +4,9 @@ import Backend from '../../backend';
 
 import invariant from 'invariant';
 
-import type { PureAction, Next, Store } from '../../store';
+import type { PureAction, Next, StoreType } from '../../store';
 
-export default (store: Store) => (next: Next) => {
+export default (store: StoreType) => (next: Next) => {
   return (action: PureAction) => {
     next(action);
 

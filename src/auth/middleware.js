@@ -8,7 +8,7 @@ import invariant from 'invariant';
 import { dismissToast, requestToast } from '../actions/toast';
 
 import type { AuthStatus } from './types';
-import type { Next, PureAction, Store } from '../store';
+import type { Next, PureAction, StoreType } from '../store';
 import type { User as FirebaseUser } from 'common/types/firebase';
 import type {
   LoginCredentials,
@@ -28,7 +28,7 @@ type ChangeStatus = (auth: AuthStatus) => *;
 //
 // -----------------------------------------------------------------------------
 
-export default (store: Store) => (next: Next) => {
+export default (store: StoreType) => (next: Next) => {
   // Convenience function.
   const changeStatus = (status: AuthStatus) => {
     return next({ type: 'AUTH_STATUS_CHANGE', status });
@@ -39,10 +39,10 @@ export default (store: Store) => (next: Next) => {
     const { auth } = store.getState();
     const loginPayload: ?LoginPayload = await genLoginPayload();
 
-    if (canLogin(auth) && loginPayload) {
+    if (canLogin(auth.status) && loginPayload) {
       Backend.setLoginPayload(loginPayload);
       changeStatus({ loginPayload, type: 'LOGGED_IN' });
-    } else if (canLogout(auth) && !loginPayload) {
+    } else if (canLogout(auth.status) && !loginPayload) {
       Backend.clearLoginPayload();
       changeStatus({ type: 'LOGGED_OUT' });
     }
@@ -63,7 +63,7 @@ export default (store: Store) => (next: Next) => {
 
       case 'LOGOUT_REQUEST': {
         const { auth } = store.getState();
-        const loginPayload = getLoginPayload(auth);
+        const loginPayload = getLoginPayload(auth.status);
         invariant(
           loginPayload,
           'Requesting logout of a user that is not logged in',

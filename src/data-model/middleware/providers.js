@@ -5,9 +5,9 @@ import Provider from 'common/lib/models/Provider';
 
 import uuid from 'uuid/v4';
 
-import type { PureAction, Next, Store } from '../../store';
+import type { PureAction, Next, StoreType } from '../../store';
 
-export default (store: Store) => (next: Next) => {
+export default (store: StoreType) => (next: Next) => {
   return (action: PureAction) => {
     next(action);
 

@@ -6,13 +6,13 @@ import invariant from 'invariant';
 
 import { getIsAuthenticated, getLoginPayload } from '../../auth/state-utils';
 
-import type { PureAction, Next, ReduxState, Store } from '../../store';
+import type { PureAction, Next, ReduxState, StoreType } from '../../store';
 
 class WatchSessionMiddleware {
   _adminStatus: 'ADMIN' | 'NOT_ADMIN' | 'UNKNOWN' = 'UNKNOWN';
 
   _next: Next | null = null;
-  _store: Store | null = null;
+  _store: StoreType | null = null;
 
   _onAction(action: PureAction): void {
     this._callNext(action);
@@ -51,7 +51,7 @@ class WatchSessionMiddleware {
   }
 
   getMiddlewareHandle() {
-    return (store: Store) => (next: Next) => {
+    return (store: StoreType) => (next: Next) => {
       this._store = store;
       this._next = next;
       return (action: PureAction) => {

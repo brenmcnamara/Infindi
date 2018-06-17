@@ -15,7 +15,7 @@ import { getContainer } from '../../datastore';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
 import type { ID } from 'common/types/core';
-import type { PureAction, Next, Store } from '../../store';
+import type { PureAction, Next, StoreType } from '../../store';
 import type { State as ReduxState } from '../../reducers/root';
 import type { Toast$Banner } from '../../reducers/toast';
 
@@ -36,7 +36,7 @@ class AccountLinkFlowManager {
   _bannerBuffer: Array<Toast$Banner> = [];
   _next: Next | null = null;
   _providerStateMap: { [providerID: ID]: ProviderState } = {};
-  _store: Store | null = null;
+  _store: StoreType | null = null;
 
   static getInstance(): AccountLinkFlowManager {
     if (!AccountLinkFlowManager._instance) {
@@ -46,7 +46,7 @@ class AccountLinkFlowManager {
   }
 
   getMiddlewareHandle() {
-    return (store: Store) => (next: Next) => {
+    return (store: StoreType) => (next: Next) => {
       this._store = store;
       this._next = next;
       return (action: PureAction) => {

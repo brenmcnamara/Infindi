@@ -1,9 +1,9 @@
 /* @flow */
 
 import Icons from '../../design/icons';
-import LoginScreen from '../../auth/components/LoginScreen.react';
+import LoginScreen from '../../auth/screens/LoginScreen.react';
 import React, { Component } from 'react';
-import SignUpScreen from '../../auth/components/SignUpScreen.react';
+import SignUpScreen from '../../auth/screens/SignUpScreen.react';
 
 import { connect } from 'react-redux';
 import { NavigatorIOS } from 'react-native';
@@ -81,7 +81,7 @@ class AuthNavigator extends Component<Props> {
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   return {
-    shouldStayOnSignUpScreen: state.auth.type === 'SIGN_UP_INITIALIZE',
+    shouldStayOnSignUpScreen: state.auth.status.type === 'SIGN_UP_INITIALIZE',
   };
 }
 

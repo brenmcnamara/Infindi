@@ -9,6 +9,7 @@ export type Action =
   | Action$AuthStatusChange
   | Action$LoginRequest
   | Action$LogoutRequest
+  | Action$ShowSignUpScreen
   | Action$SignUpRequest;
 
 type Action$SignUpRequest = {|
@@ -63,4 +64,16 @@ export function removeSignUpValidationError() {
     'SIGN_UP_VALIDATION_ERROR',
     /* shouldThrowOnDismissingNonExistantToast */ false,
   );
+}
+
+type Action$ShowSignUpScreen = {|
+  +isShowing: boolean,
+  +type: 'SHOW_SIGN_UP_SCREEN',
+|};
+
+export function showSignUpScreen(isShowing: boolean) {
+  return {
+    isShowing,
+    type: 'SHOW_SIGN_UP_SCREEN',
+  };
 }

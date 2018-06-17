@@ -27,7 +27,6 @@ import type Transaction, {
 
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../auth/actions';
-import type { Action as Action$Config } from '../actions/config';
 import type { Action as Action$DataModel } from '../data-model/actions';
 import type { Action as Action$Datastore } from '../datastore';
 import type { Action as Action$Link } from '../link/action';
@@ -46,7 +45,6 @@ export type ReduxProps = {
 export type PureAction =
   | Action$ActionItems
   | Action$Auth
-  | Action$Config
   | Action$DataModel
   | Action$Datastore<'Account', AccountRaw, Account>
   | Action$Datastore<'AccountLink', AccountLinkRaw, AccountLink>
@@ -71,7 +69,7 @@ export type ReduxState = State;
 
 export type GetState = () => State;
 
-export type Store = {|
+export type StoreType = {|
   +dispatch: Dispatch,
   +getState: GetState,
   +subscription: (cb: ChangeStoreCallback) => StoreSubscription,

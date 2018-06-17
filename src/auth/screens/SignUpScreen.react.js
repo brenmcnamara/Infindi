@@ -317,7 +317,7 @@ class SignUpScreen extends Component<Props, State> {
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   return {
-    isWaitingForSignUp: state.auth.type === 'SIGN_UP_INITIALIZE',
+    isWaitingForSignUp: state.auth.status.type === 'SIGN_UP_INITIALIZE',
   };
 }
 

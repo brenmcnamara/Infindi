@@ -1,6 +1,6 @@
 /* @flow */
 
-import AppContainer from './src/components/AppContainer.react';
+import AppContainer from './src/core/AppContainer.react';
 import Common from 'common';
 import Firebase from 'react-native-firebase';
 

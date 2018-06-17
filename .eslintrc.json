@@ -47,6 +47,7 @@
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
     },
-    "import/ignore": ["node_modules"]
+    "import/ignore": ["node_modules"],
+    "import/no-named-as-default": 0
   }
 }

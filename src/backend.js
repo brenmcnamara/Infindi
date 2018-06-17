@@ -6,8 +6,8 @@
  * normal Firebase login flow.
  */
 
-import Environment from './modules/Environment';
 import Provider from 'common/lib/models/Provider';
+import Store from './store'; // TODO: Should not access directly
 
 import invariant from 'invariant';
 
@@ -42,7 +42,6 @@ export type CreateUserPayload = {|
 |};
 
 async function genCreateUser(signUpForm: SignUpForm): Promise<Pointer<'User'>> {
-  await Environment.genLazyLoad();
   const uri = createURI('/users');
   const response: CreateUserPayload = await genPostRequest(
     uri,
@@ -67,7 +66,6 @@ async function genQueryProviders(
   limit: number,
   page: number,
 ): Promise<Array<Provider>> {
-  await Environment.genLazyLoad();
   const uri = createURI(
     `/yodlee/providers/search?query=${query}&limit=${limit}&page=${page}`,
   );
@@ -87,7 +85,6 @@ async function genYodleeSubmitProviderLoginForm(
   providerID: ID,
   loginForm: YodleeLoginForm,
 ): Promise<YodleeProviderSubmitLoginFormPayload> {
-  await Environment.genLazyLoad();
   const uri = createURI(`/yodlee/providers/${providerID}/loginForm`);
   const json = await genPostRequest(uri, { loginForm });
   return json.data;
@@ -168,7 +165,8 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
 }
 
 function createURI(path: string): string {
-  return `${Environment.getHostname()}${path}`;
+  const hostname = Store.config.hostname;
+  return `${hostname}${path}`;
 }
 
 export default {

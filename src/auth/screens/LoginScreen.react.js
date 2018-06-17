@@ -7,9 +7,6 @@ import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
 import TextButton from '../../components/shared/TextButton.react';
 
-import { GetTheme } from '../../design/components/Theme.react';
-import { setShouldShowSignUpScreen } from '../../actions/router';
-
 import invariant from 'invariant';
 
 import {
@@ -23,22 +20,30 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { login } from '../../auth/actions';
+import { GetTheme } from '../../design/components/Theme.react';
+import { login, showSignUpScreen } from '../actions';
 
 import type { ElementRef } from 'react';
 import type { LoginCredentials } from 'common/lib/models/Auth';
-import type { ReduxProps } from '../../store';
-import type { State as StoreState } from '../../reducers/root';
+import type { ReduxProps, ReduxState } from '../../store';
 import type { Theme } from '../../design/themes';
 
-export type Props = ReduxProps & {
-  loginType: 'NORMAL' | 'ERROR' | 'LOADING',
-};
+export type Props = ReduxProps & ComponentProps & ComputedProps;
+type LoginType = 'NORMAL' | 'ERROR' | 'LOADING';
 
+type ComponentProps = {};
+type ComputedProps = {
+  loginType: LoginType,
+};
 type State = {
   credentials: LoginCredentials,
   isShowingLoginError: boolean,
 };
+
+const AMPLITUDE = 7;
+const PRECISION = 15;
+const NUMBER_OF_SHAKES = 3;
+const WIGGLE_DURATION_MILLIS = 350;
 
 class LoginScreen extends Component<Props, State> {
   state: State = {
@@ -214,7 +219,7 @@ class LoginScreen extends Component<Props, State> {
   };
 
   _onPressCreateAccount = (): void => {
-    this.props.dispatch(setShouldShowSignUpScreen(true));
+    this.props.dispatch(showSignUpScreen(true));
   };
 
   _onPressLogin = (): void => {
@@ -242,41 +247,41 @@ class LoginScreen extends Component<Props, State> {
   }
 }
 
-const PRECISION = 15;
-const AMPLITUDE = 7;
-const NUMBER_OF_SHAKES = 3;
-const WIGGLE_DURATION_MILLIS = 350;
-
 function wiggleFunction(x: number): number {
   return AMPLITUDE * Math.sin(x * Math.PI * 2 * NUMBER_OF_SHAKES);
 }
 
-function mapReduxStateToProps(state: StoreState) {
-  const { auth } = state;
-  let loginType;
-  switch (auth.type) {
-    case 'LOGGED_OUT':
-    case 'LOGOUT_FAILURE':
-    case 'LOGOUT_INITIALIZE':
-      loginType = 'NORMAL';
-      break;
-
-    case 'LOGGED_IN':
-    case 'LOGIN_INITIALIZE':
-      loginType = 'LOADING';
-      break;
-
-    case 'LOGIN_FAILURE':
-      loginType = 'ERROR';
-      break;
-
-    default:
-      invariant(false, 'LoginScreen does not handle auth status %s', auth.type);
-  }
-  return { loginType };
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
+  return {
+    loginType: calculateLoginType(state),
+  };
 }
 
 export default connect(mapReduxStateToProps)(LoginScreen);
+
+function calculateLoginType(state: ReduxState): LoginType {
+  const { auth } = state;
+  switch (auth.status.type) {
+    case 'LOGGED_OUT':
+    case 'LOGOUT_FAILURE':
+    case 'LOGOUT_INITIALIZE':
+      return 'NORMAL';
+
+    case 'LOGGED_IN':
+    case 'LOGIN_INITIALIZE':
+      return 'LOADING';
+
+    case 'LOGIN_FAILURE':
+      return 'ERROR';
+
+    default:
+      return invariant(
+        false,
+        'LoginScreen does not handle auth status %s',
+        auth.status.type,
+      );
+  }
+}
 
 const styles = StyleSheet.create({
   createAccountContainer: {

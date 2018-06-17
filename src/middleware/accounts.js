@@ -9,9 +9,9 @@ import { getActiveUserID } from '../common/state-utils';
 import type { AccountContainer } from '../data-model/types';
 import type { EmitterSubscription } from '../common/event-utils';
 import type { ID } from 'common/types/core';
-import type { PureAction, Next, Store } from '../store';
+import type { PureAction, Next, StoreType } from '../store';
 
-export default (store: Store) => (next: Next) => {
+export default (store: StoreType) => (next: Next) => {
   let accountSubscription: ?EmitterSubscription = null;
   let isInitialLoad = true;
   let activeUserID: ID | null = null;

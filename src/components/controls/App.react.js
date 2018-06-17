@@ -1,8 +1,7 @@
 /* @flow */
 
 import AuthNavigator from './AuthNavigator.react';
-import Environment from '../../modules/Environment';
-import LoadingScreen from '../LoadingScreen.react';
+import LoadingScreen from '../../core/LoadingScreen.react';
 import ModalManager from '../ModalManager.react';
 import NoInternetScreen from '../NoInternetScreen.react';
 import ProviderLoginScreen from '../../link/components/ProviderLoginScreen.react';
@@ -17,7 +16,6 @@ import invariant from 'invariant';
 
 import { connect } from 'react-redux';
 import { createRoute, forceGetNextNode } from '../../common/route-utils';
-import { envDoneLoading, envFailedLoading } from '../../actions/config';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -39,15 +37,6 @@ type ComputedProps = {
 
 class App extends Component<Props> {
   _safeAreaSubviewLayout: *;
-
-  componentWillMount(): void {
-    const { dispatch } = this.props;
-    // TODO: For now we are doing this here, but may want to move this into
-    // some middleware as the project gets more complex.
-    Environment.genLazyLoad()
-      .then(() => dispatch(envDoneLoading()))
-      .catch(() => dispatch(envFailedLoading()));
-  }
 
   render() {
     const { isInWatchSession, root } = this.props;

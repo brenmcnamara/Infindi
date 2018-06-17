@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import type { Next, PureAction, Store } from '../store';
+import type { Next, PureAction, StoreType } from '../store';
 import type { Toast$Banner } from '../reducers/toast';
 
 export type Action = Action$UpdateBannerQueue;
@@ -12,7 +12,7 @@ export type Action$UpdateBannerQueue = {|
   +type: 'UPDATE_BANNER_QUEUE',
 |};
 
-export default (store: Store) => (next: Next) => {
+export default (store: StoreType) => (next: Next) => {
   let bannerQueue: Array<Toast$Banner> = [];
 
   return (action: PureAction) => {

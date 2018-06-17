@@ -111,7 +111,7 @@ function calculateRootName(state: ReduxState): RootName {
     return 'LOADING';
   }
 
-  switch (auth.type) {
+  switch (auth.status.type) {
     case 'LOGIN_INITIALIZE':
     case 'LOGIN_FAILURE':
     case 'LOGOUT_INITIALIZE':
@@ -138,6 +138,6 @@ function calculateRootName(state: ReduxState): RootName {
     }
 
     default:
-      invariant(false, 'Unrecognized auth status: %s', auth.type);
+      invariant(false, 'Unrecognized auth status: %s', auth.status.type);
   }
 }

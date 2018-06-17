@@ -6,12 +6,12 @@ import Transaction from 'common/lib/models/Transaction';
 import uuid from 'uuid/v4';
 
 import type { ID } from 'common/types/core';
-import type { PureAction, Next, Store } from '../store';
+import type { PureAction, Next, StoreType } from '../store';
 import type { TransactionContainer } from '../data-model/types';
 
 const TRANSACTIONS_PER_PAGE = 20;
 
-export default (store: Store) => (next: Next) => {
+export default (store: StoreType) => (next: Next) => {
   async function genFetchTransactions(
     accountID: ID,
     cursor: Object | null,

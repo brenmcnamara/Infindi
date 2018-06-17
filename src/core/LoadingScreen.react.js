@@ -1,8 +1,8 @@
 /* @flow */
 
-import Content from './shared/Content.react';
+import Content from '../components/shared/Content.react';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
+import Screen from '../components/shared/Screen.react';
 
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
@@ -18,7 +18,7 @@ export default class LoadingScreen extends Component<Props> {
       <Screen>
         <Content>
           <View style={styles.centerContent}>
-            <ActivityIndicator size="large" />
+            <ActivityIndicator size="small" />
           </View>
         </Content>
       </Screen>

@@ -10,12 +10,12 @@ export function getIsAdmin(state: State): boolean {
 }
 
 export function getIsAuthenticated(state: State): boolean {
-  return state.auth.type === 'LOGGED_IN';
+  return state.auth.status.type === 'LOGGED_IN';
 }
 
 export function getLoginPayload(state: State): ?LoginPayload {
-  if (state.auth.type === 'LOGGED_IN') {
-    return state.auth.loginPayload;
+  if (state.auth.status.type === 'LOGGED_IN') {
+    return state.auth.status.loginPayload;
   }
   return null;
 }

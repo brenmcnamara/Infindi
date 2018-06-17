@@ -3,7 +3,7 @@
 import invariant from 'invariant';
 
 import type { Modal } from '../reducers/modalState';
-import type { Next, PureAction, Store } from '../store';
+import type { Next, PureAction, StoreType } from '../store';
 
 export type Action = Action$UpdateModalStack;
 
@@ -20,7 +20,7 @@ export type Action$UpdateModalStack = {|
  * If the modal is from native, then the middleware will perform the necessary
  * side effects to display and hide the modal.
  */
-export default (store: Store) => (next: Next) => {
+export default (store: StoreType) => (next: Next) => {
   let modalQueue: Array<Modal> = [];
 
   return (action: PureAction) => {
