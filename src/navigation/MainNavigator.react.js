@@ -10,7 +10,7 @@ import StackNavigator from './StackNavigator.react';
 import invariant from 'invariant';
 
 import { exitAccountDetails } from '../actions/router';
-import { exitAccountVerification } from '../link/action';
+import { exitAccountVerification, requestProviderSearch } from '../link/action';
 
 import type { Action, ReduxState } from '../store';
 
@@ -40,21 +40,31 @@ export default class MainNavigator extends React.Component<Props> {
       case 'ProviderSearch -> Accounts':
       case 'ProviderLogin -> Accounts':
         return exitAccountVerification();
+
+      case 'ProviderLogin -> ProviderSearch':
+        return requestProviderSearch();
+
       default:
         return invariant(false, `Unrecognized screen change: ${change}`);
     }
   };
 
-  _calculateStackForState = (state: ReduxState): Array<string> => {
-    if (state.routeState.accountDetailsID) {
+  _calculateStackForState = (
+    reduxState: ReduxState,
+    prevStack: Array<string>,
+  ): Array<string> => {
+    if (reduxState.routeState.accountDetailsID) {
       return ['Accounts', 'AccountDetails'];
     }
 
-    const accountVerificationPage = state.accountVerification.page;
+    const accountVerificationPage = reduxState.accountVerification.page;
     if (accountVerificationPage) {
-      return accountVerificationPage.type === 'SEARCH'
-        ? ['Accounts', 'ProviderSearch']
-        : ['Accounts', 'ProviderLogin'];
+      if (accountVerificationPage.type === 'SEARCH') {
+        return ['Accounts', 'ProviderSearch'];
+      }
+      return prevStack[prevStack.length - 1] === 'ProviderLogin'
+        ? prevStack
+        : prevStack.concat(['ProviderLogin']);
     }
 
     return ['Accounts'];

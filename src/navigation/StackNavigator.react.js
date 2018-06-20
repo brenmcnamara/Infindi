@@ -21,19 +21,41 @@ export type Props = ThemeProps & ReduxProps & ComponentProps & ComputedProps;
 
 type ComponentProps = {
   calculateBackAction: (prevScreen: string, currentScreen: string) => Action,
-  calculateStackForState: (state: ReduxState) => ScreenStack,
+  calculateStackForState: (
+    state: ReduxState,
+    currentStack: ScreenStack | null,
+  ) => ScreenStack,
   isBarShadowShowing?: boolean,
   screens: Array<ScreenPayload>,
 };
 type ComputedProps = {
-  screenStack: ScreenStack,
+  reduxState: ReduxState,
 };
 type ScreenStack = Array<string>;
+type State = {
+  screenStack: ScreenStack,
+};
 
-class StackNavigator extends React.Component<Props> {
-  componentDidUpdate(prevProps: Props): void {
-    const prevStack = prevProps.screenStack;
-    const currentStack = this.props.screenStack;
+class StackNavigator extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      screenStack: props.calculateStackForState(props.reduxState, null),
+    };
+  }
+
+  static getDerivedStateFromProps(props: Props, state: ?State): State {
+    return {
+      screenStack: props.calculateStackForState(
+        props.reduxState,
+        state ? state.screenStack : null,
+      ),
+    };
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State): void {
+    const prevStack = prevState.screenStack;
+    const currentStack = this.state.screenStack;
 
     invariant(
       currentStack.length > 0,
@@ -92,7 +114,7 @@ class StackNavigator extends React.Component<Props> {
 
   // TODO: Memoize
   _getInitialComponent() {
-    return this._getComponent(this.props.screenStack[0]);
+    return this._getComponent(this.state.screenStack[0]);
   }
 
   _getComponent(screen: string) {
@@ -103,7 +125,8 @@ class StackNavigator extends React.Component<Props> {
   }
 
   _onBack = (): void => {
-    const { calculateBackAction, dispatch, screenStack } = this.props;
+    const { calculateBackAction, dispatch } = this.props;
+    const { screenStack } = this.state;
     invariant(
       screenStack.length >= 2,
       'Cannot pop item from stack with less than 2 elements',
@@ -114,13 +137,8 @@ class StackNavigator extends React.Component<Props> {
   };
 }
 
-function mapReduxStateToProps(
-  state: ReduxState,
-  props: ComponentProps,
-): ComputedProps {
-  return {
-    screenStack: props.calculateStackForState(state),
-  };
+function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
+  return { reduxState };
 }
 
 export default connect(mapReduxStateToProps)(GetThemeHOC(StackNavigator));
