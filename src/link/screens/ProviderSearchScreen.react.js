@@ -3,7 +3,6 @@
 import Content from '../../components/shared/Content.react';
 import DataModelStateUtils from '../../data-model/state-utils';
 import Downloading from '../../components/shared/Downloading.react';
-import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import List from '../../list-ui/List.react';
 import React, { Component } from 'react';
@@ -62,7 +61,7 @@ class ProviderSearchScreen extends Component<Props> {
     const shouldShowError = providerFetchStatus === 'FAILURE';
 
     return (
-      <Screen>
+      <Screen avoidNavBar={true}>
         <Content>
           {this._renderHeader()}
           {shouldShowError
@@ -71,10 +70,6 @@ class ProviderSearchScreen extends Component<Props> {
               ? this._renderSearchResults()
               : this._renderLoading()}
         </Content>
-        <FooterWithButtons
-          buttonLayout={this._getFooterButtonLayout()}
-          onPress={this._onFooterButtonPress}
-        />
       </Screen>
     );
   }
@@ -216,10 +211,6 @@ class ProviderSearchScreen extends Component<Props> {
 
   _onSelectProvider = (provider: Provider): void => {
     this.props.dispatch(requestProviderLogin(provider.id));
-  };
-
-  _onFooterButtonPress = (): void => {
-    this.props.dispatch(exitAccountVerification());
   };
 
   _getAccountLinkForProvider(provider: Provider): AccountLink | null {

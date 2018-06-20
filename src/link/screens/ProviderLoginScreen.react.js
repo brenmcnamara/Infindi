@@ -7,7 +7,7 @@ import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
-import YodleeLoginFormComponent from './YodleeLoginForm.react';
+import YodleeLoginFormComponent from '../components/YodleeLoginForm.react';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';

@@ -3,11 +3,14 @@
 import * as React from 'react';
 import AccountDetailsScreen from '../components/AccountDetailsScreen.react';
 import AccountsScreen from '../components/AccountsScreen.react';
+import ProviderLoginScreen from '../link/screens/ProviderLoginScreen.react';
+import ProviderSearchScreen from '../link/screens/ProviderSearchScreen.react';
 import StackNavigator from './StackNavigator.react';
 
 import invariant from 'invariant';
 
 import { exitAccountDetails } from '../actions/router';
+import { exitAccountVerification } from '../link/action';
 
 import type { Action, ReduxState } from '../store';
 
@@ -34,15 +37,27 @@ export default class MainNavigator extends React.Component<Props> {
       case 'AccountDetails -> Accounts':
         return exitAccountDetails();
 
+      case 'ProviderSearch -> Accounts':
+      case 'ProviderLogin -> Accounts':
+        return exitAccountVerification();
       default:
         return invariant(false, `Unrecognized screen change: ${change}`);
     }
   };
 
   _calculateStackForState = (state: ReduxState): Array<string> => {
-    return state.routeState.accountDetailsID
-      ? ['Accounts', 'AccountDetails']
-      : ['Accounts'];
+    if (state.routeState.accountDetailsID) {
+      return ['Accounts', 'AccountDetails'];
+    }
+
+    const accountVerificationPage = state.accountVerification.page;
+    if (accountVerificationPage) {
+      return accountVerificationPage.type === 'SEARCH'
+        ? ['Accounts', 'ProviderSearch']
+        : ['Accounts', 'ProviderLogin'];
+    }
+
+    return ['Accounts'];
   };
 }
 
@@ -54,5 +69,13 @@ const Screens = [
   {
     component: AccountsScreen,
     screen: 'Accounts',
+  },
+  {
+    component: ProviderLoginScreen,
+    screen: 'ProviderLogin',
+  },
+  {
+    component: ProviderSearchScreen,
+    screen: 'ProviderSearch',
   },
 ];
