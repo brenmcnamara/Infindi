@@ -7,6 +7,7 @@ import Icons from '../design/icons';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
+import TextButton from '../components/shared/TextButton.react';
 
 import invariant from 'invariant';
 import moment from 'moment';
@@ -64,8 +65,6 @@ class AccountDetailsScreen extends Component<Props> {
     return (
       <FlatList
         data={this._getListData()}
-        onEndReached={this._onEndReached}
-        onEndReachedThreshold={5}
         renderItem={this._renderListItem}
         style={styles.list}
       />
@@ -142,6 +141,23 @@ class AccountDetailsScreen extends Component<Props> {
     );
   };
 
+  _renderTransactionLoadMoreButton = () => {
+    return (
+      <GetTheme>
+        {(theme: Theme) => (
+          <View style={styles.listItemLoadeMore}>
+            <TextButton
+              onPress={this._onPressLoadMore}
+              size="LARGE"
+              text="Load More..."
+              type="SPECIAL"
+            />
+          </View>
+        )}
+      </GetTheme>
+    );
+  };
+
   _renderTransactionEmpty = () => {
     return (
       <GetTheme>
@@ -183,13 +199,14 @@ class AccountDetailsScreen extends Component<Props> {
     );
   };
 
-  _onEndReached = (): void => {
+  _onPressLoadMore = (): void => {
     const { accountID, cursor, dispatch, loadingStatus } = this.props;
     if (loadingStatus === 'STEADY') {
       invariant(
         cursor,
         'Transactions must have cursor if loading status is "STEADY"',
       );
+      // TODO: AccountID should be abstracted within cursor.
       dispatch(DataModelActions.fetchTransactions(accountID, cursor));
     }
   };
@@ -210,6 +227,13 @@ class AccountDetailsScreen extends Component<Props> {
         render: () => this._renderTransaction(transaction, index === 0),
       });
     });
+
+    if (transactions.length > 0) {
+      data.push({
+        key: 'TRANSACTION_LOAD_MORE_BUTTON',
+        render: () => this._renderTransactionLoadMoreButton(),
+      });
+    }
 
     if (
       loadingStatus === 'EMPTY' ||
@@ -271,6 +295,10 @@ const styles = StyleSheet.create({
   list: {
     marginHorizontal: 4,
     marginTop: 16,
+  },
+
+  listItemLoadeMore: {
+    marginVertical: 16,
   },
 
   listItemWithCenteredContent: {
