@@ -184,15 +184,13 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _onEndReached = (): void => {
-    const { accountID, cursor, loadingStatus } = this.props;
+    const { accountID, cursor, dispatch, loadingStatus } = this.props;
     if (loadingStatus === 'STEADY') {
       invariant(
         cursor,
         'Transactions must have cursor if loading status is "STEADY"',
       );
-      this.props.dispatch(
-        DataModelActions.fetchTransactions(accountID, cursor),
-      );
+      dispatch(DataModelActions.fetchTransactions(accountID, cursor));
     }
   };
 
@@ -241,19 +239,21 @@ class AccountDetailsScreen extends Component<Props> {
   }
 }
 
-function mapReduxStateToProps(
-  state: ReduxState,
-  props: ComponentProps,
-): ComputedProps {
+function mapReduxStateToProps(state: ReduxState): ComputedProps {
+  const accountID = state.routeState.accountDetailsID;
+  invariant(
+    accountID,
+    'Expecting accountID to exist when trying to render AccountDetailsScreen',
+  );
   return {
-    cursor: DataModelStateUtils.getCursorForAccount(state, props.accountID),
+    cursor: DataModelStateUtils.getCursorForAccount(state, accountID),
     loadingStatus: DataModelStateUtils.getTransactionLoadingStatus(
       state,
-      props.accountID,
+      accountID,
     ),
     transactions: DataModelStateUtils.getTransactionsForAccount(
       state,
-      props.accountID,
+      accountID,
     ),
   };
 }

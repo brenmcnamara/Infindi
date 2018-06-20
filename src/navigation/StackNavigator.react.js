@@ -28,10 +28,13 @@ type ComponentProps = {
   isBarShadowShowing?: boolean,
   screens: Array<ScreenPayload>,
 };
+
 type ComputedProps = {
   reduxState: ReduxState,
 };
+
 type ScreenStack = Array<string>;
+
 type State = {
   screenStack: ScreenStack,
 };
