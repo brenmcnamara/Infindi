@@ -15,6 +15,7 @@ import type { ID, Pointer } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { LoginPayload, SignUpForm } from 'common/lib/models/Auth';
 import type { ProviderRaw } from 'common/lib/models/Provider';
+import type { ReduxState } from './store';
 
 let loginPayload: LoginPayload | null = null;
 
@@ -165,7 +166,8 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
 }
 
 function createURI(path: string): string {
-  const hostname = Store.config.hostname;
+  const state: ReduxState = Store.getState();
+  const { hostname } = state.configState;
   return `${hostname}${path}`;
 }
 
