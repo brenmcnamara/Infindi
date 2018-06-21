@@ -3,25 +3,30 @@
 import * as React from 'react';
 import AccountDetailsScreen from '../components/AccountDetailsScreen.react';
 import AccountsScreen from '../components/AccountsScreen.react';
+import Icons from '../design/icons';
 import ProviderLoginScreen from '../link/screens/ProviderLoginScreen.react';
 import ProviderSearchScreen from '../link/screens/ProviderSearchScreen.react';
 import StackNavigator from './StackNavigator.react';
 
 import invariant from 'invariant';
 
+import { connect } from 'react-redux';
 import { exitAccountDetails } from '../actions/router';
 import { exitAccountVerification, requestProviderSearch } from '../link/action';
+import { requestLeftPane, requestRightPane } from '../actions/modal';
 
-import type { Action, ReduxState } from '../store';
+import type { Action, ReduxProps, ReduxState } from '../store';
 
-export type Props = {};
+export type Props = ReduxProps & {};
 
-export default class MainNavigator extends React.Component<Props> {
+class MainNavigator extends React.Component<Props> {
   render() {
     return (
       <StackNavigator
         calculateBackAction={this._calculateBackAction}
         calculateStackForState={this._calculateStackForState}
+        getLeftNavButton={this._getLeftNavButton}
+        getRightNavButton={this._getRightNavButton}
         isBarShadowShowing={true}
         screens={Screens}
       />
@@ -69,7 +74,37 @@ export default class MainNavigator extends React.Component<Props> {
 
     return ['Accounts'];
   };
+
+  _getLeftNavButton = (currentScreen: string) => {
+    if (currentScreen === 'Accounts') {
+      return {
+        icon: Icons.List,
+        onPress: this._onPressLeftNavButton,
+      };
+    }
+    return null;
+  };
+
+  _getRightNavButton = (currentScreen: string) => {
+    if (currentScreen === 'Accounts') {
+      return {
+        icon: Icons.InfindiLogoNavBar,
+        onPress: this._onPressRightNavButton,
+      };
+    }
+    return null;
+  };
+
+  _onPressLeftNavButton = (): void => {
+    this.props.dispatch(requestLeftPane());
+  };
+
+  _onPressRightNavButton = (): void => {
+    this.props.dispatch(requestRightPane());
+  };
 }
+
+export default connect()(MainNavigator);
 
 const Screens = [
   {

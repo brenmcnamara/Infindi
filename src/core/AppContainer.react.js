@@ -1,6 +1,7 @@
 /* @flow */
 
 import AppNavigator from '../navigation/AppNavigator.react';
+import ModalManager from '../components/ModalManager.react';
 import React, { Component } from 'react';
 import Store from '../store';
 import ThemeProvider, { GetTheme } from '../design/components/Theme.react';
@@ -24,6 +25,7 @@ export default class AppContainer extends Component<{}> {
                     },
                   ]}
                 >
+                  <ModalManager />
                   <AppNavigator />
                 </SafeAreaView>
               </KeyboardAvoidingView>

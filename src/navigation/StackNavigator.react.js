@@ -17,6 +17,12 @@ export type ComponentPayload = {
   component: React.ComponentType<*>,
   isBackEnabled?: () => boolean,
 };
+
+export type NavButton = {|
+  +icon: *,
+  +onPress: () => void,
+|};
+
 export type Props = ThemeProps & ReduxProps & ComponentProps & ComputedProps;
 
 type ComponentProps = {
@@ -25,6 +31,8 @@ type ComponentProps = {
     state: ReduxState,
     currentStack: ScreenStack | null,
   ) => ScreenStack,
+  getLeftNavButton?: (currentScreen: string) => NavButton | null,
+  getRightNavButton?: (currentScreen: string) => NavButton | null,
   isBarShadowShowing?: boolean,
   screens: Array<ScreenPayload>,
 };
@@ -87,11 +95,17 @@ class StackNavigator extends React.Component<Props, State> {
       // Pushed an item.
       const screen = currentStack[currentStack.length - 1];
       const component = this._getComponent(screen);
+      const rightNavButton = this.props.getRightNavButton
+        ? this.props.getRightNavButton(screen)
+        : null;
+
       this.refs.nav.push({
         barTintColor: this.props.theme.color.backgroundMain,
         component,
         leftButtonIcon: Icons.LeftArrow,
         onLeftButtonPress: this._onBack,
+        onRightButtonPress: rightNavButton && rightNavButton.onPress,
+        rightButtonIcon: rightNavButton && rightNavButton.icon,
         shadowHidden: !this.props.isBarShadowShowing,
         tintColor: this.props.theme.color.buttonNavBar,
         title: '',
@@ -100,11 +114,24 @@ class StackNavigator extends React.Component<Props, State> {
   }
 
   render() {
+    const { getLeftNavButton, getRightNavButton } = this.props;
+    const currentScreen = this._getCurrentScreen();
+    const leftNavButton = getLeftNavButton
+      ? getLeftNavButton(currentScreen)
+      : null;
+    const rightNavButton = getRightNavButton
+      ? getRightNavButton(currentScreen)
+      : null;
+
     return (
       <NavigatorIOS
         initialRoute={{
           barTintColor: this.props.theme.color.backgroundMain,
           component: this._getInitialComponent(),
+          leftButtonIcon: leftNavButton && leftNavButton.icon,
+          onLeftButtonPress: leftNavButton && leftNavButton.onPress,
+          onRightButtonPress: rightNavButton && rightNavButton.onPress,
+          rightButtonIcon: rightNavButton && rightNavButton.icon,
           shadowHidden: !this.props.isBarShadowShowing,
           tintColor: this.props.theme.color.buttonNavBar,
           title: '',
@@ -125,6 +152,15 @@ class StackNavigator extends React.Component<Props, State> {
     const payload = screens.find(payload => payload.screen === screen);
     invariant(payload, 'No screen could be found with name %s', screen);
     return payload.component;
+  }
+
+  _getCurrentScreen(): string {
+    const { screenStack } = this.state;
+    invariant(
+      screenStack.length >= 1,
+      'Screen Stack needs to have at least 1 screen',
+    );
+    return screenStack[screenStack.length - 1];
   }
 
   _onBack = (): void => {
