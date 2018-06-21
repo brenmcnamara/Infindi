@@ -136,6 +136,7 @@ class StackNavigator extends React.Component<Props, State> {
           tintColor: this.props.theme.color.buttonNavBar,
           title: '',
         }}
+        key={this.props.theme.uniqueID}
         ref="nav"
         style={{ flex: 1 }}
       />
