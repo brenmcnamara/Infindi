@@ -34,11 +34,10 @@ import type { TransactionLoadingStatus } from '../data-model/types';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
-type ComponentProps = {
-  accountID: ID,
-};
+type ComponentProps = {};
 
 type ComputedProps = {
+  accountID: ID,
   cursor: Object | null,
   loadingStatus: TransactionLoadingStatus,
   transactions: Array<Transaction>,
@@ -228,7 +227,7 @@ class AccountDetailsScreen extends Component<Props> {
       });
     });
 
-    if (transactions.length > 0) {
+    if (transactions.length > 0 && loadingStatus === 'STEADY') {
       data.push({
         key: 'TRANSACTION_LOAD_MORE_BUTTON',
         render: () => this._renderTransactionLoadMoreButton(),
@@ -270,6 +269,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     'Expecting accountID to exist when trying to render AccountDetailsScreen',
   );
   return {
+    accountID,
     cursor: DataModelStateUtils.getCursorForAccount(state, accountID),
     loadingStatus: DataModelStateUtils.getTransactionLoadingStatus(
       state,
