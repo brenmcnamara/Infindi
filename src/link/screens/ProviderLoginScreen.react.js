@@ -32,7 +32,6 @@ type ComponentProps = {};
 
 type ComputedProps = {
   callToAction: string,
-  canExit: boolean,
   canSubmit: boolean,
   isLoadingLoginForm: boolean,
   loginForm: YodleeLoginForm | null,
@@ -95,7 +94,7 @@ class ProviderLoginScreen extends Component<Props> {
 
   _getFooterButtonLayout() {
     // TODO: Should have a way to disable back button in the nav bar.
-    const { callToAction, canExit, canSubmit } = this.props;
+    const { callToAction, canSubmit } = this.props;
     return {
       centerButtonText: callToAction,
       isCenterButtonDisabled: !canSubmit,
@@ -136,14 +135,9 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     !loginForm ||
       (accountLink && accountLink.status === 'MFA / WAITING_FOR_LOGIN_FORM'),
   );
-  const pendingLoginRequest =
-    state.accountVerification.providerPendingLoginRequestMap[providerID];
-  const canExit =
-    !pendingLoginRequest && (!accountLink || !accountLink.isInMFA);
 
   return {
     callToAction,
-    canExit,
     canSubmit,
     isLoadingLoginForm,
     loginForm,
