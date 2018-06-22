@@ -74,24 +74,11 @@ class StackNavigator extends React.Component<Props, State> {
     );
 
     invariant(
-      Math.abs(prevStack.length - currentStack.length) <= 1,
-      'Stack Navigator only supports pushing and popping a single item',
+      currentStack.length - prevStack.length <= 1,
+      'Stack Navigator cannot push more than one item at a time',
     );
 
-    if (prevStack.length === currentStack.length) {
-      // Validate they look the same, for now only allow single push and
-      // single pop.
-      invariant(
-        prevStack.every((screen, index) => screen === currentStack[index]),
-        'Stack Navigator only supports push and pop',
-      );
-      return;
-    }
-
-    if (prevStack.length > currentStack.length) {
-      // Popped an item.
-      this.refs.nav.pop();
-    } else if (currentStack.length > prevStack.length) {
+    if (currentStack.length > prevStack.length) {
       // Pushed an item.
       const screen = currentStack[currentStack.length - 1];
       const component = this._getComponent(screen);
@@ -110,7 +97,23 @@ class StackNavigator extends React.Component<Props, State> {
         tintColor: this.props.theme.color.buttonNavBar,
         title: '',
       });
+      return;
     }
+
+    // NOTE: From this point on, the current stack is shorter than or equal to
+    // in length than the previous stack.
+
+    // Validate that the previous stack is a sub-list of the current stack.
+    invariant(
+      currentStack.every((screen, index) => screen === prevStack[index]),
+      'Stack Navigator only supports push and pop',
+    );
+
+    if (prevStack.length === currentStack.length) {
+      return;
+    }
+
+    this.refs.nav.popN(prevStack.length - currentStack.length);
   }
 
   render() {
