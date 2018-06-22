@@ -6,8 +6,6 @@ import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import ThemeComponent, { GetTheme } from '../design/components/Theme.react';
 
-import invariant from 'invariant';
-
 import {
   Animated,
   Easing,
@@ -35,7 +33,7 @@ type ComponentProps = {
 };
 
 type ComputedProps = {
-  userName: string,
+  userName: string | null,
 };
 
 const LEFT_PANE_WIDTH = 250;
@@ -80,6 +78,10 @@ class LeftPaneScreen extends Component<Props> {
         this._isTransitioning = false;
       });
     }
+  }
+
+  shouldComponentUpdate(nextProps: Props): boolean {
+    return !nextProps.userName;
   }
 
   render() {
@@ -259,10 +261,9 @@ const styles = StyleSheet.create({
 
 function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const userName = getUserFullName(state);
-  invariant(userName, 'User must have login payload for left pane to show');
-  return {
-    userName,
-  };
+  // TODO: Properly handle case where we are trying to render screen without a
+  // user. (externally).
+  return {userName};
 }
 
 export default connect(mapReduxStateToProps)(LeftPaneScreen);
