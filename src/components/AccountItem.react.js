@@ -100,6 +100,8 @@ export default class AccountItem extends Component<Props> {
                 </View>
                 <View style={styles.accountLoaderBottom}>
                   <Text
+                    ellipsizeMode="tail"
+                    numberOfLines={1}
                     style={[
                       styles.accountInstitution,
                       theme.getTextStyleSmall(),
@@ -176,6 +178,7 @@ const styles = StyleSheet.create({
 
   accountInstitution: {
     flex: 1,
+    paddingRight: 8,
     textAlign: 'left',
   },
 
