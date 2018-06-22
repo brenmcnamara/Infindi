@@ -95,7 +95,6 @@ export function selectActionItem(id: ID) {
         transitionInMillis: ModalTransitionInMillis,
         transitionOutMillis: ModalTransitionOutMillis,
       },
-      shouldIgnoreRequestingExistingModal: false,
       type: 'REQUEST_MODAL',
     });
   };
@@ -152,7 +151,6 @@ export function unselectCurrentActionItem() {
         transitionInMillis: ModalTransitionInMillis,
         transitionOutMillis: ModalTransitionOutMillis,
       },
-      shouldIgnoreRequestingExistingModal: false,
       type: 'REQUEST_MODAL',
     });
   };

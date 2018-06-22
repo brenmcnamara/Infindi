@@ -109,7 +109,6 @@ class HomeToActionItemTransitionModal extends Component<Props, State> {
         // Dismiss the modal.
         nextProps.dispatch({
           modalID: 'HOME_TO_ACTION_ITEM_TRANSITION',
-          shouldIgnoreDismissingNonExistantModal: false,
           type: 'DISMISS_MODAL',
         });
       });

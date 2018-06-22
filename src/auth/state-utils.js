@@ -28,7 +28,7 @@ export function getUserID(state: State): ID | null {
   return loginPayload.userInfo.id;
 }
 
-export function getUserFirstName(state: State): ?string {
+export function getUserFirstName(state: State): string | null {
   const loginPayload = getLoginPayload(state);
   if (!loginPayload) {
     return null;
@@ -36,7 +36,7 @@ export function getUserFirstName(state: State): ?string {
   return loginPayload.userInfo.firstName;
 }
 
-export function getUserFullName(state: State): ?string {
+export function getUserFullName(state: State): string | null {
   const loginPayload = getLoginPayload(state);
   if (!loginPayload) {
     return null;

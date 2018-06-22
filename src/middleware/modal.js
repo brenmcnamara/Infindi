@@ -31,7 +31,7 @@ export default (store: StoreType) => (next: Next) => {
         const { modalID } = action;
         const index = modalQueue.findIndex(modal => modal.id === modalID);
         invariant(
-          index >= 0 || action.shouldIgnoreDismissingNonExistantModal,
+          index >= 0,
           'Trying to dismiss modal that does not exist: %s',
           action.modalID,
         );

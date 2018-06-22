@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { exitAccountDetails } from '../actions/router';
 import { exitAccountVerification, requestProviderSearch } from '../link/action';
 import { requestLeftPane, requestRightPane } from '../actions/modal';
+import { throttle } from '../common/generic-utils';
 
 import type { Action, ReduxProps, ReduxState } from '../store';
 
@@ -95,13 +96,13 @@ class MainNavigator extends React.Component<Props> {
     return null;
   };
 
-  _onPressLeftNavButton = (): void => {
+  _onPressLeftNavButton = throttle(500, (): void => {
     this.props.dispatch(requestLeftPane());
-  };
+  });
 
-  _onPressRightNavButton = (): void => {
+  _onPressRightNavButton = throttle(500, (): void => {
     this.props.dispatch(requestRightPane());
-  };
+  });
 }
 
 export default connect()(MainNavigator);

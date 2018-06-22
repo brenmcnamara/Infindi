@@ -38,6 +38,7 @@ import { getNetWorth } from '../common/state-utils';
 import { GetTheme } from '../design/components/Theme.react';
 import { requestProviderLogin, requestProviderSearch } from '../link/action';
 import { requestInfoModal } from '../actions/modal';
+import { throttle } from '../common/generic-utils';
 import { viewAccountDetails } from '../actions/router';
 
 import type AccountLink from 'common/lib/models/AccountLink';
@@ -170,28 +171,33 @@ class AccountsScreen extends Component<Props> {
     );
   }
 
-  _onPressAddAccount = (): void => {
+  _onPressAddAccount = throttle(500, (): void => {
     this.props.dispatch(requestProviderSearch());
-  };
+  });
 
-  _onSelectGroupInfo = (theme: Theme, groupType: AccountGroupType): void => {
-    const content = AccountGroupInfoContent[groupType];
-    invariant(content, 'No info exists for group type: %s.', groupType);
-    this.props.dispatch(
-      requestInfoModal({
-        id: `GROUP_INFO_${groupType}`,
-        priority: 'USER_REQUESTED',
-        render: () => <Text style={theme.getTextStyleNormal()}>{content}</Text>,
-        title: getFormattedGroupType(groupType),
-      }),
-    );
-  };
+  _onSelectGroupInfo = throttle(
+    500,
+    (theme: Theme, groupType: AccountGroupType): void => {
+      const content = AccountGroupInfoContent[groupType];
+      invariant(content, 'No info exists for group type: %s.', groupType);
+      this.props.dispatch(
+        requestInfoModal({
+          id: `GROUP_INFO_${groupType}`,
+          priority: 'USER_REQUESTED',
+          render: () => (
+            <Text style={theme.getTextStyleNormal()}>{content}</Text>
+          ),
+          title: getFormattedGroupType(groupType),
+        }),
+      );
+    },
+  );
 
-  _onSelectAccount = (account: AccountRaw): void => {
+  _onSelectAccount = throttle(500, (account: AccountRaw): void => {
     this.props.dispatch(viewAccountDetails(account.id));
-  };
+  });
 
-  _onSelectAccountLink = (accountLink: AccountLink): void => {
+  _onSelectAccountLink = throttle(500, (accountLink: AccountLink): void => {
     if (this.props.isInWatchSession) {
       this.props.dispatch(
         requestInfoModal({
@@ -212,7 +218,7 @@ class AccountsScreen extends Component<Props> {
     } else {
       this.props.dispatch(requestProviderLogin(accountLink.providerRef.refID));
     }
-  };
+  });
 
   _getData() {
     const accountLinks = this._getAccountLinksRequiringAttention();

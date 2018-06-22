@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { dismissModal } from '../../actions/modal';
 import { GetTheme } from '../../design/components/Theme.react';
 import { StyleSheet, Text, View } from 'react-native';
+import { throttle } from '../../common/generic-utils';
 
 import type { ID } from 'common/types/core';
 import type { ReduxProps } from '../../store';
@@ -77,14 +78,14 @@ class InfoModal extends Component<Props> {
     );
   }
 
-  _onPressBackground = (): void => {
+  _onPressBackground = throttle(500, (): void => {
     this.props.dispatch(dismissModal(this.props.modalID));
-  };
+  });
 
-  _onPressDismiss = (): void => {
+  _onPressDismiss = throttle(500, (): void => {
     this.props.transitionStage === 'IN' &&
       this.props.dispatch(dismissModal(this.props.modalID));
-  };
+  });
 }
 
 const styles = StyleSheet.create({

@@ -8,6 +8,7 @@ import invariant from 'invariant';
 import { connect } from 'react-redux';
 import { GetThemeHOC } from '../design/components/Theme.react';
 import { NavigatorIOS } from 'react-native';
+import { throttle } from '../common/generic-utils';
 
 import type { Action, ReduxProps, ReduxState } from '../store';
 import type { ScreenPayload } from './types';
@@ -182,22 +183,6 @@ class StackNavigator extends React.Component<Props, State> {
 
 function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
   return { reduxState };
-}
-
-function throttle(delayMs: number, cb: *): * {
-  let calledAtMs: number | null = null;
-  return (...args: *) => {
-    if (!calledAtMs) {
-      calledAtMs = Date.now();
-      cb(...args);
-      return;
-    }
-    const nowMs = Date.now();
-    if (nowMs - calledAtMs >= delayMs) {
-      calledAtMs = nowMs;
-      cb(...args);
-    }
-  };
 }
 
 export default connect(mapReduxStateToProps)(GetThemeHOC(StackNavigator));

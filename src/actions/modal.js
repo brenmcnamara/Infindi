@@ -32,13 +32,11 @@ export type Action = Action$DismissModal | Action$RequestModal;
 
 export type Action$DismissModal = {|
   +modalID: ID,
-  +shouldIgnoreDismissingNonExistantModal: boolean,
   +type: 'DISMISS_MODAL',
 |};
 
 export type Action$RequestModal = {|
   +modal: Modal,
-  +shouldIgnoreRequestingExistingModal: boolean,
   +type: 'REQUEST_MODAL',
 |};
 
@@ -101,7 +99,6 @@ export function requestInfoModal(payload: InfoModalPayload) {
         transitionInMillis: InfoModalTransitionInMillis,
         transitionOutMillis: InfoModalTransitionOutMillis,
       },
-      shouldIgnoreRequestingExistingModal: false,
       type: 'REQUEST_MODAL',
     });
   };
@@ -124,7 +121,6 @@ export function requestLeftPane(): Action$RequestModal {
       transitionInMillis: LeftPaneTransitionInMillis,
       transitionOutMillis: LeftPaneTransitionOutMillis,
     },
-    shouldIgnoreRequestingExistingModal: false,
     type: 'REQUEST_MODAL',
   };
 }
@@ -146,7 +142,6 @@ export function requestRightPane(): Action$RequestModal {
       transitionInMillis: RightPaneTransitionInMillis,
       transitionOutMillis: RightPaneTransitionOutMillis,
     },
-    shouldIgnoreRequestingExistingModal: false,
     type: 'REQUEST_MODAL',
   };
 }
@@ -154,7 +149,6 @@ export function requestRightPane(): Action$RequestModal {
 export function dismissLeftPane(): Action$DismissModal {
   return {
     modalID: LeftPaneModalID,
-    shouldIgnoreDismissingNonExistantModal: false,
     type: 'DISMISS_MODAL',
   };
 }
@@ -176,13 +170,9 @@ export function requestUnimplementedModal(featureName: string) {
   });
 }
 
-export function dismissModal(
-  modalID: ID,
-  shouldIgnoreDismissingNonExistantModal: boolean = false,
-): Action$DismissModal {
+export function dismissModal(modalID: ID): Action$DismissModal {
   return {
     modalID,
-    shouldIgnoreDismissingNonExistantModal,
     type: 'DISMISS_MODAL',
   };
 }

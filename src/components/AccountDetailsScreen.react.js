@@ -22,6 +22,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { GetTheme } from '../design/components/Theme.react';
+import { throttle } from '../common/generic-utils';
 import { TransactionEmpty, TransactionLoadingError } from '../../content';
 
 import type Transaction from 'common/lib/models/Transaction';
@@ -198,7 +199,7 @@ class AccountDetailsScreen extends Component<Props> {
     );
   };
 
-  _onPressLoadMore = (): void => {
+  _onPressLoadMore = throttle(50, (): void => {
     const { accountID, cursor, dispatch, loadingStatus } = this.props;
     if (loadingStatus === 'STEADY') {
       invariant(
@@ -208,7 +209,7 @@ class AccountDetailsScreen extends Component<Props> {
       // TODO: AccountID should be abstracted within cursor.
       dispatch(DataModelActions.fetchTransactions(accountID, cursor));
     }
-  };
+  });
 
   _getKeyExtractor = item => {
     return item.key;

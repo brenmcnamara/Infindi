@@ -20,15 +20,12 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  exitAccountVerification,
-  requestProviderLogin,
-  updateProviderSearchText,
-} from '../action';
 import { getContainer } from '../../datastore';
 import { GetTheme } from '../../design/components/Theme.react';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
+import { requestProviderLogin, updateProviderSearchText } from '../action';
+import { throttle } from '../../common/generic-utils';
 
 import type AccountLink from 'common/lib/models/AccountLink';
 import type Provider from 'common/lib/models/Provider';
@@ -209,9 +206,9 @@ class ProviderSearchScreen extends Component<Props> {
     this.props.dispatch(updateProviderSearchText(text));
   };
 
-  _onSelectProvider = (provider: Provider): void => {
+  _onSelectProvider = throttle(500, (provider: Provider): void => {
     this.props.dispatch(requestProviderLogin(provider.id));
-  };
+  });
 
   _getAccountLinkForProvider(provider: Provider): AccountLink | null {
     const container = this.props.accountLinkContainer;
