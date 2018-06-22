@@ -167,7 +167,7 @@ class StackNavigator extends React.Component<Props, State> {
     return screenStack[screenStack.length - 1];
   }
 
-  _onBack = (): void => {
+  _onBack = throttle(500, (): void => {
     const { calculateBackAction, dispatch } = this.props;
     const { screenStack } = this.state;
     invariant(
@@ -177,11 +177,27 @@ class StackNavigator extends React.Component<Props, State> {
     const currentScreen = screenStack[screenStack.length - 1];
     const prevScreen = screenStack[screenStack.length - 2];
     dispatch(calculateBackAction(prevScreen, currentScreen));
-  };
+  });
 }
 
 function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
   return { reduxState };
+}
+
+function throttle(delayMs: number, cb: *): * {
+  let calledAtMs: number | null = null;
+  return (...args: *) => {
+    if (!calledAtMs) {
+      calledAtMs = Date.now();
+      cb(...args);
+      return;
+    }
+    const nowMs = Date.now();
+    if (nowMs - calledAtMs >= delayMs) {
+      calledAtMs = nowMs;
+      cb(...args);
+    }
+  };
 }
 
 export default connect(mapReduxStateToProps)(GetThemeHOC(StackNavigator));
