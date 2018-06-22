@@ -104,6 +104,7 @@ export function calculateCanSubmitLoginFormForProviderID(
   );
   const pendingLoginRequest =
     state.accountVerification.providerPendingLoginRequestMap[providerID];
+
   return (
     !pendingLoginRequest &&
     Boolean(loginForm && isFilledOut) &&

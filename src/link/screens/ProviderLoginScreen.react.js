@@ -28,9 +28,7 @@ import type { State as ReduxState } from '../../reducers/root';
 
 export type Props = ReduxProps & ComputedProps & ComponentProps;
 
-type ComponentProps = {
-  enableInteraction: boolean,
-};
+type ComponentProps = {};
 
 type ComputedProps = {
   callToAction: string,
@@ -54,7 +52,7 @@ class ProviderLoginScreen extends Component<Props> {
               </View>
             ) : (
               <YodleeLoginFormComponent
-                enableInteraction={this.props.enableInteraction}
+                enableInteraction={true}
                 loginForm={nullthrows(this.props.loginForm)}
                 onChangeLoginForm={this._onChangeLoginForm}
               />
@@ -97,10 +95,10 @@ class ProviderLoginScreen extends Component<Props> {
 
   _getFooterButtonLayout() {
     // TODO: Should have a way to disable back button in the nav bar.
-    const { callToAction, canExit, canSubmit, enableInteraction } = this.props;
+    const { callToAction, canExit, canSubmit } = this.props;
     return {
       centerButtonText: callToAction,
-      isCenterButtonDisabled: !enableInteraction || !canSubmit,
+      isCenterButtonDisabled: !canSubmit,
       type: 'CENTER',
     };
   }
@@ -134,7 +132,6 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   const canSubmit = loginForm
     ? calculateCanSubmitLoginFormForProviderID(state, providerID)
     : false;
-
   const isLoadingLoginForm = Boolean(
     !loginForm ||
       (accountLink && accountLink.status === 'MFA / WAITING_FOR_LOGIN_FORM'),
