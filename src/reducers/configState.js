@@ -10,6 +10,7 @@ export type State = {
 
 const DEFAULT_STATE: State = {
   hostname: 'https://infindi.herokuapp.com',
+  // hostname: 'http://localhost:8080',
 };
 
 export default function configStatus(

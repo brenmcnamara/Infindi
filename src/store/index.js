@@ -1,11 +1,12 @@
 /* @flow */
 
+import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
+import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
+
 import accountLinks from '../middleware/accountLinks';
-import accountLinkFlow from '../link/middleware/accountLinkFlow';
 import accounts from '../middleware/accounts';
 import authentication from '../auth/middleware';
 import modal from '../middleware/modal';
-import providerLogin from '../link/middleware/providerLogin';
 import providers from '../data-model/middleware/providers';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
@@ -88,6 +89,9 @@ export type CombineReducers<TState: Object> = (reducerMap: {
   [key: string]: Reducer<*>,
 }) => Reducer<TState>;
 
+const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
+const providerLoginMiddleware = new ProviderLoginMiddleware();
+
 let middleware;
 
 if (__DEV__) {
@@ -102,10 +106,9 @@ if (__DEV__) {
     providers,
     accountLinks,
     accounts,
-    transactions,
-    providerLogin,
+    providerLoginMiddleware.handle,
     // Then comes ui-managing middleware.
-    accountLinkFlow,
+    accountLinkFlowMiddleware.handle,
     modal,
     toast,
     // Logging is last.
@@ -123,9 +126,9 @@ if (__DEV__) {
     accountLinks,
     accounts,
     transactions,
-    providerLogin,
+    providerLoginMiddleware.handle,
     // Then comes ui-managing middleware.
-    accountLinkFlow,
+    accountLinkFlowMiddleware.handle,
     modal,
     toast,
   );

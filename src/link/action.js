@@ -162,7 +162,6 @@ export function requestLoginFormModal(providerID: ID) {
       transitionInMillis: YodleeLoginFormModalTransitionInMillis,
       transitionOutMillis: YodleeLoginFormModalTransitionOutMillis,
     },
-    shouldIgnoreRequestingExistingModal: false,
     type: 'REQUEST_MODAL',
   };
 }
