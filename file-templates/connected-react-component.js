@@ -5,6 +5,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {StyleSheet} from 'react-native';
 
+// eslint-disable-next-line import/no-unresolved
 import {ReduxProps, ReduxState} from './store'; // TODO: Fix path
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
