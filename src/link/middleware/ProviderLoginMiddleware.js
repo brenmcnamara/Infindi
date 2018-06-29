@@ -6,17 +6,26 @@ import invariant from 'invariant';
 
 import { ReduxMiddleware } from '../../common/redux-utils';
 
-import type { Action$SubmitYodleeLoginFormInitialize } from '../action';
+import type {
+  Action$SubmitLoginFormInitialize,
+  Action$SubmitMFAFormInitialize,
+} from '../action';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { PureAction, ReduxState } from '../../store';
 
 type State = {|
-  +submitFormAction: Action$SubmitYodleeLoginFormInitialize | null,
+  formType: null | 'MFA' | 'LOGIN',
+  // eslint-disable-next-line flowtype/space-after-type-colon
+  +submitFormAction:
+    | Action$SubmitLoginFormInitialize
+    | Action$SubmitMFAFormInitialize
+    | null,
   +submittedLoginForm: YodleeLoginForm | null,
 |};
 
 export default class ProviderLoginMiddleware extends ReduxMiddleware<State> {
   static __calculateInitialState = () => ({
+    formType: null,
     submitFormAction: null,
     submittedLoginForm: null,
   });
@@ -28,16 +37,26 @@ export default class ProviderLoginMiddleware extends ReduxMiddleware<State> {
   ): State => {
     // NOTE: We are updating the state pre-action since we know that at the
     // time this action is sent, we have a valid login form ready to submit.
-    if (action.type === 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE') {
+    if (
+      action.type === 'SUBMIT_LOGIN_FORM_INITIALIZE' ||
+      action.type === 'SUBMIT_MFA_FORM_INITIALIZE'
+    ) {
       const submittedLoginForm =
         reduxState.accountVerification.loginFormContainer[action.providerID];
+      const formType =
+        action.type === 'SUBMIT_LOGIN_FORM_INITIALIZE' ? 'LOGIN' : 'MFA';
       return {
+        formType,
         submitFormAction: action,
         submittedLoginForm,
       };
     }
 
-    return { submitFormAction: null, submittedLoginForm: null };
+    return {
+      formType: null,
+      submitFormAction: null,
+      submittedLoginForm: null,
+    };
   };
 
   __didUpdateState = async (state: State): Promise<void> => {
@@ -45,9 +64,13 @@ export default class ProviderLoginMiddleware extends ReduxMiddleware<State> {
       return;
     }
 
-    const { submitFormAction, submittedLoginForm } = state;
+    const { formType, submitFormAction, submittedLoginForm } = state;
     const { operationID, providerID } = submitFormAction;
 
+    invariant(
+      formType,
+      'Expecting from type to be defined during provider form submission',
+    );
     invariant(
       submittedLoginForm,
       'Expecting login form to exist for provider: %s',
@@ -55,21 +78,20 @@ export default class ProviderLoginMiddleware extends ReduxMiddleware<State> {
     );
 
     try {
-      await Backend.genYodleeSubmitProviderLoginForm(
-        providerID,
-        submittedLoginForm,
-      );
+      (await formType) === 'LOGIN'
+        ? Backend.genSubmitProviderLoginForm(providerID, submittedLoginForm)
+        : Backend.genSubmitProviderMFAForm(providerID, submittedLoginForm);
       this.__dispatch({
         operationID,
         providerID,
-        type: 'SUBMIT_YODLEE_LOGIN_FORM_SUCCESS',
+        type: 'SUBMIT_LOGIN_FORM_SUCCESS',
       });
     } catch (error) {
       this.__dispatch({
         error,
         operationID,
         providerID,
-        type: 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE',
+        type: 'SUBMIT_LOGIN_FORM_FAILURE',
       });
     }
   };

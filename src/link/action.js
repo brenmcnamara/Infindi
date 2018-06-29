@@ -20,9 +20,12 @@ export type Action =
   | Action$ExitAccountVerification
   | Action$RequestProviderLogin
   | Action$RequestProviderSearch
-  | Action$SubmitYodleeLoginFormFailure
-  | Action$SubmitYodleeLoginFormInitialize
-  | Action$SubmitYodleeLoginFormSuccess
+  | Action$SubmitLoginFormFailure
+  | Action$SubmitLoginFormInitialize
+  | Action$SubmitLoginFormSuccess
+  | Action$SubmitMFAFormFailure
+  | Action$SubmitMFAFormInitialize
+  | Action$SubmitMFAFormSuccess
   | Action$UpdateLoginForm
   | Action$UpdateProviderSearchText;
 
@@ -81,30 +84,57 @@ export function unsupportedProvider(reason: string) {
   });
 }
 
-export type Action$SubmitYodleeLoginFormInitialize = {|
+export type Action$SubmitLoginFormInitialize = {|
   +operationID: ID,
   +providerID: ID,
-  +type: 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE',
+  +type: 'SUBMIT_LOGIN_FORM_INITIALIZE',
 |};
 
-export type Action$SubmitYodleeLoginFormSuccess = {|
+export type Action$SubmitLoginFormSuccess = {|
   +operationID: ID,
   +providerID: ID,
-  +type: 'SUBMIT_YODLEE_LOGIN_FORM_SUCCESS',
+  +type: 'SUBMIT_LOGIN_FORM_SUCCESS',
 |};
 
-export type Action$SubmitYodleeLoginFormFailure = {|
+export type Action$SubmitLoginFormFailure = {|
   +error: Object,
   +operationID: ID,
   +providerID: ID,
-  +type: 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE',
+  +type: 'SUBMIT_LOGIN_FORM_FAILURE',
 |};
 
-export function submitYodleeLoginFormForProviderID(providerID: ID) {
+export function submitLoginFormForProviderID(providerID: ID) {
   return {
     providerID,
     operationID: uuid(),
-    type: 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE',
+    type: 'SUBMIT_LOGIN_FORM_INITIALIZE',
+  };
+}
+
+export type Action$SubmitMFAFormInitialize = {|
+  +operationID: ID,
+  +providerID: ID,
+  +type: 'SUBMIT_MFA_FORM_INITIALIZE',
+|};
+
+
+export type Action$SubmitMFAFormSuccess = {|
+  +operationID: ID,
+  +providerID: ID,
+  +type: 'SUBMIT_MFA_FORM_SUCCESS',
+|};
+
+export type Action$SubmitMFAFormFailure = {|
+  +operationID: ID,
+  +providerID: ID,
+  +type: 'SUBMIT_MFA_FORM_FAILURE',
+|};
+
+export function submitMFAFormForProviderID(providerID: ID) {
+  return {
+    providerID,
+    operationID: uuid(),
+    type: 'SUBMIT_MFA_FORM_INITIALIZE',
   };
 }
 

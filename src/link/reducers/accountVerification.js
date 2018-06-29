@@ -90,7 +90,7 @@ export default function accountVerification(
       };
     }
 
-    case 'SUBMIT_YODLEE_LOGIN_FORM_INITIALIZE': {
+    case 'SUBMIT_LOGIN_FORM_INITIALIZE': {
       const { providerID } = action;
       const providerPendingLoginRequestMap = {
         ...state.providerPendingLoginRequestMap,
@@ -106,7 +106,7 @@ export default function accountVerification(
       return { ...state, providerPendingLoginRequestMap };
     }
 
-    case 'SUBMIT_YODLEE_LOGIN_FORM_FAILURE': {
+    case 'SUBMIT_LOGIN_FORM_FAILURE': {
       const { providerID } = action;
       const providerPendingLoginRequestMap = {
         ...state.providerPendingLoginRequestMap,

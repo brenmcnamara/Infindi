@@ -17,7 +17,11 @@ import {
   calculateCanSubmitLoginFormForProviderID,
 } from '../utils';
 import { connect } from 'react-redux';
-import { submitYodleeLoginFormForProviderID, updateLoginForm } from '../action';
+import {
+  submitLoginFormForProviderID,
+  submitMFAFormForProviderID,
+  updateLoginForm,
+} from '../action';
 import { NavBarHeight } from '../../design/layout';
 
 import type Provider from 'common/lib/models/Provider';
@@ -33,6 +37,7 @@ type ComponentProps = {};
 type ComputedProps = {
   callToAction: string,
   canSubmit: boolean,
+  formType: 'MFA' | 'LOGIN',
   isLoadingLoginForm: boolean,
   loginForm: YodleeLoginForm | null,
   provider: Provider | null,
@@ -84,12 +89,16 @@ class ProviderLoginScreen extends Component<Props> {
   };
 
   _onFooterButtonPress = (): void => {
-    const { provider } = this.props;
+    const { dispatch, formType, provider } = this.props;
     invariant(
       provider,
       'Cannot render non-exit button on ProviderLoginScreen when there is no provider',
     );
-    this.props.dispatch(submitYodleeLoginFormForProviderID(provider.id));
+    if (formType === 'LOGIN') {
+      dispatch(submitLoginFormForProviderID(provider.id));
+    } else if (formType === 'MFA') {
+      dispatch(submitMFAFormForProviderID(provider.id));
+    }
   };
 
   _getFooterButtonLayout() {
@@ -136,9 +145,12 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
       (accountLink && accountLink.status === 'MFA / WAITING_FOR_LOGIN_FORM'),
   );
 
+  const formType = accountLink && accountLink.isInMFA ? 'MFA' : 'LOGIN';
+
   return {
     callToAction,
     canSubmit,
+    formType,
     isLoadingLoginForm,
     loginForm,
     provider: state.providers.container[providerID],

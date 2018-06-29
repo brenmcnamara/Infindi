@@ -76,18 +76,35 @@ async function genQueryProviders(
 
 // -----------------------------------------------------------------------------
 //
-// POST YODLEE PROVIDER LOGIN
+// POST LOGIN FORM
 //
 // -----------------------------------------------------------------------------
 
-export type YodleeProviderSubmitLoginFormPayload = Pointer<'AccountLink'>;
+export type SubmitProviderLoginFormPayload = Pointer<'AccountLink'>;
 
-async function genYodleeSubmitProviderLoginForm(
+async function genSubmitProviderLoginForm(
   providerID: ID,
   loginForm: YodleeLoginForm,
-): Promise<YodleeProviderSubmitLoginFormPayload> {
+): Promise<SubmitProviderLoginFormPayload> {
   const uri = createURI(`/yodlee/providers/${providerID}/loginForm`);
   const json = await genPostRequest(uri, { loginForm });
+  return json.data;
+}
+
+// -----------------------------------------------------------------------------
+//
+// POST MFA FORM
+//
+// -----------------------------------------------------------------------------
+
+export type SubmitProviderMFAFormPayload = Pointer<'AccountLink'>;
+
+async function genSubmitProviderMFAForm(
+  providerID: ID,
+  mfaForm: YodleeLoginForm,
+): Promise<SubmitProviderMFAFormPayload> {
+  const uri = createURI(`/yodlee/providers/${providerID}/mfaForm`);
+  const json = await genPostRequest(uri, { mfaForm });
   return json.data;
 }
 
@@ -175,6 +192,7 @@ export default {
   clearLoginPayload,
   genCreateUser,
   genQueryProviders,
-  genYodleeSubmitProviderLoginForm,
+  genSubmitProviderLoginForm,
+  genSubmitProviderMFAForm,
   setLoginPayload,
 };

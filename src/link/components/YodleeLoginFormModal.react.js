@@ -18,7 +18,11 @@ import {
 } from '../utils';
 import { connect } from 'react-redux';
 import { GetTheme } from '../../design/components/Theme.react';
-import { updateLoginForm, submitYodleeLoginFormForProviderID } from '../action';
+import {
+  updateLoginForm,
+  submitLoginFormForProviderID,
+  submitMFAFormForProviderID,
+} from '../action';
 
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
@@ -29,6 +33,7 @@ export type Props = ReduxProps & ComponentProps & ComputedProps;
 type ComputedProps = {
   callToAction: string,
   canSubmit: boolean,
+  formType: 'LOGIN' | 'MFA',
   isLoading: boolean,
   loginForm: YodleeLoginForm | null,
 };
@@ -117,8 +122,13 @@ class YodleeLoginFormModal extends Component<Props> {
   };
 
   _onPressSubmit = (): void => {
-    const { providerID } = this.props;
-    this.props.dispatch(submitYodleeLoginFormForProviderID(providerID));
+    const { dispatch, formType, providerID } = this.props;
+    if (formType === 'LOGIN') {
+      dispatch(submitLoginFormForProviderID(providerID));
+    } else {
+      dispatch(submitMFAFormForProviderID(providerID));
+    }
+
   };
 }
 
@@ -149,6 +159,7 @@ function mapReduxStateToProps(
     callToAction,
     canSubmit,
     isLoading,
+    formType: accountLink && accountLink.isInMFA ? 'MFA' : 'LOGIN',
     loginForm,
   };
 }

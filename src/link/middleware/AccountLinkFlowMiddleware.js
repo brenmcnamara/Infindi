@@ -4,7 +4,6 @@ import invariant from 'invariant';
 
 import { AccountLinkBanner } from '../../../content';
 import {
-  clearLoginForm,
   dismissLoginFormModal,
   exitAccountVerification,
   requestLoginFormModal,
