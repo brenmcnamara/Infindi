@@ -106,6 +106,7 @@ if (__DEV__) {
     providers,
     accountLinks,
     accounts,
+    transactions,
     providerLoginMiddleware.handle,
     // Then comes ui-managing middleware.
     accountLinkFlowMiddleware.handle,

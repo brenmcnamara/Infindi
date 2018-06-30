@@ -79,9 +79,12 @@ export default class ProviderLoginMiddleware extends ReduxMiddleware<State> {
 
     try {
       if (formType === 'LOGIN') {
-        Backend.genSubmitProviderLoginForm(providerID, submittedLoginForm);
+        await Backend.genSubmitProviderLoginForm(
+          providerID,
+          submittedLoginForm,
+        );
       } else {
-        Backend.genSubmitProviderMFAForm(providerID, submittedLoginForm);
+        await Backend.genSubmitProviderMFAForm(providerID, submittedLoginForm);
       }
       this.__dispatch({
         operationID,
