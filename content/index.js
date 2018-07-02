@@ -104,6 +104,10 @@ export const ActionItemPagerNullState = cleanupWhitespace(`
  * of account login to the user.
  */
 export const AccountLinkBanner = {
+  EMPTY: cleanupWhitespace(`
+    Initializing your link.
+  `),
+
   'FAILURE / BAD_CREDENTIALS': cleanupWhitespace(`
     Login Failed. Please check your credentials.
   `),
@@ -114,6 +118,10 @@ export const AccountLinkBanner = {
 
   'FAILURE / INTERNAL_SERVICE_FAILURE': cleanupWhitespace(`
     Download failed. Please try again.
+  `),
+
+  'FAILURE / TIMEOUT': cleanupWhitespace(`
+    The banking service is not responding. Try again later.
   `),
 
   'FAILURE / USER_INPUT_REQUEST_IN_BACKGROUND': cleanupWhitespace(`
