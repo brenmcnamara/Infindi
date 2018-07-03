@@ -14,7 +14,6 @@ import invariant from 'invariant';
 import type { ID, Pointer } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { LoginPayload, SignUpForm } from 'common/lib/models/Auth';
-import type { ProviderRaw } from 'common/lib/models/Provider';
 import type { ReduxState } from './store';
 
 let loginPayload: LoginPayload | null = null;
@@ -38,17 +37,10 @@ function clearLoginPayload(): void {
 //
 // -----------------------------------------------------------------------------
 
-export type CreateUserPayload = {|
-  +data: { userRef: Pointer<'User'> },
-|};
-
 async function genCreateUser(signUpForm: SignUpForm): Promise<Pointer<'User'>> {
   const uri = createURI('/v1/users');
-  const response: CreateUserPayload = await genPostRequest(
-    uri,
-    { signUpForm },
-    'DO_NOT_AUTHORIZE',
-  );
+  const body = { signUpForm };
+  const response = await genPostRequest(uri, body, 'DO_NOT_AUTHORIZE');
   return response.data.userRef;
 }
 
@@ -58,19 +50,15 @@ async function genCreateUser(signUpForm: SignUpForm): Promise<Pointer<'User'>> {
 //
 // -----------------------------------------------------------------------------
 
-type QueryProvidersPayload = {|
-  +data: { providers: Array<ProviderRaw> },
-|};
-
 async function genQueryProviders(
-  query: string,
+  search: string,
   limit: number,
   page: number,
 ): Promise<Array<Provider>> {
   const uri = createURI(
-    `/v1/providers/search?query=${query}&limit=${limit}&page=${page}`,
+    `/v1/providers/query?search=${search}&limit=${limit}&page=${page}`,
   );
-  const response: QueryProvidersPayload = await genGetRequest(uri);
+  const response = await genGetRequest(uri);
   return response.data.providers.map(p => Provider.fromRaw(p));
 }
 
@@ -80,15 +68,13 @@ async function genQueryProviders(
 //
 // -----------------------------------------------------------------------------
 
-export type SubmitProviderLoginFormPayload = Pointer<'AccountLink'>;
-
-async function genSubmitProviderLoginForm(
+async function genSetProviderLoginForm(
   providerID: ID,
   loginForm: YodleeLoginForm,
-): Promise<SubmitProviderLoginFormPayload> {
+): Promise<Pointer<'AccountLink'>> {
   const uri = createURI(`/v1/providers/${providerID}/loginForm`);
-  const json = await genPostRequest(uri, { loginForm });
-  return json.data.accountLinkRef;
+  const response = await genPostRequest(uri, { loginForm });
+  return response.data.accountLinkRef;
 }
 
 // -----------------------------------------------------------------------------
@@ -97,15 +83,13 @@ async function genSubmitProviderLoginForm(
 //
 // -----------------------------------------------------------------------------
 
-export type SubmitProviderMFAFormPayload = Pointer<'AccountLink'>;
-
-async function genSubmitProviderMFAForm(
+async function genSetProviderMFAForm(
   providerID: ID,
   mfaForm: YodleeLoginForm,
-): Promise<SubmitProviderMFAFormPayload> {
+): Promise<Pointer<'AccountLink'>> {
   const uri = createURI(`/v1/providers/${providerID}/mfaForm`);
-  const json = await genPostRequest(uri, { mfaForm });
-  return json.data.accountLinkRef;
+  const response = await genPostRequest(uri, { mfaForm });
+  return response.data.accountLinkRef;
 }
 
 // -----------------------------------------------------------------------------
@@ -192,7 +176,7 @@ export default {
   clearLoginPayload,
   genCreateUser,
   genQueryProviders,
-  genSubmitProviderLoginForm,
-  genSubmitProviderMFAForm,
+  genSetProviderLoginForm,
+  genSetProviderMFAForm,
   setLoginPayload,
 };

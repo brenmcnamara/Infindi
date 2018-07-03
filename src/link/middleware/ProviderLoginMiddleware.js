@@ -1,6 +1,6 @@
 /* @flow */
 
-import Backend from '../../backend';
+import FindiService from '../../FindiService';
 
 import invariant from 'invariant';
 
@@ -79,12 +79,15 @@ export default class ProviderLoginMiddleware extends ReduxMiddleware<State> {
 
     try {
       if (formType === 'LOGIN') {
-        await Backend.genSubmitProviderLoginForm(
+        await FindiService.genSetProviderLoginForm(
           providerID,
           submittedLoginForm,
         );
       } else {
-        await Backend.genSubmitProviderMFAForm(providerID, submittedLoginForm);
+        await FindiService.genSetProviderMFAForm(
+          providerID,
+          submittedLoginForm,
+        );
       }
       this.__dispatch({
         operationID,

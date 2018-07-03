@@ -1,6 +1,6 @@
 /* @flow */
 
-import Backend from '../../backend';
+import FindiService from '../../FindiService';
 
 import invariant from 'invariant';
 
@@ -77,7 +77,7 @@ export default class ProviderSearchManager {
     return Promise.resolve()
       .then(() => {
         this._currentSearch = search;
-        return Backend.genQueryProviders(search, LIMIT, this._nextPage);
+        return FindiService.genQueryProviders(search, LIMIT, this._nextPage);
       })
       .then(providers => {
         this._lastSuccessfulSearch = search;

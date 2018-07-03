@@ -1,6 +1,6 @@
 /* @flow */
 
-import Backend from '../../backend';
+import FindiService from '../../FindiService';
 import Provider from 'common/lib/models/Provider';
 
 import uuid from 'uuid/v4';
@@ -38,7 +38,7 @@ async function runSearch(searchText: string, next: Next): Promise<void> {
   });
   let providers: Array<Provider>;
   try {
-    providers = await Backend.genQueryProviders(searchText, 100, 0);
+    providers = await FindiService.genQueryProviders(searchText, 100, 0);
   } catch (error) {
     next({
       operationID,

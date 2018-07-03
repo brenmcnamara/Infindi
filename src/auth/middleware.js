@@ -1,6 +1,6 @@
 /* @flow */
 
-import Backend from '../backend';
+import FindiService from '../FindiService';
 import Firebase from 'react-native-firebase';
 
 import invariant from 'invariant';
@@ -40,10 +40,10 @@ export default (store: StoreType) => (next: Next) => {
     const loginPayload: ?LoginPayload = await genLoginPayload();
 
     if (canLogin(auth.status) && loginPayload) {
-      Backend.setLoginPayload(loginPayload);
+      FindiService.setLoginPayload(loginPayload);
       changeStatus({ loginPayload, type: 'LOGGED_IN' });
     } else if (canLogout(auth.status) && !loginPayload) {
-      Backend.clearLoginPayload();
+      FindiService.clearLoginPayload();
       changeStatus({ type: 'LOGGED_OUT' });
     }
   });
@@ -139,7 +139,7 @@ function genPerformSignUp(
           /* shouldThrowOnDismissingNonExistantToast */ false,
         ),
       );
-      return Backend.genCreateUser(signUpForm);
+      return FindiService.genCreateUser(signUpForm);
     })
     .then(() => {
       const { email, password } = signUpForm;
