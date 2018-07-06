@@ -1,7 +1,12 @@
 /* @flow */
 
+import _AccountLinkMiddleware from '../data-model/_middleware/AccountLink';
+import _AccountMiddleware from '../data-model/_middleware/Account';
 import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
+import _ProviderMiddleware from '../data-model/_middleware/Provider';
 import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
+import _TransactionMiddleware from '../data-model/_middleware/Transaction';
+import _UserInfoMiddleware from '../data-model/_middleware/UserInfo';
 
 import accountLinks from '../middleware/accountLinks';
 import accounts from '../middleware/accounts';
@@ -26,6 +31,8 @@ import type Transaction, {
   TransactionRaw,
 } from 'common/lib/models/Transaction';
 
+import type { Action as Action$Account } from '../data-model/_actions/Account';
+import type { Action as Action$AccountLink } from '../data-model/_actions/AccountLink';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../auth/actions';
 import type { Action as Action$DataModel } from '../data-model/actions';
@@ -33,9 +40,12 @@ import type { Action as Action$Datastore } from '../datastore';
 import type { Action as Action$Link } from '../link/action';
 import type { Action as Action$Modal } from '../actions/modal';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
+import type { Action as Action$Provider } from '../data-model/_actions/Provider';
 import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
+import type { Action as Action$Transaction } from '../data-model/_actions/Transaction';
+import type { Action as Action$UserInfo } from '../data-model/_actions/UserInfo';
 import type { Action as Action$WatchSession } from '../watch-session/actions';
 import type { State } from '../reducers/root';
 
@@ -44,6 +54,8 @@ export type ReduxProps = {
 };
 
 export type PureAction =
+  | Action$Account
+  | Action$AccountLink
   | Action$ActionItems
   | Action$Auth
   | Action$DataModel
@@ -53,9 +65,12 @@ export type PureAction =
   | Action$Link
   | Action$Modal
   | Action$ModalMiddleware
+  | Action$Provider
   | Action$Router
   | Action$Toast
   | Action$ToastMiddleware
+  | Action$Transaction
+  | Action$UserInfo
   | Action$WatchSession;
 
 export type ThunkAction = (dispatch: PureDispatch, getState: GetState) => any;
@@ -89,8 +104,13 @@ export type CombineReducers<TState: Object> = (reducerMap: {
   [key: string]: Reducer<*>,
 }) => Reducer<TState>;
 
+const accountLinkMiddleware = new _AccountLinkMiddleware();
+const accountMiddleware = new _AccountMiddleware();
 const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
+const providerMiddleware = new _ProviderMiddleware();
 const providerLoginMiddleware = new ProviderLoginMiddleware();
+const transactionMiddleware = new _TransactionMiddleware();
+const userInfoMiddleware = new _UserInfoMiddleware();
 
 let middleware;
 
@@ -102,11 +122,25 @@ if (__DEV__) {
     // Then comes middleware that need network access.
     authentication,
     watchSession,
+    // -------------------------------------------------------------------------
+    // DATA MODEL MIDDLEWARE
+    // -------------------------------------------------------------------------
+    accountLinkMiddleware.handle,
+    accountMiddleware.handle,
+    providerMiddleware.handle,
+    transactionMiddleware.handle,
+    userInfoMiddleware.handle,
+    // -------------------------------------------------------------------------
+    // LEGACY DATA MODEL MIDDLEWARE
+    // -------------------------------------------------------------------------
     userInfo,
     providers,
     accountLinks,
     accounts,
     transactions,
+    // -------------------------------------------------------------------------
+    // UI MIDDLEWARE
+    // -------------------------------------------------------------------------
     providerLoginMiddleware.handle,
     // Then comes ui-managing middleware.
     accountLinkFlowMiddleware.handle,
@@ -122,11 +156,25 @@ if (__DEV__) {
     // Then comes middleware that need network access.
     authentication,
     watchSession,
+    // -------------------------------------------------------------------------
+    // DATA MODEL MIDDLEWARE
+    // -------------------------------------------------------------------------
+    accountLinkMiddleware.handle,
+    accountMiddleware.handle,
+    providerMiddleware.handle,
+    transactionMiddleware.handle,
+    userInfoMiddleware.handle,
+    // -------------------------------------------------------------------------
+    // LEGACY DATA MODEL MIDDLEWARE
+    // -------------------------------------------------------------------------
     userInfo,
     providers,
     accountLinks,
     accounts,
     transactions,
+    // -------------------------------------------------------------------------
+    // UI MIDDLEWARE
+    // -------------------------------------------------------------------------
     providerLoginMiddleware.handle,
     // Then comes ui-managing middleware.
     accountLinkFlowMiddleware.handle,
