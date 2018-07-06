@@ -172,6 +172,8 @@ export default class Middleware<
       listenerState,
     );
     this._collection = this._collection.merge(Immutable.Map(idAndModelPairs));
+
+    this._dispatchUpdate();
   };
 
   handle = (store: StoreType) => (next: Next) => {

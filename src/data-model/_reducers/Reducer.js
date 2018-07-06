@@ -4,8 +4,14 @@ import Immutable from 'immutable';
 
 import type FindiError from 'common/lib/FindiError';
 
-import type { ID, ModelStub } from 'common/types/core';
 import type { Model, ModelCollection } from 'common/lib/models/Model';
+import type {
+  ModelCursorMap,
+  ModelCursorStateMap,
+  ModelListenerMap,
+  ModelListenerStateMap,
+} from '../_types';
+import type { ModelStub } from 'common/types/core';
 import type { PureAction } from '../../store';
 
 export type ModelLoadState =
@@ -16,9 +22,13 @@ export type State<
   TModelName: string,
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
+  TCollection: ModelCollection<TModelName, TRaw, TModel>,
 > = {
-  +collection: Immutable.Map<ID, TModel>,
-  +loadState: ModelLoadState,
+  +collection: TCollection,
+  +cursorMap: ModelCursorMap<TModelName>,
+  +cursorStateMap: ModelCursorStateMap<TModelName>,
+  +listenerMap: ModelListenerMap<TModelName>,
+  +listenerStateMap: ModelListenerStateMap<TModelName>,
 };
 
 export function generateReducer<
@@ -26,18 +36,38 @@ export function generateReducer<
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
+  TReducerState: State<TModelName, TRaw, TModel, TCollection>,
 >(ModelCtor: Class<TModel>) {
-  const DEFAULT_STATE: State<TModelName, TRaw, TModel> = {
+  // $FlowFixMe - This is correct.
+  const DEFAULT_STATE: TReducerState = {
     collection: Immutable.Map(),
-    loadState: { type: 'EMPTY' },
+    cursorMap: Immutable.Map(),
+    cursorStateMap: Immutable.Map(),
+    listenerMap: Immutable.Map(),
+    listenerStateMap: Immutable.Map(),
   };
-  const {modelName} = ModelCtor;
+  const { modelName } = ModelCtor;
 
   return (
-    state: State<TModelName, TRaw, TModel> = DEFAULT_STATE,
+    state: TReducerState = DEFAULT_STATE,
     action: PureAction,
-  ): State<TModelName, TRaw, TModel> => {
+  ): TReducerState => {
     switch (action.type) {
+      case 'MODEL_UPDATE_STATE': {
+        if (action.modelName !== modelName) {
+          return state;
+        }
+        // $FlowFixMe - Assuming model names are mutually exclusive.
+        return {
+          ...state,
+          collection: action.collection,
+          cursorMap: action.cursorMap,
+          cursorStateMap: action.cursorStateMap,
+          listenerMap: action.listenerMap,
+          listenerStateMap: action.listenerStateMap,
+        };
+      }
+
       default: {
         return state;
       }

@@ -2,11 +2,17 @@
 
 import Account from 'common/lib/models/Account';
 
-import {generateReducer} from './Reducer';
+import { generateReducer } from './Reducer';
 
-import type {AccountRaw} from 'common/lib/models/Account';
-import type {State as StateTemplate} from './Reducer';
+import type { AccountCollection, AccountRaw } from 'common/lib/models/Account';
+import type { State as StateTemplate } from './Reducer';
 
-export type State = StateTemplate<'Account', AccountRaw, Account>;
+// eslint-disable-next-line flowtype/generic-spacing
+export type State = StateTemplate<
+  'Account',
+  AccountRaw,
+  Account,
+  AccountCollection,
+>;
 
 export default generateReducer(Account);

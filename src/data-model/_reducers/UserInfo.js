@@ -5,8 +5,17 @@ import UserInfo from 'common/lib/models/UserInfo';
 import { generateReducer } from './Reducer';
 
 import type { State as StateTemplate } from './Reducer';
-import type { UserInfoRaw } from 'common/lib/models/UserInfo';
+import type {
+  UserInfoCollection,
+  UserInfoRaw,
+} from 'common/lib/models/UserInfo';
 
-export type State = StateTemplate<'UserInfo', UserInfoRaw, UserInfo>;
+// eslint-disable-next-line flowtype/generic-spacing
+export type State = StateTemplate<
+  'UserInfo',
+  UserInfoRaw,
+  UserInfo,
+  UserInfoCollection,
+>;
 
 export default generateReducer(UserInfo);
