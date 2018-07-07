@@ -31,6 +31,47 @@ type State = {|
   +providerDataMap: { [providerID: ID]: ProviderData },
 |};
 
+function calculateState(reduxState: ReduxState): State {
+  const accountLinkContainer = getContainer(reduxState.accountLinks) || {};
+  const accountVerificationPage = reduxState.accountVerification.page;
+  const selectedProviderID =
+    accountVerificationPage &&
+    accountVerificationPage.type === 'LOGIN' &&
+    accountVerificationPage.providerID;
+
+  const { providerPendingLoginRequestMap } = reduxState.accountVerification;
+
+  const providerDataMap = {};
+
+  // Loop through providers. There could be providers that do not have
+  // account links.
+  forEachObject(reduxState.providers.container, provider => {
+    providerDataMap[provider.id] = {
+      isViewingLoginScreen: selectedProviderID === provider.id,
+      pendingRequest: providerPendingLoginRequestMap[provider.id] || null,
+      providerID: provider.id,
+      shouldShowLoginFormModal: false,
+      status: null,
+    };
+  });
+
+  // We can override providerStateMap values in this second pass. The data
+  // from the account links has higher priority.
+  forEachObject(accountLinkContainer, accountLink => {
+    const providerID = accountLink.providerRef.refID;
+    const isViewingLoginScreen = selectedProviderID === providerID;
+    providerDataMap[providerID] = {
+      isViewingLoginScreen,
+      pendingRequest: providerPendingLoginRequestMap[providerID] || null,
+      providerID,
+      shouldShowLoginFormModal: !isViewingLoginScreen && accountLink.isInMFA,
+      status: accountLink.status,
+    };
+  });
+
+  return { providerDataMap };
+}
+
 export default class AccountLinkFlowMiddleware extends ReduxMiddleware<State> {
   _bannerBuffer: Array<Toast$Banner> = [];
 
@@ -105,47 +146,6 @@ export default class AccountLinkFlowMiddleware extends ReduxMiddleware<State> {
       this.__dispatch(requestLoginFormModal(providerID));
     }
   }
-}
-
-function calculateState(reduxState: ReduxState): State {
-  const accountLinkContainer = getContainer(reduxState.accountLinks) || {};
-  const accountVerificationPage = reduxState.accountVerification.page;
-  const selectedProviderID =
-    accountVerificationPage &&
-    accountVerificationPage.type === 'LOGIN' &&
-    accountVerificationPage.providerID;
-
-  const { providerPendingLoginRequestMap } = reduxState.accountVerification;
-
-  const providerDataMap = {};
-
-  // Loop through providers. There could be providers that do not have
-  // account links.
-  forEachObject(reduxState.providers.container, provider => {
-    providerDataMap[provider.id] = {
-      isViewingLoginScreen: selectedProviderID === provider.id,
-      pendingRequest: providerPendingLoginRequestMap[provider.id] || null,
-      providerID: provider.id,
-      shouldShowLoginFormModal: false,
-      status: null,
-    };
-  });
-
-  // We can override providerStateMap values in this second pass. The data
-  // from the account links has higher priority.
-  forEachObject(accountLinkContainer, accountLink => {
-    const providerID = accountLink.providerRef.refID;
-    const isViewingLoginScreen = selectedProviderID === providerID;
-    providerDataMap[providerID] = {
-      isViewingLoginScreen,
-      pendingRequest: providerPendingLoginRequestMap[providerID] || null,
-      providerID,
-      shouldShowLoginFormModal: !isViewingLoginScreen && accountLink.isInMFA,
-      status: accountLink.status,
-    };
-  });
-
-  return { providerDataMap };
 }
 
 // TODO: I don't like this, it is confusing, should try to remove it.

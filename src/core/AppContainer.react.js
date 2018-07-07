@@ -2,6 +2,7 @@
 
 import AppNavigator from '../navigation/AppNavigator.react';
 import CalculateGlobalTheme from '../core/CalculateGlobalTheme.react';
+import LifeCycleManager from '../life-cycle/LifeCycleManager.react';
 import ModalManager from '../components/ModalManager.react';
 import React, { Component } from 'react';
 import Store from '../store';
@@ -32,6 +33,7 @@ export default class AppContainer extends Component<Props> {
                     { backgroundColor: theme.color.backgroundMain },
                   ]}
                 >
+                  <LifeCycleManager />
                   <ModalManager />
                   <AppNavigator />
                 </SafeAreaView>

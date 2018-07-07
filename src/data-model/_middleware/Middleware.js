@@ -67,7 +67,7 @@ export default class Middleware<
     });
   };
 
-  _createCursor = (cursor: ModelCursor<TModelName>): void => {
+  _setCursor = (cursor: ModelCursor<TModelName>): void => {
     invariant(
       !this._cursorMap.get(cursor.id),
       'Trying to create a cursor for %s that already exists: %s',
@@ -89,7 +89,7 @@ export default class Middleware<
     this._dispatchUpdate();
   };
 
-  _createListener = (listener: ModelListener<TModelName>): void => {
+  _setListener = (listener: ModelListener<TModelName>): void => {
     invariant(
       !this._listenerMap.get(listener.id),
       'Trying to create a listener for %s that already exists: %s',
@@ -182,30 +182,30 @@ export default class Middleware<
       next(action);
 
       switch (action.type) {
-        case 'MODEL_CREATE_CURSOR': {
-          const { modelName } = this.constructor.__ModelCtor;
-          if (action.modelName === modelName) {
-            // $FlowFixMe - Assuming model names are mutually exclusive.
-            const cursor: ModelCursor<TModelName> = action.cursor;
-            this._createCursor(cursor);
-          }
-          break;
-        }
-
-        case 'MODEL_CREATE_LISTENER': {
-          const { modelName } = this.constructor.__ModelCtor;
-          if (action.modelName === modelName) {
-            // $FlowFixMe = Assuming model names are mutually
-            const listener: ModelListener<TModelName> = action.listener;
-            this._createListener(listener);
-          }
-          break;
-        }
-
         case 'MODEL_DELETE_LISTENER': {
           const { modelName } = this.constructor.__ModelCtor;
           if (action.modelName === modelName) {
             this._deleteListener(action.listenerID);
+          }
+          break;
+        }
+
+        case 'MODEL_SET_CURSOR': {
+          const { modelName } = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            // $FlowFixMe - Assuming model names are mutually exclusive.
+            const cursor: ModelCursor<TModelName> = action.cursor;
+            this._setCursor(cursor);
+          }
+          break;
+        }
+
+        case 'MODEL_SET_LISTENER': {
+          const { modelName } = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            // $FlowFixMe = Assuming model names are mutually
+            const listener: ModelListener<TModelName> = action.listener;
+            this._setListener(listener);
           }
           break;
         }

@@ -5,10 +5,11 @@ import Transaction from 'common/lib/models/Transaction';
 import {
   generateActionCreators,
   generateCreateListener,
-  generateCreatePageCursor,
+  generateCreateCursor,
 } from './Actions';
 
 import type { Action as ActionTemplate } from './Actions';
+import type { ModelCursor, ModelListener, ModelQuery } from '../_types';
 import type {
   TransactionCollection,
   TransactionRaw,
@@ -22,7 +23,14 @@ export type Action = ActionTemplate<
   TransactionCollection,
 >;
 
-export const createListener = generateCreateListener(Transaction);
-export const createPageCursor = generateCreatePageCursor(Transaction);
+type CreateCursor = (query: ModelQuery) => ModelCursor<'Transaction'>;
+type CreateListener = (query: ModelQuery) => ModelListener<'Transaction'>;
+
+// $FlowFixMe - Template types are correct.
+export const createCursor: CreateCursor = generateCreateCursor(Transaction);
+// $FlowFixMe - Template types are correct.
+export const createListener: CreateListener = generateCreateListener(
+  Transaction,
+);
 
 export default generateActionCreators(Transaction);

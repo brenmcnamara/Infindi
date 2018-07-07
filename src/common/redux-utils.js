@@ -23,6 +23,7 @@ export class ReduxMiddleware<TState> {
     );
   };
 
+  // TODO: MARK THIS METHOD AS UNSAFE. COULD BE FETCHING INCOMPLETE UPDATES.
   // eslint-disable-next-line flowtype/space-after-type-colon
   static __calculateStatePreAction:
     | ((

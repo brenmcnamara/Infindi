@@ -16,17 +16,17 @@ import type {
 
 // TODO: What about pagination?
 export type ActionCreators<TModelName: string> = {|
-  +createCursor: (
-    cursor: ModelCursor<TModelName>,
-  ) => Action$ModelCreateCursor<TModelName>,
-
-  +createListener: (
-    listener: ModelListener<TModelName>,
-  ) => Action$ModelCreateListener<TModelName>,
-
   +deleteListener: (listenerID: ID) => Action$ModelDeleteListener<TModelName>,
 
   +fetchCursorPage: (cursorID: ID) => Action$ModelFetchCursorPage<TModelName>,
+
+  +setCursor: (
+    cursor: ModelCursor<TModelName>,
+  ) => Action$ModelSetCursor<TModelName>,
+
+  +setListener: (
+    listener: ModelListener<TModelName>,
+  ) => Action$ModelSetListener<TModelName>,
 |};
 
 export type Action<
@@ -35,23 +35,11 @@ export type Action<
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
 > =
-  | Action$ModelCreateCursor<TModelName>
-  | Action$ModelCreateListener<TModelName>
   | Action$ModelDeleteListener<TModelName>
   | Action$ModelFetchCursorPage<TModelName>
+  | Action$ModelSetCursor<TModelName>
+  | Action$ModelSetListener<TModelName>
   | Action$ModelUpdateState<TModelName, TRaw, TModel, TCollection>;
-
-export type Action$ModelCreateCursor<TModelName: string> = {|
-  +cursor: ModelCursor<TModelName>,
-  +modelName: TModelName,
-  +type: 'MODEL_CREATE_CURSOR',
-|};
-
-export type Action$ModelCreateListener<TModelName: string> = {|
-  +listener: ModelListener<TModelName>,
-  +modelName: TModelName,
-  +type: 'MODEL_CREATE_LISTENER',
-|};
 
 export type Action$ModelDeleteListener<TModelName: string> = {|
   +listenerID: ID,
@@ -63,6 +51,18 @@ export type Action$ModelFetchCursorPage<TModelName: string> = {|
   +cursorID: ID,
   +modelName: TModelName,
   +type: 'MODEL_FETCH_CURSOR_PAGE',
+|};
+
+export type Action$ModelSetCursor<TModelName: string> = {|
+  +cursor: ModelCursor<TModelName>,
+  +modelName: TModelName,
+  +type: 'MODEL_SET_CURSOR',
+|};
+
+export type Action$ModelSetListener<TModelName: string> = {|
+  +listener: ModelListener<TModelName>,
+  +modelName: TModelName,
+  +type: 'MODEL_SET_LISTENER',
 |};
 
 export type Action$ModelUpdateState<
@@ -80,7 +80,7 @@ export type Action$ModelUpdateState<
   +type: 'MODEL_UPDATE_STATE',
 |};
 
-export function generateCreatePageCursor<
+export function generateCreateCursor<
   TModelName: string,
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
@@ -115,22 +115,22 @@ export function generateActionCreators<
 >(ModelCtor: Class<TModel>): ActionCreators<TModelName> {
   const modelName = ModelCtor.modelName;
   return {
-    createCursor: (cursor: ModelCursor<TModelName>) => ({
-      cursor,
-      modelName,
-      type: 'MODEL_CREATE_CURSOR',
-    }),
-
-    createListener: (listener: ModelListener<TModelName>) => ({
-      listener,
-      modelName,
-      type: 'MODEL_CREATE_LISTENER',
-    }),
-
     deleteListener: (listenerID: ID) => ({
       listenerID,
       modelName,
       type: 'MODEL_DELETE_LISTENER',
+    }),
+
+    setCursor: (cursor: ModelCursor<TModelName>) => ({
+      cursor,
+      modelName,
+      type: 'MODEL_SET_CURSOR',
+    }),
+
+    setListener: (listener: ModelListener<TModelName>) => ({
+      listener,
+      modelName,
+      type: 'MODEL_SET_LISTENER',
     }),
 
     fetchCursorPage: (cursorID: ID) => ({

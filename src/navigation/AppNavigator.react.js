@@ -66,5 +66,5 @@ const Screens = [
   {
     component: MainNavigator,
     screen: 'Main',
-  }
+  },
 ];

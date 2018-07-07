@@ -4,11 +4,12 @@ import UserInfo from 'common/lib/models/UserInfo';
 
 import {
   generateActionCreators,
+  generateCreateCursor,
   generateCreateListener,
-  generateCreatePageCursor,
 } from './Actions';
 
 import type { Action as ActionTemplate } from './Actions';
+import type { ModelCursor, ModelListener, ModelQuery } from '../_types';
 import type {
   UserInfoCollection,
   UserInfoRaw,
@@ -22,7 +23,12 @@ export type Action = ActionTemplate<
   UserInfoCollection,
 >;
 
-export const createListener = generateCreateListener(UserInfo);
-export const createPageCursor = generateCreatePageCursor(UserInfo);
+type CreateCursor = (query: ModelQuery) => ModelCursor<'UserInfo'>;
+type CreateListener = (query: ModelQuery) => ModelListener<'UserInfo'>;
+
+// $FlowFixMe - Template types are correct.
+export const createCursor: CreateCursor = generateCreateCursor(UserInfo);
+// $FlowFixMe - Template types are correct.
+export const createListener: CreateListener = generateCreateListener(UserInfo);
 
 export default generateActionCreators(UserInfo);
