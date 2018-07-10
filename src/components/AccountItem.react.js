@@ -21,11 +21,10 @@ import {
 } from '../common/credit-card-utils';
 import { GetTheme } from '../design/components/Theme.react';
 
-import type { AccountRaw } from 'common/lib/models/Account';
 import type { Theme } from '../design/themes';
 
 export type Props = {
-  account: AccountRaw,
+  account: Account,
   isDownloading: boolean,
   isFirst: boolean,
   isLast: boolean,
@@ -58,8 +57,7 @@ export default class AccountItem extends Component<Props> {
   }
 
   render() {
-    const account = Account.fromRaw(this.props.account);
-    const { isFirst } = this.props;
+    const { account, isFirst } = this.props;
     const topBorder = isFirst ? { borderTopWidth: 1 } : {};
 
     const downloadingStyles = [
@@ -110,7 +108,7 @@ export default class AccountItem extends Component<Props> {
                     {account.institution}
                   </Text>
                   <Text style={[styles.accountType, theme.getTextStyleSmall()]}>
-                    {getFormattedAccountType(account.toRaw())}
+                    {getFormattedAccountType(account)}
                   </Text>
                 </View>
               </View>
@@ -125,7 +123,7 @@ export default class AccountItem extends Component<Props> {
   }
 
   _renderAccountName(theme: Theme) {
-    const {account} = this.props;
+    const { account } = this.props;
     if (!isCreditCardAccount(account)) {
       return (
         <Text
@@ -137,7 +135,7 @@ export default class AccountItem extends Component<Props> {
             theme.getTextStyleNormalWithEmphasis(),
           ]}
         >
-          {Account.fromRaw(account).name}
+          {account.name}
         </Text>
       );
     }
@@ -167,8 +165,8 @@ export default class AccountItem extends Component<Props> {
   }
 }
 
-function getFormattedAccountType(account: AccountRaw): string {
-  return Account.fromRaw(account).accountType.replace(/_/g, ' ');
+function getFormattedAccountType(account: Account): string {
+  return account.accountType.replace(/_/g, ' ');
 }
 
 const styles = StyleSheet.create({

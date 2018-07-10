@@ -42,15 +42,11 @@ import { requestInfoModal } from '../actions/modal';
 import { throttle } from '../common/generic-utils';
 import { viewAccountDetails } from '../actions/router';
 
+import type Account, { AccountCollection, AccountGroupType } from 'common/lib/models/Account';
 import type AccountLink, {
   AccountLinkCollection,
 } from 'common/lib/models/AccountLink';
 
-import type {
-  AccountCollection,
-  AccountGroupType,
-  AccountRaw,
-} from 'common/lib/models/Account';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
@@ -196,7 +192,7 @@ class AccountsScreen extends Component<Props> {
     },
   );
 
-  _onSelectAccount = throttle(500, (account: AccountRaw): void => {
+  _onSelectAccount = throttle(500, (account: Account): void => {
     this.props.dispatch(viewAccountDetails(account.id));
   });
 
@@ -324,7 +320,7 @@ class AccountsScreen extends Component<Props> {
         rows.push({
           Comp: () => (
             <AccountItem
-              account={account.toRaw()}
+              account={account}
               isDownloading={isDownloading}
               isFirst={index === 0}
               isLast={index === group.collection.size - 1}
