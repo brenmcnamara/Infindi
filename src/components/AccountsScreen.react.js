@@ -68,7 +68,6 @@ type ComputedProps = {
 
 class AccountsScreen extends Component<Props> {
   render() {
-    console.log('rendering');
     return (
       <GetTheme>
         {theme => (
@@ -225,7 +224,6 @@ class AccountsScreen extends Component<Props> {
   });
 
   _getData() {
-    console.log('getting data');
     const accountLinks = this._getAccountLinksRequiringAttention();
     const { accounts } = this.props;
     // TODO: METADATA
@@ -359,7 +357,6 @@ class AccountsScreen extends Component<Props> {
 }
 
 function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
-  console.log('mapping redux state');
   const loginPayload = getLoginPayload(reduxState);
   invariant(
     loginPayload,
