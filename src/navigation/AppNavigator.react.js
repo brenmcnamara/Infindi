@@ -10,11 +10,9 @@ import invariant from 'invariant';
 
 import type { ReduxState } from '../store';
 
-export type Props = ComponentProps & ComputedProps;
-export type AppRoute = 'AUTH' | 'LOADING' | 'MAIN';
+export type Props = ComponentProps;
 
 type ComponentProps = {};
-type ComputedProps = {};
 
 export default class AppNavigator extends React.Component<Props> {
   render() {

@@ -1,10 +1,14 @@
 /* @flow */
 
 import * as React from 'react';
-import AccountLink from 'common/lib/models/AccountLink';
+import AccountActions, {
+  createListener as createAccountListener,
+} from '../data-model/_actions/Account';
 import AccountLinkActions, {
   createListener as createAccountLinkListener,
 } from '../data-model/_actions/AccountLink';
+import AccountQuery from 'common/lib/models/AccountQuery';
+import AccountLinkQuery from 'common/lib/models/AccountLinkQuery';
 
 import { connect } from 'react-redux';
 import { getUserID } from '../auth/state-utils';
@@ -21,23 +25,30 @@ type ComputedProps = {
 };
 
 class LifeCycleManager extends React.Component<Props> {
-  _performLogin = (userID: ID): void => {
-    const query = AccountLink.FirebaseCollectionUNSAFE.where(
-      'userRef.refID',
-      '==',
-      userID,
-    );
-    const listener = createAccountLinkListener(query);
-    this.props.dispatch(AccountLinkActions.setListener(listener));
+  _didLoginUser = (userID: ID): void => {
+    const accountLinkQuery = AccountLinkQuery.forUser(userID);
+    const accountLinkListener = createAccountLinkListener(accountLinkQuery);
+    this.props.dispatch(AccountLinkActions.setListener(accountLinkListener));
+
+    const accountQuery = AccountQuery.forUser(userID);
+    const accountListener = createAccountListener(accountQuery);
+    this.props.dispatch(AccountActions.setListener(accountListener));
+
+    // TODO: Load providers.
   };
 
-  _performLogout = (): void => {};
+  _didLogoutUser = (): void => {
+    this.props.dispatch(AccountLinkActions.deleteEverything());
+    this.props.dispatch(AccountActions.deleteEverything());
+
+    // TODO: Destroy providers.
+  };
 
   componentDidUpdate(prevProps: Props): void {
     if (!prevProps.userID && this.props.userID) {
-      this._performLogin(this.props.userID);
+      this._didLoginUser(this.props.userID);
     } else if (prevProps.userID && !this.props.userID) {
-      this._performLogout();
+      this._didLogoutUser();
     }
   }
 

@@ -16,6 +16,8 @@ import type {
 
 // TODO: What about pagination?
 export type ActionCreators<TModelName: string> = {|
+  +deleteEverything: () => Action$ModelDeleteEverything<TModelName>,
+
   +deleteListener: (listenerID: ID) => Action$ModelDeleteListener<TModelName>,
 
   +fetchCursorPage: (cursorID: ID) => Action$ModelFetchCursorPage<TModelName>,
@@ -35,11 +37,17 @@ export type Action<
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
 > =
+  | Action$ModelDeleteEverything<TModelName>
   | Action$ModelDeleteListener<TModelName>
   | Action$ModelFetchCursorPage<TModelName>
   | Action$ModelSetCursor<TModelName>
   | Action$ModelSetListener<TModelName>
   | Action$ModelUpdateState<TModelName, TRaw, TModel, TCollection>;
+
+export type Action$ModelDeleteEverything<TModelName: string> = {|
+  +modelName: TModelName,
+  +type: 'MODEL_DELETE_EVERYTHING',
+|};
 
 export type Action$ModelDeleteListener<TModelName: string> = {|
   +listenerID: ID,
@@ -115,6 +123,11 @@ export function generateActionCreators<
 >(ModelCtor: Class<TModel>): ActionCreators<TModelName> {
   const modelName = ModelCtor.modelName;
   return {
+    deleteEverything: () => ({
+      modelName,
+      type: 'MODEL_DELETE_EVERYTHING',
+    }),
+
     deleteListener: (listenerID: ID) => ({
       listenerID,
       modelName,

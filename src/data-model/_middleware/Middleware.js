@@ -86,7 +86,6 @@ export default class Middleware<
 
     this._cursorMap = this._cursorMap.set(cursor.id, cursor);
     this._cursorStateMap = this._cursorStateMap.set(cursor.id, cursorState);
-    this._dispatchUpdate();
   };
 
   _setListener = (listener: ModelListener<TModelName>): void => {
@@ -117,8 +116,18 @@ export default class Middleware<
       listener.id,
       subscription,
     );
+  };
 
-    this._dispatchUpdate();
+  _deleteEverything = (): void => {
+    // Delete all listeners.
+    this._listenerMap.forEach((_, listenerID) => {
+      this._deleteListener(listenerID);
+    });
+
+    // Delete all cursors.
+
+    // Delete all state.
+    this._collection = Immutable.Map();
   };
 
   _deleteListener = (listenerID: ID): void => {
@@ -142,8 +151,6 @@ export default class Middleware<
     this._listenerSubscriptionMap = this._listenerSubscriptionMap.delete(
       listenerID,
     );
-
-    this._dispatchUpdate();
   };
 
   _onListenerSnapshot = (listenerID: ID, snapshot: Object): void => {
@@ -182,10 +189,20 @@ export default class Middleware<
       next(action);
 
       switch (action.type) {
+        case 'MODEL_DELETE_EVERYTHING': {
+          const {modelName} = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            this._deleteEverything();
+            this._dispatchUpdate();
+          }
+          break;
+        }
+
         case 'MODEL_DELETE_LISTENER': {
           const { modelName } = this.constructor.__ModelCtor;
           if (action.modelName === modelName) {
             this._deleteListener(action.listenerID);
+            this._dispatchUpdate();
           }
           break;
         }
@@ -196,6 +213,7 @@ export default class Middleware<
             // $FlowFixMe - Assuming model names are mutually exclusive.
             const cursor: ModelCursor<TModelName> = action.cursor;
             this._setCursor(cursor);
+            this._dispatchUpdate();
           }
           break;
         }

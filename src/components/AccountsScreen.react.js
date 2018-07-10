@@ -1,6 +1,5 @@
 /* @flow */
 
-import Account from 'common/lib/models/Account';
 import AccountGroupHeader, {
   HEIGHT as AccountGroupHeaderHeight,
 } from './AccountGroupHeader.react';
@@ -11,12 +10,16 @@ import AccountLinkGroupHeader, {
 import AccountLinkItem, {
   HEIGHT as AccountLinkItemHeight,
 } from './AccountLinkItem.react';
+import AccountLinkStateUtils from '../data-model/_state-utils/AccountLink';
+import AccountStateUtils from '../data-model/_state-utils/Account';
 import BannerManager from './shared/BannerManager.react';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
 import Icons from '../design/icons';
 import If from './shared/If.react';
+import Immutable from 'immutable';
 import List from '../list-ui/List.react';
+import LifeCycleStateUtils from '../life-cycle/StateUtils';
 import NetWorth, { HEIGHT as NetWorthHeight } from './NetWorth.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
@@ -31,8 +34,6 @@ import {
 } from '../../content';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
-import { EMPTY_OBJ } from '../constants';
-import { filterObject, isObjectEmpty, reduceObject } from '../common/obj-utils';
 import { getLoginPayload } from '../auth/state-utils';
 import { getNetWorth } from '../common/state-utils';
 import { GetTheme } from '../design/components/Theme.react';
@@ -41,13 +42,15 @@ import { requestInfoModal } from '../actions/modal';
 import { throttle } from '../common/generic-utils';
 import { viewAccountDetails } from '../actions/router';
 
-import type AccountLink from 'common/lib/models/AccountLink';
+import type AccountLink, {
+  AccountLinkCollection,
+} from 'common/lib/models/AccountLink';
 
-import type { AccountGroupType, AccountRaw } from 'common/lib/models/Account';
 import type {
-  AccountContainer,
-  AccountLinkContainer,
-} from '../data-model/types';
+  AccountCollection,
+  AccountGroupType,
+  AccountRaw,
+} from 'common/lib/models/Account';
 import type { Dollars } from 'common/types/core';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
@@ -56,8 +59,8 @@ import type { Theme } from '../design/themes';
 export type Props = ReduxProps & ComputedProps;
 
 type ComputedProps = {
-  accountLinkContainer: AccountLinkContainer,
-  accounts: AccountContainer,
+  accountLinks: AccountLinkCollection,
+  accounts: AccountCollection,
   isDownloading: boolean,
   isInWatchSession: boolean,
   netWorth: number,
@@ -65,6 +68,7 @@ type ComputedProps = {
 
 class AccountsScreen extends Component<Props> {
   render() {
+    console.log('rendering');
     return (
       <GetTheme>
         {theme => (
@@ -102,7 +106,7 @@ class AccountsScreen extends Component<Props> {
     const { isDownloading, accounts } = this.props;
 
     return (
-      <If predicate={!isDownloading && !isObjectEmpty(accounts)}>
+      <If predicate={!isDownloading && accounts.size > 0}>
         <Content>
           <BannerManager
             channels={['CORE', 'ACCOUNTS']}
@@ -121,7 +125,7 @@ class AccountsScreen extends Component<Props> {
   _renderNullState(theme: Theme) {
     const { isDownloading, accounts } = this.props;
     return (
-      <If predicate={!isDownloading && isObjectEmpty(accounts)}>
+      <If predicate={!isDownloading && accounts.size <= 0}>
         <Content>
           <BannerManager
             channels={['CORE', 'ACCOUNTS']}
@@ -141,7 +145,7 @@ class AccountsScreen extends Component<Props> {
                   styles.textCenter,
                 ]}
               >
-                You Have No Accounts
+                {'You Have No Accounts'}
               </Text>
               <Text style={[theme.getTextStyleNormal(), styles.textCenter]}>
                 {AccountNullStateContent}
@@ -221,51 +225,41 @@ class AccountsScreen extends Component<Props> {
   });
 
   _getData() {
+    console.log('getting data');
     const accountLinks = this._getAccountLinksRequiringAttention();
     const { accounts } = this.props;
+    // TODO: METADATA
     const groupList = [
       {
-        container: filterObject(
-          accounts,
-          account => Account.fromRaw(account).groupType === 'AVAILABLE_CASH',
+        collection: accounts.filter(
+          account => account.groupType === 'AVAILABLE_CASH',
         ),
         type: 'AVAILABLE_CASH',
       },
       {
-        container: filterObject(
-          accounts,
-          account => Account.fromRaw(account).groupType === 'CREDIT_CARD_DEBT',
+        collection: accounts.filter(
+          account => account.groupType === 'CREDIT_CARD_DEBT',
         ),
         type: 'CREDIT_CARD_DEBT',
       },
       {
-        container: filterObject(
-          accounts,
-          account => Account.fromRaw(account).groupType === 'DEBT',
-        ),
+        collection: accounts.filter(account => account.groupType === 'DEBT'),
         type: 'DEBT',
       },
       {
-        container: filterObject(
-          accounts,
-          account =>
-            Account.fromRaw(account).groupType === 'LIQUID_INVESTMENTS',
+        collection: accounts.filter(
+          account => account.groupType === 'LIQUID_INVESTMENTS',
         ),
         type: 'LIQUID_INVESTMENTS',
       },
       {
-        container: filterObject(
-          accounts,
-          account =>
-            Account.fromRaw(account).groupType === 'NON_LIQUID_INVESTMENTS',
+        collection: accounts.filter(
+          account => account.groupType === 'NON_LIQUID_INVESTMENTS',
         ),
         type: 'NON_LIQUID_INVESTMENTS',
       },
       {
-        container: filterObject(
-          accounts,
-          account => Account.fromRaw(account).groupType === 'OTHER',
-        ),
+        collection: accounts.filter(account => account.groupType === 'OTHER'),
         type: 'OTHER',
       },
     ];
@@ -278,7 +272,7 @@ class AccountsScreen extends Component<Props> {
       },
     ];
 
-    if (accountLinks.length > 0) {
+    if (accountLinks.size > 0) {
       rows.push({
         Comp: AccountLinkGroupHeader,
         height: AccountLinkGroupHeaderHeight,
@@ -300,10 +294,10 @@ class AccountsScreen extends Component<Props> {
     }
 
     groupList.forEach(group => {
-      if (isObjectEmpty(group.container)) {
+      if (group.collection.size <= 0) {
         return;
       }
-      const balance = getTotalBalanceForAccountContainer(group.container);
+      const balance = getTotalBalanceForAccountContainer(group.collection);
       rows.push({
         Comp: () => (
           <GetTheme>
@@ -320,14 +314,11 @@ class AccountsScreen extends Component<Props> {
         key: `ACCOUNT_GROUP_HEADER / ${group.type}`,
       });
 
-      const { accountLinkContainer } = this.props;
+      const { accountLinks } = this.props;
 
-      // $FlowFixMe - This is correct.
-      const accounts: Array<AccountRaw> = Object.values(group.container);
-
-      accounts.forEach((account: AccountRaw, index: number) => {
-        const accountLink =
-          accountLinkContainer[account.accountLinkRef.refID] || null;
+      let index = 0;
+      group.collection.forEach(account => {
+        const accountLink = accountLinks.get(account.accountLinkRef.refID);
         const isDownloading = Boolean(
           accountLink && (accountLink.isLinking || accountLink.isInMFA),
         );
@@ -335,54 +326,53 @@ class AccountsScreen extends Component<Props> {
         rows.push({
           Comp: () => (
             <AccountItem
-              account={account}
+              account={account.toRaw()}
               isDownloading={isDownloading}
               isFirst={index === 0}
-              isLast={index === accounts.length - 1}
+              isLast={index === group.collection.size - 1}
               onSelect={() => this._onSelectAccount(account)}
             />
           ),
           height: AccountItemHeight,
           key: `ACCOUNT / ${account.id}`,
         });
+        ++index;
       });
     });
 
     return rows;
   }
 
-  _getAccountLinksRequiringAttention(): Array<AccountLink> {
-    const container = this.props.accountLinkContainer;
-    const accountLinks = [];
-    // $FlowFixMe - This is correct.
-    Object.values(container).forEach((accountLink: AccountLink) => {
+  _getAccountLinksRequiringAttention(): Immutable.List<AccountLink> {
+    return this.props.accountLinks.reduce((list, accountLink) => {
       // Put all linking account links at the beginning of the array.
       if (accountLink.isLinking || accountLink.isInMFA) {
-        accountLinks.unshift(accountLink);
+        return list.unshift(accountLink);
       }
       // Put all failed account links at the end of the array.
       if (accountLink.isLinkFailure) {
-        accountLinks.push(accountLink);
+        return list.push(accountLink);
       }
-    });
-    return accountLinks;
+      return list;
+    }, Immutable.List());
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  const { accountLinks, accounts } = state;
-  const loginPayload = getLoginPayload(state);
+function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
+  console.log('mapping redux state');
+  const loginPayload = getLoginPayload(reduxState);
   invariant(
     loginPayload,
     'Trying to render account data when no user is logged in',
   );
   return {
-    accountLinkContainer:
-      accountLinks.type === 'STEADY' ? accountLinks.container : EMPTY_OBJ,
-    accounts: accounts.type === 'STEADY' ? accounts.container : EMPTY_OBJ,
-    isDownloading: accounts.type === 'DOWNLOADING',
-    isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(state),
-    netWorth: getNetWorth(state),
+    accountLinks: AccountLinkStateUtils.getCollection(reduxState),
+    accounts: AccountStateUtils.getCollection(reduxState),
+    isDownloading:
+      !LifeCycleStateUtils.didLoadAccounts(reduxState) ||
+      !LifeCycleStateUtils.didLoadAccountLinks(reduxState),
+    isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(reduxState),
+    netWorth: getNetWorth(reduxState),
   };
 }
 
@@ -436,6 +426,8 @@ export function getFormattedGroupType(groupType: AccountGroupType): string {
   );
 }
 
-function getTotalBalanceForAccountContainer(group: AccountContainer): Dollars {
-  return reduceObject(group, (total, account) => total + account.balance, 0);
+function getTotalBalanceForAccountContainer(
+  collection: AccountCollection,
+): Dollars {
+  return collection.reduce((sum, account) => sum + account.balance, 0);
 }

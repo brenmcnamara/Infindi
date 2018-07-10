@@ -90,13 +90,12 @@ function genPerformLogin(
   loginCredentials: LoginCredentials,
   changeStatus: ChangeStatus,
 ) {
-  const promise = new Promise(resolve => {
-    changeStatus({ loginCredentials, type: 'LOGIN_INITIALIZE' });
-    resolve();
-  });
-  return promise
+  // NOTE: Login auth state will automatically be detected in
+  // "onAuthStateChanged" from above.
+  return Promise.resolve()
     .then(() => {
       const { email, password } = loginCredentials;
+      changeStatus({ loginCredentials, type: 'LOGIN_INITIALIZE' });
       return Auth.signInAndRetrieveDataWithEmailAndPassword(email, password);
     })
     .catch(error => {
@@ -111,12 +110,9 @@ function genPerformLogout(
 ): Promise<void> {
   // NOTE: Login auth state will automatically be detected in
   // "onAuthStateChanged" from above.
-  const promise = new Promise(resolve => {
-    changeStatus({ type: 'LOGOUT_INITIALIZE' });
-    resolve();
-  });
-  return promise
+  return Promise.resolve()
     .then(() => {
+      changeStatus({ type: 'LOGOUT_INITIALIZE' });
       return Auth.signOut();
     })
     .catch(error => {
