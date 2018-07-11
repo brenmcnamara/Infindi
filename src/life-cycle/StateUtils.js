@@ -6,7 +6,7 @@ import nullthrows from 'nullthrows';
 import type { ReduxState } from '../store';
 
 function didLoadAccounts(reduxState: ReduxState): boolean {
-  const account = reduxState._account;
+  const account = reduxState.account;
   invariant(
     account.listenerStateMap.size <= 1,
     'Expecting at most 1 listener for accounts',
@@ -19,7 +19,7 @@ function didLoadAccounts(reduxState: ReduxState): boolean {
 }
 
 function didLoadAccountLinks(reduxState: ReduxState): boolean {
-  const accountLink = reduxState._accountLink;
+  const accountLink = reduxState.accountLink;
   invariant(
     accountLink.listenerStateMap.size <= 1,
     'Expecting at most 1 listener for account links',

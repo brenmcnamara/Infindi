@@ -1,5 +1,6 @@
 /* @flow */
 
+import AccountLinkStateUtils from '../../data-model/_state-utils/AccountLink';
 import Content from '../../components/shared/Content.react';
 import DataModelStateUtils from '../../data-model/state-utils';
 import Downloading from '../../components/shared/Downloading.react';
@@ -20,17 +21,17 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { getContainer } from '../../datastore';
 import { GetTheme } from '../../design/components/Theme.react';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
 import { requestProviderLogin, updateProviderSearchText } from '../action';
 import { throttle } from '../../common/generic-utils';
 
-import type AccountLink from 'common/lib/models/AccountLink';
+import type AccountLink, {
+  AccountLinkCollection,
+} from 'common/lib/models/AccountLink';
 import type Provider from 'common/lib/models/Provider';
 
-import type { AccountLinkContainer } from '../../data-model/types';
 import type { ElementRef } from 'react';
 import type { ReduxProps, ReduxState } from '../../store';
 
@@ -39,7 +40,7 @@ export type Props = ComponentProps & ComputedProps & ReduxProps;
 type ComponentProps = {};
 
 type ComputedProps = {
-  accountLinkContainer: AccountLinkContainer,
+  accountLinks: AccountLinkCollection,
   didCompleteInitialSearch: boolean,
   enableInteraction: boolean,
   providerFetchStatus: 'LOADING' | 'STEADY' | 'EMPTY' | 'FAILURE',
@@ -211,16 +212,11 @@ class ProviderSearchScreen extends Component<Props> {
   });
 
   _getAccountLinkForProvider(provider: Provider): AccountLink | null {
-    const container = this.props.accountLinkContainer;
-    for (const id in container) {
-      if (
-        container.hasOwnProperty(id) &&
-        container[id].providerRef.refID === provider.id
-      ) {
-        return container[id];
-      }
-    }
-    return null;
+    return (
+      this.props.accountLinks.find(
+        accountLink => accountLink.providerRef.refID === provider.id,
+      ) || null
+    );
   }
 
   _getFooterButtonLayout() {
@@ -240,15 +236,15 @@ class ProviderSearchScreen extends Component<Props> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  const { didCompleteInitialSearch } = state.accountVerification;
+function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
+  const { didCompleteInitialSearch } = reduxState.accountVerification;
   return {
-    accountLinkContainer: getContainer(state.accountLinks) || {},
+    accountLinks: AccountLinkStateUtils.getCollection(reduxState),
     didCompleteInitialSearch,
     enableInteraction: true,
-    providerFetchStatus: state.providers.status,
-    providers: DataModelStateUtils.getProviders(state),
-    searchText: state.accountVerification.providerSearchText,
+    providerFetchStatus: reduxState.providers.status,
+    providers: DataModelStateUtils.getProviders(reduxState),
+    searchText: reduxState.accountVerification.providerSearchText,
   };
 }
 

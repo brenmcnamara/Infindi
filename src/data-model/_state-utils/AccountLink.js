@@ -20,5 +20,5 @@ export type StateUtils = StateUtilsTemplate<
 
 export default generateStateUtils(
   AccountLink,
-  reduxState => reduxState._accountLink,
+  reduxState => reduxState.accountLink,
 );

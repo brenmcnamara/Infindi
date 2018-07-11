@@ -115,12 +115,12 @@ export default function accountVerification(
       return { ...state, providerPendingLoginRequestMap };
     }
 
-    case 'CONTAINER_DOWNLOAD_FINISHED': {
+    case 'MODEL_UPDATE_STATE': {
       if (action.modelName !== 'AccountLink') {
         return state;
       }
       // $FlowFixMe - This is correct.
-      const container: AccountLinkContainer = action.container;
+      const accountLinks: AccountLinkCollection = action.collection;
 
       const loginFormContainer = { ...state.loginFormContainer };
       const loginFormSource = { ...state.loginFormSource };
@@ -132,12 +132,7 @@ export default function accountVerification(
       // of entering or exiting multi-factor authentication. If so, we need to
       // update the login form to the correct one for the provider associated
       // with the account link.
-      for (const accountLinkID in container) {
-        if (!container.hasOwnProperty(accountLinkID)) {
-          continue;
-        }
-
-        const accountLink = container[accountLinkID];
+      accountLinks.forEach(accountLink => {
         const providerID = accountLink.providerRef.refID;
         if (
           accountLink.sourceOfTruth.type === 'YODLEE' &&
@@ -166,7 +161,7 @@ export default function accountVerification(
           loginFormSource[providerID] = 'PROVIDER';
         }
         delete providerPendingLoginRequestMap[providerID];
-      }
+      });
 
       // NOTE: We are assuming here that once we get an update of account links
       // we are done waiting provider login to be pending. There can be race

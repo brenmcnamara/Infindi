@@ -1,5 +1,7 @@
 /* @flow */
 
+import AccountLinkStateUtils from '../../data-model/_state-utils/AccountLink';
+
 import invariant from 'invariant';
 
 import { AccountLinkBanner } from '../../../content';
@@ -10,7 +12,6 @@ import {
 } from '../action';
 import { requestMultipleToasts } from '../../actions/toast';
 import { forEachObject } from '../../common/obj-utils';
-import { getContainer } from '../../datastore';
 import { ReduxMiddleware } from '../../common/redux-utils';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
@@ -32,7 +33,7 @@ type State = {|
 |};
 
 function calculateState(reduxState: ReduxState): State {
-  const accountLinkContainer = getContainer(reduxState.accountLinks) || {};
+  const accountLinks = AccountLinkStateUtils.getCollection(reduxState);
   const accountVerificationPage = reduxState.accountVerification.page;
   const selectedProviderID =
     accountVerificationPage &&
@@ -57,7 +58,7 @@ function calculateState(reduxState: ReduxState): State {
 
   // We can override providerStateMap values in this second pass. The data
   // from the account links has higher priority.
-  forEachObject(accountLinkContainer, accountLink => {
+  accountLinks.forEach(accountLink => {
     const providerID = accountLink.providerRef.refID;
     const isViewingLoginScreen = selectedProviderID === providerID;
     providerDataMap[providerID] = {

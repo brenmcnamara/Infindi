@@ -1,9 +1,7 @@
 /* @flow */
 
-import _accountLink from '../data-model/_reducers/AccountLink';
-import accountLinks from '../data-model/reducers/accountLinks';
-import _account from '../data-model/_reducers/Account';
-import accounts from '../data-model/reducers/accounts';
+import account from '../data-model/_reducers/Account';
+import accountLink from '../data-model/_reducers/AccountLink';
 import accountVerification from '../link/reducers/accountVerification';
 import actionItems from './actionItems';
 import auth from '../auth/reducer';
@@ -22,10 +20,8 @@ import watchSessionState from '../watch-session/reducers/watchSessionState';
 
 import { combineReducers } from 'redux';
 
-import type { State as State$_AccountLink } from '../data-model/_reducers/AccountLink';
-import type { State as State$AccountLinks } from '../data-model/reducers/accountLinks';
-import type { State as State$Accounts } from '../data-model/reducers/accounts';
-import type { State as State$_Account } from '../data-model/_reducers/Account';
+import type { State as State$Account } from '../data-model/_reducers/Account';
+import type { State as State$AccountLink } from '../data-model/_reducers/AccountLink';
 import type { State as State$AccountVerification } from '../link/reducers/accountVerification';
 import type { State as State$ActionItems } from './actionItems';
 import type { State as State$Auth } from '../auth/reducer';
@@ -43,10 +39,8 @@ import type { State as State$UserInfo } from '../data-model/reducers/userInfo';
 import type { State as State$WatchSession } from '../watch-session/reducers/watchSessionState';
 
 export type State = {|
-  +_accountLink: State$_AccountLink,
-  +accountLinks: State$AccountLinks,
-  +_account: State$_Account,
-  +accounts: State$Accounts,
+  +account: State$Account,
+  +accountLink: State$AccountLink,
   +accountVerification: State$AccountVerification,
   +actionItems: State$ActionItems,
   +auth: State$Auth,
@@ -66,11 +60,9 @@ export type State = {|
 
 // TODO: Can I add flow typing here?
 export default combineReducers({
-  _accountLink,
-  accountLinks,
+  account,
+  accountLink,
   actionItems,
-  _account,
-  accounts,
   accountVerification,
   auth,
   configState,

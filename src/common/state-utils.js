@@ -1,6 +1,6 @@
 /* @flow */
 
-import invariant from 'invariant';
+import AccountStateUtils from '../data-model/_state-utils/Account';
 
 import { getLoginPayload } from '../auth/state-utils';
 
@@ -23,29 +23,11 @@ export function getActiveUserID(state: ReduxState): ID | null {
   return state.watchSessionState.watchUserID || loginPayload.firebaseUser.uid;
 }
 
-export function getNetWorth(state: ReduxState): Dollars {
-  const { accounts } = state;
-  switch (accounts.type) {
-    case 'DOWNLOADING':
-    case 'DOWNLOAD_FAILED':
-    case 'EMPTY': {
-      return 0;
-    }
-
-    case 'STEADY': {
-      const { container } = accounts;
-      let total = 0;
-      for (const id in container) {
-        if (container.hasOwnProperty(id)) {
-          total += container[id].balance;
-        }
-      }
-      return total;
-    }
-
-    default:
-      return invariant(false, 'Unrecognized account type %s', accounts.type);
-  }
+export function getNetWorth(reduxState: ReduxState): Dollars {
+  return AccountStateUtils.getCollection(reduxState).reduce(
+    (sum, account) => sum + account.balance,
+    0,
+  );
 }
 
 export function getToast(state: ReduxState, toastID: ID): Toast | null {

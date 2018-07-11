@@ -8,8 +8,6 @@ import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware'
 import _TransactionMiddleware from '../data-model/_middleware/Transaction';
 import _UserInfoMiddleware from '../data-model/_middleware/UserInfo';
 
-import accountLinks from '../middleware/accountLinks';
-import accounts from '../middleware/accounts';
 import authentication from '../auth/middleware';
 import modal from '../middleware/modal';
 import providers from '../data-model/middleware/providers';
@@ -23,10 +21,6 @@ import watchSession from '../watch-session/middleware/watch-session';
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 
-import type Account, { AccountRaw } from 'common/lib/models/Account';
-import type AccountLink, {
-  AccountLinkRaw,
-} from 'common/lib/models/AccountLink';
 import type Transaction, {
   TransactionRaw,
 } from 'common/lib/models/Transaction';
@@ -59,8 +53,6 @@ export type PureAction =
   | Action$ActionItems
   | Action$Auth
   | Action$DataModel
-  | Action$Datastore<'Account', AccountRaw, Account>
-  | Action$Datastore<'AccountLink', AccountLinkRaw, AccountLink>
   | Action$Datastore<'Transaction', TransactionRaw, Transaction>
   | Action$Link
   | Action$Modal
@@ -135,8 +127,6 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     userInfo,
     providers,
-    accountLinks,
-    accounts,
     transactions,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
@@ -169,8 +159,6 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     userInfo,
     providers,
-    accountLinks,
-    accounts,
     transactions,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE

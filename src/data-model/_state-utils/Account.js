@@ -15,4 +15,4 @@ export type StateUtils = StateUtilsTemplate<
   AccountCollection,
 >;
 
-export default generateStateUtils(Account, reduxState => reduxState._account);
+export default generateStateUtils(Account, reduxState => reduxState.account);

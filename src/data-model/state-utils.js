@@ -1,5 +1,7 @@
 /* @flow */
 
+import AccountLinkStateUtils from '../data-model/_state-utils/AccountLink';
+
 import { getContainer } from '../datastore';
 
 import type AccountLink from 'common/lib/models/AccountLink';
@@ -19,19 +21,14 @@ function getCursorForAccount(state: ReduxState, accountID: ID): Object | null {
 }
 
 function getAccountLinkForProviderID(
-  state: ReduxState,
+  reduxState: ReduxState,
   providerID: ID,
 ): AccountLink | null {
-  const container = getContainer(state.accountLinks) || {};
-  for (const id in container) {
-    if (
-      container.hasOwnProperty(id) &&
-      container[id].providerRef.refID === providerID
-    ) {
-      return container[id];
-    }
-  }
-  return null;
+  return (
+    AccountLinkStateUtils.getCollection(reduxState).find(
+      accountLink => accountLink.providerRef.refID === providerID,
+    ) || null
+  );
 }
 
 // NOTE: The order the transaction firebase query returns transactions must be
