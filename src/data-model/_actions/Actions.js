@@ -3,7 +3,12 @@
 import uuid from 'uuid/v1';
 
 import type { ID, ModelStub } from 'common/types/core';
-import type { Model, ModelCollection } from 'common/lib/models/Model';
+import type {
+  Model,
+  ModelCollection,
+  ModelOrderedQuery,
+  ModelQuery,
+} from 'common/lib/models/Model';
 import type {
   ModelCursor,
   ModelCursorMap,
@@ -11,12 +16,13 @@ import type {
   ModelListener,
   ModelListenerMap,
   ModelListenerStateMap,
-  ModelQuery,
 } from '../_types';
 
 // TODO: What about pagination?
 export type ActionCreators<TModelName: string> = {|
   +deleteEverything: () => Action$ModelDeleteEverything<TModelName>,
+
+  +deleteCursor: (cursorID: ID) => Action$ModelDeleteCursor<TModelName>,
 
   +deleteListener: (listenerID: ID) => Action$ModelDeleteListener<TModelName>,
 
@@ -38,6 +44,7 @@ export type Action<
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
 > =
   | Action$ModelDeleteEverything<TModelName>
+  | Action$ModelDeleteCursor<TModelName>
   | Action$ModelDeleteListener<TModelName>
   | Action$ModelFetchCursorPage<TModelName>
   | Action$ModelSetCursor<TModelName>
@@ -47,6 +54,12 @@ export type Action<
 export type Action$ModelDeleteEverything<TModelName: string> = {|
   +modelName: TModelName,
   +type: 'MODEL_DELETE_EVERYTHING',
+|};
+
+export type Action$ModelDeleteCursor<TModelName: string> = {|
+  +cursorID: ID,
+  +modelName: TModelName,
+  +type: 'MODEL_DELETE_CURSOR',
 |};
 
 export type Action$ModelDeleteListener<TModelName: string> = {|
@@ -93,10 +106,14 @@ export function generateCreateCursor<
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
 >(ModelCtor: Class<TModel>) {
-  return (query: ModelQuery): ModelCursor<TModelName> => {
+  return (
+    query: ModelOrderedQuery,
+    pageSize: number,
+  ): ModelCursor<TModelName> => {
     return {
       id: uuid(),
       modelName: ModelCtor.modelName,
+      pageSize,
       query,
     };
   };
@@ -126,6 +143,12 @@ export function generateActionCreators<
     deleteEverything: () => ({
       modelName,
       type: 'MODEL_DELETE_EVERYTHING',
+    }),
+
+    deleteCursor: (cursorID: ID) => ({
+      cursorID,
+      modelName,
+      type: 'MODEL_DELETE_CURSOR',
     }),
 
     deleteListener: (listenerID: ID) => ({

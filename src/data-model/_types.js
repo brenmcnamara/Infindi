@@ -4,6 +4,7 @@ import type FindiError from 'common/lib/FindiError';
 import type Immutable from 'immutable';
 
 import type { ID } from 'common/types/core';
+import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
 
 export type LoadState =
   | {| +type: 'EMPTY' | 'LOADING' | 'STEADY' |}
@@ -20,12 +21,13 @@ export type ModelListener<TModelName: string> = {|
 export type ModelCursor<TModelName: string> = {|
   +id: ID,
   +modelName: TModelName,
-  +query: ModelQuery,
+  +pageSize: number,
+  +query: ModelOrderedQuery,
 |};
 
 export type ModelCursorState<TModelName: string> = {|
-  +currentPage: number,
   +cursorID: ID,
+  +cursorRef: Object | null,
   +didReachEnd: boolean,
   +loadState: LoadState,
   +modelIDs: Immutable.List<ID>,
@@ -62,6 +64,3 @@ export type ModelListenerStateMap<TModelName: string> = Immutable.Map<
   ID,
   ModelListenerState<TModelName>,
 >;
-
-// TODO: Move this to common.
-export type ModelQuery = Object;

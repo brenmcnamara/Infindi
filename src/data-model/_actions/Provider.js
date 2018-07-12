@@ -13,7 +13,8 @@ import type {
   ProviderCollection,
   ProviderRaw,
 } from 'common/lib/models/Provider';
-import type { ModelCursor, ModelListener, ModelQuery } from '../_types';
+import type { ModelCursor, ModelListener } from '../_types';
+import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
 
 // eslint-disable-next-line flowtype/generic-spacing
 export type Action = ActionTemplate<
@@ -23,12 +24,15 @@ export type Action = ActionTemplate<
   ProviderCollection,
 >;
 
+type CreateCursor = (
+  query: ModelOrderedQuery,
+  pageSize: number,
+) => ModelCursor<'Provider'>;
 type CreateListener = (query: ModelQuery) => ModelListener<'Provider'>;
-type CreateCursor = (query: ModelQuery) => ModelCursor<'Provider'>;
 
 // $FlowFixMe - Template types are correct.
-export const createListener: CreateListener = generateCreateListener(Provider);
-// $FlowFixMe - Template types are correct.
 export const createCursor: CreateCursor = generateCreateCursor(Provider);
+// $FlowFixMe - Template types are correct.
+export const createListener: CreateListener = generateCreateListener(Provider);
 
 export default generateActionCreators(Provider);

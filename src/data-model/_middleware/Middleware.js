@@ -76,8 +76,8 @@ export default class Middleware<
     );
 
     const cursorState: ModelCursorState<TModelName> = {
-      currentPage: -1,
       cursorID: cursor.id,
+      cursorRef: null,
       didReachEnd: false,
       loadState: { type: 'EMPTY' },
       modelIDs: Immutable.List(),
@@ -125,9 +125,24 @@ export default class Middleware<
     });
 
     // Delete all cursors.
+    this._cursorMap.forEach((_, cursorID) => {
+      this._deleteCursor(cursorID);
+    });
 
     // Delete all state.
     this._collection = Immutable.Map();
+  };
+
+  _deleteCursor = (cursorID: ID): void => {
+    invariant(
+      this._cursorMap.get(cursorID),
+      'Trying to delete a cursor for %s that does not exist: %s',
+      this.constructor.__ModelCtor.modelName,
+      cursorID,
+    );
+
+    this._cursorMap = this._cursorMap.delete(cursorID);
+    this._cursorStateMap = this._cursorStateMap.delete(cursorID);
   };
 
   _deleteListener = (listenerID: ID): void => {
@@ -183,6 +198,70 @@ export default class Middleware<
     this._dispatchUpdate();
   };
 
+  _fetchCursorPageAndDispatchUpdate = (cursorID: ID): void => {
+    let cursor = this._cursorMap.get(cursorID);
+    let cursorState = this._cursorStateMap.get(cursorID);
+
+    invariant(
+      cursor,
+      'Expecting cursor to exist for model %s with id: %s',
+      this.constructor.__ModelCtor.modelName,
+      cursorID,
+    );
+    invariant(
+      cursorState,
+      'Expecting cursor state to exist for model %s with id: %s',
+      this.constructor.__ModelCtor.modelName,
+      cursorID,
+    );
+
+    // NOTE: Not handling the case that we get new content after we marked this
+    // cursor as reaching the end.
+    invariant(
+      !cursorState.didReachEnd,
+      'Cannot update a cursor that has reached the end of its content',
+    );
+    // NOTE: Assuming firebase query.
+    let query = cursor.query;
+    const { cursorRef } = cursorState;
+
+    if (cursorRef) {
+      query = query.startAfter(cursorRef);
+    }
+
+    query.limit(cursor.pageSize).then(snapshot => {
+      // NOTE: Need to re-query for the cursor and cursor state to see if they
+      // changed since we started this query. Could be the case that they were
+      // deleted. In that case, we should throw away the results of this query
+      // and abandon the operation.
+      cursor = this._cursorMap.get(cursorID);
+      cursorState = this._cursorStateMap.get(cursorID);
+
+      if (!cursor || !cursorState) {
+        return;
+      }
+
+      const didReachEnd = snapshot.docs.length < cursor.pageSize;
+      const modelIDs = snapshot.docs.map(doc => doc.data().id);
+      const idAndModelPairs = snapshot.docs.map(doc => {
+        const model = this.constructor.__ModelCtor.fromRaw(doc.data());
+        return [model.id, model];
+      });
+
+      const nextCursorState = {
+        ...cursorState,
+        didReachEnd,
+        modelIDs: cursorState.modelIDs.concat(Immutable.List(modelIDs)),
+      };
+
+      // NOTE: All mutations should be kept in this section here.
+      this._collection = this._collection.merge(Immutable.Map(idAndModelPairs));
+      this._cursorStateMap.set(cursorID, nextCursorState);
+
+      this._dispatchUpdate();
+    });
+  };
+
   handle = (store: StoreType) => (next: Next) => {
     this._next = next;
     return (action: PureAction) => {
@@ -190,9 +269,18 @@ export default class Middleware<
 
       switch (action.type) {
         case 'MODEL_DELETE_EVERYTHING': {
-          const {modelName} = this.constructor.__ModelCtor;
+          const { modelName } = this.constructor.__ModelCtor;
           if (action.modelName === modelName) {
             this._deleteEverything();
+            this._dispatchUpdate();
+          }
+          break;
+        }
+
+        case 'MODEL_DELETE_CURSOR': {
+          const {modelName} = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            this._deleteCursor(action.cursorID);
             this._dispatchUpdate();
           }
           break;
@@ -203,6 +291,14 @@ export default class Middleware<
           if (action.modelName === modelName) {
             this._deleteListener(action.listenerID);
             this._dispatchUpdate();
+          }
+          break;
+        }
+
+        case 'MODEL_FETCH_CURSOR_PAGE': {
+          const { modelName } = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            this._fetchCursorPageAndDispatchUpdate(action.cursorID);
           }
           break;
         }
