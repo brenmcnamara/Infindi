@@ -1,8 +1,16 @@
 /* @flow */
 
+import Immutable from 'immutable';
+
+import invariant from 'invariant';
+
 import type { ID } from 'common/types/core';
 import type { ModelStub } from 'common/lib/db-utils';
-import type { Model, ModelCollection } from 'common/lib/models/Model';
+import type {
+  Model,
+  ModelCollection,
+  ModelOrderedCollection,
+} from 'common/lib/models/Model';
 import type {
   ModelCursor,
   ModelCursorState,
@@ -17,6 +25,7 @@ export type StateUtils<
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
+  TOrderedCollection: ModelOrderedCollection<TModelName, TRaw, TModel>,
 > = {|
   +getCollection: (reduxState: ReduxState) => TCollection,
 
@@ -39,6 +48,11 @@ export type StateUtils<
     reduxState: ReduxState,
     listenerID: ID,
   ) => ModelListenerState<TModelName> | null,
+
+  getOrderedCollectionForCursor: (
+    reduxState: ReduxState,
+    cursorID: ID,
+  ) => TOrderedCollection,
 |};
 
 export function generateStateUtils<
@@ -46,11 +60,12 @@ export function generateStateUtils<
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
+  TOrderedCollection: ModelOrderedCollection<TModelName, TRaw, TModel>,
   TReducerState: ReducerState<TModelName, TRaw, TModel, TCollection>,
 >(
   ModelCtor: Class<TModel>,
   getReducerState: (reduxState: ReduxState) => TReducerState,
-): StateUtils<TModelName, TRaw, TModel, TCollection> {
+): StateUtils<TModelName, TRaw, TModel, TCollection, TOrderedCollection> {
   return {
     getCollection: (reduxState: ReduxState) =>
       getReducerState(reduxState).collection,
@@ -66,5 +81,31 @@ export function generateStateUtils<
 
     getListenerState: (reduxState: ReduxState, listenerID: ID) =>
       getReducerState(reduxState).listenerStateMap.get(listenerID) || null,
+
+    getOrderedCollectionForCursor: (reduxState: ReduxState, cursorID: ID) => {
+      const cursorState = getReducerState(reduxState).cursorStateMap.get(
+        cursorID,
+      );
+      invariant(
+        cursorState,
+        'Expecting model %s to have cursor with id: %s',
+        ModelCtor.modelName,
+        cursorID,
+      );
+      const { collection } = getReducerState(reduxState);
+      // $FlowFixMe - This is correct.
+      return Immutable.OrderedMap(
+        cursorState.modelIDs.map(modelID => {
+          const model = collection.get(modelID);
+          invariant(
+            model,
+            'Expecting %s model to exist for id: %s',
+            ModelCtor.modelName,
+            modelID,
+          );
+          return [modelID, model];
+        }),
+      );
+    },
   };
 }

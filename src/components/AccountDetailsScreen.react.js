@@ -1,13 +1,14 @@
 /* @flow */
 
 import Content from './shared/Content.react';
-import DataModelActions from '../data-model/actions';
-import DataModelStateUtils from '../data-model/state-utils';
 import Icons from '../design/icons';
+import LifeCycleStateUtils from '../life-cycle/StateUtils';
 import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from '../components/shared/TextButton.react';
+import TransactionActions from '../data-model/_actions/Transaction';
+import TransactionStateUtils from '../data-model/_state-utils/Transaction';
 
 import invariant from 'invariant';
 import moment from 'moment';
@@ -25,13 +26,15 @@ import { GetTheme } from '../design/components/Theme.react';
 import { throttle } from '../common/generic-utils';
 import { TransactionEmpty, TransactionLoadingError } from '../../content';
 
-import type Transaction from 'common/lib/models/Transaction';
+import type Transaction, {
+  TransactionOrderedCollection,
+} from 'common/lib/models/Transaction';
 
 import type { ID } from 'common/types/core';
+import type { ModelCursorState } from '../data-model/_types';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
 import type { Theme } from '../design/themes';
-import type { TransactionLoadingStatus } from '../data-model/types';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
@@ -39,15 +42,23 @@ type ComponentProps = {};
 
 type ComputedProps = {
   accountID: ID,
-  cursor: Object | null,
-  loadingStatus: TransactionLoadingStatus,
-  transactions: Array<Transaction>,
+  transactionCursorState: ModelCursorState<'Transaction'>,
+  transactions: TransactionOrderedCollection,
 };
 
 class AccountDetailsScreen extends Component<Props> {
   _shouldAllowBackButton: boolean = false;
 
-  componentDidMount(): void {}
+  componentWillMount(): void {
+    const { dispatch, transactionCursorState } = this.props;
+    if (
+      !transactionCursorState.didReachEnd &&
+      transactionCursorState.modelIDs.size <= 0
+    ) {
+      const { cursorID } = transactionCursorState;
+      dispatch(TransactionActions.fetchCursorPage(cursorID));
+    }
+  }
 
   render() {
     return (
@@ -200,14 +211,10 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _onPressLoadMore = throttle(50, (): void => {
-    const { accountID, cursor, dispatch, loadingStatus } = this.props;
-    if (loadingStatus === 'STEADY') {
-      invariant(
-        cursor,
-        'Transactions must have cursor if loading status is "STEADY"',
-      );
-      // TODO: AccountID should be abstracted within cursor.
-      dispatch(DataModelActions.fetchTransactions(accountID, cursor));
+    const { dispatch, transactionCursorState } = this.props;
+    if (transactionCursorState.loadState.type === 'STEADY') {
+      const { cursorID } = transactionCursorState;
+      dispatch(TransactionActions.fetchCursorPage(cursorID));
     }
   });
 
@@ -216,43 +223,43 @@ class AccountDetailsScreen extends Component<Props> {
   };
 
   _getListData() {
-    const { loadingStatus, transactions } = this.props;
+    const { transactions, transactionCursorState } = this.props;
+    const { didReachEnd, loadState } = transactionCursorState;
     const data = [
       { key: 'TRANSACTION_HEADER', render: this._renderTransactionHeader },
     ];
 
-    transactions.forEach((transaction, index) => {
+    let isFirstTransaction = true;
+    transactions.forEach(transaction => {
       data.push({
         key: `TRANSACTION_${transaction.id}`,
-        render: () => this._renderTransaction(transaction, index === 0),
+        render: () => this._renderTransaction(transaction, isFirstTransaction),
       });
+      isFirstTransaction = false;
     });
 
-    if (transactions.length > 0 && loadingStatus === 'STEADY') {
+    if (transactions.size > 0 && loadState.type === 'STEADY' && !didReachEnd) {
       data.push({
         key: 'TRANSACTION_LOAD_MORE_BUTTON',
         render: () => this._renderTransactionLoadMoreButton(),
       });
     }
 
-    if (
-      loadingStatus === 'EMPTY' ||
-      (loadingStatus === 'END_OF_INPUT' && transactions.length === 0)
-    ) {
+    if (loadState.type === 'EMPTY' || (didReachEnd && transactions.size <= 0)) {
       data.push({
         key: 'TRANSACTION_EMPTY',
         render: this._renderTransactionEmpty,
       });
     }
 
-    if (loadingStatus === 'LOADING') {
+    if (loadState.type === 'LOADING') {
       data.push({
         key: 'TRANSACTION_LOADING',
         render: this._renderTransactionLoadingSpiral,
       });
     }
 
-    if (loadingStatus === 'FAILURE') {
+    if (loadState.type === 'FAILURE') {
       data.push({
         key: 'TRANSACTION_ERROR',
         render: this._renderTransactionError,
@@ -263,22 +270,29 @@ class AccountDetailsScreen extends Component<Props> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  const accountID = state.routeState.accountDetailsID;
+function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
+  const accountID = reduxState.routeState.accountDetailsID;
   invariant(
     accountID,
     'Expecting accountID to exist when trying to render AccountDetailsScreen',
   );
+  const transactionCursorState = LifeCycleStateUtils.getTransactionCursorState(
+    reduxState,
+    accountID,
+  );
+  invariant(
+    transactionCursorState,
+    'Expecting transaction cursor to exist for account id: %s',
+    accountID,
+  );
+  const { cursorID } = transactionCursorState;
   return {
     accountID,
-    cursor: DataModelStateUtils.getCursorForAccount(state, accountID),
-    loadingStatus: DataModelStateUtils.getTransactionLoadingStatus(
-      state,
-      accountID,
-    ),
-    transactions: DataModelStateUtils.getTransactionsForAccount(
-      state,
-      accountID,
+    transactionCursorState,
+    // TODO: Reselect
+    transactions: TransactionStateUtils.getOrderedCollectionForCursor(
+      reduxState,
+      cursorID,
     ),
   };
 }

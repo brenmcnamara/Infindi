@@ -6,6 +6,7 @@ import { generateStateUtils } from './StateUtils';
 
 import type {
   ProviderCollection,
+  ProviderOrderedCollection,
   ProviderRaw,
 } from 'common/lib/models/Provider';
 import type { StateUtils as StateUtilsTemplate } from './StateUtils';
@@ -16,6 +17,7 @@ export type StateUtils = StateUtilsTemplate<
   ProviderRaw,
   Provider,
   ProviderCollection,
+  ProviderOrderedCollection,
 >;
 
 export default generateStateUtils(Provider, reduxState => reduxState._provider);

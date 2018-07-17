@@ -6,6 +6,7 @@ import { generateStateUtils } from './StateUtils';
 
 import type {
   AccountLinkCollection,
+  AccountLinkOrderedCollection,
   AccountLinkRaw,
 } from 'common/lib/models/AccountLink';
 import type { StateUtils as StateUtilsTemplate } from './StateUtils';
@@ -16,6 +17,7 @@ export type StateUtils = StateUtilsTemplate<
   AccountLinkRaw,
   AccountLink,
   AccountLinkCollection,
+  AccountLinkOrderedCollection,
 >;
 
 export default generateStateUtils(

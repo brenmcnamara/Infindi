@@ -11,6 +11,7 @@ import AccountQuery from 'common/lib/models/AccountQuery';
 import AccountLinkQuery from 'common/lib/models/AccountLinkQuery';
 import AccountStateUtils from '../data-model/_state-utils/Account';
 import Immutable from 'immutable';
+import LifeCycleActions from './Actions';
 import TransactionActions, {
   createCursor as createTransactionCursor,
 } from '../data-model/_actions/Transaction';
@@ -23,6 +24,8 @@ import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
 import type { ReduxProps, ReduxState } from '../store';
+// eslint-disable-next-line max-len
+import type { State as State$AccountToTransactionCursor } from './reducers/accountToTransactionCursor';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
@@ -30,14 +33,13 @@ type ComponentProps = {};
 
 type ComputedProps = {
   accountIDs: Immutable.Set<ID>,
+  accountToTransactionCursor: State$AccountToTransactionCursor,
   userID: ID | null,
 };
 
 const TRANSACTION_PAGE_SIZE = 20;
 
 class LifeCycleManager extends React.Component<Props> {
-  _accountToTransactionCursor: Immutable.Map<ID, ID> = Immutable.Map();
-
   _onLoginUser = (userID: ID): void => {
     const accountLinkQuery = AccountLinkQuery.forUser(userID);
     const accountLinkListener = createAccountLinkListener(accountLinkQuery);
@@ -59,7 +61,7 @@ class LifeCycleManager extends React.Component<Props> {
 
   _onAddAccount = (accountID: ID): void => {
     invariant(
-      !this._accountToTransactionCursor.get(accountID),
+      !this.props.accountToTransactionCursor.get(accountID),
       'Expecting no transaction cursor to exist for account: %s',
       accountID,
     );
@@ -67,14 +69,13 @@ class LifeCycleManager extends React.Component<Props> {
     const query = TransactionQuery.orderedForAccount(accountID);
     const cursor = createTransactionCursor(query, TRANSACTION_PAGE_SIZE);
     this.props.dispatch(TransactionActions.setCursor(cursor));
-    this._accountToTransactionCursor = this._accountToTransactionCursor.set(
-      accountID,
-      cursor.id,
+    this.props.dispatch(
+      LifeCycleActions.addAccountToTransactionCursorPair(accountID, cursor.id),
     );
   };
 
   _onDeleteAccount = (accountID: ID): void => {
-    const cursorID = this._accountToTransactionCursor.get(accountID);
+    const cursorID = this.props.accountToTransactionCursor.get(accountID);
     invariant(
       cursorID,
       'Expecting transaction cursor to exist for account: %s',
@@ -82,7 +83,9 @@ class LifeCycleManager extends React.Component<Props> {
     );
 
     this.props.dispatch(TransactionActions.deleteCursor(cursorID));
-    this._accountToTransactionCursor.delete(accountID);
+    this.props.dispatch(
+      LifeCycleActions.removeAccountToTransactionCursorPair(accountID),
+    );
   };
 
   componentDidUpdate(prevProps: Props): void {
@@ -119,6 +122,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
 
   return {
     accountIDs,
+    accountToTransactionCursor: reduxState.accountToTransactionCursor,
     userID: getUserID(reduxState),
   };
 }

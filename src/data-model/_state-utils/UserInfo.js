@@ -7,6 +7,7 @@ import { generateStateUtils } from './StateUtils';
 import type { StateUtils as StateUtilsTemplate } from './StateUtils';
 import type {
   UserInfoCollection,
+  UserInfoOrderedCollection,
   UserInfoRaw,
 } from 'common/lib/models/UserInfo';
 
@@ -16,6 +17,7 @@ export type StateUtils = StateUtilsTemplate<
   UserInfoRaw,
   UserInfo,
   UserInfoCollection,
+  UserInfoOrderedCollection,
 >;
 
 export default generateStateUtils(UserInfo, reduxState => reduxState._userInfo);

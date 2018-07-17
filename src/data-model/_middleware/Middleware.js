@@ -1,5 +1,6 @@
 /* @flow */
 
+import FindiError from 'common/lib/FindiError';
 import Immutable from 'immutable';
 
 import invariant from 'invariant';
@@ -221,6 +222,11 @@ export default class Middleware<
       !cursorState.didReachEnd,
       'Cannot update a cursor that has reached the end of its content',
     );
+
+    cursorState = { ...cursorState, loadState: { type: 'LOADING' } };
+    this._cursorStateMap = this._cursorStateMap.set(cursorID, cursorState);
+    this._dispatchUpdate();
+
     // NOTE: Assuming firebase query.
     let query = cursor.query;
     const { cursorRef } = cursorState;
@@ -229,37 +235,69 @@ export default class Middleware<
       query = query.startAfter(cursorRef);
     }
 
-    query.limit(cursor.pageSize).then(snapshot => {
-      // NOTE: Need to re-query for the cursor and cursor state to see if they
-      // changed since we started this query. Could be the case that they were
-      // deleted. In that case, we should throw away the results of this query
-      // and abandon the operation.
-      cursor = this._cursorMap.get(cursorID);
-      cursorState = this._cursorStateMap.get(cursorID);
+    query
+      .limit(cursor.pageSize)
+      .get()
+      .then(snapshot => {
+        // NOTE: Need to re-query for the cursor and cursor state to see if they
+        // changed since we started this query. Could be the case that they were
+        // deleted. In that case, we should throw away the results of this query
+        // and abandon the operation.
+        cursor = this._cursorMap.get(cursorID);
+        cursorState = this._cursorStateMap.get(cursorID);
 
-      if (!cursor || !cursorState) {
-        return;
-      }
+        if (!cursor || !cursorState) {
+          return;
+        }
 
-      const didReachEnd = snapshot.docs.length < cursor.pageSize;
-      const modelIDs = snapshot.docs.map(doc => doc.data().id);
-      const idAndModelPairs = snapshot.docs.map(doc => {
-        const model = this.constructor.__ModelCtor.fromRaw(doc.data());
-        return [model.id, model];
+        const didReachEnd = snapshot.docs.length < cursor.pageSize;
+        const modelIDs = snapshot.docs.map(doc => doc.data().id);
+        const idAndModelPairs = snapshot.docs.map(doc => {
+          const model = this.constructor.__ModelCtor.fromRaw(doc.data());
+          return [model.id, model];
+        });
+
+        const cursorRef =
+          snapshot.docs.length > 0
+            ? snapshot.docs[snapshot.docs.length - 1]
+            : null;
+
+        cursorState = {
+          ...cursorState,
+          cursorRef,
+          didReachEnd,
+          loadState: { type: 'STEADY' },
+          modelIDs: cursorState.modelIDs.concat(Immutable.List(modelIDs)),
+        };
+        // NOTE: All mutations should be kept in this section here.
+        this._collection = this._collection.merge(
+          Immutable.Map(idAndModelPairs),
+        );
+        this._cursorStateMap = this._cursorStateMap.set(cursorID, cursorState);
+
+        this._dispatchUpdate();
+      })
+      .catch(error => {
+        // NOTE: Need to re-query for the cursor and cursor state to see if they
+        // changed since we started this query. Could be the case that they were
+        // deleted. In that case, we should throw away the results of this query
+        // and abandon the operation.
+        cursor = this._cursorMap.get(cursorID);
+        cursorState = this._cursorStateMap.get(cursorID);
+
+        if (!cursor || !cursorState) {
+          return;
+        }
+
+        const findiError = FindiError.fromUknownEntity(error);
+        cursorState = {
+          ...cursorState,
+          loadState: { error: findiError, type: 'FAILURE' },
+        };
+
+        this._cursorStateMap = this._cursorStateMap.set(cursorID, cursorState);
+        this._dispatchUpdate();
       });
-
-      const nextCursorState = {
-        ...cursorState,
-        didReachEnd,
-        modelIDs: cursorState.modelIDs.concat(Immutable.List(modelIDs)),
-      };
-
-      // NOTE: All mutations should be kept in this section here.
-      this._collection = this._collection.merge(Immutable.Map(idAndModelPairs));
-      this._cursorStateMap.set(cursorID, nextCursorState);
-
-      this._dispatchUpdate();
-    });
   };
 
   handle = (store: StoreType) => (next: Next) => {
@@ -278,7 +316,7 @@ export default class Middleware<
         }
 
         case 'MODEL_DELETE_CURSOR': {
-          const {modelName} = this.constructor.__ModelCtor;
+          const { modelName } = this.constructor.__ModelCtor;
           if (action.modelName === modelName) {
             this._deleteCursor(action.cursorID);
             this._dispatchUpdate();

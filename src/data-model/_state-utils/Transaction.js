@@ -7,6 +7,7 @@ import { generateStateUtils } from './StateUtils';
 import type { StateUtils as StateUtilsTemplate } from './StateUtils';
 import type {
   TransactionCollection,
+  TransactionOrderedCollection,
   TransactionRaw,
 } from 'common/lib/models/Transaction';
 
@@ -16,9 +17,10 @@ export type StateUtils = StateUtilsTemplate<
   TransactionRaw,
   Transaction,
   TransactionCollection,
+  TransactionOrderedCollection,
 >;
 
 export default generateStateUtils(
   Transaction,
-  reduxState => reduxState._transaction,
+  reduxState => reduxState.transaction,
 );

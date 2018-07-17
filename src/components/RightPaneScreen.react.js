@@ -23,7 +23,10 @@ import { getActiveUserID } from '../common/state-utils';
 import { getUserID } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
-import type { LoadStatus, UserInfoContainer } from '../data-model/types';
+import type {
+  LoadStatusDEPRECATED,
+  UserInfoContainer,
+} from '../data-model/types';
 import type { ReduxProps, ReduxState } from '../store';
 import type { Theme } from '../design/themes';
 import type { UserInfoRaw } from 'common/lib/models/UserInfo';
@@ -39,7 +42,7 @@ type ComputedProps = {
   activeUserID: ID,
   currentUserID: ID,
   userInfoContainer: UserInfoContainer,
-  userInfoLoadStatus: LoadStatus,
+  userInfoLoadStatus: LoadStatusDEPRECATED,
 };
 
 const MID_DOT = String.fromCharCode(183);

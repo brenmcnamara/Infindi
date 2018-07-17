@@ -5,7 +5,7 @@ import _AccountMiddleware from '../data-model/_middleware/Account';
 import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
 import _ProviderMiddleware from '../data-model/_middleware/Provider';
 import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
-import _TransactionMiddleware from '../data-model/_middleware/Transaction';
+import TransactionMiddleware from '../data-model/_middleware/Transaction';
 import _UserInfoMiddleware from '../data-model/_middleware/UserInfo';
 
 import authentication from '../auth/middleware';
@@ -14,23 +14,18 @@ import providers from '../data-model/middleware/providers';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 import toast from '../middleware/toast';
-import transactions from '../middleware/transactions';
 import userInfo from '../data-model/middleware/userInfo';
 import watchSession from '../watch-session/middleware/watch-session';
 
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 
-import type Transaction, {
-  TransactionRaw,
-} from 'common/lib/models/Transaction';
-
 import type { Action as Action$Account } from '../data-model/_actions/Account';
 import type { Action as Action$AccountLink } from '../data-model/_actions/AccountLink';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../auth/actions';
 import type { Action as Action$DataModel } from '../data-model/actions';
-import type { Action as Action$Datastore } from '../datastore';
+import type { Action as Action$LifeCycle } from '../life-cycle/Actions';
 import type { Action as Action$Link } from '../link/action';
 import type { Action as Action$Modal } from '../actions/modal';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
@@ -53,7 +48,7 @@ export type PureAction =
   | Action$ActionItems
   | Action$Auth
   | Action$DataModel
-  | Action$Datastore<'Transaction', TransactionRaw, Transaction>
+  | Action$LifeCycle
   | Action$Link
   | Action$Modal
   | Action$ModalMiddleware
@@ -101,7 +96,7 @@ const accountMiddleware = new _AccountMiddleware();
 const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
 const providerMiddleware = new _ProviderMiddleware();
 const providerLoginMiddleware = new ProviderLoginMiddleware();
-const transactionMiddleware = new _TransactionMiddleware();
+const transactionMiddleware = new TransactionMiddleware();
 const userInfoMiddleware = new _UserInfoMiddleware();
 
 let middleware;
@@ -127,7 +122,6 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     userInfo,
     providers,
-    transactions,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
     // -------------------------------------------------------------------------
@@ -159,7 +153,6 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     userInfo,
     providers,
-    transactions,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
     // -------------------------------------------------------------------------

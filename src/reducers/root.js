@@ -2,6 +2,7 @@
 
 import account from '../data-model/_reducers/Account';
 import accountLink from '../data-model/_reducers/AccountLink';
+import accountToTransactionCursor from '../life-cycle/reducers/accountToTransactionCursor';
 import accountVerification from '../link/reducers/accountVerification';
 import actionItems from './actionItems';
 import auth from '../auth/reducer';
@@ -11,9 +12,7 @@ import _provider from '../data-model/_reducers/Provider';
 import providers from '../data-model/reducers/providers';
 import routeState from './routeState';
 import toast from './toast';
-import transactionLoading from '../data-model/reducers/transactionLoading';
-import _transaction from '../data-model/_reducers/Transaction';
-import transactions from '../data-model/reducers/transactions';
+import transaction from '../data-model/_reducers/Transaction';
 import _userInfo from '../data-model/_reducers/UserInfo';
 import userInfo from '../data-model/reducers/userInfo';
 import watchSessionState from '../watch-session/reducers/watchSessionState';
@@ -22,6 +21,8 @@ import { combineReducers } from 'redux';
 
 import type { State as State$Account } from '../data-model/_reducers/Account';
 import type { State as State$AccountLink } from '../data-model/_reducers/AccountLink';
+// eslint-disable-next-line max-len
+import type { State as State$AccountToTransactionCursor } from '../life-cycle/reducers/accountToTransactionCursor';
 import type { State as State$AccountVerification } from '../link/reducers/accountVerification';
 import type { State as State$ActionItems } from './actionItems';
 import type { State as State$Auth } from '../auth/reducer';
@@ -31,9 +32,7 @@ import type { State as State$_Provider } from '../data-model/_reducers/Provider'
 import type { State as State$Providers } from '../data-model/reducers/providers';
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
-import type { State as State$TransactionLoading } from '../data-model/reducers/transactionLoading';
-import type { State as State$_Transaction } from '../data-model/_reducers/Transaction';
-import type { State as State$Transactions } from '../data-model/reducers/transactions';
+import type { State as State$Transaction } from '../data-model/_reducers/Transaction';
 import type { State as State$_UserInfo } from '../data-model/_reducers/UserInfo';
 import type { State as State$UserInfo } from '../data-model/reducers/userInfo';
 import type { State as State$WatchSession } from '../watch-session/reducers/watchSessionState';
@@ -41,6 +40,7 @@ import type { State as State$WatchSession } from '../watch-session/reducers/watc
 export type State = {|
   +account: State$Account,
   +accountLink: State$AccountLink,
+  +accountToTransactionCursor: State$AccountToTransactionCursor,
   +accountVerification: State$AccountVerification,
   +actionItems: State$ActionItems,
   +auth: State$Auth,
@@ -50,9 +50,7 @@ export type State = {|
   +providers: State$Providers,
   +routeState: State$RouteState,
   +toast: State$Toast,
-  +transactionLoading: State$TransactionLoading,
-  +_transaction: State$_Transaction,
-  +transactions: State$Transactions,
+  +transaction: State$Transaction,
   +_userInfo: State$_UserInfo,
   +userInfo: State$UserInfo,
   +watchSessionState: State$WatchSession,
@@ -63,6 +61,7 @@ export default combineReducers({
   account,
   accountLink,
   actionItems,
+  accountToTransactionCursor,
   accountVerification,
   auth,
   configState,
@@ -71,9 +70,7 @@ export default combineReducers({
   providers,
   routeState,
   toast,
-  transactionLoading,
-  _transaction,
-  transactions,
+  transaction,
   _userInfo,
   userInfo,
   watchSessionState,
