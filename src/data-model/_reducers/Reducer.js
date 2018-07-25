@@ -10,6 +10,8 @@ import type {
   ModelCursorStateMap,
   ModelListenerMap,
   ModelListenerStateMap,
+  ModelOperationMap,
+  ModelOperationStateMap,
 } from '../_types';
 import type { ModelStub } from 'common/types/core';
 import type { PureAction } from '../../store';
@@ -29,6 +31,8 @@ export type State<
   +cursorStateMap: ModelCursorStateMap<TModelName>,
   +listenerMap: ModelListenerMap<TModelName>,
   +listenerStateMap: ModelListenerStateMap<TModelName>,
+  +operationMap: ModelOperationMap<TModelName>,
+  +operationStateMap: ModelOperationStateMap<TModelName>,
 };
 
 export function generateReducer<
@@ -65,6 +69,8 @@ export function generateReducer<
           cursorStateMap: action.cursorStateMap,
           listenerMap: action.listenerMap,
           listenerStateMap: action.listenerStateMap,
+          operationMap: action.operationMap,
+          operationStateMap: action.operationStateMap,
         };
       }
 

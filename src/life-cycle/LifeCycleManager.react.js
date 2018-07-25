@@ -16,11 +16,15 @@ import TransactionActions, {
   createCursor as createTransactionCursor,
 } from '../data-model/_actions/Transaction';
 import TransactionQuery from 'common/lib/models/TransactionQuery';
+import UserInfo from 'common/lib/models/UserInfo';
+import UserInfoActions, {
+  createOperation as createUserInfoOperation,
+} from '../data-model/_actions/UserInfo';
 
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import { getUserID } from '../auth/state-utils';
+import { getUserInfo } from '../auth/state-utils';
 
 import type { ID } from 'common/types/core';
 import type { ReduxProps, ReduxState } from '../store';
@@ -34,29 +38,39 @@ type ComponentProps = {};
 type ComputedProps = {
   accountIDs: Immutable.Set<ID>,
   accountToTransactionCursor: State$AccountToTransactionCursor,
-  userID: ID | null,
+  userInfo: UserInfo | null,
 };
 
 const TRANSACTION_PAGE_SIZE = 20;
 
 class LifeCycleManager extends React.Component<Props> {
-  _onLoginUser = (userID: ID): void => {
-    const accountLinkQuery = AccountLinkQuery.forUser(userID);
+  _onLoginUser = (userInfo: UserInfo): void => {
+    const accountLinkQuery = AccountLinkQuery.forUser(userInfo.id);
     const accountLinkListener = createAccountLinkListener(accountLinkQuery);
-    this.props.dispatch(AccountLinkActions.setListener(accountLinkListener));
+    this.props.dispatch(
+      AccountLinkActions.setAndRunListener(accountLinkListener),
+    );
 
-    const accountQuery = AccountQuery.forUser(userID);
+    const accountQuery = AccountQuery.forUser(userInfo.id);
     const accountListener = createAccountListener(accountQuery);
-    this.props.dispatch(AccountActions.setListener(accountListener));
+    this.props.dispatch(AccountActions.setAndRunListener(accountListener));
 
     // TODO: Load providers.
+
+    if (userInfo.isAdmin) {
+      const userInfoQuery = UserInfo.FirebaseCollectionUNSAFE;
+      const userInfoOperation = createUserInfoOperation(userInfoQuery);
+      this.props.dispatch(
+        UserInfoActions.setAndRunOperation(userInfoOperation),
+      );
+    }
   };
 
   _onLogoutUser = (): void => {
     this.props.dispatch(AccountLinkActions.deleteEverything());
     this.props.dispatch(AccountActions.deleteEverything());
-
     // TODO: Destroy providers.
+    this.props.dispatch(UserInfoActions.deleteEverything());
   };
 
   _onAddAccount = (accountID: ID): void => {
@@ -89,9 +103,9 @@ class LifeCycleManager extends React.Component<Props> {
   };
 
   componentDidUpdate(prevProps: Props): void {
-    if (!prevProps.userID && this.props.userID) {
-      this._onLoginUser(this.props.userID);
-    } else if (prevProps.userID && !this.props.userID) {
+    if (!prevProps.userInfo && this.props.userInfo) {
+      this._onLoginUser(this.props.userInfo);
+    } else if (prevProps.userInfo && !this.props.userInfo) {
       this._onLogoutUser();
     }
 
@@ -123,7 +137,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
   return {
     accountIDs,
     accountToTransactionCursor: reduxState.accountToTransactionCursor,
-    userID: getUserID(reduxState),
+    userInfo: getUserInfo(reduxState),
   };
 }
 

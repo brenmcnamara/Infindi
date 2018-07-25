@@ -17,6 +17,10 @@ import type {
   ModelListenerMap,
   ModelListenerState,
   ModelListenerStateMap,
+  ModelOperation,
+  ModelOperationMap,
+  ModelOperationState,
+  ModelOperationStateMap,
 } from '../_types';
 import type { Next, PureAction, StoreType } from '../../store';
 
@@ -49,6 +53,8 @@ export default class Middleware<
   _listenerSubscriptionMap: ListenerSubscriptionMap = Immutable.Map();
   _listenerStateMap: ModelListenerStateMap<TModelName> = Immutable.Map();
   _next: Next;
+  _operationMap: ModelOperationMap<TModelName> = Immutable.Map();
+  _operationStateMap: ModelOperationStateMap<TModelName> = Immutable.Map();
 
   _dispatchUpdate = (): void => {
     invariant(
@@ -64,6 +70,8 @@ export default class Middleware<
       listenerMap: this._listenerMap,
       listenerStateMap: this._listenerStateMap,
       modelName: this.constructor.__ModelCtor.modelName,
+      operationMap: this._operationMap,
+      operationStateMap: this._operationStateMap,
       type: 'MODEL_UPDATE_STATE',
     });
   };
@@ -89,7 +97,7 @@ export default class Middleware<
     this._cursorStateMap = this._cursorStateMap.set(cursor.id, cursorState);
   };
 
-  _setListener = (listener: ModelListener<TModelName>): void => {
+  _setAndRunListener = (listener: ModelListener<TModelName>): void => {
     invariant(
       !this._listenerMap.get(listener.id),
       'Trying to create a listener for %s that already exists: %s',
@@ -116,6 +124,98 @@ export default class Middleware<
     this._listenerSubscriptionMap = this._listenerSubscriptionMap.set(
       listener.id,
       subscription,
+    );
+  };
+
+  _setAndRunOperation = (operation: ModelOperation<TModelName>): void => {
+    invariant(
+      !this._operationMap.get(operation.id),
+      'Trying to create an operation for %s that already exists: %s',
+      this.constructor.__ModelCtor.modelName,
+      operation.id,
+    );
+
+    const operationState: ModelOperationState<TModelName> = {
+      operationID: operation.id,
+      loadState: { type: 'LOADING' },
+      modelIDs: Immutable.Set(),
+      modelName: this.constructor.__ModelCtor.modelName,
+    };
+
+    operation.query
+      .get()
+      .then(snapshot => {
+        // NOTE: The user could have deleted the operation before it completed.
+        // Need to check that the operation still exists.
+        const operationInnerScope = this._operationMap.get(operation.id);
+        if (!operationInnerScope) {
+          return;
+        }
+        let operationStateInnerScope = this._operationStateMap.get(
+          operation.id,
+        );
+        invariant(
+          operationStateInnerScope,
+          'Expecting operation state to exist for %s and given operation: %s',
+          this.constructor.__ModelCtor.modelName,
+          operation.id,
+        );
+
+        const modelIDs: Array<ID> = snapshot.docs.map(doc => doc.data().id);
+        const idAndModelPairs: Array<[ID, TModel]> = snapshot.docs.map(doc => {
+          const model = this.constructor.__ModelCtor.fromRaw(doc.data());
+          return [model.id, model];
+        });
+
+        operationStateInnerScope = {
+          ...operationStateInnerScope,
+          loadState: { type: 'STEADY' },
+          modelIDs: Immutable.Set(modelIDs),
+        };
+
+        this._operationStateMap = this._operationStateMap.set(
+          operation.id,
+          operationStateInnerScope,
+        );
+        this._collection = this._collection.merge(
+          Immutable.Map(idAndModelPairs),
+        );
+        this._dispatchUpdate();
+      })
+      .catch(error => {
+        // NOTE: The user could have deleted the operation before it completed.
+        // Need to check that the operation still exists.
+        const operationInnerScope = this._operationMap.get(operation.id);
+        if (!operationInnerScope) {
+          return;
+        }
+        let operationStateInnerScope = this._operationStateMap.get(
+          operation.id,
+        );
+        invariant(
+          operationStateInnerScope,
+          'Expecting operation state to exist for %s and given operation: %s',
+          this.constructor.__ModelCtor.modelName,
+          operation.id,
+        );
+
+        const findiError = FindiError.fromUnknownEntity(error);
+        operationStateInnerScope = {
+          ...operationStateInnerScope,
+          loadState: { error: findiError, type: 'FAILURE' },
+        };
+
+        this._operationStateMap = this._operationStateMap.set(
+          operation.id,
+          operationStateInnerScope,
+        );
+        this._dispatchUpdate();
+      });
+
+    this._operationMap = this._operationMap.set(operation.id, operation);
+    this._operationStateMap = this._operationStateMap.set(
+      operation.id,
+      operationState,
     );
   };
 
@@ -169,6 +269,18 @@ export default class Middleware<
     );
   };
 
+  _deleteOperation = (operationID: ID): void => {
+    invariant(
+      this._operationMap.get(operationID),
+      'Trying to delete an operation for %s that does not exist: %s',
+      this.constructor.__ModelCtor.modelName,
+      operationID,
+    );
+
+    this._operationMap = this._operationMap.delete(operationID);
+    this._operationStateMap = this._operationStateMap.delete(operationID);
+  };
+
   _onListenerSnapshot = (listenerID: ID, snapshot: Object): void => {
     let listenerState = this._listenerStateMap.get(listenerID);
     invariant(
@@ -179,10 +291,10 @@ export default class Middleware<
     );
 
     const modelIDs: Array<ID> = snapshot.docs.map(doc => doc.data().id);
-    const idAndModelPairs: Array<[ID, TModel]> = snapshot.docs.map(doc => [
-      doc.data().id,
-      this.constructor.__ModelCtor.fromRaw(doc.data()),
-    ]);
+    const idAndModelPairs: Array<[ID, TModel]> = snapshot.docs.map(doc => {
+      const model = this.constructor.__ModelCtor.fromRaw(doc.data());
+      return [model.id, model];
+    });
 
     listenerState = {
       ...listenerState,
@@ -333,10 +445,41 @@ export default class Middleware<
           break;
         }
 
+        case 'MODEL_DELETE_OPERATION': {
+          const { modelName } = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            this._deleteOperation(action.operationID);
+            this._dispatchUpdate();
+          }
+          break;
+        }
+
         case 'MODEL_FETCH_CURSOR_PAGE': {
           const { modelName } = this.constructor.__ModelCtor;
           if (action.modelName === modelName) {
             this._fetchCursorPageAndDispatchUpdate(action.cursorID);
+          }
+          break;
+        }
+
+        case 'MODEL_SET_AND_RUN_LISTENER': {
+          const { modelName } = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            // $FlowFixMe = Assuming model names are mutually exclusive.
+            const listener: ModelListener<TModelName> = action.listener;
+            this._setAndRunListener(listener);
+            this._dispatchUpdate();
+          }
+          break;
+        }
+
+        case 'MODEL_SET_AND_RUN_OPERATION': {
+          const { modelName } = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            // $FlowFixMe = Assuming model names are mutually exclusive.
+            const operation: ModelOperation<TModelName> = action.operation;
+            this._setAndRunOperation(operation);
+            this._dispatchUpdate();
           }
           break;
         }
@@ -348,16 +491,6 @@ export default class Middleware<
             const cursor: ModelCursor<TModelName> = action.cursor;
             this._setCursor(cursor);
             this._dispatchUpdate();
-          }
-          break;
-        }
-
-        case 'MODEL_SET_LISTENER': {
-          const { modelName } = this.constructor.__ModelCtor;
-          if (action.modelName === modelName) {
-            // $FlowFixMe = Assuming model names are mutually
-            const listener: ModelListener<TModelName> = action.listener;
-            this._setListener(listener);
           }
           break;
         }

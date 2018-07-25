@@ -6,7 +6,7 @@ import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddlew
 import _ProviderMiddleware from '../data-model/_middleware/Provider';
 import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
 import TransactionMiddleware from '../data-model/_middleware/Transaction';
-import _UserInfoMiddleware from '../data-model/_middleware/UserInfo';
+import UserInfoMiddleware from '../data-model/_middleware/UserInfo';
 
 import authentication from '../auth/middleware';
 import modal from '../middleware/modal';
@@ -14,7 +14,6 @@ import providers from '../data-model/middleware/providers';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 import toast from '../middleware/toast';
-import userInfo from '../data-model/middleware/userInfo';
 import watchSession from '../watch-session/middleware/watch-session';
 
 import { applyMiddleware, createStore } from 'redux';
@@ -97,7 +96,7 @@ const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
 const providerMiddleware = new _ProviderMiddleware();
 const providerLoginMiddleware = new ProviderLoginMiddleware();
 const transactionMiddleware = new TransactionMiddleware();
-const userInfoMiddleware = new _UserInfoMiddleware();
+const userInfoMiddleware = new UserInfoMiddleware();
 
 let middleware;
 
@@ -120,7 +119,6 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     // LEGACY DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
-    userInfo,
     providers,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
@@ -151,7 +149,6 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     // LEGACY DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
-    userInfo,
     providers,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE

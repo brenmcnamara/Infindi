@@ -6,7 +6,7 @@ import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 
 import type { ID } from 'common/types/core';
-import type { ModelCursorState } from '../data-model/_types';
+import type { LoadState, ModelCursorState } from '../data-model/_types';
 import type { ReduxState } from '../store';
 
 function didLoadAccounts(reduxState: ReduxState): boolean {
@@ -71,10 +71,17 @@ function getTransactionCursorState(
   return transaction.cursorStateMap.get(cursorID) || null;
 }
 
+function getUserFetchLoadState(reduxState: ReduxState): LoadState {
+  const { userInfo } = reduxState;
+  const operationState = userInfo.operationStateMap.first();
+  return operationState ? operationState.loadState : { type: 'EMPTY' };
+}
+
 export default {
   didCreateTransactionCursors,
   didLoadAccountLinks,
   didLoadAccounts,
   getTransactionCursorState,
+  getUserFetchLoadState,
   isActiveUserInitialized,
 };

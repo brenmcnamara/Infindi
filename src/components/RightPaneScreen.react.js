@@ -1,9 +1,11 @@
 /* @flow */
 
 import Content from './shared/Content.react';
+import LifeCycleStateUtils from '../life-cycle/StateUtils';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import ThemeComponent, { GetTheme } from '../design/components/Theme.react';
+import UserInfoStateUtils from '../data-model/_state-utils/UserInfo';
 import WatchSessionActions from '../watch-session/actions';
 
 import {
@@ -22,14 +24,12 @@ import { dismissModal, RightPaneModalID } from '../actions/modal';
 import { getActiveUserID } from '../common/state-utils';
 import { getUserID } from '../auth/state-utils';
 
+import type UserInfo, { UserInfoCollection } from 'common/lib/models/UserInfo';
+
 import type { ID } from 'common/types/core';
-import type {
-  LoadStatusDEPRECATED,
-  UserInfoContainer,
-} from '../data-model/types';
+import type { LoadState } from '../data-model/_types';
 import type { ReduxProps, ReduxState } from '../store';
 import type { Theme } from '../design/themes';
-import type { UserInfoRaw } from 'common/lib/models/UserInfo';
 
 export type Props = ReduxProps & ComputedProps & ComponentProps;
 
@@ -41,8 +41,8 @@ type ComponentProps = {
 type ComputedProps = {
   activeUserID: ID,
   currentUserID: ID,
-  userInfoContainer: UserInfoContainer,
-  userInfoLoadStatus: LoadStatusDEPRECATED,
+  userFetchLoadState: LoadState,
+  userInfos: UserInfoCollection,
 };
 
 const MID_DOT = String.fromCharCode(183);
@@ -171,7 +171,7 @@ class RightPaneScreen extends Component<Props> {
     );
   }
 
-  _renderUserInfo(theme: Theme, userInfo: UserInfoRaw, isFirst: boolean) {
+  _renderUserInfo(theme: Theme, userInfo: UserInfo, isFirst: boolean) {
     const userGroups = [];
     if (userInfo.isAdmin) {
       userGroups.push('ADMIN');
@@ -245,7 +245,7 @@ class RightPaneScreen extends Component<Props> {
     }
   };
 
-  _onPressUserInfo = (userInfo: UserInfoRaw): void => {
+  _onPressUserInfo = (userInfo: UserInfo): void => {
     if (this.props.show) {
       this.props.dispatch(WatchSessionActions.enterWatchSession(userInfo.id));
       this.props.dispatch(dismissModal(RightPaneModalID));
@@ -263,23 +263,25 @@ class RightPaneScreen extends Component<Props> {
     const {
       activeUserID,
       currentUserID,
-      userInfoLoadStatus,
-      userInfoContainer,
+      userFetchLoadState,
+      userInfos,
     } = this.props;
 
     const data = [this._renderHeader(theme)];
-    if (userInfoLoadStatus === 'LOADING') {
+    if (
+      userFetchLoadState.type === 'LOADING' ||
+      userFetchLoadState.type === 'EMPTY'
+    ) {
       data.push(this._renderSpinner(theme));
     }
 
-    Object.values(userInfoContainer).forEach(
-      // $FlowFixMe - Entries will always be UserInfo.
-      (userInfo: UserInfo, index: number) => {
-        if (currentUserID !== userInfo.id) {
-          data.push(this._renderUserInfo(theme, userInfo, index === 0));
-        }
-      },
-    );
+    let isFirstUserInfo = true;
+    userInfos.forEach(userInfo => {
+      if (currentUserID !== userInfo.id) {
+        data.push(this._renderUserInfo(theme, userInfo, isFirstUserInfo));
+      }
+      isFirstUserInfo = false;
+    });
 
     if (activeUserID !== currentUserID) {
       // Currently in watch session.
@@ -337,12 +339,12 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapReduxStateToProps(state: ReduxState) {
+function mapReduxStateToProps(reduxState: ReduxState) {
   return {
-    activeUserID: getActiveUserID(state),
-    currentUserID: getUserID(state),
-    userInfoContainer: state.userInfo.container,
-    userInfoLoadStatus: state.userInfo.loadStatus,
+    activeUserID: getActiveUserID(reduxState),
+    currentUserID: getUserID(reduxState),
+    userFetchLoadState: LifeCycleStateUtils.getUserFetchLoadState(reduxState),
+    userInfos: UserInfoStateUtils.getCollection(reduxState),
   };
 }
 

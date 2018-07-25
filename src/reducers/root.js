@@ -13,8 +13,7 @@ import providers from '../data-model/reducers/providers';
 import routeState from './routeState';
 import toast from './toast';
 import transaction from '../data-model/_reducers/Transaction';
-import _userInfo from '../data-model/_reducers/UserInfo';
-import userInfo from '../data-model/reducers/userInfo';
+import userInfo from '../data-model/_reducers/UserInfo';
 import watchSessionState from '../watch-session/reducers/watchSessionState';
 
 import { combineReducers } from 'redux';
@@ -33,8 +32,7 @@ import type { State as State$Providers } from '../data-model/reducers/providers'
 import type { State as State$RouteState } from './routeState';
 import type { State as State$Toast } from './toast';
 import type { State as State$Transaction } from '../data-model/_reducers/Transaction';
-import type { State as State$_UserInfo } from '../data-model/_reducers/UserInfo';
-import type { State as State$UserInfo } from '../data-model/reducers/userInfo';
+import type { State as State$UserInfo } from '../data-model/_reducers/UserInfo';
 import type { State as State$WatchSession } from '../watch-session/reducers/watchSessionState';
 
 export type State = {|
@@ -51,7 +49,6 @@ export type State = {|
   +routeState: State$RouteState,
   +toast: State$Toast,
   +transaction: State$Transaction,
-  +_userInfo: State$_UserInfo,
   +userInfo: State$UserInfo,
   +watchSessionState: State$WatchSession,
 |};
@@ -71,7 +68,6 @@ export default combineReducers({
   routeState,
   toast,
   transaction,
-  _userInfo,
   userInfo,
   watchSessionState,
 });

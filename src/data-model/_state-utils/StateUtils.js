@@ -16,6 +16,8 @@ import type {
   ModelCursorState,
   ModelListener,
   ModelListenerState,
+  ModelOperation,
+  ModelOperationState,
 } from '../_types';
 import type { ReduxState } from '../../store';
 import type { State as ReducerState } from '../_reducers/Reducer';
@@ -49,6 +51,16 @@ export type StateUtils<
     listenerID: ID,
   ) => ModelListenerState<TModelName> | null,
 
+  +getOperation: (
+    reduxState: ReduxState,
+    operationID: ID,
+  ) => ModelOperation<TModelName> | null,
+
+  +getOperationState: (
+    reduxState: ReduxState,
+    operationID: ID,
+  ) => ModelOperationState<TModelName> | null,
+
   getOrderedCollectionForCursor: (
     reduxState: ReduxState,
     cursorID: ID,
@@ -81,6 +93,12 @@ export function generateStateUtils<
 
     getListenerState: (reduxState: ReduxState, listenerID: ID) =>
       getReducerState(reduxState).listenerStateMap.get(listenerID) || null,
+
+    getOperation: (reduxState: ReduxState, operationID: ID) =>
+      getReducerState(reduxState).operationMap.get(operationID) || null,
+
+    getOperationState: (reduxState: ReduxState, operationID: ID) =>
+      getReducerState(reduxState).operationStateMap.get(operationID) || null,
 
     getOrderedCollectionForCursor: (reduxState: ReduxState, cursorID: ID) => {
       const cursorState = getReducerState(reduxState).cursorStateMap.get(

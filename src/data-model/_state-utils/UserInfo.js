@@ -20,4 +20,4 @@ export type StateUtils = StateUtilsTemplate<
   UserInfoOrderedCollection,
 >;
 
-export default generateStateUtils(UserInfo, reduxState => reduxState._userInfo);
+export default generateStateUtils(UserInfo, reduxState => reduxState.userInfo);

@@ -2,6 +2,7 @@
 
 import FindiService from '../FindiService';
 import Firebase from 'react-native-firebase';
+import UserInfo from 'common/lib/models/UserInfo';
 
 import invariant from 'invariant';
 
@@ -15,7 +16,6 @@ import type {
   LoginPayload,
   SignUpForm,
 } from 'common/lib/models/Auth';
-import type { UserInfoRaw } from 'common/lib/models/UserInfo';
 
 const Auth = Firebase.auth();
 const Database = Firebase.firestore();
@@ -164,7 +164,7 @@ function genPerformSignUp(
 //
 // -----------------------------------------------------------------------------
 
-async function genUserInfo(id: string): Promise<UserInfoRaw> {
+async function genUserInfo(id: string): Promise<UserInfo> {
   // TODO: Look into what errors this may return.
   // $FlowFixMe - Do not understand this flow error.
   const document = await Database.collection('UserInfo')
@@ -174,8 +174,7 @@ async function genUserInfo(id: string): Promise<UserInfoRaw> {
     document.exists,
     'Data Error: UserInfo is missing for logged in user',
   );
-  const userInfo: UserInfoRaw = document.data();
-  return userInfo;
+  return UserInfo.fromRaw(document.data());
 }
 
 async function genLoginPayload(): Promise<?LoginPayload> {
