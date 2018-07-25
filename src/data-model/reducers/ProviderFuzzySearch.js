@@ -1,19 +1,20 @@
 /* @flow */
 
-import type { ID } from 'common/types/core';
-import type { ProviderContainer, ProviderFetchStatus } from '../types';
+import Immutable from 'immutable';
+
+import type { LoadState } from '../types';
+import type { ProviderOrderedCollection } from 'common/lib/models/Provider';
 import type { PureAction } from '../../store';
 
 export type State = {
-  container: ProviderContainer,
-  ordering: Array<ID>,
-  status: ProviderFetchStatus,
+  loadState: LoadState,
+  orderedCollection: ProviderOrderedCollection,
 };
 
 const DEFAULT_STATE = {
-  container: {},
-  ordering: [],
-  status: 'EMPTY',
+  loadState: { type: 'EMPTY' },
+  // $FlowFixMe - Immutable is being stupid.
+  orderedCollection: Immutable.OrderedMap(),
 };
 
 export default function providers(
@@ -31,14 +32,16 @@ export default function providers(
     case 'FETCH_PROVIDERS_SUCCESS': {
       return {
         ...state,
-        container: action.container,
-        ordering: action.ordering,
-        status: 'STEADY',
+        loadState: { type: 'STEADY' },
+        orderedCollection: action.orderedCollection,
       };
     }
 
     case 'FETCH_PROVIDERS_FAILURE': {
-      return { ...state, status: 'FAILURE' };
+      return {
+        ...state,
+        loadState: { error: action.error, type: 'FAILURE' },
+      };
     }
   }
   return state;

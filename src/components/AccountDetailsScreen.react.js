@@ -7,8 +7,8 @@ import MoneyText from './shared/MoneyText.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from '../components/shared/TextButton.react';
-import TransactionActions from '../data-model/_actions/Transaction';
-import TransactionStateUtils from '../data-model/_state-utils/Transaction';
+import TransactionActions from '../data-model/actions/Transaction';
+import TransactionStateUtils from '../data-model/state-utils/Transaction';
 
 import invariant from 'invariant';
 import moment from 'moment';
@@ -31,7 +31,7 @@ import type Transaction, {
 } from 'common/lib/models/Transaction';
 
 import type { ID } from 'common/types/core';
-import type { ModelCursorState } from '../data-model/_types';
+import type { ModelCursorState } from '../data-model/types';
 import type { ReduxProps } from '../store';
 import type { State as ReduxState } from '../reducers/root';
 import type { Theme } from '../design/themes';

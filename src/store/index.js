@@ -1,39 +1,39 @@
 /* @flow */
 
-import _AccountLinkMiddleware from '../data-model/_middleware/AccountLink';
-import _AccountMiddleware from '../data-model/_middleware/Account';
+import AccountLinkMiddleware from '../data-model/middleware/AccountLink';
 import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
-import _ProviderMiddleware from '../data-model/_middleware/Provider';
+import AccountMiddleware from '../data-model/middleware/Account';
 import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
-import TransactionMiddleware from '../data-model/_middleware/Transaction';
-import UserInfoMiddleware from '../data-model/_middleware/UserInfo';
+import ProviderMiddleware from '../data-model/middleware/Provider';
+import TransactionMiddleware from '../data-model/middleware/Transaction';
+import UserInfoMiddleware from '../data-model/middleware/UserInfo';
 
 import authentication from '../auth/middleware';
 import modal from '../middleware/modal';
-import providers from '../data-model/middleware/providers';
+import providerFuzzySearch from '../data-model/middleware/providerFuzzySearch';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
 import toast from '../middleware/toast';
-import watchSession from '../watch-session/middleware/watch-session';
 
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
 
-import type { Action as Action$Account } from '../data-model/_actions/Account';
-import type { Action as Action$AccountLink } from '../data-model/_actions/AccountLink';
+import type { Action as Action$Account } from '../data-model/actions/Account';
+import type { Action as Action$AccountLink } from '../data-model/actions/AccountLink';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
 import type { Action as Action$Auth } from '../auth/actions';
-import type { Action as Action$DataModel } from '../data-model/actions';
 import type { Action as Action$LifeCycle } from '../life-cycle/Actions';
 import type { Action as Action$Link } from '../link/action';
 import type { Action as Action$Modal } from '../actions/modal';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
-import type { Action as Action$Provider } from '../data-model/_actions/Provider';
+import type { Action as Action$Provider } from '../data-model/actions/Provider';
+// eslint-disable-next-line max-len
+import type { Action as Action$ProviderFuzzySearch } from '../data-model/actions/ProviderFuzzySearch';
 import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Toast } from '../actions/toast';
 import type { Action as Action$ToastMiddleware } from '../middleware/toast';
-import type { Action as Action$Transaction } from '../data-model/_actions/Transaction';
-import type { Action as Action$UserInfo } from '../data-model/_actions/UserInfo';
+import type { Action as Action$Transaction } from '../data-model/actions/Transaction';
+import type { Action as Action$UserInfo } from '../data-model/actions/UserInfo';
 import type { Action as Action$WatchSession } from '../watch-session/actions';
 import type { State } from '../reducers/root';
 
@@ -46,12 +46,12 @@ export type PureAction =
   | Action$AccountLink
   | Action$ActionItems
   | Action$Auth
-  | Action$DataModel
   | Action$LifeCycle
   | Action$Link
   | Action$Modal
   | Action$ModalMiddleware
   | Action$Provider
+  | Action$ProviderFuzzySearch
   | Action$Router
   | Action$Toast
   | Action$ToastMiddleware
@@ -90,10 +90,10 @@ export type CombineReducers<TState: Object> = (reducerMap: {
   [key: string]: Reducer<*>,
 }) => Reducer<TState>;
 
-const accountLinkMiddleware = new _AccountLinkMiddleware();
-const accountMiddleware = new _AccountMiddleware();
+const accountLinkMiddleware = new AccountLinkMiddleware();
+const accountMiddleware = new AccountMiddleware();
 const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
-const providerMiddleware = new _ProviderMiddleware();
+const providerMiddleware = new ProviderMiddleware();
 const providerLoginMiddleware = new ProviderLoginMiddleware();
 const transactionMiddleware = new TransactionMiddleware();
 const userInfoMiddleware = new UserInfoMiddleware();
@@ -107,7 +107,6 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    watchSession,
     // -------------------------------------------------------------------------
     // DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
@@ -119,7 +118,7 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     // LEGACY DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
-    providers,
+    providerFuzzySearch,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
     // -------------------------------------------------------------------------
@@ -137,7 +136,6 @@ if (__DEV__) {
     thunk,
     // Then comes middleware that need network access.
     authentication,
-    watchSession,
     // -------------------------------------------------------------------------
     // DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
@@ -149,7 +147,7 @@ if (__DEV__) {
     // -------------------------------------------------------------------------
     // LEGACY DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
-    providers,
+    providerFuzzySearch,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
     // -------------------------------------------------------------------------

@@ -1,7 +1,8 @@
 /* @flow */
 
-import type { ID } from 'common/types/core';
-import type { ProviderContainer } from '../types';
+import type FindiError from 'common/lib/FindiError';
+
+import type { ProviderOrderedCollection } from 'common/lib/models/Provider';
 
 export type Action =
   | Action$FetchProvidersFailure
@@ -9,19 +10,16 @@ export type Action =
   | Action$FetchProvidersSuccess;
 
 type Action$FetchProvidersInitialize = {|
-  +operationID: ID,
   +searchText: string,
   +type: 'FETCH_PROVIDERS_INITIALIZE',
 |};
 
 type Action$FetchProvidersSuccess = {|
-  +container: ProviderContainer,
-  +operationID: ID,
-  +ordering: Array<ID>,
+  +orderedCollection: ProviderOrderedCollection,
   +type: 'FETCH_PROVIDERS_SUCCESS',
 |};
 
 type Action$FetchProvidersFailure = {|
-  +operationID: ID,
+  +error: FindiError,
   +type: 'FETCH_PROVIDERS_FAILURE',
 |};

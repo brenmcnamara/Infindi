@@ -1,6 +1,6 @@
 /* @flow */
 
-import DataModelStateUtils from '../data-model/state-utils';
+import AccountLinkStateUtils from '../data-model/state-utils/AccountLink';
 
 import invariant from 'invariant';
 
@@ -93,17 +93,19 @@ export function calculateLoginFormCallToActionForProviderID(
 }
 
 export function calculateCanSubmitLoginFormForProviderID(
-  state: ReduxState,
+  reduxState: ReduxState,
   providerID: ID,
 ): boolean {
-  const loginForm = state.accountVerification.loginFormContainer[providerID];
+  const loginForm =
+    reduxState.accountVerification.loginFormContainer[providerID];
   const isFilledOut = calculateIsFormFilledOut(loginForm);
-  const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
-    state,
-    providerID,
+  const accountLink = AccountLinkStateUtils.findModel(
+    reduxState,
+    model => model.providerRef.refID === providerID,
   );
+
   const pendingLoginRequest =
-    state.accountVerification.providerPendingLoginRequestMap[providerID];
+    reduxState.accountVerification.providerPendingLoginRequestMap[providerID];
 
   return (
     !pendingLoginRequest &&

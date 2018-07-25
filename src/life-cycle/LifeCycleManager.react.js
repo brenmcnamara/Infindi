@@ -3,23 +3,23 @@
 import * as React from 'react';
 import AccountActions, {
   createListener as createAccountListener,
-} from '../data-model/_actions/Account';
+} from '../data-model/actions/Account';
 import AccountLinkActions, {
   createListener as createAccountLinkListener,
-} from '../data-model/_actions/AccountLink';
+} from '../data-model/actions/AccountLink';
 import AccountQuery from 'common/lib/models/AccountQuery';
 import AccountLinkQuery from 'common/lib/models/AccountLinkQuery';
-import AccountStateUtils from '../data-model/_state-utils/Account';
+import AccountStateUtils from '../data-model/state-utils/Account';
 import Immutable from 'immutable';
 import LifeCycleActions from './Actions';
 import TransactionActions, {
   createCursor as createTransactionCursor,
-} from '../data-model/_actions/Transaction';
+} from '../data-model/actions/Transaction';
 import TransactionQuery from 'common/lib/models/TransactionQuery';
 import UserInfo from 'common/lib/models/UserInfo';
 import UserInfoActions, {
   createOperation as createUserInfoOperation,
-} from '../data-model/_actions/UserInfo';
+} from '../data-model/actions/UserInfo';
 
 import invariant from 'invariant';
 

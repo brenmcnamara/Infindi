@@ -47,15 +47,16 @@ export default function accountVerification(
       const defaultLoginFormContainer = { ...state.defaultLoginFormContainer };
       const loginFormContainer = { ...state.loginFormContainer };
       const loginFormSource = { ...state.loginFormSource };
-      for (const providerID of action.ordering) {
-        const provider = action.container[providerID];
+
+      action.orderedCollection.forEach(provider => {
         const loginForm = getYodleeLoginForm(provider);
-        defaultLoginFormContainer[providerID] = loginForm;
-        if (loginFormSource[providerID] !== 'ACCOUNT_LINK') {
-          loginFormContainer[providerID] = loginForm;
-          loginFormSource[providerID] = 'PROVIDER';
+        defaultLoginFormContainer[provider.id] = loginForm;
+        if (loginFormSource[provider.id] !== 'ACCOUNT_LINK') {
+          loginFormContainer[provider.id] = loginForm;
+          loginFormSource[provider.id] = 'PROVIDER';
         }
-      }
+      });
+
       return {
         ...state,
         defaultLoginFormContainer,

@@ -1,8 +1,7 @@
 /* @flow */
 
-import AccountLinkStateUtils from '../../data-model/_state-utils/AccountLink';
+import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 import Content from '../../components/shared/Content.react';
-import DataModelStateUtils from '../../data-model/state-utils';
 import Downloading from '../../components/shared/Downloading.react';
 import Icons from '../../design/icons';
 import List from '../../list-ui/List.react';
@@ -30,9 +29,12 @@ import { throttle } from '../../common/generic-utils';
 import type AccountLink, {
   AccountLinkCollection,
 } from 'common/lib/models/AccountLink';
-import type Provider from 'common/lib/models/Provider';
+import type Provider, {
+  ProviderOrderedCollection,
+} from 'common/lib/models/Provider';
 
 import type { ElementRef } from 'react';
+import type { LoadState } from '../../data-model/types';
 import type { ReduxProps, ReduxState } from '../../store';
 
 export type Props = ComponentProps & ComputedProps & ReduxProps;
@@ -43,8 +45,8 @@ type ComputedProps = {
   accountLinks: AccountLinkCollection,
   didCompleteInitialSearch: boolean,
   enableInteraction: boolean,
-  providerFetchStatus: 'LOADING' | 'STEADY' | 'EMPTY' | 'FAILURE',
-  providers: Array<Provider>,
+  providerLoadState: LoadState,
+  providers: ProviderOrderedCollection,
   searchText: string,
 };
 
@@ -55,8 +57,8 @@ class ProviderSearchScreen extends Component<Props> {
   _searchRef: ElementRef<typeof TextInput> | null = null;
 
   render() {
-    const { didCompleteInitialSearch, providerFetchStatus } = this.props;
-    const shouldShowError = providerFetchStatus === 'FAILURE';
+    const { didCompleteInitialSearch, providerLoadState } = this.props;
+    const shouldShowError = providerLoadState.type === 'FAILURE';
 
     return (
       <Screen avoidNavBar={true}>
@@ -228,11 +230,13 @@ class ProviderSearchScreen extends Component<Props> {
   }
 
   _getData() {
-    return this.props.providers.map((provider, index) => ({
-      Comp: () => this._renderProvider(provider),
-      height: PROVIDER_ITEM_HEIGHT,
-      key: provider.id,
-    }));
+    return this.props.providers
+      .map((provider, index) => ({
+        Comp: () => this._renderProvider(provider),
+        height: PROVIDER_ITEM_HEIGHT,
+        key: provider.id,
+      }))
+      .toArray();
   }
 }
 
@@ -242,8 +246,8 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
     accountLinks: AccountLinkStateUtils.getCollection(reduxState),
     didCompleteInitialSearch,
     enableInteraction: true,
-    providerFetchStatus: reduxState.providers.status,
-    providers: DataModelStateUtils.getProviders(reduxState),
+    providerLoadState: reduxState.providerFuzzySearch.loadState,
+    providers: reduxState.providerFuzzySearch.orderedCollection,
     searchText: reduxState.accountVerification.providerSearchText,
   };
 }

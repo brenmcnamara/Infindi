@@ -10,7 +10,7 @@ import {
 } from './Actions';
 
 import type { Action as ActionTemplate } from './Actions';
-import type { ModelCursor, ModelListener, ModelOperation } from '../_types';
+import type { ModelCursor, ModelListener, ModelOperation } from '../types';
 import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
 import type {
   TransactionCollection,

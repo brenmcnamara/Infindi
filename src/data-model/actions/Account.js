@@ -11,7 +11,7 @@ import {
 
 import type { AccountCollection, AccountRaw } from 'common/lib/models/Account';
 import type { Action as ActionTemplate } from './Actions';
-import type { ModelCursor, ModelListener, ModelOperation } from '../_types';
+import type { ModelCursor, ModelListener, ModelOperation } from '../types';
 import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
 
 // eslint-disable-next-line flowtype/generic-spacing

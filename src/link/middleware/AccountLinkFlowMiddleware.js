@@ -1,6 +1,6 @@
 /* @flow */
 
-import AccountLinkStateUtils from '../../data-model/_state-utils/AccountLink';
+import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 
 import invariant from 'invariant';
 
@@ -46,7 +46,7 @@ function calculateState(reduxState: ReduxState): State {
 
   // Loop through providers. There could be providers that do not have
   // account links.
-  forEachObject(reduxState.providers.container, provider => {
+  reduxState.providerFuzzySearch.orderedCollection.forEach(provider => {
     providerDataMap[provider.id] = {
       isViewingLoginScreen: selectedProviderID === provider.id,
       pendingRequest: providerPendingLoginRequestMap[provider.id] || null,

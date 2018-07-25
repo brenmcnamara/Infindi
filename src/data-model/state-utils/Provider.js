@@ -20,4 +20,4 @@ export type StateUtils = StateUtilsTemplate<
   ProviderOrderedCollection,
 >;
 
-export default generateStateUtils(Provider, reduxState => reduxState._provider);
+export default generateStateUtils(Provider, reduxState => reduxState.provider);

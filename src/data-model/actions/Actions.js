@@ -19,7 +19,7 @@ import type {
   ModelOperation,
   ModelOperationMap,
   ModelOperationStateMap,
-} from '../_types';
+} from '../types';
 
 // TODO: What about pagination?
 export type ActionCreators<TModelName: string> = {|

@@ -10,8 +10,8 @@ import AccountLinkGroupHeader, {
 import AccountLinkItem, {
   HEIGHT as AccountLinkItemHeight,
 } from './AccountLinkItem.react';
-import AccountLinkStateUtils from '../data-model/_state-utils/AccountLink';
-import AccountStateUtils from '../data-model/_state-utils/Account';
+import AccountLinkStateUtils from '../data-model/state-utils/AccountLink';
+import AccountStateUtils from '../data-model/state-utils/Account';
 import BannerManager from './shared/BannerManager.react';
 import Content from './shared/Content.react';
 import Footer from './shared/Footer.react';
@@ -24,7 +24,7 @@ import NetWorth, { HEIGHT as NetWorthHeight } from './NetWorth.react';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import TextButton from './shared/TextButton.react';
-import WatchSessionStateUtils from '../watch-session/state-utils';
+import WatchSessionStateUtils from '../watch-session/StateUtils';
 
 import invariant from 'invariant';
 

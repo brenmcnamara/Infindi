@@ -5,7 +5,7 @@ import LifeCycleStateUtils from '../life-cycle/StateUtils';
 import React, { Component } from 'react';
 import Screen from './shared/Screen.react';
 import ThemeComponent, { GetTheme } from '../design/components/Theme.react';
-import UserInfoStateUtils from '../data-model/_state-utils/UserInfo';
+import UserInfoStateUtils from '../data-model/state-utils/UserInfo';
 import WatchSessionActions from '../watch-session/actions';
 
 import {
@@ -27,7 +27,7 @@ import { getUserID } from '../auth/state-utils';
 import type UserInfo, { UserInfoCollection } from 'common/lib/models/UserInfo';
 
 import type { ID } from 'common/types/core';
-import type { LoadState } from '../data-model/_types';
+import type { LoadState } from '../data-model/types';
 import type { ReduxProps, ReduxState } from '../store';
 import type { Theme } from '../design/themes';
 

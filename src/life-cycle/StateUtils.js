@@ -1,12 +1,12 @@
 /* @flow */
 
-import AccountStateUtils from '../data-model/_state-utils/Account';
+import AccountStateUtils from '../data-model/state-utils/Account';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 
 import type { ID } from 'common/types/core';
-import type { LoadState, ModelCursorState } from '../data-model/_types';
+import type { LoadState, ModelCursorState } from '../data-model/types';
 import type { ReduxState } from '../store';
 
 function didLoadAccounts(reduxState: ReduxState): boolean {

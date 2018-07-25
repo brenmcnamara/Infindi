@@ -1,6 +1,6 @@
 /* @flow */
 
-import AccountStateUtils from '../data-model/_state-utils/Account';
+import AccountStateUtils from '../data-model/state-utils/Account';
 
 import { getLoginPayload } from '../auth/state-utils';
 

@@ -21,7 +21,7 @@ import type {
   ModelOperationMap,
   ModelOperationState,
   ModelOperationStateMap,
-} from '../_types';
+} from '../types';
 import type { Next, PureAction, StoreType } from '../../store';
 
 type ListenerSubscriptionMap = Immutable.Map<ID, EmitterSubscription>;

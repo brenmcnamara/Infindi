@@ -1,6 +1,6 @@
 /* @flow */
 
-import DataModelStateUtils from '../../data-model/state-utils';
+import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 import ModalTransition, {
   TransitionInMillis as ModalTransitionInMillis,
   TransitionOutMillis as ModalTransitionOutMillis,
@@ -128,29 +128,28 @@ class YodleeLoginFormModal extends Component<Props> {
     } else {
       dispatch(submitMFAFormForProviderID(providerID));
     }
-
   };
 }
 
 function mapReduxStateToProps(
-  state: ReduxState,
+  reduxState: ReduxState,
   props: ComponentProps,
 ): ComputedProps {
   const { providerID } = props;
   const loginForm =
-    state.accountVerification.loginFormContainer[providerID] || null;
+    reduxState.accountVerification.loginFormContainer[providerID] || null;
   const callToAction = loginForm
-    ? calculateLoginFormCallToActionForProviderID(state, providerID)
+    ? calculateLoginFormCallToActionForProviderID(reduxState, providerID)
     : '';
   const canSubmit =
     Boolean(loginForm) &&
-    calculateCanSubmitLoginFormForProviderID(state, providerID);
-  const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
-    state,
-    providerID,
+    calculateCanSubmitLoginFormForProviderID(reduxState, providerID);
+  const accountLink = AccountLinkStateUtils.findModel(
+    reduxState,
+    accountLink => accountLink.providerRef.refID === providerID,
   );
   const pendingLoginRequest =
-    state.accountVerification.providerPendingLoginRequestMap[providerID];
+    reduxState.accountVerification.providerPendingLoginRequestMap[providerID];
   const isLoading =
     Boolean(pendingLoginRequest) ||
     !accountLink ||

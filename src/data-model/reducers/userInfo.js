@@ -1,38 +1,21 @@
 /* @flow */
 
-import type { PureAction } from '../../store';
-import type { UserInfoContainer } from '../types';
+import UserInfo from 'common/lib/models/UserInfo';
 
-export type State = {
-  container: UserInfoContainer,
-  loadStatus: 'STEADY' | 'FAILURE' | 'EMPTY' | 'LOADING',
-};
+import { generateReducer } from './Reducer';
 
-const DEFAULT_STATE: State = {
-  container: {},
-  loadStatus: 'EMPTY',
-};
+import type { State as StateTemplate } from './Reducer';
+import type {
+  UserInfoCollection,
+  UserInfoRaw,
+} from 'common/lib/models/UserInfo';
 
-export default function userInfo(
-  state: State = DEFAULT_STATE,
-  action: PureAction,
-): State {
-  switch (action.type) {
-    case 'CLEAR_ALL_USERS': {
-      return { ...state, container: {}, loadStatus: 'EMPTY' };
-    }
+// eslint-disable-next-line flowtype/generic-spacing
+export type State = StateTemplate<
+  'UserInfo',
+  UserInfoRaw,
+  UserInfo,
+  UserInfoCollection,
+>;
 
-    case 'FETCH_ALL_USERS_INITIALIZE': {
-      return { ...state, loadStatus: 'LOADING' };
-    }
-
-    case 'FETCH_ALL_USERS_SUCCESS': {
-      return { ...state, container: action.container, loadStatus: 'STEADY' };
-    }
-
-    case 'FETCH_ALL_USERS_FAILURE': {
-      return { ...state, loadStatus: 'FAILURE' };
-    }
-  }
-  return state;
-}
+export default generateReducer(UserInfo);

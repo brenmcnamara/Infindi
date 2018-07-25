@@ -18,9 +18,9 @@ import type {
   ModelListenerState,
   ModelOperation,
   ModelOperationState,
-} from '../_types';
+} from '../types';
 import type { ReduxState } from '../../store';
-import type { State as ReducerState } from '../_reducers/Reducer';
+import type { State as ReducerState } from '../reducers/Reducer';
 
 export type StateUtils<
   TModelName: string,
@@ -28,7 +28,12 @@ export type StateUtils<
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
   TOrderedCollection: ModelOrderedCollection<TModelName, TRaw, TModel>,
-> = {|
+> = {
+  +findModel: (
+    reduxState: ReduxState,
+    predicate: (model: TModel) => boolean,
+  ) => TModel | null,
+
   +getCollection: (reduxState: ReduxState) => TCollection,
 
   +getCursor: (
@@ -65,7 +70,7 @@ export type StateUtils<
     reduxState: ReduxState,
     cursorID: ID,
   ) => TOrderedCollection,
-|};
+};
 
 export function generateStateUtils<
   TModelName: string,
@@ -79,6 +84,11 @@ export function generateStateUtils<
   getReducerState: (reduxState: ReduxState) => TReducerState,
 ): StateUtils<TModelName, TRaw, TModel, TCollection, TOrderedCollection> {
   return {
+    findModel: (
+      reduxState: ReduxState,
+      predicate: (model: TModel) => boolean,
+    ) => getReducerState(reduxState).collection.find(predicate) || null,
+
     getCollection: (reduxState: ReduxState) =>
       getReducerState(reduxState).collection,
 

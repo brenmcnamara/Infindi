@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import ThemeProvider from '../design/components/Theme.react';
-import WatchSessionStateUtils from '../watch-session/state-utils';
+import WatchSessionStateUtils from '../watch-session/StateUtils';
 
 import { connect } from 'react-redux';
 

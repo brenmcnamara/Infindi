@@ -12,7 +12,7 @@ import type {
   ModelListenerStateMap,
   ModelOperationMap,
   ModelOperationStateMap,
-} from '../_types';
+} from '../types';
 import type { ModelStub } from 'common/types/core';
 import type { PureAction } from '../../store';
 

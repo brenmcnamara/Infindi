@@ -1,46 +1,46 @@
 /* @flow */
 
-import uuid from 'uuid/v4';
+import UserInfo from 'common/lib/models/UserInfo';
 
-import type { ID } from 'common/types/core';
-import type { UserInfoContainer } from '../types';
+import {
+  generateActionCreators,
+  generateCreateCursor,
+  generateCreateListener,
+  generateCreateOperation,
+} from './Actions';
 
-export type Action =
-  | Action$ClearAllUsers
-  | Action$FetchAllUsersFailure
-  | Action$FetchAllUsersInitialize
-  | Action$FetchAllUsersSuccess;
+import type { Action as ActionTemplate } from './Actions';
+import type { ModelCursor, ModelListener, ModelOperation } from '../types';
+import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
+import type {
+  UserInfoCollection,
+  UserInfoRaw,
+} from 'common/lib/models/UserInfo';
 
-type Action$FetchAllUsersFailure = {|
-  +error: Object,
-  +operationID: ID,
-  +type: 'FETCH_ALL_USERS_FAILURE',
-|};
+// eslint-disable-next-line flowtype/generic-spacing
+export type Action = ActionTemplate<
+  'UserInfo',
+  UserInfoRaw,
+  UserInfo,
+  UserInfoCollection,
+>;
 
-type Action$FetchAllUsersInitialize = {|
-  +operationID: ID,
-  +type: 'FETCH_ALL_USERS_INITIALIZE',
-|};
+type CreateCursor = (
+  query: ModelOrderedQuery,
+  pageSize: number,
+) => ModelCursor<'UserInfo'>;
 
-type Action$FetchAllUsersSuccess = {|
-  +container: UserInfoContainer,
-  +operationID: ID,
-  +type: 'FETCH_ALL_USERS_SUCCESS',
-|};
+type CreateListener = (query: ModelQuery) => ModelListener<'UserInfo'>;
 
-export function fetchAllUsers() {
-  return {
-    operationID: uuid(),
-    type: 'FETCH_ALL_USERS_INITIALIZE',
-  };
-}
+type CreateOperation = (query: ModelQuery) => ModelOperation<'UserInfo'>;
 
-type Action$ClearAllUsers = {|
-  +type: 'CLEAR_ALL_USERS',
-|};
+// $FlowFixMe - Template types are correct.
+export const createCursor: CreateCursor = generateCreateCursor(UserInfo);
+// $FlowFixMe - Template types are correct.
+export const createListener: CreateListener = generateCreateListener(UserInfo);
+// $FlowFixMe - Template types are correct.
+export const createOperation: CreateOperation = generateCreateOperation(
+  UserInfo,
+);
 
-export function clearAllUsers() {
-  return {
-    type: 'CLEAR_ALL_USERS',
-  };
-}
+export default generateActionCreators(UserInfo);

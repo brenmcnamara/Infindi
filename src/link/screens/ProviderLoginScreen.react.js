@@ -1,8 +1,8 @@
 /* @flow */
 
+import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 import BannerManager from '../../components/shared/BannerManager.react';
 import Content from '../../components/shared/Content.react';
-import DataModelStateUtils from '../../data-model/state-utils';
 import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
 import React, { Component } from 'react';
 import Screen from '../../components/shared/Screen.react';
@@ -112,8 +112,8 @@ class ProviderLoginScreen extends Component<Props> {
   }
 }
 
-function mapReduxStateToProps(state: ReduxState): ComputedProps {
-  const { page } = state.accountVerification;
+function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
+  const { page } = reduxState.accountVerification;
   invariant(
     page && page.type === 'LOGIN',
     'Login page showing when page is not type login: %s',
@@ -121,24 +121,24 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   );
   const { providerID } = page;
   const loginForm =
-    state.accountVerification.loginFormContainer[providerID] || null;
-  const accountLink = DataModelStateUtils.getAccountLinkForProviderID(
-    state,
-    providerID,
+    reduxState.accountVerification.loginFormContainer[providerID] || null;
+  const accountLink = AccountLinkStateUtils.findModel(
+    reduxState,
+    accountLink => accountLink.providerRef.refID === providerID,
   );
   // TODO: Properly handle provider loading failure.
   invariant(
     loginForm ||
-      state.providers.status === 'EMPTY' ||
-      state.providers.status === 'LOADING',
+      reduxState.providerFuzzySearch.status === 'EMPTY' ||
+      reduxState.providerFuzzySearch.status === 'LOADING',
     'Expecting login form to either be loading or to exist for providerID: %s',
     providerID,
   );
   const callToAction = loginForm
-    ? calculateLoginFormCallToActionForProviderID(state, providerID)
+    ? calculateLoginFormCallToActionForProviderID(reduxState, providerID)
     : 'LOGIN';
   const canSubmit = loginForm
-    ? calculateCanSubmitLoginFormForProviderID(state, providerID)
+    ? calculateCanSubmitLoginFormForProviderID(reduxState, providerID)
     : false;
   const isLoadingLoginForm = Boolean(
     !loginForm ||
@@ -146,6 +146,8 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   );
 
   const formType = accountLink && accountLink.isInMFA ? 'MFA' : 'LOGIN';
+  const provider =
+    reduxState.providerFuzzySearch.orderedCollection.get(providerID) || null;
 
   return {
     callToAction,
@@ -153,7 +155,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
     formType,
     isLoadingLoginForm,
     loginForm,
-    provider: state.providers.container[providerID],
+    provider,
   };
 }
 
