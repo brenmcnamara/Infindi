@@ -49,7 +49,6 @@ async function runSearch(searchText: string, next: Next): Promise<void> {
     providers.map(provider => [provider.id, provider]),
   );
 
-
   next({
     // $FlowFixMe - Immutable is being stupid.
     orderedCollection,
