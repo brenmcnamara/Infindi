@@ -6,7 +6,7 @@ import UserInfo from 'common/lib/models/UserInfo';
 
 import invariant from 'invariant';
 
-import { dismissToast, requestToast } from '../actions/toast';
+import { dismissBanner, requestBanner } from '../banner/Actions';
 
 import type { AuthStatus } from './types';
 import type { Next, PureAction, StoreType } from '../store';
@@ -130,7 +130,7 @@ function genPerformSignUp(
     .then(() => {
       changeStatus({ signUpForm, type: 'SIGN_UP_INITIALIZE' });
       next(
-        dismissToast(
+        dismissBanner(
           'SIGN_UP_REQUEST_ERROR',
           /* shouldThrowOnDismissingNonExistantToast */ false,
         ),
@@ -145,14 +145,13 @@ function genPerformSignUp(
       const errorMessage = error.errorMessage || error.toString();
       changeStatus({ errorMessage, signUpForm, type: 'SIGN_UP_FAILURE' });
       next(
-        requestToast({
+        requestBanner({
           bannerChannel: 'SIGN_UP',
           bannerType: 'ALERT',
           id: 'SIGN_UP_REQUEST_ERROR',
           priority: 'NORMAL',
           showSpinner: false,
           text: errorMessage,
-          toastType: 'BANNER',
         }),
       );
     });

@@ -1,11 +1,11 @@
 /* @flow */
 
-import Content from '../../components/shared/Content.react';
-import Footer from '../../components/shared/Footer.react';
+import Content from '../../shared/Content.react';
+import Footer from '../../shared/Footer.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import Screen from '../../components/shared/Screen.react';
-import TextButton from '../../components/shared/TextButton.react';
+import Screen from '../../shared/Screen.react';
+import TextButton from '../../shared/TextButton.react';
 
 import invariant from 'invariant';
 
@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { GetTheme } from '../../design/components/Theme.react';
-import { login, showSignUpScreen } from '../actions';
+import { login, showSignUpScreen } from '../Actions';
 
 import type { ElementRef } from 'react';
 import type { LoginCredentials } from 'common/lib/models/Auth';

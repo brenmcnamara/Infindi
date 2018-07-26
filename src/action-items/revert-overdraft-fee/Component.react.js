@@ -4,12 +4,12 @@ import BulletPoint from '../BulletPoint.react';
 import Footer from '../Footer.react';
 import Header from '../Header.react';
 import React, { Component } from 'react';
-import TextButton from '../../components/shared/TextButton.react';
+import TextButton from '../../shared/TextButton.react';
 import TextDesign from '../../design/text';
 
 import { CallToActionText, Template } from './Metadata';
 import { connect } from 'react-redux';
-import { requestUnimplementedModal } from '../../actions/modal';
+import { requestUnimplementedModal } from '../../modal/Actions';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { ActionItemComponentProps } from '..';

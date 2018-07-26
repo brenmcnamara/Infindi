@@ -4,9 +4,9 @@ import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 import ModalTransition, {
   TransitionInMillis as ModalTransitionInMillis,
   TransitionOutMillis as ModalTransitionOutMillis,
-} from '../../components/shared/ModalTransition.react';
+} from '../../modal/ModalTransition.react';
 import React, { Component } from 'react';
-import TextButton from '../../components/shared/TextButton.react';
+import TextButton from '../../shared/TextButton.react';
 import YodleeLoginFormComponent from './YodleeLoginForm.react';
 
 import invariant from 'invariant';
@@ -22,7 +22,7 @@ import {
   updateLoginForm,
   submitLoginFormForProviderID,
   submitMFAFormForProviderID,
-} from '../action';
+} from '../Actions';
 
 import type { ID } from 'common/types/core';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';

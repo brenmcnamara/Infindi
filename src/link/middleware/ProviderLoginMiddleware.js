@@ -9,7 +9,7 @@ import { ReduxMiddleware } from '../../common/redux-utils';
 import type {
   Action$SubmitLoginFormInitialize,
   Action$SubmitMFAFormInitialize,
-} from '../action';
+} from '../Actions';
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 import type { PureAction, ReduxState } from '../../store';
 

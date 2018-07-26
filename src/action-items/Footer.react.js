@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import TextButton from '../components/shared/TextButton.react';
+import TextButton from '../shared/TextButton.react';
 
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { GetTheme } from '../design/components/Theme.react';

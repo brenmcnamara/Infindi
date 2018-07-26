@@ -1,13 +1,12 @@
 /* @flow */
 
 import AccountStateUtils from '../data-model/state-utils/Account';
+import AuthStateUtils from '../auth/StateUtils';
 
-import { getLoginPayload } from '../auth/state-utils';
-
+import type { Banner } from '../banner/types';
 import type { Dollars, ID } from 'common/types/core';
 import type { Modal } from '../reducers/modalState';
 import type { ReduxState } from '../store';
-import type { Toast } from '../reducers/toast';
 
 // -----------------------------------------------------------------------------
 //
@@ -15,12 +14,14 @@ import type { Toast } from '../reducers/toast';
 //
 // -----------------------------------------------------------------------------
 
-export function getActiveUserID(state: ReduxState): ID | null {
-  const loginPayload = getLoginPayload(state);
+export function getActiveUserID(reduxState: ReduxState): ID | null {
+  const loginPayload = AuthStateUtils.getLoginPayload(reduxState);
   if (!loginPayload) {
     return null;
   }
-  return state.watchSessionState.watchUserID || loginPayload.firebaseUser.uid;
+  return (
+    reduxState.watchSessionState.watchUserID || loginPayload.firebaseUser.uid
+  );
 }
 
 export function getNetWorth(reduxState: ReduxState): Dollars {
@@ -30,8 +31,10 @@ export function getNetWorth(reduxState: ReduxState): Dollars {
   );
 }
 
-export function getToast(state: ReduxState, toastID: ID): Toast | null {
-  return state.toast.bannerQueue.find(banner => banner.id === toastID) || null;
+export function getBanner(reduxState: ReduxState, bannerID: ID): Banner | null {
+  return (
+    reduxState.banner.bannerQueue.find(banner => banner.id === bannerID) || null
+  );
 }
 
 export function getModalForID(state: ReduxState, modalID: ID): Modal | null {

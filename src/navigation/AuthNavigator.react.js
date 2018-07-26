@@ -7,7 +7,7 @@ import StackNavigator from './StackNavigator.react';
 
 import invariant from 'invariant';
 
-import { showSignUpScreen } from '../auth/actions';
+import { showSignUpScreen } from '../auth/Actions';
 
 import type { Action, ReduxState } from '../store';
 

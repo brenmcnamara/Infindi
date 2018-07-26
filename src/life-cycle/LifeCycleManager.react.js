@@ -10,6 +10,7 @@ import AccountLinkActions, {
 import AccountQuery from 'common/lib/models/AccountQuery';
 import AccountLinkQuery from 'common/lib/models/AccountLinkQuery';
 import AccountStateUtils from '../data-model/state-utils/Account';
+import AuthStateUtils from '../auth/StateUtils';
 import Immutable from 'immutable';
 import LifeCycleActions from './Actions';
 import TransactionActions, {
@@ -24,7 +25,7 @@ import UserInfoActions, {
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import { getUserInfo } from '../auth/state-utils';
+
 
 import type { ID } from 'common/types/core';
 import type { ReduxProps, ReduxState } from '../store';
@@ -137,7 +138,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
   return {
     accountIDs,
     accountToTransactionCursor: reduxState.accountToTransactionCursor,
-    userInfo: getUserInfo(reduxState),
+    userInfo: AuthStateUtils.getUserInfo(reduxState),
   };
 }
 

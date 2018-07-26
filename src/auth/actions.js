@@ -1,6 +1,6 @@
 /* @flow */
 
-import { dismissToast, requestToast } from '../actions/toast';
+import { dismissBanner, requestBanner } from '../banner/Actions';
 
 import type { AuthStatus } from './types';
 import type { LoginCredentials, SignUpForm } from 'common/lib/models/Auth';
@@ -48,19 +48,18 @@ type Action$AuthStatusChange = {|
 |};
 
 export function showSignUpValidationError(errorMessage: string) {
-  return requestToast({
+  return requestBanner({
     bannerChannel: 'SIGN_UP',
     bannerType: 'ALERT',
     id: 'SIGN_UP_VALIDATION_ERROR',
     priority: 'NORMAL',
     showSpinner: false,
     text: errorMessage,
-    toastType: 'BANNER',
   });
 }
 
 export function removeSignUpValidationError() {
-  return dismissToast(
+  return dismissBanner(
     'SIGN_UP_VALIDATION_ERROR',
     /* shouldThrowOnDismissingNonExistantToast */ false,
   );

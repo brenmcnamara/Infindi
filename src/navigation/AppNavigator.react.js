@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import AuthNavigator from './AuthNavigator.react';
-import LoadingScreen from '../core/LoadingScreen.react';
+import LoadingScreen from '../LoadingScreen.react';
 import MainNavigator from './MainNavigator.react';
 import SwitchNavigator from './SwitchNavigator.react';
 

@@ -1,11 +1,11 @@
 /* @flow */
 
 import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
-import BannerManager from '../../components/shared/BannerManager.react';
-import Content from '../../components/shared/Content.react';
-import FooterWithButtons from '../../components/shared/FooterWithButtons.react';
+import BannerManager from '../../banner/BannerManager.react';
+import Content from '../../shared/Content.react';
+import FooterWithButtons from '../../shared/FooterWithButtons.react';
 import React, { Component } from 'react';
-import Screen from '../../components/shared/Screen.react';
+import Screen from '../../shared/Screen.react';
 import YodleeLoginFormComponent from '../components/YodleeLoginForm.react';
 
 import invariant from 'invariant';
@@ -21,14 +21,13 @@ import {
   submitLoginFormForProviderID,
   submitMFAFormForProviderID,
   updateLoginForm,
-} from '../action';
+} from '../Actions';
 import { NavBarHeight } from '../../design/layout';
 
 import type Provider from 'common/lib/models/Provider';
 
 import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
-import type { ReduxProps } from '../../store';
-import type { State as ReduxState } from '../../reducers/root';
+import type { ReduxProps, ReduxState } from '../../store';
 
 export type Props = ReduxProps & ComputedProps & ComponentProps;
 

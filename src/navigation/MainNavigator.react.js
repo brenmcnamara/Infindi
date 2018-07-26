@@ -1,8 +1,8 @@
 /* @flow */
 
 import * as React from 'react';
-import AccountDetailsScreen from '../components/AccountDetailsScreen.react';
-import AccountsScreen from '../components/AccountsScreen.react';
+import AccountDetailsScreen from '../AccountDetailsScreen.react';
+import AccountsScreen from '../AccountsScreen.react';
 import Icons from '../design/icons';
 import ProviderLoginScreen from '../link/screens/ProviderLoginScreen.react';
 import ProviderSearchScreen from '../link/screens/ProviderSearchScreen.react';
@@ -12,8 +12,11 @@ import invariant from 'invariant';
 
 import { connect } from 'react-redux';
 import { exitAccountDetails } from '../actions/router';
-import { exitAccountVerification, requestProviderSearch } from '../link/action';
-import { requestLeftPane, requestRightPane } from '../actions/modal';
+import {
+  exitAccountVerification,
+  requestProviderSearch,
+} from '../link/Actions';
+import { requestLeftPane, requestRightPane } from '../modal/Actions';
 import { throttle } from '../common/generic-utils';
 
 import type { Action, ReduxProps, ReduxState } from '../store';

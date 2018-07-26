@@ -1,10 +1,10 @@
 /* @flow */
 
-import BannerManager from '../../components/shared/BannerManager.react';
-import Content from '../../components/shared/Content.react';
-import FooterWithButton from '../../components/shared/FooterWithButtons.react';
+import BannerManager from '../../banner/BannerManager.react';
+import Content from '../../shared/Content.react';
+import FooterWithButton from '../../shared/FooterWithButtons.react';
 import React, { Component } from 'react';
-import Screen from '../../components/shared/Screen.react';
+import Screen from '../../shared/Screen.react';
 
 import invariant from 'invariant';
 
@@ -14,7 +14,7 @@ import {
   removeSignUpValidationError,
   showSignUpValidationError,
   signUp,
-} from '../actions';
+} from '../Actions';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import type { ElementRef } from 'react';

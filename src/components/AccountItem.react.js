@@ -3,8 +3,8 @@
 import Account from 'common/lib/models/Account';
 import Downloading, {
   WIDTH as DOWNLOADING_WIDTH,
-} from './shared/Downloading.react';
-import MoneyText from './shared/MoneyText.react';
+} from '../shared/Downloading.react';
+import MoneyText from '../shared/MoneyText.react';
 import React, { Component } from 'react';
 
 import {

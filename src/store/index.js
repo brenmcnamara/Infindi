@@ -13,7 +13,7 @@ import modal from '../middleware/modal';
 import providerFuzzySearch from '../data-model/middleware/providerFuzzySearch';
 import rootReducer from '../reducers/root';
 import thunk from 'redux-thunk';
-import toast from '../middleware/toast';
+import banner from '../banner/middleware';
 
 import { applyMiddleware, createStore } from 'redux';
 import { createLogger } from 'redux-logger';
@@ -21,20 +21,20 @@ import { createLogger } from 'redux-logger';
 import type { Action as Action$Account } from '../data-model/actions/Account';
 import type { Action as Action$AccountLink } from '../data-model/actions/AccountLink';
 import type { Action as Action$ActionItems } from '../actions/actionItems';
-import type { Action as Action$Auth } from '../auth/actions';
+import type { Action as Action$Auth } from '../auth/Actions';
+import type { Action as Action$Banner } from '../banner/Actions';
+import type { Action as Action$BannerMiddleware } from '../banner/middleware';
 import type { Action as Action$LifeCycle } from '../life-cycle/Actions';
-import type { Action as Action$Link } from '../link/action';
-import type { Action as Action$Modal } from '../actions/modal';
+import type { Action as Action$Link } from '../link/Actions';
+import type { Action as Action$Modal } from '../modal/Actions';
 import type { Action as Action$ModalMiddleware } from '../middleware/modal';
 import type { Action as Action$Provider } from '../data-model/actions/Provider';
 // eslint-disable-next-line max-len
 import type { Action as Action$ProviderFuzzySearch } from '../data-model/actions/ProviderFuzzySearch';
 import type { Action as Action$Router } from '../actions/router';
-import type { Action as Action$Toast } from '../actions/toast';
-import type { Action as Action$ToastMiddleware } from '../middleware/toast';
 import type { Action as Action$Transaction } from '../data-model/actions/Transaction';
 import type { Action as Action$UserInfo } from '../data-model/actions/UserInfo';
-import type { Action as Action$WatchSession } from '../watch-session/actions';
+import type { Action as Action$WatchSession } from '../watch-session/Actions';
 import type { State } from '../reducers/root';
 
 export type ReduxProps = {
@@ -46,6 +46,8 @@ export type PureAction =
   | Action$AccountLink
   | Action$ActionItems
   | Action$Auth
+  | Action$Banner
+  | Action$BannerMiddleware
   | Action$LifeCycle
   | Action$Link
   | Action$Modal
@@ -53,8 +55,6 @@ export type PureAction =
   | Action$Provider
   | Action$ProviderFuzzySearch
   | Action$Router
-  | Action$Toast
-  | Action$ToastMiddleware
   | Action$Transaction
   | Action$UserInfo
   | Action$WatchSession;
@@ -126,7 +126,7 @@ if (__DEV__) {
     // Then comes ui-managing middleware.
     accountLinkFlowMiddleware.handle,
     modal,
-    toast,
+    banner,
     // Logging is last.
     reduxLogger,
   );
@@ -155,7 +155,7 @@ if (__DEV__) {
     // Then comes ui-managing middleware.
     accountLinkFlowMiddleware.handle,
     modal,
-    toast,
+    banner,
   );
 }
 

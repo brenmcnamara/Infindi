@@ -1,7 +1,6 @@
 /* @flow */
 
-import If from './shared/If.react';
-import MoneyText from './shared/MoneyText.react';
+import MoneyText from '../shared/MoneyText.react';
 import React, { Component } from 'react';
 
 import { GetTheme } from '../design/components/Theme.react';
@@ -24,8 +23,7 @@ export default class NetWorth extends Component<Props> {
             <Text style={[theme.getTextStyleHeader3(), styles.header]}>
               NET WORTH
             </Text>
-            <If predicate={typeof this.props.netWorth === 'number'}>
-              {/* GUARD AGAINST NaN Errors */}
+            {typeof this.props.netWorth === 'number' && (
               <MoneyText
                 dollars={this.props.netWorth || 0}
                 textStyle={[
@@ -33,8 +31,8 @@ export default class NetWorth extends Component<Props> {
                   { color: theme.color.moneyTextPositive },
                 ]}
               />
-            </If>
-            <If predicate={typeof this.props.netWorth !== 'number'}>
+            )}
+            {typeof this.props.netWorth !== 'number' && (
               <Text
                 style={[
                   theme.getTextStyleHeader2(),
@@ -43,7 +41,7 @@ export default class NetWorth extends Component<Props> {
               >
                 --
               </Text>
-            </If>
+            )}
           </View>
         )}
       </GetTheme>

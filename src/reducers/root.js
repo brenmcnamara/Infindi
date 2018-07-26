@@ -6,12 +6,12 @@ import accountToTransactionCursor from '../life-cycle/reducers/accountToTransact
 import accountVerification from '../link/reducers/accountVerification';
 import actionItems from './actionItems';
 import auth from '../auth/reducer';
+import banner from '../banner/Reducer';
 import configState from './configState';
 import modalState from './modalState';
 import provider from '../data-model/reducers/Provider';
 import providerFuzzySearch from '../data-model/reducers/ProviderFuzzySearch';
 import routeState from './routeState';
-import toast from './toast';
 import transaction from '../data-model/reducers/Transaction';
 import userInfo from '../data-model/reducers/UserInfo';
 import watchSessionState from '../watch-session/reducers/watchSessionState';
@@ -25,13 +25,13 @@ import type { State as State$AccountToTransactionCursor } from '../life-cycle/re
 import type { State as State$AccountVerification } from '../link/reducers/accountVerification';
 import type { State as State$ActionItems } from './actionItems';
 import type { State as State$Auth } from '../auth/reducer';
+import type { State as State$Banner } from '../banner/Reducer';
 import type { State as State$ConfigState } from './configState';
 import type { State as State$ModalState } from './modalState';
 import type { State as State$Provider } from '../data-model/reducers/Provider';
 // eslint-disable-next-line max-len
 import type { State as State$ProviderFuzzySearch } from '../data-model/reducers/ProviderFuzzySearch';
 import type { State as State$RouteState } from './routeState';
-import type { State as State$Toast } from './toast';
 import type { State as State$Transaction } from '../data-model/reducers/Transaction';
 import type { State as State$UserInfo } from '../data-model/reducers/UserInfo';
 import type { State as State$WatchSession } from '../watch-session/reducers/watchSessionState';
@@ -43,12 +43,12 @@ export type State = {|
   +accountVerification: State$AccountVerification,
   +actionItems: State$ActionItems,
   +auth: State$Auth,
+  +banner: State$Banner,
   +configState: State$ConfigState,
   +modalState: State$ModalState,
   +provider: State$Provider,
   +providerFuzzySearch: State$ProviderFuzzySearch,
   +routeState: State$RouteState,
-  +toast: State$Toast,
   +transaction: State$Transaction,
   +userInfo: State$UserInfo,
   +watchSessionState: State$WatchSession,
@@ -62,12 +62,12 @@ export default combineReducers({
   accountToTransactionCursor,
   accountVerification,
   auth,
+  banner,
   configState,
   modalState,
   provider,
   providerFuzzySearch,
   routeState,
-  toast,
   transaction,
   userInfo,
   watchSessionState,

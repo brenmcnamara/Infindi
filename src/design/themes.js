@@ -4,7 +4,7 @@ import Colors from './colors';
 
 import invariant from 'invariant';
 
-import type { BannerType } from '../reducers/toast';
+import type { BannerType } from '../banner/types';
 import type { ID } from 'common/types/core';
 
 export type Theme = Theme$Constants & Theme$Methods;

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import Unimplemented from '../../components/shared/Unimplemented.react';
+import Unimplemented from '../../shared/Unimplemented.react';
 
 export type Props = {};
 

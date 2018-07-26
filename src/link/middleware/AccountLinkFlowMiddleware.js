@@ -9,15 +9,15 @@ import {
   dismissLoginFormModal,
   exitAccountVerification,
   requestLoginFormModal,
-} from '../action';
-import { requestMultipleToasts } from '../../actions/toast';
+} from '../Actions';
 import { forEachObject } from '../../common/obj-utils';
 import { ReduxMiddleware } from '../../common/redux-utils';
+import { requestMultipleBanners } from '../../banner/Actions';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
+import type { Banner } from '../../banner/types';
 import type { ID } from 'common/types/core';
-import type { State as ReduxState } from '../../reducers/root';
-import type { Toast$Banner } from '../../reducers/toast';
+import type { ReduxState } from '../../store';
 
 type ProviderData = {|
   +isViewingLoginScreen: boolean,
@@ -74,7 +74,7 @@ function calculateState(reduxState: ReduxState): State {
 }
 
 export default class AccountLinkFlowMiddleware extends ReduxMiddleware<State> {
-  _bannerBuffer: Array<Toast$Banner> = [];
+  _bannerBuffer: Array<Banner> = [];
 
   static __calculateInitialState = calculateState;
   static __calculateStatePostAction = calculateState;
@@ -107,7 +107,7 @@ export default class AccountLinkFlowMiddleware extends ReduxMiddleware<State> {
     //    Could design a "redux middleware" class that will automatically
     //    perform batching for certain types of actions.
     if (this._bannerBuffer.length > 0) {
-      this.__dispatch(requestMultipleToasts(this._bannerBuffer));
+      this.__dispatch(requestMultipleBanners(this._bannerBuffer));
       this._bannerBuffer = [];
     }
   };
@@ -182,6 +182,5 @@ function createAccountLinkBanner(providerID: ID, status: AccountLinkStatus) {
       status.startsWith('IN_PROGRESS') ||
       status === 'MFA / WAITING_FOR_LOGIN_FORM',
     text: AccountLinkBanner[status],
-    toastType: 'BANNER',
   };
 }

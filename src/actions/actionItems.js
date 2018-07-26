@@ -3,7 +3,7 @@
 import HomeToActionItemTransitionModal, {
   TransitionInMillis as ModalTransitionInMillis,
   TransitionOutMillis as ModalTransitionOutMillis,
-} from '../components/HomeToActionItemTransitionModal.react';
+} from '../action-items/HomeToActionItemTransitionModal.react';
 import React from 'react';
 
 import invariant from 'invariant';
