@@ -37,7 +37,9 @@ function didLoadAccountLinks(reduxState: ReduxState): boolean {
 }
 
 function didCreateTransactionCursors(reduxState: ReduxState): boolean {
-  const { accountToTransactionCursor, transaction } = reduxState;
+  const { lifeCycle, transaction } = reduxState;
+  const { accountToTransactionCursor } = lifeCycle;
+
   if (
     accountToTransactionCursor.size <= 0 ||
     accountToTransactionCursor.size !==
@@ -58,8 +60,13 @@ function getActiveUserID(reduxState: ReduxState): ID | null {
     return null;
   }
   return (
-    reduxState.watchSessionState.watchUserID || loginPayload.firebaseUser.uid
+    reduxState.lifeCycle.watchSessionActiveUserID ||
+    loginPayload.firebaseUser.uid
   );
+}
+
+function getIsInWatchSession(reduxState: ReduxState): boolean {
+  return reduxState.lifeCycle.watchSessionActiveUserID !== null;
 }
 
 function isActiveUserInitialized(reduxState: ReduxState): boolean {
@@ -74,7 +81,9 @@ function getTransactionCursorState(
   reduxState: ReduxState,
   accountID: ID,
 ): ModelCursorState<'Transaction'> | null {
-  const { accountToTransactionCursor, transaction } = reduxState;
+  const { lifeCycle, transaction } = reduxState;
+  const { accountToTransactionCursor } = lifeCycle;
+
   const cursorID = accountToTransactionCursor.get(accountID);
   if (!cursorID) {
     return null;
@@ -93,6 +102,7 @@ export default {
   didLoadAccountLinks,
   didLoadAccounts,
   getActiveUserID,
+  getIsInWatchSession,
   getTransactionCursorState,
   getUserFetchLoadState,
   isActiveUserInitialized,

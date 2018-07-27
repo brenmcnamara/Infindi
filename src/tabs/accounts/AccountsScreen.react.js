@@ -25,7 +25,6 @@ import React, { Component } from 'react';
 import Screen from '../../shared/components/Screen.react';
 import SharedStateUtils from '../../shared/StateUtils';
 import TextButton from '../../shared/components/TextButton.react';
-import WatchSessionStateUtils from '../../watch-session/StateUtils';
 
 import invariant from 'invariant';
 import throttle from '../../shared/throttle';
@@ -371,7 +370,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
     isDownloading:
       !LifeCycleStateUtils.didLoadAccounts(reduxState) ||
       !LifeCycleStateUtils.didLoadAccountLinks(reduxState),
-    isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(reduxState),
+    isInWatchSession: LifeCycleStateUtils.getIsInWatchSession(reduxState),
     netWorth: SharedStateUtils.getNetWorth(reduxState),
   };
 }

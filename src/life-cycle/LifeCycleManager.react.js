@@ -26,11 +26,8 @@ import invariant from 'invariant';
 
 import { connect } from 'react-redux';
 
-
 import type { ID } from 'common/types/core';
 import type { ReduxProps, ReduxState } from '../store';
-// eslint-disable-next-line max-len
-import type { State as State$AccountToTransactionCursor } from './reducers/accountToTransactionCursor';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
@@ -38,7 +35,7 @@ type ComponentProps = {};
 
 type ComputedProps = {
   accountIDs: Immutable.Set<ID>,
-  accountToTransactionCursor: State$AccountToTransactionCursor,
+  accountToTransactionCursor: Immutable.Map<ID, ID>,
   userInfo: UserInfo | null,
 };
 
@@ -137,7 +134,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
 
   return {
     accountIDs,
-    accountToTransactionCursor: reduxState.accountToTransactionCursor,
+    accountToTransactionCursor: reduxState.lifeCycle.accountToTransactionCursor,
     userInfo: AuthStateUtils.getUserInfo(reduxState),
   };
 }

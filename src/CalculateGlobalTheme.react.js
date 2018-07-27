@@ -1,8 +1,8 @@
 /* @flow */
 
 import * as React from 'react';
+import LifeCycleStateUtils from './life-cycle/StateUtils';
 import ThemeProvider from './design/components/Theme.react';
-import WatchSessionStateUtils from './watch-session/StateUtils';
 
 import { connect } from 'react-redux';
 
@@ -31,7 +31,7 @@ class CalculateGlobalTheme extends React.Component<Props> {
 
 function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
   return {
-    themeName: WatchSessionStateUtils.getIsInWatchSession(reduxState)
+    themeName: LifeCycleStateUtils.getIsInWatchSession(reduxState)
       ? 'lightInverted'
       : 'light',
   };

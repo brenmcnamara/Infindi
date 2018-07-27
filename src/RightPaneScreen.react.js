@@ -2,12 +2,12 @@
 
 import AuthStateUtils from './auth/StateUtils';
 import Content from './shared/components/Content.react';
+import LifeCycleActions from './life-cycle/Actions';
 import LifeCycleStateUtils from './life-cycle/StateUtils';
 import React, { Component } from 'react';
 import Screen from './shared/components/Screen.react';
 import ThemeComponent, { GetTheme } from './design/components/Theme.react';
 import UserInfoStateUtils from './data-model/state-utils/UserInfo';
-import WatchSessionActions from './watch-session/Actions';
 
 import {
   ActivityIndicator,
@@ -246,14 +246,14 @@ class RightPaneScreen extends Component<Props> {
 
   _onPressUserInfo = (userInfo: UserInfo): void => {
     if (this.props.show) {
-      this.props.dispatch(WatchSessionActions.enterWatchSession(userInfo.id));
+      this.props.dispatch(LifeCycleActions.enterWatchSession(userInfo.id));
       this.props.dispatch(dismissModal(RightPaneModalID));
     }
   };
 
   _onPressExitWatchSession = (): void => {
     if (this.props.show) {
-      this.props.dispatch(WatchSessionActions.exitWatchSession());
+      this.props.dispatch(LifeCycleActions.exitWatchSession());
       this.props.dispatch(dismissModal(RightPaneModalID));
     }
   };

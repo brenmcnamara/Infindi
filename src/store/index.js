@@ -34,7 +34,6 @@ import type { Action as Action$Provider } from '../data-model/actions/Provider';
 import type { Action as Action$ProviderFuzzySearch } from '../data-model/actions/ProviderFuzzySearch';
 import type { Action as Action$Transaction } from '../data-model/actions/Transaction';
 import type { Action as Action$UserInfo } from '../data-model/actions/UserInfo';
-import type { Action as Action$WatchSession } from '../watch-session/Actions';
 import type { State } from './RootReducer';
 
 export type ReduxProps = {
@@ -56,8 +55,7 @@ export type PureAction =
   | Action$Provider
   | Action$ProviderFuzzySearch
   | Action$Transaction
-  | Action$UserInfo
-  | Action$WatchSession;
+  | Action$UserInfo;
 
 export type ThunkAction = (dispatch: PureDispatch, getState: GetState) => any;
 
