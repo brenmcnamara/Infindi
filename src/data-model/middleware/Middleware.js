@@ -112,8 +112,10 @@ export default class Middleware<
       modelName: this.constructor.__ModelCtor.modelName,
     };
 
-    const subscription = listener.query.onSnapshot(snapshot =>
-      this._onListenerSnapshot(listener.id, snapshot),
+    const subscription = createFirebaseListenerAdapter(
+      listener.query.onSnapshot(snapshot =>
+        this._onListenerSnapshot(listener.id, snapshot),
+      ),
     );
 
     this._listenerMap = this._listenerMap.set(listener.id, listener);
@@ -496,5 +498,13 @@ export default class Middleware<
         }
       }
     };
+  };
+}
+
+function createFirebaseListenerAdapter(
+  unsubscribe: () => void,
+): EmitterSubscription {
+  return {
+    remove: unsubscribe,
   };
 }

@@ -56,6 +56,10 @@ export type StateUtils<
     listenerID: ID,
   ) => ModelListenerState<TModelName> | null,
 
+  +getModel: (reduxState: ReduxState, id: ID) => TModel | null,
+
+  +getModelNullthrows: (reduxState: ReduxState, id: ID) => TModel,
+
   +getOperation: (
     reduxState: ReduxState,
     operationID: ID,
@@ -97,6 +101,20 @@ export function generateStateUtils<
 
     getCursorState: (reduxState: ReduxState, cursorID: ID) =>
       getReducerState(reduxState).cursorStateMap.get(cursorID) || null,
+
+    getModel: (reduxState: ReduxState, id: ID) =>
+      getReducerState(reduxState).collection.get(id) || null,
+
+    getModelNullthrows: (reduxState: ReduxState, id: ID) => {
+      const model = getReducerState(reduxState).collection.get(id);
+      invariant(
+        model,
+        'Expecting %s model with id %s to exist',
+        ModelCtor.modelName,
+        id,
+      );
+      return model;
+    },
 
     getListener: (reduxState: ReduxState, listenerID: ID) =>
       getReducerState(reduxState).listenerMap.get(listenerID) || null,

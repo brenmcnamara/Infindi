@@ -21,6 +21,7 @@ import UserInfo from 'common/lib/models/UserInfo';
 import UserInfoActions, {
   createOperation as createUserInfoOperation,
 } from '../data-model/actions/UserInfo';
+import UserInfoStateUtils from '../data-model/state-utils/UserInfo';
 
 import invariant from 'invariant';
 
@@ -36,25 +37,14 @@ type ComponentProps = {};
 type ComputedProps = {
   accountIDs: Immutable.Set<ID>,
   accountToTransactionCursor: Immutable.Map<ID, ID>,
-  userInfo: UserInfo | null,
+  activeUserInfo: UserInfo | null,
+  loggedInUserInfo: UserInfo | null,
 };
 
 const TRANSACTION_PAGE_SIZE = 20;
 
 class LifeCycleManager extends React.Component<Props> {
   _onLoginUser = (userInfo: UserInfo): void => {
-    const accountLinkQuery = AccountLinkQuery.forUser(userInfo.id);
-    const accountLinkListener = createAccountLinkListener(accountLinkQuery);
-    this.props.dispatch(
-      AccountLinkActions.setAndRunListener(accountLinkListener),
-    );
-
-    const accountQuery = AccountQuery.forUser(userInfo.id);
-    const accountListener = createAccountListener(accountQuery);
-    this.props.dispatch(AccountActions.setAndRunListener(accountListener));
-
-    // TODO: Load providers.
-
     if (userInfo.isAdmin) {
       const userInfoQuery = UserInfo.FirebaseCollectionUNSAFE;
       const userInfoOperation = createUserInfoOperation(userInfoQuery);
@@ -65,10 +55,24 @@ class LifeCycleManager extends React.Component<Props> {
   };
 
   _onLogoutUser = (): void => {
-    this.props.dispatch(AccountLinkActions.deleteEverything());
-    this.props.dispatch(AccountActions.deleteEverything());
-    // TODO: Destroy providers.
     this.props.dispatch(UserInfoActions.deleteEverything());
+  };
+
+  _onAddActiveUser = (userInfo: UserInfo): void => {
+    const accountLinkQuery = AccountLinkQuery.forUser(userInfo.id);
+    const accountLinkListener = createAccountLinkListener(accountLinkQuery);
+    this.props.dispatch(
+      AccountLinkActions.setAndRunListener(accountLinkListener),
+    );
+
+    const accountQuery = AccountQuery.forUser(userInfo.id);
+    const accountListener = createAccountListener(accountQuery);
+    this.props.dispatch(AccountActions.setAndRunListener(accountListener));
+  };
+
+  _onRemoveActiveUser = (): void => {
+    this.props.dispatch(AccountActions.deleteEverything());
+    this.props.dispatch(AccountLinkActions.deleteEverything());
   };
 
   _onAddAccount = (accountID: ID): void => {
@@ -101,10 +105,20 @@ class LifeCycleManager extends React.Component<Props> {
   };
 
   componentDidUpdate(prevProps: Props): void {
-    if (!prevProps.userInfo && this.props.userInfo) {
-      this._onLoginUser(this.props.userInfo);
-    } else if (prevProps.userInfo && !this.props.userInfo) {
+    if (!prevProps.loggedInUserInfo && this.props.loggedInUserInfo) {
+      this._onLoginUser(this.props.loggedInUserInfo);
+    } else if (prevProps.loggedInUserInfo && !this.props.loggedInUserInfo) {
+      this._onRemoveActiveUser();
       this._onLogoutUser();
+    }
+
+    if (this.props.activeUserInfo !== prevProps.activeUserInfo) {
+      if (prevProps.activeUserInfo) {
+        this._onRemoveActiveUser();
+      }
+      if (this.props.activeUserInfo) {
+        this._onAddActiveUser(this.props.activeUserInfo);
+      }
     }
 
     this.props.accountIDs.forEach(accountID => {
@@ -132,10 +146,21 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
     AccountStateUtils.getCollection(reduxState).keys(),
   );
 
+  const {
+    accountToTransactionCursor,
+    watchSessionActiveUserID,
+  } = reduxState.lifeCycle;
+
   return {
     accountIDs,
-    accountToTransactionCursor: reduxState.lifeCycle.accountToTransactionCursor,
-    userInfo: AuthStateUtils.getUserInfo(reduxState),
+    accountToTransactionCursor,
+    activeUserInfo: watchSessionActiveUserID
+      ? UserInfoStateUtils.getModelNullthrows(
+          reduxState,
+          watchSessionActiveUserID,
+        )
+      : AuthStateUtils.getUserInfo(reduxState),
+    loggedInUserInfo: AuthStateUtils.getUserInfo(reduxState),
   };
 }
 
