@@ -18,7 +18,7 @@ const DEFAULT_STATE: State = {
   tabName: DEFAULT_TAB_NAME,
 };
 
-export default function routeState(
+export default function navigation(
   state: State = DEFAULT_STATE,
   action: PureAction,
 ): State {

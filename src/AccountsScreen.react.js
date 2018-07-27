@@ -43,7 +43,7 @@ import { GetTheme } from './design/components/Theme.react';
 import { requestProviderLogin, requestProviderSearch } from './link/Actions';
 import { requestInfoModal } from './modal/Actions';
 import { throttle } from './common/generic-utils';
-import { viewAccountDetails } from './actions/router';
+import { viewAccountDetails } from './navigation/Actions';
 
 import type Account, {
   AccountCollection,

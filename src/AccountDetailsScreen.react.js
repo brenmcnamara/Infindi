@@ -32,8 +32,7 @@ import type Transaction, {
 
 import type { ID } from 'common/types/core';
 import type { ModelCursorState } from './data-model/types';
-import type { ReduxProps } from './store';
-import type { State as ReduxState } from './reducers/root';
+import type { ReduxProps, ReduxState } from './store';
 import type { Theme } from './design/themes';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
@@ -271,7 +270,7 @@ class AccountDetailsScreen extends Component<Props> {
 }
 
 function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
-  const accountID = reduxState.routeState.accountDetailsID;
+  const accountID = reduxState.navigation.accountDetailsID;
   invariant(
     accountID,
     'Expecting accountID to exist when trying to render AccountDetailsScreen',

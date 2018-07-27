@@ -12,7 +12,7 @@ import type {
   Modal$Native,
   Modal$ReactWithTransition,
   TransitionStage,
-} from '../reducers/modalState';
+} from '../modal/types';
 import type { ReduxProps, ReduxState } from '../store';
 
 /**
@@ -199,7 +199,7 @@ class ModalManager extends Component<Props, State> {
 
 function mapReduxStateToProps(state: ReduxState) {
   return {
-    mostImportantModal: state.modalState.modalQueue[0] || null,
+    mostImportantModal: state.modal.modalQueue[0] || null,
   };
 }
 

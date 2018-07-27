@@ -1,178 +1,157 @@
 /* @flow */
 
-/**
- * This module controls the presentation of all modal views.
- */
-
-import InfoModal, {
-  TransitionInMillis as InfoModalTransitionInMillis,
-  TransitionOutMillis as InfoModalTransitionOutMillis,
-} from '../modal/InfoModal.react';
-import LeftPaneScreen, {
-  TransitionInMillis as LeftPaneTransitionInMillis,
-  TransitionOutMillis as LeftPaneTransitionOutMillis,
-} from '../LeftPaneScreen.react';
+import HomeToActionItemTransitionModal, {
+  TransitionInMillis as ModalTransitionInMillis,
+  TransitionOutMillis as ModalTransitionOutMillis,
+} from './HomeToActionItemTransitionModal.react';
 import React from 'react';
-import RightPaneScreen, {
-  TransitionInMillis as RightPaneTransitionInMillis,
-  TransitionOutMillis as RightPaneTransitionOutMillis,
-} from '../RightPaneScreen.react';
 
-import { GetTheme } from '../design/components/Theme.react';
-import { Text } from 'react-native';
+import invariant from 'invariant';
 
-import type { GetState, PureDispatch } from '../store';
 import type { ID } from 'common/types/core';
-import type { Modal } from '../reducers/modalState';
+import type { PureDispatch, ReduxState } from '../store';
 
-export const LeftPaneModalID = 'LEFT_PANE';
-export const RightPaneModalID = 'RIGHT_PANE';
+export type Action =
+  | Action$DeleteActionItem
+  | Action$FocusedActionItemChange
+  | Action$SelectActionItem
+  | Action$UnselectCurrentActionItem;
 
-export type Action = Action$DismissModal | Action$RequestModal;
-
-export type Action$DismissModal = {|
-  +modalID: ID,
-  +type: 'DISMISS_MODAL',
+export type Action$FocusedActionItemChange = {|
+  +actionItemID: ID,
+  +type: 'FOCUSED_ACTION_ITEM_CHANGE',
 |};
 
-export type Action$RequestModal = {|
-  +modal: Modal,
-  +type: 'REQUEST_MODAL',
+export function focusedActionItemChange(id: ID) {
+  return {
+    actionItemID: id,
+    type: 'FOCUSED_ACTION_ITEM_CHANGE',
+  };
+}
+
+export type Action$DeleteActionItem = {|
+  +actionItemID: ID,
+  +type: 'DELETE_ACTION_ITEM',
 |};
 
-export type InfoModalPayload = {
-  id: ID,
-  render: () => React$Element<*>,
-  title: string,
-};
+export function deleteActionItem(id: ID) {
+  return {
+    actionItemID: id,
+    type: 'DELETE_ACTION_ITEM',
+  };
+}
 
-export function requestInfoModal(payload: InfoModalPayload) {
-  return (dispatch: PureDispatch, getState: GetState) => {
-    const alreadyHasInfoModal = getState().modalState.modalQueue.some(
-      modal => modal.id === payload.id,
-    );
-    if (alreadyHasInfoModal) {
-      return;
-    }
+// NOTE: The only way to present a action item now is by clicking on the
+// card in the dialog. We may need to add support for other transitions in the
+// future as we create other mechanisms.
 
+export type Action$SelectActionItem = {|
+  +actionItemID: ID,
+  +type: 'SELECT_ACTION_ITEM',
+|};
+
+export function selectActionItem(id: ID) {
+  return (dispatch: PureDispatch, getState: () => ReduxState) => {
+    // NOTE: The transition modal does the work of dispatching the selected
+    // action item action once it is presented. The modal also dismisses
+    // itself.
     dispatch({
       modal: {
-        id: payload.id,
+        id: 'HOME_TO_ACTION_ITEM_TRANSITION',
         modalType: 'REACT_WITH_TRANSITION',
-        priority: 'USER_REQUESTED',
+        priority: 'SYSTEM_CRITICAL',
         renderIn: () => (
-          <InfoModal
-            modalID={payload.id}
-            title={payload.title}
-            transitionStage="IN"
-          >
-            {payload.render()}
-          </InfoModal>
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={true}
+            transitionType="HOME_TO_ACTION_ITEM"
+          />
         ),
         renderOut: () => (
-          <InfoModal
-            modalID={payload.id}
-            title={payload.title}
-            transitionStage="OUT"
-          >
-            {payload.render()}
-          </InfoModal>
-        ),
-        renderTransitionIn: () => (
-          <InfoModal
-            modalID={payload.id}
-            title={payload.title}
-            transitionStage="TRANSITION_IN"
-          >
-            {payload.render()}
-          </InfoModal>
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={false}
+            transitionType="HOME_TO_ACTION_ITEM"
+          />
         ),
         renderTransitionOut: () => (
-          <InfoModal
-            modalID={payload.id}
-            title={payload.title}
-            transitionStage="TRANSITION_OUT"
-          >
-            {payload.render()}
-          </InfoModal>
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={false}
+            transitionType="HOME_TO_ACTION_ITEM"
+          />
         ),
-        transitionInMillis: InfoModalTransitionInMillis,
-        transitionOutMillis: InfoModalTransitionOutMillis,
+        renderTransitionIn: () => (
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={true}
+            transitionType="HOME_TO_ACTION_ITEM"
+          />
+        ),
+        transitionInMillis: ModalTransitionInMillis,
+        transitionOutMillis: ModalTransitionOutMillis,
       },
       type: 'REQUEST_MODAL',
     });
   };
 }
 
-export function requestLeftPane(): Action$RequestModal {
-  return {
-    modal: {
-      id: LeftPaneModalID,
-      modalType: 'REACT_WITH_TRANSITION',
-      priority: 'USER_REQUESTED',
-      renderIn: () => <LeftPaneScreen animateOnMount={true} show={true} />,
-      renderOut: () => <LeftPaneScreen animateOnMount={true} show={false} />,
-      renderTransitionIn: () => (
-        <LeftPaneScreen animateOnMount={true} show={true} />
-      ),
-      renderTransitionOut: () => (
-        <LeftPaneScreen animateOnMount={true} show={false} />
-      ),
-      transitionInMillis: LeftPaneTransitionInMillis,
-      transitionOutMillis: LeftPaneTransitionOutMillis,
-    },
-    type: 'REQUEST_MODAL',
-  };
-}
+export type Action$UnselectCurrentActionItem = {|
+  +type: 'UNSELECT_CURRENT_ACTION_ITEM',
+|};
 
-export function requestRightPane(): Action$RequestModal {
-  return {
-    modal: {
-      id: RightPaneModalID,
-      modalType: 'REACT_WITH_TRANSITION',
-      priority: 'USER_REQUESTED',
-      renderIn: () => <RightPaneScreen animateOnMount={true} show={true} />,
-      renderOut: () => <RightPaneScreen animateOnMount={true} show={false} />,
-      renderTransitionIn: () => (
-        <RightPaneScreen animateOnMount={true} show={true} />
-      ),
-      renderTransitionOut: () => (
-        <RightPaneScreen animateOnMount={true} show={false} />
-      ),
-      transitionInMillis: RightPaneTransitionInMillis,
-      transitionOutMillis: RightPaneTransitionOutMillis,
-    },
-    type: 'REQUEST_MODAL',
-  };
-}
-
-export function dismissLeftPane(): Action$DismissModal {
-  return {
-    modalID: LeftPaneModalID,
-    type: 'DISMISS_MODAL',
-  };
-}
-
-export function requestUnimplementedModal(featureName: string) {
-  return requestInfoModal({
-    id: `IMPLEMENT_ME(${featureName})`,
-    render: () => (
-      <GetTheme>
-        {theme => (
-          <Text style={theme.getTextStyleNormal()}>
-            This feature is not yet implemented, but should be ready soon!
-            Thanks for your patience!
-          </Text>
-        )}
-      </GetTheme>
-    ),
-    title: featureName,
-  });
-}
-
-export function dismissModal(modalID: ID): Action$DismissModal {
-  return {
-    modalID,
-    type: 'DISMISS_MODAL',
+export function unselectCurrentActionItem() {
+  return (dispatch: PureDispatch, getState: () => ReduxState) => {
+    const id = getState().actionItems.selectedID;
+    invariant(id, 'Trying to unselect action item when none is selected');
+    // NOTE: The transition modal does the work of dispatching the unselect
+    // action item action once it is presented. The modal also dismisses
+    // itself.
+    dispatch({
+      modal: {
+        id: 'HOME_TO_ACTION_ITEM_TRANSITION',
+        modalType: 'REACT_WITH_TRANSITION',
+        priority: 'SYSTEM_CRITICAL',
+        renderIn: () => (
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={true}
+            transitionType="ACTION_ITEM_TO_HOME"
+          />
+        ),
+        renderOut: () => (
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={false}
+            transitionType="ACTION_ITEM_TO_HOME"
+          />
+        ),
+        renderTransitionOut: () => (
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={false}
+            transitionType="ACTION_ITEM_TO_HOME"
+          />
+        ),
+        renderTransitionIn: () => (
+          <HomeToActionItemTransitionModal
+            dismissAfterTransitioningOut={true}
+            actionItemID={id}
+            show={true}
+            transitionType="ACTION_ITEM_TO_HOME"
+          />
+        ),
+        transitionInMillis: ModalTransitionInMillis,
+        transitionOutMillis: ModalTransitionOutMillis,
+      },
+      type: 'REQUEST_MODAL',
+    });
   };
 }

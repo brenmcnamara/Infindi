@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import type { Modal } from '../reducers/modalState';
+import type { Modal } from '../modal/types';
 import type { Next, PureAction, StoreType } from '../store';
 
 export type Action = Action$UpdateModalStack;

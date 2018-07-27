@@ -9,9 +9,9 @@ import TransactionMiddleware from '../data-model/middleware/Transaction';
 import UserInfoMiddleware from '../data-model/middleware/UserInfo';
 
 import authentication from '../auth/middleware';
-import modal from '../middleware/modal';
+import modal from '../modal/middleware';
 import providerFuzzySearch from '../data-model/middleware/providerFuzzySearch';
-import rootReducer from '../reducers/root';
+import rootReducer from './RootReducer';
 import thunk from 'redux-thunk';
 import banner from '../banner/middleware';
 
@@ -20,22 +20,22 @@ import { createLogger } from 'redux-logger';
 
 import type { Action as Action$Account } from '../data-model/actions/Account';
 import type { Action as Action$AccountLink } from '../data-model/actions/AccountLink';
-import type { Action as Action$ActionItems } from '../actions/actionItems';
+import type { Action as Action$ActionItems } from '../action-items/Actions';
 import type { Action as Action$Auth } from '../auth/Actions';
 import type { Action as Action$Banner } from '../banner/Actions';
 import type { Action as Action$BannerMiddleware } from '../banner/middleware';
 import type { Action as Action$LifeCycle } from '../life-cycle/Actions';
 import type { Action as Action$Link } from '../link/Actions';
 import type { Action as Action$Modal } from '../modal/Actions';
-import type { Action as Action$ModalMiddleware } from '../middleware/modal';
+import type { Action as Action$ModalMiddleware } from '../modal/middleware';
+import type { Action as Action$Navigation } from '../navigation/Actions';
 import type { Action as Action$Provider } from '../data-model/actions/Provider';
 // eslint-disable-next-line max-len
 import type { Action as Action$ProviderFuzzySearch } from '../data-model/actions/ProviderFuzzySearch';
-import type { Action as Action$Router } from '../actions/router';
 import type { Action as Action$Transaction } from '../data-model/actions/Transaction';
 import type { Action as Action$UserInfo } from '../data-model/actions/UserInfo';
 import type { Action as Action$WatchSession } from '../watch-session/Actions';
-import type { State } from '../reducers/root';
+import type { State } from './RootReducer';
 
 export type ReduxProps = {
   +dispatch: Dispatch,
@@ -52,9 +52,9 @@ export type PureAction =
   | Action$Link
   | Action$Modal
   | Action$ModalMiddleware
+  | Action$Navigation
   | Action$Provider
   | Action$ProviderFuzzySearch
-  | Action$Router
   | Action$Transaction
   | Action$UserInfo
   | Action$WatchSession;

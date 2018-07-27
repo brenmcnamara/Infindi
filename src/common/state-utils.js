@@ -5,7 +5,7 @@ import AuthStateUtils from '../auth/StateUtils';
 
 import type { Banner } from '../banner/types';
 import type { Dollars, ID } from 'common/types/core';
-import type { Modal } from '../reducers/modalState';
+import type { Modal } from '../modal/types';
 import type { ReduxState } from '../store';
 
 // -----------------------------------------------------------------------------
@@ -38,7 +38,5 @@ export function getBanner(reduxState: ReduxState, bannerID: ID): Banner | null {
 }
 
 export function getModalForID(state: ReduxState, modalID: ID): Modal | null {
-  return (
-    state.modalState.modalQueue.find(modal => modal.id === modalID) || null
-  );
+  return state.modal.modalQueue.find(modal => modal.id === modalID) || null;
 }

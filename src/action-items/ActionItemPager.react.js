@@ -23,7 +23,7 @@ import {
   deleteActionItem,
   focusedActionItemChange,
   selectActionItem,
-} from '../actions/actionItems';
+} from './Actions';
 import { ActionItemCardSize, ActionItemCardSpacing } from '../design/layout';
 
 import type { ID } from 'common/types/core';

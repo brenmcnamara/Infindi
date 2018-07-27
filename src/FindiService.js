@@ -168,7 +168,7 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
 
 function createURI(path: string): string {
   const state: ReduxState = Store.getState();
-  const { hostname } = state.configState;
+  const { hostname } = state.settings;
   return `${hostname}${path}`;
 }
 

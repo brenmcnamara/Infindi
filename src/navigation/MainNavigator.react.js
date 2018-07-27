@@ -11,7 +11,7 @@ import StackNavigator from './StackNavigator.react';
 import invariant from 'invariant';
 
 import { connect } from 'react-redux';
-import { exitAccountDetails } from '../actions/router';
+import { exitAccountDetails } from '../navigation/Actions';
 import {
   exitAccountVerification,
   requestProviderSearch,
@@ -62,7 +62,7 @@ class MainNavigator extends React.Component<Props> {
     reduxState: ReduxState,
     prevStack: Array<string>,
   ): Array<string> => {
-    if (reduxState.routeState.accountDetailsID) {
+    if (reduxState.navigation.accountDetailsID) {
       return ['Accounts', 'AccountDetails'];
     }
 

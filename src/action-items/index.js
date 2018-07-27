@@ -27,8 +27,8 @@ export const Templates = {
 };
 
 export type ActionItemCardProps = {
-  +enableUserInteraction: bool,
-  +isFocused: bool,
+  +enableUserInteraction: boolean,
+  +isFocused: boolean,
   +onNoThanks: () => any,
   +onSeeDetails: () => any,
 };

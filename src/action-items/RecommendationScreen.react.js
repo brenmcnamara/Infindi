@@ -8,7 +8,7 @@ import invariant from 'invariant';
 
 import { Components } from '../action-items';
 import { connect } from 'react-redux';
-import { unselectCurrentActionItem } from '../actions/actionItems';
+import { unselectCurrentActionItem } from './Actions';
 
 import type { ComponentType } from 'react';
 import type { ID } from 'common/types/core';
@@ -57,4 +57,7 @@ function mapReduxStateToProps(state: ReduxState): ComputedProps {
   };
 }
 
-export default (connect(mapReduxStateToProps)(ActionItemScreen): ComponentType<ComponentProps,>);
+// eslint-disable-next-line flowtype/generic-spacing
+export default (connect(mapReduxStateToProps)(ActionItemScreen): ComponentType<
+  ComponentProps,
+>);

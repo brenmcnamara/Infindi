@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { ID } from 'common/types/core';
-import type { PureAction } from '../store';
 
 export type ModalPriority = 'SYSTEM_CRITICAL' | 'USER_REQUESTED';
 
@@ -28,23 +27,3 @@ export type Modal$Native = {|
   +priority: ModalPriority,
   +show: () => any,
 |};
-
-export type State = {
-  +modalQueue: Array<Modal>,
-};
-
-const DEFAULT_STATE: State = {
-  modalQueue: [],
-};
-
-export default function modalState(
-  state: State = DEFAULT_STATE,
-  action: PureAction,
-): State {
-  switch (action.type) {
-    case 'UPDATE_MODAL_QUEUE': {
-      return { ...state, modalQueue: action.modalQueue };
-    }
-  }
-  return state;
-}

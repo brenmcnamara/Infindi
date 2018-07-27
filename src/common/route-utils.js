@@ -2,7 +2,7 @@
 
 import invariant from 'invariant';
 
-import type { State as ReduxState } from '../reducers/root';
+import type { ReduxState } from '../store';
 
 export type Route = RouteNode;
 
@@ -37,18 +37,18 @@ export type TabName = 'ACCOUNTS';
 //
 // -----------------------------------------------------------------------------
 
-export function createRoute(state: ReduxState): Route {
-  const rootName = calculateRootName(state);
+export function createRoute(reduxState: ReduxState): Route {
+  const rootName = calculateRootName(reduxState);
   switch (rootName) {
     case 'AUTH': {
-      const signUpNode = state.routeState.shouldShowSignUpScreen
+      const signUpNode = reduxState.navigation.shouldShowSignUpScreen
         ? { name: 'SIGN_UP', next: null }
         : null;
       return { name: 'AUTH', next: signUpNode };
     }
 
     case 'MAIN': {
-      return { name: 'MAIN', next: createAccounts(state) };
+      return { name: 'MAIN', next: createAccounts(reduxState) };
     }
 
     default:
@@ -56,22 +56,23 @@ export function createRoute(state: ReduxState): Route {
   }
 }
 
-function createAccounts(state: ReduxState): RouteNode {
+function createAccounts(reduxState: ReduxState): RouteNode {
   invariant(
-    state.routeState.tabName === 'ACCOUNTS',
+    reduxState.navigation.tabName === 'ACCOUNTS',
     'Expecting ACCOUNTS to be active tab: %s',
-    state.routeState.tabName,
+    reduxState.navigation.tabName,
   );
-  const isRequestingAccountDetails = state.routeState.accountDetailsID !== null;
+  const isRequestingAccountDetails =
+    reduxState.navigation.accountDetailsID !== null;
 
   return {
     name: 'ACCOUNTS',
-    next: isRequestingAccountDetails ? createAccountDetails(state) : null,
+    next: isRequestingAccountDetails ? createAccountDetails(reduxState) : null,
   };
 }
 
-function createAccountDetails(state: ReduxState): RouteNode {
-  const { accountDetailsID } = state.routeState;
+function createAccountDetails(reduxState: ReduxState): RouteNode {
+  const { accountDetailsID } = reduxState.navigation;
   invariant(accountDetailsID, 'Expecting account details to be requested');
   return {
     name: 'ACCOUNT_DETAILS',
@@ -105,11 +106,8 @@ export function forceGetNextNode(node: RouteNode): RouteNode {
   return node.next;
 }
 
-function calculateRootName(state: ReduxState): RootName {
-  const { auth, configState, actionItems } = state;
-  if (configState.envStatus === 'ENV_LOADING') {
-    return 'LOADING';
-  }
+function calculateRootName(reduxState: ReduxState): RootName {
+  const { actionItems, auth } = reduxState;
 
   switch (auth.status.type) {
     case 'LOGIN_INITIALIZE':
@@ -124,7 +122,7 @@ function calculateRootName(state: ReduxState): RootName {
     }
 
     case 'LOGGED_IN': {
-      const accountVerificationPage = state.accountVerification.page;
+      const accountVerificationPage = reduxState.accountVerification.page;
       if (!accountVerificationPage) {
         return actionItems.selectedID ? 'RECOMMENDATION' : 'MAIN';
       }

@@ -13,7 +13,7 @@ const DEFAULT_STATE: State = {
   hostname: 'http://localhost:8080',
 };
 
-export default function configStatus(
+export default function settings(
   state: State = DEFAULT_STATE,
   action: PureAction,
 ): State {

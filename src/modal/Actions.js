@@ -23,7 +23,7 @@ import { Text } from 'react-native';
 
 import type { GetState, PureDispatch } from '../store';
 import type { ID } from 'common/types/core';
-import type { Modal } from '../reducers/modalState';
+import type { Modal } from '../modal/types';
 
 export const LeftPaneModalID = 'LEFT_PANE';
 export const RightPaneModalID = 'RIGHT_PANE';
@@ -50,7 +50,7 @@ export type InfoModalPayload = {
 
 export function requestInfoModal(payload: InfoModalPayload) {
   return (dispatch: PureDispatch, getState: GetState) => {
-    const alreadyHasInfoModal = getState().modalState.modalQueue.some(
+    const alreadyHasInfoModal = getState().modal.modalQueue.some(
       modal => modal.id === payload.id,
     );
     if (alreadyHasInfoModal) {
