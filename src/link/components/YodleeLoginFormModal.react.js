@@ -17,6 +17,7 @@ import {
   calculateCanSubmitLoginFormForProviderID,
 } from '../utils';
 import { connect } from 'react-redux';
+import { EMPTY_FUNCTION } from '../../constants';
 import { GetTheme } from '../../design/components/Theme.react';
 import {
   updateLoginForm,
@@ -42,8 +43,6 @@ type ComponentProps = {
   providerID: ID,
   transitionStage: 'IN' | 'OUT' | 'TRANSITION_IN' | 'TRANSITION_OUT',
 };
-
-const EMPTY_FUNCTION = () => {};
 
 export const TransitionInMillis = ModalTransitionInMillis;
 export const TransitionOutMillis = ModalTransitionOutMillis;
