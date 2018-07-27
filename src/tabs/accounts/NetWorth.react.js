@@ -1,9 +1,9 @@
 /* @flow */
 
-import MoneyText from '../shared/components/MoneyText.react';
+import MoneyText from '../../shared/components/MoneyText.react';
 import React, { Component } from 'react';
 
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Dollars } from 'common/types/core';

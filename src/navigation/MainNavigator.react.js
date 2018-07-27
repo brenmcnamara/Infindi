@@ -1,8 +1,8 @@
 /* @flow */
 
 import * as React from 'react';
-import AccountDetailsScreen from '../AccountDetailsScreen.react';
-import AccountsScreen from '../AccountsScreen.react';
+import AccountDetailsScreen from '../tabs/accounts/AccountDetailsScreen.react';
+import AccountsScreen from '../tabs/accounts/AccountsScreen.react';
 import Icons from '../design/icons';
 import ProviderLoginScreen from '../link/screens/ProviderLoginScreen.react';
 import ProviderSearchScreen from '../link/screens/ProviderSearchScreen.react';

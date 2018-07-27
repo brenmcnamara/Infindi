@@ -1,18 +1,18 @@
 /* @flow */
 
-import Content from './shared/components/Content.react';
-import Icons from './design/icons';
-import LifeCycleStateUtils from './life-cycle/StateUtils';
-import MoneyText from './shared/components/MoneyText.react';
+import Content from '../../shared/components/Content.react';
+import Icons from '../../design/icons';
+import LifeCycleStateUtils from '../../life-cycle/StateUtils';
+import MoneyText from '../../shared/components/MoneyText.react';
 import React, { Component } from 'react';
-import Screen from './shared/components/Screen.react';
-import TextButton from './shared/components/TextButton.react';
-import TransactionActions from './data-model/actions/Transaction';
-import TransactionStateUtils from './data-model/state-utils/Transaction';
+import Screen from '../../shared/components/Screen.react';
+import TextButton from '../../shared/components/TextButton.react';
+import TransactionActions from '../../data-model/actions/Transaction';
+import TransactionStateUtils from '../../data-model/state-utils/Transaction';
 
 import invariant from 'invariant';
 import moment from 'moment';
-import throttle from './shared/throttle';
+import throttle from '../../shared/throttle';
 
 import {
   ActivityIndicator,
@@ -23,17 +23,17 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { GetTheme } from './design/components/Theme.react';
-import { TransactionEmpty, TransactionLoadingError } from '../content';
+import { GetTheme } from '../../design/components/Theme.react';
+import { TransactionEmpty, TransactionLoadingError } from '../../../content';
 
 import type Transaction, {
   TransactionOrderedCollection,
 } from 'common/lib/models/Transaction';
 
 import type { ID } from 'common/types/core';
-import type { ModelCursorState } from './data-model/types';
-import type { ReduxProps, ReduxState } from './store';
-import type { Theme } from './design/themes';
+import type { ModelCursorState } from '../../data-model/types';
+import type { ReduxProps, ReduxState } from '../../store';
+import type { Theme } from '../../design/themes';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 

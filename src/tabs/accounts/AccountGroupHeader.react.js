@@ -1,15 +1,15 @@
 /* @flow */
 
-import InfoButton from '../shared/components/InfoButton.react';
-import MoneyText from '../shared/components/MoneyText.react';
+import InfoButton from '../../shared/components/InfoButton.react';
+import MoneyText from '../../shared/components/MoneyText.react';
 import React, { Component } from 'react';
 
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { AccountGroupType } from 'common/lib/models/Account';
 import type { Dollars } from 'common/types/core';
-import type { Theme } from '../design/themes';
+import type { Theme } from '../../design/themes';
 
 export type Props = {
   balance: Dollars,

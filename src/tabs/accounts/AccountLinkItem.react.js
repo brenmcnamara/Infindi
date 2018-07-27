@@ -1,6 +1,6 @@
 /* @flow */
 
-import Icons from '../design/icons';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
 
 import {
@@ -11,11 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 
 import type AccountLink from 'common/lib/models/AccountLink';
 
-import type { Theme } from '../design/themes';
+import type { Theme } from '../../design/themes';
 
 export type Props = {
   accountLink: AccountLink,

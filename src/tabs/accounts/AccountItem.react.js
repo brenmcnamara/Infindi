@@ -1,11 +1,11 @@
 /* @flow */
 
 import Account from 'common/lib/models/Account';
-import CreditCardUtils from '../credit-card/Utils';
+import CreditCardUtils from '../../credit-card/Utils';
 import Downloading, {
   WIDTH as DOWNLOADING_WIDTH,
-} from '../shared/components/Downloading.react';
-import MoneyText from '../shared/components/MoneyText.react';
+} from '../../shared/components/Downloading.react';
+import MoneyText from '../../shared/components/MoneyText.react';
 import React, { Component } from 'react';
 
 import {
@@ -15,9 +15,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 
-import type { Theme } from '../design/themes';
+import type { Theme } from '../../design/themes';
 
 export type Props = {
   account: Account,

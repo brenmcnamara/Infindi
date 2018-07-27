@@ -2,48 +2,47 @@
 
 import AccountGroupHeader, {
   HEIGHT as AccountGroupHeaderHeight,
-} from './components/AccountGroupHeader.react';
-import AccountItem, {
-  HEIGHT as AccountItemHeight,
-} from './components/AccountItem.react';
+} from './AccountGroupHeader.react';
+import AccountItem, { HEIGHT as AccountItemHeight } from './AccountItem.react';
 import AccountLinkGroupHeader, {
   HEIGHT as AccountLinkGroupHeaderHeight,
-} from './components/AccountLinkGroupHeader.react';
+} from './AccountLinkGroupHeader.react';
 import AccountLinkItem, {
   HEIGHT as AccountLinkItemHeight,
-} from './components/AccountLinkItem.react';
-import AccountLinkStateUtils from './data-model/state-utils/AccountLink';
-import AccountStateUtils from './data-model/state-utils/Account';
-import AuthStateUtils from './auth/StateUtils';
-import BannerManager from './banner/BannerManager.react';
-import Content from './shared/components/Content.react';
-import Footer from './shared/components/Footer.react';
-import Icons from './design/icons';
+} from './AccountLinkItem.react';
+import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
+import AccountStateUtils from '../../data-model/state-utils/Account';
+import AuthStateUtils from '../../auth/StateUtils';
+import BannerManager from '../../banner/BannerManager.react';
+import Content from '../../shared/components/Content.react';
+import Footer from '../../shared/components/Footer.react';
+import Icons from '../../design/icons';
 import Immutable from 'immutable';
-import List from './list-ui/List.react';
-import LifeCycleStateUtils from './life-cycle/StateUtils';
-import NetWorth, {
-  HEIGHT as NetWorthHeight,
-} from './components/NetWorth.react';
+import List from '../../list-ui/List.react';
+import LifeCycleStateUtils from '../../life-cycle/StateUtils';
+import NetWorth, { HEIGHT as NetWorthHeight } from './NetWorth.react';
 import React, { Component } from 'react';
-import Screen from './shared/components/Screen.react';
-import SharedStateUtils from './shared/StateUtils';
-import TextButton from './shared/components/TextButton.react';
-import WatchSessionStateUtils from './watch-session/StateUtils';
+import Screen from '../../shared/components/Screen.react';
+import SharedStateUtils from '../../shared/StateUtils';
+import TextButton from '../../shared/components/TextButton.react';
+import WatchSessionStateUtils from '../../watch-session/StateUtils';
 
 import invariant from 'invariant';
-import throttle from './shared/throttle';
+import throttle from '../../shared/throttle';
 
 import {
   AccountGroupInfo as AccountGroupInfoContent,
   AccountNullState as AccountNullStateContent,
-} from '../content';
+} from '../../../content';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
-import { GetTheme } from './design/components/Theme.react';
-import { requestProviderLogin, requestProviderSearch } from './link/Actions';
-import { requestInfoModal } from './modal/Actions';
-import { viewAccountDetails } from './navigation/Actions';
+import { GetTheme } from '../../design/components/Theme.react';
+import {
+  requestProviderLogin,
+  requestProviderSearch,
+} from '../../link/Actions';
+import { requestInfoModal } from '../../modal/Actions';
+import { viewAccountDetails } from '../../navigation/Actions';
 
 import type Account, {
   AccountCollection,
@@ -54,8 +53,8 @@ import type AccountLink, {
 } from 'common/lib/models/AccountLink';
 
 import type { Dollars } from 'common/types/core';
-import type { ReduxProps, ReduxState } from './store';
-import type { Theme } from './design/themes';
+import type { ReduxProps, ReduxState } from '../../store';
+import type { Theme } from '../../design/themes';
 
 export type Props = ReduxProps & ComputedProps;
 
