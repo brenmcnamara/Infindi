@@ -1,10 +1,11 @@
 /* @flow */
 
 import Account from 'common/lib/models/Account';
+import CreditCardUtils from '../credit-card/Utils';
 import Downloading, {
   WIDTH as DOWNLOADING_WIDTH,
-} from '../shared/Downloading.react';
-import MoneyText from '../shared/MoneyText.react';
+} from '../shared/components/Downloading.react';
+import MoneyText from '../shared/components/MoneyText.react';
 import React, { Component } from 'react';
 
 import {
@@ -14,11 +15,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  getCreditCardNumber,
-  getCreditCardType,
-  isCreditCardAccount,
-} from '../common/credit-card-utils';
 import { GetTheme } from '../design/components/Theme.react';
 
 import type { Theme } from '../design/themes';
@@ -124,7 +120,7 @@ export default class AccountItem extends Component<Props> {
 
   _renderAccountName(theme: Theme) {
     const { account } = this.props;
-    if (!isCreditCardAccount(account)) {
+    if (!CreditCardUtils.isCreditCardAccount(account)) {
       return (
         <Text
           ellipsizeMode="tail"
@@ -139,8 +135,8 @@ export default class AccountItem extends Component<Props> {
         </Text>
       );
     }
-    const creditCardType = getCreditCardType(account);
-    const creditCardNumber = getCreditCardNumber(account);
+    const creditCardType = CreditCardUtils.getCreditCardType(account);
+    const creditCardNumber = CreditCardUtils.getCreditCardNumber(account);
 
     const typeFormatted =
       creditCardType === 'OTHER'

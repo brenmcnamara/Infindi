@@ -1,9 +1,9 @@
 /* @flow */
 
-import Icons from '../design/icons';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
 
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 export default class HomeScreen extends Component<{}> {

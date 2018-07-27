@@ -1,8 +1,8 @@
 /* @flow */
 
-import Content from './shared/Content.react';
+import Content from './shared/components/Content.react';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
+import Screen from './shared/components/Screen.react';
 
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 

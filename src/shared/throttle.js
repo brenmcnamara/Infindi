@@ -1,6 +1,6 @@
 /* @flow */
 
-export function throttle(delayMs: number, cb: *): * {
+export default function throttle(delayMs: number, cb: *): * {
   let calledAtMs: number | null = null;
   return (...args: *) => {
     if (!calledAtMs) {

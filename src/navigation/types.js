@@ -2,6 +2,8 @@
 
 import type { ComponentType } from 'react';
 
+export type TabName = 'ACCOUNTS';
+
 export type ScreenPayload = {
   +component: ComponentType<*>,
   +screen: string,

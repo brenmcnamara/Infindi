@@ -1,6 +1,6 @@
 /* @flow */
 
-import Icons from '../design/icons';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
 
 import { Animated, Easing, Image, StyleSheet, View } from 'react-native';

@@ -2,9 +2,9 @@
 
 import ActionItemPager from './action-items/ActionItemPager.react';
 import BannerManager from './banner/BannerManager.react';
-import Content from './shared/Content.react';
+import Content from './shared/components/Content.react';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
+import Screen from './shared/components/Screen.react';
 
 import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';

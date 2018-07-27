@@ -1,6 +1,6 @@
 /* @flow */
 
-import Icons from '../design/icons';
+import Icons from '../../design/icons';
 import React, { Component } from 'react';
 
 import { Image, TouchableOpacity } from 'react-native';

@@ -3,7 +3,7 @@
 import BulletPoint from '../BulletPoint.react';
 import Colors from '../../design/colors';
 import React, { Component } from 'react';
-import TextButton from '../../shared/TextButton.react';
+import TextButton from '../../shared/components/TextButton.react';
 import TextDesign from '../../design/text';
 
 import { StyleSheet, Text, View } from 'react-native';

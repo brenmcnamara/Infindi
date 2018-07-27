@@ -1,10 +1,10 @@
 /* @flow */
 
 import BannerManager from '../../banner/BannerManager.react';
-import Content from '../../shared/Content.react';
-import FooterWithButton from '../../shared/FooterWithButtons.react';
+import Content from '../../shared/components/Content.react';
+import FooterWithButton from '../../shared/components/FooterWithButtons.react';
 import React, { Component } from 'react';
-import Screen from '../../shared/Screen.react';
+import Screen from '../../shared/components/Screen.react';
 
 import invariant from 'invariant';
 

@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 import { Text, TouchableOpacity } from 'react-native';
 
-import type { Theme } from '../design/themes';
+import type { Theme } from '../../design/themes';
 
 export type ButtonType = 'PRIMARY' | 'NORMAL' | 'SPECIAL';
 export type ButtonSize = 'SMALL' | 'MEDIUM' | 'LARGE';

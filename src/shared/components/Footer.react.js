@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 import { StyleSheet, View } from 'react-native';
 
 export type Props = {

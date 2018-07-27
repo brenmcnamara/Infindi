@@ -20,14 +20,14 @@ const REGEXP_DISCOVER = /^(6011|65|64[4-9]|62212[6-9]|6221[3-9]|622[2-8]|6229[01
 const REGEXP_MASTERCARD = /^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[01]|2720)[0-9]{0,}$/;
 const REGEXP_VISA = /^4[0-9]{0,}$/;
 
-export function isCreditCardAccount(account: Account): boolean {
+function isCreditCardAccount(account: Account): boolean {
   return (
     account.sourceOfTruth.type === 'YODLEE' &&
     account.sourceOfTruth.value.CONTAINER === 'creditCard'
   );
 }
 
-export function getCreditCardNumber(account: Account): string {
+function getCreditCardNumber(account: Account): string {
   invariant(
     isCreditCardAccount(account),
     'Expecting account %s to be valid credit card account',
@@ -40,7 +40,7 @@ export function getCreditCardNumber(account: Account): string {
   return accountNumber || '(No Card Number Found)';
 }
 
-export function getCreditCardType(account: Account): CreditCardType {
+function getCreditCardType(account: Account): CreditCardType {
   const creditCardNumber = getCreditCardNumber(account);
 
   if (REGEXP_AMEX.test(creditCardNumber)) {
@@ -55,6 +55,13 @@ export function getCreditCardType(account: Account): CreditCardType {
   return 'OTHER';
 }
 
-export function getIconForCreditCardType(creditCardType: CreditCardType) {
+function getIconForCreditCardType(creditCardType: CreditCardType) {
   return Icons.CreditCard[creditCardType];
 }
+
+export default {
+  getCreditCardNumber,
+  getCreditCardType,
+  isCreditCardAccount,
+  getIconForCreditCardType,
+};

@@ -1,8 +1,8 @@
 /* @flow */
 
 import * as React from 'react';
-import Content from './shared/Content.react';
-import Screen from './shared/Screen.react';
+import Content from './shared/components/Content.react';
+import Screen from './shared/components/Screen.react';
 
 import { GetTheme } from './design/components/Theme.react';
 import { StyleSheet, Text, View } from 'react-native';

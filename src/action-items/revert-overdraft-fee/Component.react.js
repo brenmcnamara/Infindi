@@ -4,7 +4,7 @@ import BulletPoint from '../BulletPoint.react';
 import Footer from '../Footer.react';
 import Header from '../Header.react';
 import React, { Component } from 'react';
-import TextButton from '../../shared/TextButton.react';
+import TextButton from '../../shared/components/TextButton.react';
 import TextDesign from '../../design/text';
 
 import { CallToActionText, Template } from './Metadata';

@@ -1,10 +1,10 @@
 /* @flow */
 
 import AuthStateUtils from './auth/StateUtils';
-import Content from './shared/Content.react';
+import Content from './shared/components/Content.react';
 import LifeCycleStateUtils from './life-cycle/StateUtils';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
+import Screen from './shared/components/Screen.react';
 import ThemeComponent, { GetTheme } from './design/components/Theme.react';
 import UserInfoStateUtils from './data-model/state-utils/UserInfo';
 import WatchSessionActions from './watch-session/Actions';
@@ -22,7 +22,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { dismissModal, RightPaneModalID } from './modal/Actions';
-import { getActiveUserID } from './common/state-utils';
 
 import type UserInfo, { UserInfoCollection } from 'common/lib/models/UserInfo';
 
@@ -341,7 +340,7 @@ const styles = StyleSheet.create({
 
 function mapReduxStateToProps(reduxState: ReduxState) {
   return {
-    activeUserID: getActiveUserID(reduxState),
+    activeUserID: LifeCycleStateUtils.getActiveUserID(reduxState),
     currentUserID: AuthStateUtils.getUserID(reduxState),
     userFetchLoadState: LifeCycleStateUtils.getUserFetchLoadState(reduxState),
     userInfos: UserInfoStateUtils.getCollection(reduxState),

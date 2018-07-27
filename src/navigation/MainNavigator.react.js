@@ -9,6 +9,7 @@ import ProviderSearchScreen from '../link/screens/ProviderSearchScreen.react';
 import StackNavigator from './StackNavigator.react';
 
 import invariant from 'invariant';
+import throttle from '../shared/throttle';
 
 import { connect } from 'react-redux';
 import { exitAccountDetails } from '../navigation/Actions';
@@ -17,7 +18,6 @@ import {
   requestProviderSearch,
 } from '../link/Actions';
 import { requestLeftPane, requestRightPane } from '../modal/Actions';
-import { throttle } from '../common/generic-utils';
 
 import type { Action, ReduxProps, ReduxState } from '../store';
 

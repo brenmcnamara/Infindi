@@ -1,6 +1,8 @@
 /* @flow */
 
 import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
+import Immutable from 'immutable';
+import ReduxMiddleware from '../../shared/redux/ReduxMiddleware';
 
 import invariant from 'invariant';
 
@@ -10,8 +12,6 @@ import {
   exitAccountVerification,
   requestLoginFormModal,
 } from '../Actions';
-import { forEachObject } from '../../common/obj-utils';
-import { ReduxMiddleware } from '../../common/redux-utils';
 import { requestMultipleBanners } from '../../banner/Actions';
 
 import type { AccountLinkStatus } from 'common/lib/models/AccountLink';
@@ -29,7 +29,7 @@ type ProviderData = {|
 |};
 
 type State = {|
-  +providerDataMap: { [providerID: ID]: ProviderData },
+  +providerDataMap: Immutable.Map<ID, ProviderData>,
 |};
 
 function calculateState(reduxState: ReduxState): State {
@@ -42,18 +42,18 @@ function calculateState(reduxState: ReduxState): State {
 
   const { providerPendingLoginRequestMap } = reduxState.accountVerification;
 
-  const providerDataMap = {};
+  let providerDataMap = Immutable.Map();
 
   // Loop through providers. There could be providers that do not have
   // account links.
   reduxState.providerFuzzySearch.orderedCollection.forEach(provider => {
-    providerDataMap[provider.id] = {
+    providerDataMap = providerDataMap.set(provider.id, {
       isViewingLoginScreen: selectedProviderID === provider.id,
       pendingRequest: providerPendingLoginRequestMap[provider.id] || null,
       providerID: provider.id,
       shouldShowLoginFormModal: false,
       status: null,
-    };
+    });
   });
 
   // We can override providerStateMap values in this second pass. The data
@@ -61,13 +61,13 @@ function calculateState(reduxState: ReduxState): State {
   accountLinks.forEach(accountLink => {
     const providerID = accountLink.providerRef.refID;
     const isViewingLoginScreen = selectedProviderID === providerID;
-    providerDataMap[providerID] = {
+    providerDataMap = providerDataMap.set(providerID, {
       isViewingLoginScreen,
       pendingRequest: providerPendingLoginRequestMap[providerID] || null,
       providerID,
       shouldShowLoginFormModal: !isViewingLoginScreen && accountLink.isInMFA,
       status: accountLink.status,
-    };
+    });
   });
 
   return { providerDataMap };
@@ -84,8 +84,8 @@ export default class AccountLinkFlowMiddleware extends ReduxMiddleware<State> {
     const currentProviderDataMap = currentState.providerDataMap;
 
     // Iterate through update and created provider data objects.
-    forEachObject(currentProviderDataMap, (toProviderData, providerID) => {
-      const fromProviderData = prevProviderDataMap[providerID] || null;
+    currentProviderDataMap.forEach((toProviderData, providerID) => {
+      const fromProviderData = prevProviderDataMap.get(providerID) || null;
       this._handleProviderDataChange(
         providerID,
         fromProviderData,
@@ -94,8 +94,8 @@ export default class AccountLinkFlowMiddleware extends ReduxMiddleware<State> {
     });
 
     // Iterate through removed provider data objects.
-    forEachObject(prevProviderDataMap, (fromProviderData, providerID) => {
-      if (!currentProviderDataMap[providerID]) {
+    prevProviderDataMap.forEach((fromProviderData, providerID) => {
+      if (!currentProviderDataMap.has(providerID)) {
         this._handleProviderDataChange(providerID, fromProviderData, null);
       }
     });

@@ -1,17 +1,18 @@
 /* @flow */
 
-import Content from './shared/Content.react';
+import Content from './shared/components/Content.react';
 import Icons from './design/icons';
 import LifeCycleStateUtils from './life-cycle/StateUtils';
-import MoneyText from './shared/MoneyText.react';
+import MoneyText from './shared/components/MoneyText.react';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
-import TextButton from './shared/TextButton.react';
+import Screen from './shared/components/Screen.react';
+import TextButton from './shared/components/TextButton.react';
 import TransactionActions from './data-model/actions/Transaction';
 import TransactionStateUtils from './data-model/state-utils/Transaction';
 
 import invariant from 'invariant';
 import moment from 'moment';
+import throttle from './shared/throttle';
 
 import {
   ActivityIndicator,
@@ -23,7 +24,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { GetTheme } from './design/components/Theme.react';
-import { throttle } from './common/generic-utils';
 import { TransactionEmpty, TransactionLoadingError } from '../content';
 
 import type Transaction, {

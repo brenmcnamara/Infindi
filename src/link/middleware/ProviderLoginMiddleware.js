@@ -1,10 +1,9 @@
 /* @flow */
 
 import FindiService from '../../FindiService';
+import ReduxMiddleware from '../../shared/redux/ReduxMiddleware';
 
 import invariant from 'invariant';
-
-import { ReduxMiddleware } from '../../common/redux-utils';
 
 import type {
   Action$SubmitLoginFormInitialize,

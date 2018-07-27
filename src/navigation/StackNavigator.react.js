@@ -4,11 +4,11 @@ import * as React from 'react';
 import Icons from '../design/icons';
 
 import invariant from 'invariant';
+import throttle from '../shared/throttle';
 
 import { connect } from 'react-redux';
 import { GetThemeHOC } from '../design/components/Theme.react';
 import { NavigatorIOS } from 'react-native';
-import { throttle } from '../common/generic-utils';
 
 import type { Action, ReduxProps, ReduxState } from '../store';
 import type { ScreenPayload } from './types';

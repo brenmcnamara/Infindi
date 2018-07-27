@@ -1,11 +1,11 @@
 /* @flow */
 
-import Content from '../../shared/Content.react';
-import Footer from '../../shared/Footer.react';
+import Content from '../../shared/components/Content.react';
+import Footer from '../../shared/components/Footer.react';
 import Icons from '../../design/icons';
 import React, { Component } from 'react';
-import Screen from '../../shared/Screen.react';
-import TextButton from '../../shared/TextButton.react';
+import Screen from '../../shared/components/Screen.react';
+import TextButton from '../../shared/components/TextButton.react';
 
 import invariant from 'invariant';
 

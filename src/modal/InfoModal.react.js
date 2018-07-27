@@ -5,13 +5,14 @@ import ModalTransition, {
   TransitionOutMillis as ModalTransitionOutMillis,
 } from './ModalTransition.react';
 import React, { Component } from 'react';
-import TextButton from '../shared/TextButton.react';
+import TextButton from '../shared/components/TextButton.react';
+
+import throttle from '../shared/throttle';
 
 import { connect } from 'react-redux';
 import { dismissModal } from '../modal/Actions';
 import { GetTheme } from '../design/components/Theme.react';
 import { StyleSheet, Text, View } from 'react-native';
-import { throttle } from '../common/generic-utils';
 
 import type { ID } from 'common/types/core';
 import type { ReduxProps } from '../store';

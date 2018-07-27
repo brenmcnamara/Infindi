@@ -1,14 +1,15 @@
 /* @flow */
 
 import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
-import Content from '../../shared/Content.react';
-import Downloading from '../../shared/Downloading.react';
+import Content from '../../shared/components/Content.react';
+import Downloading from '../../shared/components/Downloading.react';
 import Icons from '../../design/icons';
 import List from '../../list-ui/List.react';
 import React, { Component } from 'react';
-import Screen from '../../shared/Screen.react';
+import Screen from '../../shared/components/Screen.react';
 
 import invariant from 'invariant';
+import throttle from '../../shared/throttle';
 
 import {
   ActivityIndicator,
@@ -24,7 +25,6 @@ import { GetTheme } from '../../design/components/Theme.react';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
 import { requestProviderLogin, updateProviderSearchText } from '../Actions';
-import { throttle } from '../../common/generic-utils';
 
 import type AccountLink, {
   AccountLinkCollection,

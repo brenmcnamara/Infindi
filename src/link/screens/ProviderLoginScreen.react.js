@@ -2,10 +2,10 @@
 
 import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 import BannerManager from '../../banner/BannerManager.react';
-import Content from '../../shared/Content.react';
-import FooterWithButtons from '../../shared/FooterWithButtons.react';
+import Content from '../../shared/components/Content.react';
+import FooterWithButtons from '../../shared/components/FooterWithButtons.react';
 import React, { Component } from 'react';
-import Screen from '../../shared/Screen.react';
+import Screen from '../../shared/components/Screen.react';
 import YodleeLoginFormComponent from '../components/YodleeLoginForm.react';
 
 import invariant from 'invariant';

@@ -1,6 +1,6 @@
 /* @flow */
 
-import MoneyText from '../shared/MoneyText.react';
+import MoneyText from '../shared/components/MoneyText.react';
 import React, { Component } from 'react';
 
 import { GetTheme } from '../design/components/Theme.react';

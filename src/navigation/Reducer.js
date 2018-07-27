@@ -1,16 +1,16 @@
 /* @flow */
 
-import { DEFAULT_TAB_NAME } from '../common/route-utils';
-
 import type { ID } from 'common/types/core';
 import type { PureAction } from '../store';
-import type { TabName } from '../common/route-utils';
+import type { TabName } from './types';
 
 export type State = {
   +accountDetailsID: ID | null,
   +shouldShowSignUpScreen: boolean,
   +tabName: TabName,
 };
+
+const DEFAULT_TAB_NAME = 'ACCOUNTS';
 
 const DEFAULT_STATE: State = {
   accountDetailsID: null,

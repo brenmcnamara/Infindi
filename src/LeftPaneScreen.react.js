@@ -1,10 +1,10 @@
 /* @flow */
 
 import AuthStateUtils from './auth/StateUtils';
-import Content from './shared/Content.react';
+import Content from './shared/components/Content.react';
 import Icons from './design/icons';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
+import Screen from './shared/components/Screen.react';
 import ThemeComponent, { GetTheme } from './design/components/Theme.react';
 
 import {

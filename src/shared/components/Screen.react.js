@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 
-import { GetTheme } from '../design/components/Theme.react';
-import { NavBarHeight, TabBarHeight } from '../design/layout';
+import { GetTheme } from '../../design/components/Theme.react';
+import { NavBarHeight, TabBarHeight } from '../../design/layout';
 import { StyleSheet, View } from 'react-native';
 
 export type Props = {

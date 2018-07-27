@@ -6,7 +6,7 @@ import TextButton from './TextButton.react';
 import invariant from 'invariant';
 
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 
 type ButtonLayout =
   | ButtonLayout$LeftAndRight

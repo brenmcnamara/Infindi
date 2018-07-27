@@ -1,6 +1,7 @@
 /* @flow */
 
 import AccountStateUtils from '../data-model/state-utils/Account';
+import AuthStateUtils from '../auth/StateUtils';
 
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
@@ -51,6 +52,16 @@ function didCreateTransactionCursors(reduxState: ReduxState): boolean {
   );
 }
 
+function getActiveUserID(reduxState: ReduxState): ID | null {
+  const loginPayload = AuthStateUtils.getLoginPayload(reduxState);
+  if (!loginPayload) {
+    return null;
+  }
+  return (
+    reduxState.watchSessionState.watchUserID || loginPayload.firebaseUser.uid
+  );
+}
+
 function isActiveUserInitialized(reduxState: ReduxState): boolean {
   return (
     didLoadAccounts(reduxState) &&
@@ -81,6 +92,7 @@ export default {
   didCreateTransactionCursors,
   didLoadAccountLinks,
   didLoadAccounts,
+  getActiveUserID,
   getTransactionCursorState,
   getUserFetchLoadState,
   isActiveUserInitialized,

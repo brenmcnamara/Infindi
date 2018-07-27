@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 
 import invariant from 'invariant';
 
-import type { EmitterSubscription } from '../../common/event-utils';
+import type { EmitterSubscription } from '../../shared/types';
 import type { ID, ModelStub } from 'common/types/core';
 import type { Model, ModelCollection } from 'common/lib/models/Model';
 import type {

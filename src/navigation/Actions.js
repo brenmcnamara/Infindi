@@ -1,14 +1,13 @@
 /* @flow */
 
 import type { ID } from 'common/types/core';
-import type { TabName } from '../common/route-utils';
+import type { TabName } from './types';
 
 export type Action =
   | Action$ExitAccountDetails
   | Action$SetShouldShowSignUpScreen
   | Action$ViewTab
   | Action$ViewAccountDetails;
-
 
 export type Action$ViewTab = {|
   +tabName: TabName,

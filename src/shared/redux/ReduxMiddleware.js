@@ -2,11 +2,11 @@
 
 import invariant from 'invariant';
 
-import type { Next, PureAction, ReduxState, StoreType } from '../store';
+import type { Next, PureAction, ReduxState, StoreType } from '../../store';
 
 export type ActionPhase = 'PRE-ACTION' | 'POST-ACTION';
 
-export class ReduxMiddleware<TState> {
+export default class ReduxMiddleware<TState> {
   _state: TState;
   _next: Next | null = null;
 

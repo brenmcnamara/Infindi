@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { GetTheme } from '../design/components/Theme.react';
+import { GetTheme } from '../../design/components/Theme.react';
 import { Text } from 'react-native';
 
 import type { Dollars } from 'common/types/core';

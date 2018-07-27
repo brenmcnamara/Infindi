@@ -1,7 +1,7 @@
 /* @flow */
 
 import Colors from '../design/colors';
-import TextButton from '../shared/TextButton.react';
+import TextButton from '../shared/components/TextButton.react';
 import React, { Component } from 'react';
 import TextDesign from '../design/text';
 

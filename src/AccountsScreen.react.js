@@ -16,8 +16,8 @@ import AccountLinkStateUtils from './data-model/state-utils/AccountLink';
 import AccountStateUtils from './data-model/state-utils/Account';
 import AuthStateUtils from './auth/StateUtils';
 import BannerManager from './banner/BannerManager.react';
-import Content from './shared/Content.react';
-import Footer from './shared/Footer.react';
+import Content from './shared/components/Content.react';
+import Footer from './shared/components/Footer.react';
 import Icons from './design/icons';
 import Immutable from 'immutable';
 import List from './list-ui/List.react';
@@ -26,11 +26,13 @@ import NetWorth, {
   HEIGHT as NetWorthHeight,
 } from './components/NetWorth.react';
 import React, { Component } from 'react';
-import Screen from './shared/Screen.react';
-import TextButton from './shared/TextButton.react';
+import Screen from './shared/components/Screen.react';
+import SharedStateUtils from './shared/StateUtils';
+import TextButton from './shared/components/TextButton.react';
 import WatchSessionStateUtils from './watch-session/StateUtils';
 
 import invariant from 'invariant';
+import throttle from './shared/throttle';
 
 import {
   AccountGroupInfo as AccountGroupInfoContent,
@@ -38,11 +40,9 @@ import {
 } from '../content';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
-import { getNetWorth } from './common/state-utils';
 import { GetTheme } from './design/components/Theme.react';
 import { requestProviderLogin, requestProviderSearch } from './link/Actions';
 import { requestInfoModal } from './modal/Actions';
-import { throttle } from './common/generic-utils';
 import { viewAccountDetails } from './navigation/Actions';
 
 import type Account, {
@@ -373,7 +373,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
       !LifeCycleStateUtils.didLoadAccounts(reduxState) ||
       !LifeCycleStateUtils.didLoadAccountLinks(reduxState),
     isInWatchSession: WatchSessionStateUtils.getIsInWatchSession(reduxState),
-    netWorth: getNetWorth(reduxState),
+    netWorth: SharedStateUtils.getNetWorth(reduxState),
   };
 }
 

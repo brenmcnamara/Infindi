@@ -6,7 +6,7 @@ import ModalTransition, {
   TransitionOutMillis as ModalTransitionOutMillis,
 } from '../../modal/ModalTransition.react';
 import React, { Component } from 'react';
-import TextButton from '../../shared/TextButton.react';
+import TextButton from '../../shared/components/TextButton.react';
 import YodleeLoginFormComponent from './YodleeLoginForm.react';
 
 import invariant from 'invariant';
