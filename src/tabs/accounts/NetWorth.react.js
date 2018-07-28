@@ -12,7 +12,7 @@ export type Props = {
   netWorth: Dollars | null,
 };
 
-export const HEIGHT = 80;
+export const HEIGHT = 70;
 
 export default class NetWorth extends Component<Props> {
   render() {
@@ -20,7 +20,9 @@ export default class NetWorth extends Component<Props> {
       <GetTheme>
         {theme => (
           <View style={styles.root}>
-            <Text style={[theme.getTextStyleHeader3(), styles.header]}>
+            <Text
+              style={[theme.getTextStyleNormalWithEmphasis(), styles.header]}
+            >
               NET WORTH
             </Text>
             {typeof this.props.netWorth === 'number' && (
@@ -51,7 +53,7 @@ export default class NetWorth extends Component<Props> {
 
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 8,
+    marginBottom: 4,
   },
 
   root: {

@@ -20,11 +20,11 @@ export default class AccountLinkGroupHeader extends Component<Props> {
             <View
               style={[
                 styles.content,
-                { borderColor: theme.color.borderNormal },
+                { borderColor: theme.color.borderLight },
               ]}
             >
               <Text
-                style={[styles.text, theme.getTextStyleNormalWithEmphasis()]}
+                style={[styles.text, theme.getTextStyleSmallHeader()]}
               >
                 ACCOUNT LINKS
               </Text>

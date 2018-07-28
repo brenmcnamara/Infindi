@@ -23,8 +23,8 @@ type Theme$Constants = {
     +bannerTextInfo: string,
     +bannerTextSuccess: string,
 
-    +borderDark: string,
     +borderHairline: string,
+    +borderLight: string,
     +borderNormal: string,
 
     +buttonNavBar: string,
@@ -77,6 +77,7 @@ type Theme$Methods = {
   +getTextStyleNormal: () => Object,
   +getTextStyleNormalWithEmphasis: () => Object,
   +getTextStyleSmall: () => Object,
+  +getTextStyleSmallHeader: () => Object,
   +getTextStyleSmallWithEmphasis: () => Object,
   +getTextStyleTiny: () => Object,
   +getTextStyleAlert: () => Object,
@@ -100,6 +101,7 @@ function createTheme(constants: Theme$Constants): Theme {
       constants,
     ),
     getTextStyleSmall: getTextStyleSmall.bind(null, constants),
+    getTextStyleSmallHeader: getTextStyleSmallHeader.bind(null, constants),
     getTextStyleSmallWithEmphasis: getTextStyleSmallWithEmphasis.bind(
       null,
       constants,
@@ -186,6 +188,15 @@ function getTextStyleSmall(constants: Theme$Constants): Object {
   };
 }
 
+function getTextStyleSmallHeader(constants: Theme$Constants): Object {
+  return {
+    color: constants.color.textNormal,
+    fontFamily: constants.fontFamily.thin,
+    fontSize: constants.fontSize.tiny,
+    lineHeight: constants.fontLineHeight.small,
+  };
+}
+
 function getTextStyleSmallWithEmphasis(constants: Theme$Constants): Object {
   return {
     color: constants.color.textNormal,
@@ -228,8 +239,8 @@ const Themes = {
       bannerTextInfo: Colors.GRAY_EF,
       bannerTextSuccess: Colors.GRAY_EF,
 
-      borderDark: Colors.GRAY_CA,
       borderHairline: '#C4C4C4',
+      borderLight: Colors.GRAY_DC,
       borderNormal: '#4a5c66',
 
       buttonNavBar: Colors.BLACK,
@@ -265,7 +276,7 @@ const Themes = {
       header2: 22,
       header3: 18,
 
-      normal: 16,
+      normal: 14,
       small: 14,
       tiny: 12,
     },
@@ -287,9 +298,9 @@ const Themes = {
       bannerTextInfo: Colors.GRAY_EF,
       bannerTextSuccess: Colors.GRAY_EF,
 
-      borderDark: Colors.GRAY_CA,
       borderHairline: '#C4C4C4',
-      borderNormal: Colors.GRAY_DC,
+      borderLight: Colors.GRAY_DC,
+      borderNormal: Colors.GRAY_CA,
 
       buttonNavBar: Colors.BLACK,
 
@@ -324,7 +335,7 @@ const Themes = {
       header2: 22,
       header3: 18,
 
-      normal: 16,
+      normal: 14,
       small: 14,
       tiny: 12,
     },
@@ -346,8 +357,8 @@ const Themes = {
       bannerTextInfo: Colors.GRAY_EF,
       bannerTextSuccess: Colors.GRAY_EF,
 
-      borderDark: Colors.GRAY_CA,
       borderHairline: '#C4C4C4',
+      borderLight: Colors.GRAY_DC,
       borderNormal: '#CCCCCC',
 
       buttonNavBar: Colors.BLACK,
@@ -383,7 +394,7 @@ const Themes = {
       header2: 22,
       header3: 18,
 
-      normal: 16,
+      normal: 14,
       small: 14,
       tiny: 12,
     },

@@ -23,7 +23,7 @@ export type Props = {
   onSelectAccountLink: () => any,
 };
 
-export const HEIGHT = 65;
+export const HEIGHT = 70;
 
 export default class AccountLinkItem extends Component<Props> {
   render() {
@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8,
-    paddingVertical: 4,
   },
 
   contentLeft: {

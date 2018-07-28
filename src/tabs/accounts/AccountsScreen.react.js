@@ -316,27 +316,26 @@ class AccountsScreen extends Component<Props> {
 
       const { accountLinks } = this.props;
 
-      let index = 0;
+      let isFirstItem = true;
       group.collection.forEach(account => {
         const accountLink = accountLinks.get(account.accountLinkRef.refID);
         const isDownloading = Boolean(
           accountLink && (accountLink.isLinking || accountLink.isInMFA),
         );
-
+        const isFirstItemScoped = isFirstItem;
         rows.push({
           Comp: () => (
             <AccountItem
               account={account}
               isDownloading={isDownloading}
-              isFirst={index === 0}
-              isLast={index === group.collection.size - 1}
+              isFirst={isFirstItemScoped}
               onSelect={() => this._onSelectAccount(account)}
             />
           ),
           height: AccountItemHeight,
           key: `ACCOUNT / ${account.id}`,
         });
-        ++index;
+        isFirstItem = false;
       });
     });
 

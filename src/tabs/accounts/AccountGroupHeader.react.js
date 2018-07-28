@@ -17,7 +17,7 @@ export type Props = {
   onSelectInfo: () => any,
 };
 
-export const HEIGHT = 50;
+export const HEIGHT = 58;
 
 export default class AccountGroupHeader extends Component<Props> {
   render() {
@@ -28,12 +28,12 @@ export default class AccountGroupHeader extends Component<Props> {
             <View
               style={[
                 styles.content,
-                { borderColor: theme.color.borderNormal },
+                { borderColor: theme.color.borderLight },
               ]}
             >
               <Text
                 style={[
-                  theme.getTextStyleNormalWithEmphasis(),
+                  theme.getTextStyleSmallHeader(),
                   styles.groupType,
                 ]}
               >
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
 
   groupType: {
-    marginRight: 4,
+    marginRight: 12,
   },
 
   root: {
