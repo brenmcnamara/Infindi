@@ -9,7 +9,7 @@ manual testing steps to make sure everything is working as expected.**
 - Test Steps:
   - Start from the login page
   - Put in the credentials for the public test account:
-    - email: infindi.testing@gmail.co
+    - email: infindi.testing@gmail.com
     - password: public_password2
   - Hit Login
 - Expected Result:
@@ -25,7 +25,7 @@ manual testing steps to make sure everything is working as expected.**
  
  **View a Dropdown of all the Providers**
  - Test Steps:
-   - Start from loggin-in account
+   - Start from logged-in account
    - Click on the "ADD ACCOUNT" button on the bottom
  - Expected Result:
    - Navigates to the provider list screen
@@ -33,6 +33,14 @@ manual testing steps to make sure everything is working as expected.**
    - Test with admin account and non-admin account:
      - Admin accounts have a "Test Login" option on the top of the list
      - Non-Admin accounts do not have a "Test Login" option in the list
+
+**Filter Providers Using Fuzzy Search**
+- Test Steps:
+  - Start from logged-in account
+  - Click on the "ADD ACCOUNT" button on the bottom
+  - Select the search bar and type in the search bar
+- Expected Result:
+  - Expected to see the search shrink to providers relevant to the text search
 
  **Successful Link with a Yodlee Provider**
  - Test Steps:
