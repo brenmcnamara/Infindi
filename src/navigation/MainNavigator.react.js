@@ -3,6 +3,7 @@
 import * as React from 'react';
 import AccountDetailsScreen from '../tabs/accounts/AccountDetailsScreen.react';
 import AccountsScreen from '../tabs/accounts/AccountsScreen.react';
+import AuthStateUtils from '../auth/StateUtils';
 import Icons from '../design/icons';
 import ProviderLoginScreen from '../link/screens/ProviderLoginScreen.react';
 import ProviderSearchScreen from '../link/screens/ProviderSearchScreen.react';
@@ -21,7 +22,11 @@ import { requestLeftPane, requestRightPane } from '../modal/Actions';
 
 import type { Action, ReduxProps, ReduxState } from '../store';
 
-export type Props = ReduxProps & {};
+export type Props = ReduxProps & ComputedProps;
+
+type ComputedProps = {
+  isAdmin: boolean,
+};
 
 class MainNavigator extends React.Component<Props> {
   render() {
@@ -90,7 +95,7 @@ class MainNavigator extends React.Component<Props> {
   };
 
   _getRightNavButton = (currentScreen: string) => {
-    if (currentScreen === 'Accounts') {
+    if (this.props.isAdmin && currentScreen === 'Accounts') {
       return {
         icon: Icons.InfindiLogoNavBar,
         onPress: this._onPressRightNavButton,
@@ -108,7 +113,14 @@ class MainNavigator extends React.Component<Props> {
   });
 }
 
-export default connect()(MainNavigator);
+function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
+  const userInfo = AuthStateUtils.getUserInfo(reduxState);
+  return {
+    isAdmin: Boolean(userInfo && userInfo.isAdmin),
+  };
+}
+
+export default connect(mapReduxStateToProps)(MainNavigator);
 
 const Screens = [
   {
