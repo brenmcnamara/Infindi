@@ -25,6 +25,18 @@ manual testing steps to make sure everything is working as expected.**
 - Expected Result:
   - Should be navigated back to the login page of the user
  
+ ### Accounts Screen
+ 
+ **User with no provider links or accounts will see the null-state page**
+ - Test Steps:
+   - Start from a logged-out account
+   - In the backend repository, run the script to delete all user data:
+     - `node bin/delete-all-user-data userID=<userID>`
+     - **NOTE: Make sure you know what you are doing, this permanantely deletes all user data**
+   - Login with the user that had his / her data wiped clean
+   - Wait for everything to load
+   - Should see the null-state page after logging in
+
  ### Provider Search
  
  **View a Dropdown of all the Providers**
