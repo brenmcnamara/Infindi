@@ -5,6 +5,8 @@ manual testing steps to make sure everything is working as expected.**
 
 ## Test Cases
 
+### Authentication
+
 **Login Existing User**
 - Test Steps:
   - Start from the login page
@@ -23,6 +25,8 @@ manual testing steps to make sure everything is working as expected.**
 - Expected Result:
   - Should be navigated back to the login page of the user
  
+ ### Provider Search
+ 
  **View a Dropdown of all the Providers**
  - Test Steps:
    - Start from logged-in account
@@ -38,9 +42,22 @@ manual testing steps to make sure everything is working as expected.**
 - Test Steps:
   - Start from logged-in account
   - Click on the "ADD ACCOUNT" button on the bottom
-  - Select the search bar and type in the search bar
+  - Select the search bar and type something in it
 - Expected Result:
   - Expected to see the search shrink to providers relevant to the text search
+
+**Provider Search is Maintained During Page Switches**
+- Test Steps:
+  - Start from logged-in account
+  - Click on the "ADD ACCOUNT" button on the bottom
+  - Select the search bar and type something in it
+  - Click the back button on the top left to return to the home page
+  - Click on the "ADD ACCOUNT" button again
+- Expected Result:
+  - The text that was entered in the provider is remembered after enginering the page
+  - The list of providers is relevant to the text search
+  
+### Provider Linking
 
  **Successful Link with a Yodlee Provider**
  - Test Steps:
