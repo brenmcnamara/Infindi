@@ -67,4 +67,20 @@ manual testing steps to make sure everything is working as expected.**
    - Enter the login information for the provider
  - Expected Result:
    - *TODO*
+  
+ ### Admin Features
+ 
+**The Admin Pane Icon shows for admin users**
+  - Test Steps:
+    - Start with logged-out account
+    - Log in with admin credentials
+  - Expected Result:
+    - There should be a button on the top right of the home screen containing admin-specific options
+
+**The Admin Pane Icon does not show for public users**
+  - Test Steps:
+    - Start with logged-out account
+    - Log in with public (non-admin) credentials
+  - Expected Result:
+    - There should be no button on the top right for admin options
    
