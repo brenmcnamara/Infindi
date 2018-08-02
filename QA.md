@@ -46,6 +46,7 @@ manual testing steps to make sure everything is working as expected.**
 - Expected Result:
   - Should see the screen auto-update to reflect the deleted data
   - Make sure the net worth and the net value of each section reflects the fact that some accounts were removed
+  - Try running this script when there is only 1 account link and when there is more than one account link. This will test both conditions of whether we are deleting the last account link or if there are still account links left in the list.
 
  ## Provider Search
  
