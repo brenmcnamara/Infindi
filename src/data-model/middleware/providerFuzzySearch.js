@@ -4,30 +4,55 @@ import FindiError from 'common/lib/FindiError';
 import FindiService from '../../FindiService';
 import Immutable from 'immutable';
 import Provider from 'common/lib/models/Provider';
+import ReduxMiddleware from '../../shared/redux/ReduxMiddleware';
 
-import type { PureAction, Next, StoreType } from '../../store';
+import type { Next, PureAction, ReduxState } from '../../store';
 
-export default (store: StoreType) => (next: Next) => {
-  return (action: PureAction) => {
-    next(action);
+type SearchRequest = {| +searchText: string |} | null;
 
+type State = {
+  +searchRequest: SearchRequest,
+};
+
+export default class ProviderFuzzySearch extends ReduxMiddleware<State> {
+  static __calculateInitialState = (reduxState: ReduxState): State => {
+    return { searchRequest: null };
+  };
+
+  static __calculateStatePostAction = (
+    reduxState: ReduxState,
+    prevState: State,
+    action: PureAction,
+  ): State => {
     switch (action.type) {
       case 'REQUEST_PROVIDER_SEARCH':
       case 'REQUEST_PROVIDER_LOGIN': {
-        const reduxState = store.getState();
         if (reduxState.providerFuzzySearch.loadState.type === 'EMPTY') {
-          runSearch(reduxState.accountVerification.providerSearchText, next);
+          const searchText = reduxState.accountVerification.providerSearchText;
+          return { ...prevState, searchRequest: { searchText } };
         }
-        break;
+        return prevState;
       }
 
       case 'UPDATE_PROVIDER_SEARCH_TEXT': {
-        runSearch(action.searchText, next);
-        break;
+        const { searchText } = action;
+        return { ...prevState, searchRequest: { searchText } };
+      }
+
+      default: {
+        return prevState;
       }
     }
   };
-};
+
+  __didUpdateState = (currentState: State, prevState: State): void => {
+    const { searchRequest } = currentState;
+    if (searchRequest && searchRequest !== prevState.searchRequest) {
+      const { searchText } = searchRequest;
+      runSearch(searchText, this.__dispatch);
+    }
+  };
+}
 
 async function runSearch(searchText: string, next: Next): Promise<void> {
   next({

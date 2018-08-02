@@ -3,6 +3,7 @@
 import AccountLinkMiddleware from '../data-model/middleware/AccountLink';
 import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
 import AccountMiddleware from '../data-model/middleware/Account';
+import ProviderFuzzySearchMiddleware from '../data-model/middleware/ProviderFuzzySearch';
 import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
 import ProviderMiddleware from '../data-model/middleware/Provider';
 import TransactionMiddleware from '../data-model/middleware/Transaction';
@@ -10,7 +11,6 @@ import UserInfoMiddleware from '../data-model/middleware/UserInfo';
 
 import authentication from '../auth/middleware';
 import modal from '../modal/middleware';
-import providerFuzzySearch from '../data-model/middleware/providerFuzzySearch';
 import rootReducer from './RootReducer';
 import thunk from 'redux-thunk';
 import banner from '../banner/middleware';
@@ -91,8 +91,10 @@ export type CombineReducers<TState: Object> = (reducerMap: {
 const accountLinkMiddleware = new AccountLinkMiddleware();
 const accountMiddleware = new AccountMiddleware();
 const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
-const providerMiddleware = new ProviderMiddleware();
+const providerFuzzySearchMiddleware = new ProviderFuzzySearchMiddleware();
 const providerLoginMiddleware = new ProviderLoginMiddleware();
+const providerMiddleware = new ProviderMiddleware();
+
 const transactionMiddleware = new TransactionMiddleware();
 const userInfoMiddleware = new UserInfoMiddleware();
 
@@ -106,7 +108,7 @@ if (__DEV__) {
     // Then comes middleware that need network access.
     authentication,
     // -------------------------------------------------------------------------
-    // DATA MODEL MIDDLEWARE
+    // BOILERPLATE DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
     accountLinkMiddleware.handle,
     accountMiddleware.handle,
@@ -114,9 +116,9 @@ if (__DEV__) {
     transactionMiddleware.handle,
     userInfoMiddleware.handle,
     // -------------------------------------------------------------------------
-    // LEGACY DATA MODEL MIDDLEWARE
+    // CUSTOM DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
-    providerFuzzySearch,
+    providerFuzzySearchMiddleware.handle,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
     // -------------------------------------------------------------------------
@@ -135,7 +137,7 @@ if (__DEV__) {
     // Then comes middleware that need network access.
     authentication,
     // -------------------------------------------------------------------------
-    // DATA MODEL MIDDLEWARE
+    // BOILERPLATE DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
     accountLinkMiddleware.handle,
     accountMiddleware.handle,
@@ -143,9 +145,9 @@ if (__DEV__) {
     transactionMiddleware.handle,
     userInfoMiddleware.handle,
     // -------------------------------------------------------------------------
-    // LEGACY DATA MODEL MIDDLEWARE
+    // CUSTOM DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
-    providerFuzzySearch,
+    providerFuzzySearchMiddleware.handle,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
     // -------------------------------------------------------------------------

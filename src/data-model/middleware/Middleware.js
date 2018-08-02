@@ -403,7 +403,7 @@ export default class Middleware<
           return;
         }
 
-        const findiError = FindiError.fromUknownEntity(error);
+        const findiError = FindiError.fromUnknownEntity(error);
         cursorState = {
           ...cursorState,
           loadState: { error: findiError, type: 'FAILURE' },
