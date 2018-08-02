@@ -301,14 +301,14 @@ export default class Middleware<
     listenerState = {
       ...listenerState,
       loadState: { type: 'STEADY' },
-      modelIDs: listenerState.modelIDs.merge(Immutable.Set(modelIDs)),
+      modelIDs: Immutable.Set(modelIDs),
     };
 
     this._listenerStateMap = this._listenerStateMap.set(
       listenerID,
       listenerState,
     );
-    this._collection = this._collection.merge(Immutable.Map(idAndModelPairs));
+    this._collection = Immutable.Map(idAndModelPairs);
 
     this._dispatchUpdate();
   };
