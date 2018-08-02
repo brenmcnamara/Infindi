@@ -3,9 +3,7 @@
 **We need to maintain a high quality of usability for this app. This document outlines
 manual testing steps to make sure everything is working as expected.**
 
-## Test Cases
-
-### Authentication
+## Authentication
 
 **Login Existing User**
 - Test Steps:
@@ -25,19 +23,31 @@ manual testing steps to make sure everything is working as expected.**
 - Expected Result:
   - Should be navigated back to the login page of the user
  
- ### Accounts Screen
+ ## Accounts Screen
  
  **User with no provider links or accounts will see the null-state page**
  - Test Steps:
    - Start from a logged-out account
    - In the backend repository, run the script to delete all user data:
      - `node bin/delete-all-user-data userID=<userID>`
-     - **NOTE: Make sure you know what you are doing, this permanantely deletes all user data**
+     - **NOTE: Make sure you know what you are doing, this permanantely deletes user data**
    - Login with the user that had his / her data wiped clean
    - Wait for everything to load
+ - Expected Result:
    - Should see the null-state page after logging in
 
- ### Provider Search
+**Accounts list auto-updates with changes to accounts**
+- Test steps:
+  - Start from a logged-in account on the Accounts screen
+  - In the backend repository, run the script to delete one of the links from the user:
+    - `node bin/delete-account-link accountLinkID=<accountLinkID>`
+    - **NOTE: Make sure you know what you are doing, this permanantely deletes user data**
+  - Wait for the script to finish running
+- Expected Result:
+  - Should see the screen auto-update to reflect the deleted data
+  - Make sure the net worth and the net value of each section reflects the fact that some accounts were removed
+
+ ## Provider Search
  
  **View a Dropdown of all the Providers**
  - Test Steps:
@@ -69,7 +79,7 @@ manual testing steps to make sure everything is working as expected.**
   - The text that was entered in the provider is remembered after enginering the page
   - The list of providers is relevant to the text search
   
-### Provider Linking
+## Provider Linking
 
  **Successful Link with a Yodlee Provider**
  - Test Steps:
@@ -85,7 +95,7 @@ manual testing steps to make sure everything is working as expected.**
      - Link a provider for the first time
      - Link a provider when the user has no providers that have yet been linked
  
- ### Admin Features
+ ## Admin Features
  
 **The Admin Pane Icon shows for admin users**
   - Test Steps:
