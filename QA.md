@@ -67,7 +67,12 @@ manual testing steps to make sure everything is working as expected.**
    - Enter the login information for the provider
  - Expected Result:
    - *TODO*
-  
+ - Additional Notes:
+   - Try performing links under the following conditions:
+     - Link a provider that has already been linked for the user
+     - Link a provider for the first time
+     - Link a provider when the user has no providers that have yet been linked
+ 
  ### Admin Features
  
 **The Admin Pane Icon shows for admin users**
