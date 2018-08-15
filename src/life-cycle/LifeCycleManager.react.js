@@ -59,13 +59,13 @@ class LifeCycleManager extends React.Component<Props> {
   };
 
   _onAddActiveUser = (userInfo: UserInfo): void => {
-    const accountLinkQuery = AccountLinkQuery.forUser(userInfo.id);
+    const accountLinkQuery = AccountLinkQuery.Collection.forUser(userInfo.id);
     const accountLinkListener = createAccountLinkListener(accountLinkQuery);
     this.props.dispatch(
       AccountLinkActions.setAndRunListener(accountLinkListener),
     );
 
-    const accountQuery = AccountQuery.forUser(userInfo.id);
+    const accountQuery = AccountQuery.Single.forUser(userInfo.id);
     const accountListener = createAccountListener(accountQuery);
     this.props.dispatch(AccountActions.setAndRunListener(accountListener));
   };
@@ -82,7 +82,7 @@ class LifeCycleManager extends React.Component<Props> {
       accountID,
     );
 
-    const query = TransactionQuery.orderedForAccount(accountID);
+    const query = TransactionQuery.OrderedCollection.forAccount(accountID);
     const cursor = createTransactionCursor(query, TRANSACTION_PAGE_SIZE);
     this.props.dispatch(TransactionActions.setCursor(cursor));
     this.props.dispatch(

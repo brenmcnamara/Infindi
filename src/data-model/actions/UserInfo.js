@@ -10,8 +10,11 @@ import {
 } from './Actions';
 
 import type { Action as ActionTemplate } from './Actions';
+import type {
+  ModelCollectionQuery,
+  ModelOrderedCollectionQuery,
+} from 'common/lib/models/Model';
 import type { ModelCursor, ModelListener, ModelOperation } from '../types';
-import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
 import type {
   UserInfoCollection,
   UserInfoRaw,
@@ -26,13 +29,17 @@ export type Action = ActionTemplate<
 >;
 
 type CreateCursor = (
-  query: ModelOrderedQuery,
+  query: ModelOrderedCollectionQuery,
   pageSize: number,
 ) => ModelCursor<'UserInfo'>;
 
-type CreateListener = (query: ModelQuery) => ModelListener<'UserInfo'>;
+type CreateListener = (
+  query: ModelCollectionQuery,
+) => ModelListener<'UserInfo'>;
 
-type CreateOperation = (query: ModelQuery) => ModelOperation<'UserInfo'>;
+type CreateOperation = (
+  query: ModelCollectionQuery,
+) => ModelOperation<'UserInfo'>;
 
 // $FlowFixMe - Template types are correct.
 export const createCursor: CreateCursor = generateCreateCursor(UserInfo);

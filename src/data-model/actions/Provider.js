@@ -15,7 +15,10 @@ import type {
   ProviderRaw,
 } from 'common/lib/models/Provider';
 import type { ModelCursor, ModelListener, ModelOperation } from '../types';
-import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
+import type {
+  ModelCollectionQuery,
+  ModelOrderedCollectionQuery,
+} from 'common/lib/models/Model';
 
 // eslint-disable-next-line flowtype/generic-spacing
 export type Action = ActionTemplate<
@@ -26,13 +29,17 @@ export type Action = ActionTemplate<
 >;
 
 type CreateCursor = (
-  query: ModelOrderedQuery,
+  query: ModelOrderedCollectionQuery,
   pageSize: number,
 ) => ModelCursor<'Provider'>;
 
-type CreateListener = (query: ModelQuery) => ModelListener<'Provider'>;
+type CreateListener = (
+  query: ModelCollectionQuery,
+) => ModelListener<'Provider'>;
 
-type CreateOperation = (query: ModelQuery) => ModelOperation<'Provider'>;
+type CreateOperation = (
+  query: ModelCollectionQuery,
+) => ModelOperation<'Provider'>;
 
 // $FlowFixMe - Template types are correct.
 export const createCursor: CreateCursor = generateCreateCursor(Provider);

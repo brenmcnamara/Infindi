@@ -1,30 +1,22 @@
 /* @flow */
 
-import Icons from '../../design/icons';
 import React, { Component } from 'react';
+import YodleeLoginFormFieldOption from './YodleeLoginFormFieldOption.react';
+import YodleeLoginFormHeader from './YodleeLoginFormHeader.react';
+import YodleeLoginFormInputField from './YodleeLoginFormInputField.react';
+import YodleeLoginFormSubheader from './YodleeLoginFormSubheader.react';
 
 import invariant from 'invariant';
 
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { GetTheme } from '../../design/components/Theme.react';
+import { FlatList, StyleSheet } from 'react-native';
 
 import type {
   LoginField,
   LoginField$General,
   LoginField$Option,
-  LoginField$TextOrPassword,
   LoginForm,
   LoginRow,
 } from 'common/types/yodlee-v1.0';
-import type { Theme } from '../../design/themes';
 
 export type Props = {
   enableInteraction: boolean,
@@ -67,172 +59,73 @@ export default class YodleeLoginForm extends Component<Props> {
         keyExtractor={(_, index) => String(index)}
         keyboardShouldPersistTaps="always"
         renderItem={this._renderDataRow}
+        style={styles.root}
       />
     );
   }
 
   _renderDataRow = ({ item }: { item: DataRow }) => {
-    return (
-      <GetTheme>
-        {theme => {
-          if (item.type === 'LOGIN_FORM_FIELD') {
-            switch (item.field.type) {
-              case 'text':
-              case 'password':
-                return this._renderFieldTextOrPassword(
-                  theme,
-                  item.field,
-                  item.row,
-                  item.location,
-                );
-              case 'option':
-                return this._renderFieldOption(
-                  theme,
-                  item.field,
-                  item.location,
-                );
-              default:
-                invariant(
-                  false,
-                  'Unhandled yodlee login field: %s',
-                  item.field.type,
-                );
-            }
-          } else if (item.type === 'FORGOT_PASSWORD') {
-            invariant(false, 'FORGOT PASSWORD NOT YET SUPPORTED');
-          } else if (item.type === 'HEADER') {
-            return this._renderHeader(theme, item.title, item.subtitle);
-          } else if (item.type === 'SUBHEADER') {
-            return this._renderSubheader(theme, item.label);
-          } else {
-            return invariant(false, 'Unrecognized data row: %s', item.type);
+    switch (item.type) {
+      case 'LOGIN_FORM_FIELD': {
+        switch (item.field.type) {
+          case 'text':
+          case 'password': {
+            const { row } = item;
+            const { fieldIndex, rowIndex } = item.location;
+            return (
+              <YodleeLoginFormInputField
+                autoFocus={rowIndex === 0 && fieldIndex === 0}
+                enableInteraction={this.props.enableInteraction}
+                isPassword={item.field.type === 'password'}
+                onChangeText={text =>
+                  this._onChangeFormTextValue(item.location, text)
+                }
+                placeholder={row.label.length <= 15 ? row.label : ''}
+              />
+            );
           }
-        }}
-      </GetTheme>
-    );
+
+          case 'option': {
+            const { field } = item;
+            return (
+              <YodleeLoginFormFieldOption
+                onSelectItem={(optionItem, index) =>
+                  this._onPressFieldOptionItem(field, item.location, index)
+                }
+                option={field}
+              />
+            );
+          }
+
+          default: {
+            return invariant(
+              false,
+              'Unhandled yodlee login field: %s',
+              item.field.type,
+            );
+          }
+        }
+      }
+
+      case 'FORGOT_PASSWORD': {
+        return invariant(false, 'Forgot password not yet supported');
+      }
+
+      case 'HEADER': {
+        return (
+          <YodleeLoginFormHeader title={item.title} subtitle={item.subtitle} />
+        );
+      }
+
+      case 'SUBHEADER': {
+        return <YodleeLoginFormSubheader text={item.label} />;
+      }
+
+      default: {
+        return invariant(false, 'Unrecognized data row: %s', item.type);
+      }
+    }
   };
-
-  _renderHeader(theme: Theme, title: string | null, subtitle: string | null) {
-    return (
-      <View style={styles.formHeader}>
-        {title ? (
-          <Text style={[theme.getTextStyleHeader3(), styles.formHeaderTitle]}>
-            {title}
-          </Text>
-        ) : null}
-        {subtitle ? (
-          <Text
-            style={[
-              theme.getTextStyleNormalWithEmphasis(),
-              styles.formHeaderSubtitle,
-            ]}
-          >
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
-    );
-  }
-
-  _renderSubheader(theme: Theme, label: string) {
-    return (
-      <View style={styles.formSubheader}>
-        <Text
-          style={[
-            theme.getTextStyleNormalWithEmphasis(),
-            styles.formSubheaderText,
-          ]}
-        >
-          {label}
-        </Text>
-      </View>
-    );
-  }
-
-  _renderFieldTextOrPassword(
-    theme: Theme,
-    field: LoginField$TextOrPassword,
-    row: LoginRow,
-    location: FieldLocation,
-  ) {
-    return (
-      <TextInput
-        autoCapitalize="none"
-        autoCorrect={false}
-        autoFocus={location.rowIndex === 0 && location.fieldIndex === 0}
-        editable={this.props.enableInteraction}
-        onChangeText={text => this._onChangeFormTextValue(location, text)}
-        placeholder={row.label.length <= 15 ? row.label : ''}
-        secureTextEntry={field.type === 'password'}
-        style={[
-          styles.fieldTextOrPassword,
-          {
-            borderColor: theme.color.borderNormal,
-            fontFamily: theme.fontFamily.thick,
-            fontSize: theme.fontSize.header3,
-          },
-        ]}
-      />
-    );
-  }
-
-  _renderFieldOption(
-    theme: Theme,
-    field: LoginField$Option,
-    location: FieldLocation,
-  ) {
-    return (
-      <View
-        style={[
-          styles.fieldOption,
-          {
-            backgroundColor: theme.color.backgroundListItem,
-            borderColor: theme.color.borderNormal,
-          },
-        ]}
-      >
-        {field.option.map((option, index) => (
-          <View
-            key={index}
-            style={[
-              styles.fieldOptionItemContainer,
-              { borderColor: theme.color.borderNormal },
-            ]}
-          >
-            <TouchableOpacity
-              key={index}
-              onPress={() =>
-                this._onPressFieldOptionItem(field, location, index)
-              }
-            >
-              <View
-                style={[
-                  styles.fieldOptionItem,
-                  { backgroundColor: theme.color.backgroundListItem },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.fieldOptionItemText,
-                    theme.getTextStyleNormal(),
-                  ]}
-                >
-                  {option.displayText}
-                </Text>
-                {option.isSelected === 'true' ? (
-                  <Image
-                    resizeMode="contain"
-                    source={Icons.Checkmark}
-                    style={styles.checkmarkIcon}
-                  />
-                ) : null}
-              </View>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-    );
-  }
 
   _onChangeFormTextValue = (location: FieldLocation, text: string): void => {
     const loginForm = this._updateValue(location, text);
@@ -297,19 +190,16 @@ export default class YodleeLoginForm extends Component<Props> {
 
   _getData() {
     const { loginForm } = this.props;
-    const data = [
-      {
-        subtitle:
-          loginForm.formType === 'questionAndAnswer'
-            ? loginForm.mfaInfoText
-            : null,
-        title:
-          loginForm.formType === 'questionAndAnswer'
-            ? loginForm.mfaInfoTitle
-            : null,
+
+    const data = [];
+    if (loginForm.formType === 'questionAndAnswer') {
+      const { mfaInfoText, mfaInfoTitle } = loginForm;
+      data.push({
+        subtitle: mfaInfoText,
+        title: mfaInfoTitle,
         type: 'HEADER',
-      },
-    ];
+      });
+    }
 
     loginForm.row.forEach((row, rowIndex) => {
       if (loginForm.formType === 'questionAndAnswer' || row.label.length > 15) {
@@ -329,63 +219,7 @@ export default class YodleeLoginForm extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
-  checkmarkIcon: {
-    height: 20,
-    width: 20,
-  },
-
-  fieldOption: {
-    borderTopWidth: 1,
-    marginBottom: 16,
-    marginHorizontal: 4,
-  },
-
-  fieldOptionItem: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    height: 44,
-    marginHorizontal: 8,
-  },
-
-  fieldOptionItemContainer: {
-    borderBottomWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-  },
-
-  fieldOptionItemText: {
-    flex: 1,
-  },
-
-  fieldTextOrPassword: {
-    borderBottomWidth: 1,
-    marginBottom: 24,
-    marginHorizontal: 24,
-    paddingBottom: 4,
-  },
-
-  formHeader: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-
-  formHeaderSubtitle: {
-    marginTop: 4,
-    textAlign: 'center',
-  },
-
-  formHeaderTitle: {
-    textAlign: 'center',
-  },
-
-  formSubheader: {
-    alignItems: 'center',
-    marginBottom: 8,
-    marginHorizontal: 8,
-  },
-
-  formSubheaderText: {
-    textAlign: 'center',
+  root: {
+    marginTop: 0,
   },
 });

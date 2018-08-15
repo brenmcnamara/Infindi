@@ -4,7 +4,10 @@ import type FindiError from 'common/lib/FindiError';
 import type Immutable from 'immutable';
 
 import type { ID } from 'common/types/core';
-import type { ModelOrderedQuery, ModelQuery } from 'common/lib/models/Model';
+import type {
+  ModelCollectionQuery,
+  ModelOrderedCollectionQuery,
+} from 'common/lib/models/Model';
 
 export type LoadState =
   | {| +type: 'EMPTY' | 'LOADING' | 'STEADY' |}
@@ -15,7 +18,7 @@ export type ModelCursor<TModelName: string> = {|
   +id: ID,
   +modelName: TModelName,
   +pageSize: number,
-  +query: ModelOrderedQuery,
+  +query: ModelOrderedCollectionQuery,
 |};
 
 // eslint-disable-next-line flowtype/generic-spacing
@@ -43,7 +46,7 @@ export type ModelCursorStateMap<TModelName: string> = Immutable.Map<
 export type ModelListener<TModelName: string> = {|
   +id: ID,
   +modelName: TModelName,
-  +query: ModelQuery,
+  +query: ModelCollectionQuery,
 |};
 
 // eslint-disable-next-line flowtype/generic-spacing
@@ -68,7 +71,7 @@ export type ModelListenerStateMap<TModelName: string> = Immutable.Map<
 export type ModelOperation<TModelName: string> = {|
   +id: ID,
   +modelName: TModelName,
-  +query: ModelQuery,
+  +query: ModelCollectionQuery,
 |};
 
 // eslint-disable-next-line flowtype/generic-spacing

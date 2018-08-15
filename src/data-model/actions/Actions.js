@@ -6,8 +6,8 @@ import type { ID, ModelStub } from 'common/types/core';
 import type {
   Model,
   ModelCollection,
-  ModelOrderedQuery,
-  ModelQuery,
+  ModelCollectionQuery,
+  ModelOrderedCollectionQuery,
 } from 'common/lib/models/Model';
 import type {
   ModelCursor,
@@ -134,7 +134,7 @@ export function generateCreateCursor<
   TModel: Model<TModelName, TRaw>,
 >(ModelCtor: Class<TModel>) {
   return (
-    query: ModelOrderedQuery,
+    query: ModelOrderedCollectionQuery,
     pageSize: number,
   ): ModelCursor<TModelName> => {
     return {
@@ -151,7 +151,7 @@ export function generateCreateListener<
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
 >(ModelCtor: Class<TModel>) {
-  return (query: ModelQuery): ModelListener<TModelName> => {
+  return (query: ModelCollectionQuery): ModelListener<TModelName> => {
     return {
       id: uuid(),
       modelName: ModelCtor.modelName,
@@ -165,7 +165,7 @@ export function generateCreateOperation<
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
 >(ModelCtor: Class<TModel>) {
-  return (query: ModelQuery): ModelOperation<TModelName> => {
+  return (query: ModelCollectionQuery): ModelOperation<TModelName> => {
     return {
       id: uuid(),
       modelName: ModelCtor.modelName,
