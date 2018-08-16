@@ -1,11 +1,11 @@
 /* @flow */
 
+import * as React from 'react';
 import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 import Content from '../../shared/components/Content.react';
 import Downloading from '../../shared/components/Downloading.react';
 import Icons from '../../design/icons';
 import List from '../../list-ui/List.react';
-import React, { Component } from 'react';
 import Screen from '../../shared/components/Screen.react';
 
 import invariant from 'invariant';
@@ -53,12 +53,14 @@ type ComputedProps = {
 const LIST_CONTENT_INSET = { bottom: 4, left: 0, right: 0, top: 0 };
 const PROVIDER_ITEM_HEIGHT = 65;
 
-class ProviderSearchScreen extends Component<Props> {
+class ProviderSearchScreen extends React.Component<Props> {
   _searchRef: ElementRef<typeof TextInput> | null = null;
 
   render() {
     const { didCompleteInitialSearch, providerLoadState } = this.props;
     const shouldShowError = providerLoadState.type === 'FAILURE';
+    const shouldShowSpinner =
+      providerLoadState.type === 'LOADING' && !didCompleteInitialSearch;
 
     return (
       <Screen avoidNavBar={true}>
@@ -66,9 +68,9 @@ class ProviderSearchScreen extends Component<Props> {
           {this._renderHeader()}
           {shouldShowError
             ? this._renderSearchError()
-            : didCompleteInitialSearch
-              ? this._renderSearchResults()
-              : this._renderLoading()}
+            : shouldShowSpinner
+              ? this._renderLoading()
+              : this._renderSearchResults()}
         </Content>
       </Screen>
     );

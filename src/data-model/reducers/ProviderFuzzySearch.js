@@ -26,7 +26,7 @@ export default function providers(
       // NOTE: Does not handle the case where we have simultaneous fetches.
       // That will probably never happen, so just assume we are only ever
       // fetching providers one at a time.
-      return { ...state, status: 'LOADING' };
+      return { ...state, loadState: { type: 'LOADING' } };
     }
 
     case 'FETCH_PROVIDERS_SUCCESS': {

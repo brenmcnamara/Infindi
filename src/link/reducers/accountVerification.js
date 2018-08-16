@@ -67,7 +67,7 @@ export default function accountVerification(
     }
 
     case 'FETCH_PROVIDERS_FAILURE': {
-      return { ...state, didCompleteInitialSearch: true };
+      return { ...state, didCompleteInitialSearch: false };
     }
 
     case 'REQUEST_PROVIDER_LOGIN': {

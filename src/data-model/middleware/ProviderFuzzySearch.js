@@ -24,10 +24,12 @@ export default class ProviderFuzzySearch extends ReduxMiddleware<State> {
     prevState: State,
     action: PureAction,
   ): State => {
+    const fuzzySearchStatus = reduxState.providerFuzzySearch.loadState.type;
+
     switch (action.type) {
       case 'REQUEST_PROVIDER_SEARCH':
       case 'REQUEST_PROVIDER_LOGIN': {
-        if (reduxState.providerFuzzySearch.loadState.type === 'EMPTY') {
+        if (fuzzySearchStatus === 'EMPTY' || fuzzySearchStatus === 'FAILURE') {
           const searchText = reduxState.accountVerification.providerSearchText;
           return { ...prevState, searchRequest: { searchText } };
         }
