@@ -50,10 +50,7 @@ class AccountDetailsScreen extends Component<Props> {
 
   componentWillMount(): void {
     const { dispatch, transactionCursorState } = this.props;
-    if (
-      !transactionCursorState.didReachEnd &&
-      transactionCursorState.modelIDs.size <= 0
-    ) {
+    if (transactionCursorState.modelIDs.size === 0) {
       const { cursorID } = transactionCursorState;
       dispatch(TransactionActions.fetchCursorPage(cursorID));
     }
@@ -244,7 +241,7 @@ class AccountDetailsScreen extends Component<Props> {
       });
     }
 
-    if (loadState.type === 'EMPTY' || (didReachEnd && transactions.size <= 0)) {
+    if (loadState.type === 'EMPTY') {
       data.push({
         key: 'TRANSACTION_EMPTY',
         render: this._renderTransactionEmpty,

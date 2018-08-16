@@ -333,7 +333,7 @@ export default class Middleware<
     // NOTE: Not handling the case that we get new content after we marked this
     // cursor as reaching the end.
     invariant(
-      !cursorState.didReachEnd,
+      !cursorState.didReachEnd || cursorState.modelIDs.size === 0,
       'Cannot update a cursor that has reached the end of its content',
     );
 
