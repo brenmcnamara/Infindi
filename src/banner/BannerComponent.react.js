@@ -115,14 +115,26 @@ export default class BannerComponent extends Component<Props, State> {
         {theme => (
           <View style={rootStyles}>
             <Animated.View
-              style={{
-                backgroundColor: theme.getBackgroundColorForBannerType(
-                  banner.bannerType,
-                ),
-                height: this._height,
-              }}
+              style={[
+                {
+                  backgroundColor: theme.getBackgroundColorForBannerType(
+                    banner.bannerType,
+                  ),
+                  height: this._height,
+                },
+              ]}
             >
-              <View style={styles.banner}>
+              <Animated.View
+                style={[
+                  styles.banner,
+                  {
+                    marginTop: this._height.interpolate({
+                      inputRange: [0, BANNER_HEIGHT],
+                      outputRange: [-BANNER_HEIGHT, 0],
+                    }),
+                  },
+                ]}
+              >
                 <Text
                   style={[
                     styles.text,
@@ -140,7 +152,7 @@ export default class BannerComponent extends Component<Props, State> {
                     size="small"
                   />
                 ) : null}
-              </View>
+              </Animated.View>
             </Animated.View>
           </View>
         )}
@@ -265,10 +277,14 @@ export default class BannerComponent extends Component<Props, State> {
 }
 
 const styles = StyleSheet.create({
+  animatedView: {
+    alignItems: 'flex-end',
+  },
+
   banner: {
     alignItems: 'flex-end',
-    flex: 1,
     flexDirection: 'row',
+    height: BANNER_HEIGHT,
     justifyContent: 'center',
     paddingBottom: BANNER_CONTENT_PADDING,
   },
