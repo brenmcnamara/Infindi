@@ -6,6 +6,7 @@
  * normal Firebase login flow.
  */
 
+import FindiError from 'common/lib/FindiError';
 import Provider from 'common/lib/models/Provider';
 import Store from './store'; // TODO: Should not access directly
 
@@ -128,14 +129,12 @@ async function genPostRequest<T: Object>(
   if (response.status >= 400) {
     let errorJSON;
     try {
-      errorJSON = await response.json();
-    } catch (_) {
-      throw {
-        errorCode: 'infindi/service-error',
-        errorMessage: `Failed with status ${response.status}`,
-      };
+      const errorResponse = await response.json();
+      errorJSON = errorResponse.error;
+    } catch (error) {
+      throw FindiError.fromUnknownEntity(error);
     }
-    throw errorJSON;
+    throw FindiError.fromRaw(errorJSON);
   }
   return await response.json();
 }
@@ -154,14 +153,14 @@ async function genGetRequest<T: Object>(uri: string): Promise<T> {
   if (response.status >= 400) {
     let errorJSON;
     try {
-      errorJSON = await response.json();
-    } catch (_) {
-      throw {
-        errorCode: 'infindi/service-error',
-        errorMessage: `Failed with status ${response.status}`,
-      };
+      const errorResponse = await response.json();
+      errorJSON = errorResponse.error;
+    } catch (error) {
+      // It's possible that trying to parse the error will result in another
+      // error. Need to guard against this.
+      throw FindiError.fromUnknownEntity(error);
     }
-    throw errorJSON;
+    throw FindiError.fromRaw(errorJSON);
   }
   return await response.json();
 }

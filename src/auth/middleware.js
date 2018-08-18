@@ -1,5 +1,6 @@
 /* @flow */
 
+import FindiError from 'common/lib/FindiError';
 import FindiService from '../FindiService';
 import Firebase from 'react-native-firebase';
 import UserInfo from 'common/lib/models/UserInfo';
@@ -121,40 +122,47 @@ function genPerformLogout(
     });
 }
 
-function genPerformSignUp(
+async function genPerformSignUp(
   changeStatus: ChangeStatus,
   next: Next,
   signUpForm: SignUpForm,
 ): Promise<void> {
-  return Promise.resolve()
-    .then(() => {
-      changeStatus({ signUpForm, type: 'SIGN_UP_INITIALIZE' });
-      next(
-        dismissBanner(
-          'SIGN_UP_REQUEST_ERROR',
-          /* shouldThrowOnDismissingNonExistantToast */ false,
-        ),
-      );
-      return FindiService.genCreateUser(signUpForm);
-    })
-    .then(() => {
-      const { email, password } = signUpForm;
-      return Auth.signInAndRetrieveDataWithEmailAndPassword(email, password);
-    })
-    .catch(error => {
-      const errorMessage = error.errorMessage || error.toString();
-      changeStatus({ errorMessage, signUpForm, type: 'SIGN_UP_FAILURE' });
-      next(
-        requestBanner({
-          bannerChannel: 'SIGN_UP',
-          bannerType: 'ALERT',
-          id: 'SIGN_UP_REQUEST_ERROR',
-          priority: 'NORMAL',
-          showSpinner: false,
-          text: errorMessage,
-        }),
-      );
-    });
+  try {
+    await genPerformSignUpImpl(changeStatus, next, signUpForm);
+  } catch (error) {
+    console.log(error);
+    const findiError = FindiError.fromUnknownEntity(error);
+    const errorMessage = findiError.errorMessage;
+    changeStatus({ errorMessage, signUpForm, type: 'SIGN_UP_FAILURE' });
+    next(
+      requestBanner({
+        bannerChannel: 'SIGN_UP',
+        bannerType: 'ALERT',
+        id: 'SIGN_UP_REQUEST_ERROR',
+        priority: 'NORMAL',
+        showSpinner: false,
+        text: errorMessage,
+      }),
+    );
+  }
+}
+
+async function genPerformSignUpImpl(
+  changeStatus: ChangeStatus,
+  next: Next,
+  signUpForm: SignUpForm,
+): Promise<void> {
+  changeStatus({ signUpForm, type: 'SIGN_UP_INITIALIZE' });
+  next(
+    dismissBanner(
+      'SIGN_UP_REQUEST_ERROR',
+      /* shouldThrowOnDismissingNonExistantToast */ false,
+    ),
+  );
+  await FindiService.genCreateUser(signUpForm);
+
+  const { email, password } = signUpForm;
+  await Auth.signInAndRetrieveDataWithEmailAndPassword(email, password);
 }
 
 // -----------------------------------------------------------------------------
