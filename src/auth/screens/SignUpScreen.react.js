@@ -57,6 +57,10 @@ class SignUpScreen extends Component<Props, State> {
   _lastNameInputRef: TextInputRef | null = null;
   _passwordInputRef: TextInputRef | null = null;
 
+  componentWillUnmount(): void {
+    this.props.dispatch(removeSignUpValidationError());
+  }
+
   render() {
     const { isWaitingForSignUp } = this.props;
     const { signUpForm } = this.state;
