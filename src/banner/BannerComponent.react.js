@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 
 import invariant from 'invariant';
-import nullthrows from 'nullthrows';
 
 import {
   ActivityIndicator,
@@ -54,7 +53,6 @@ export default class BannerComponent extends Component<Props, State> {
   _currentTransitionID: ID = 'request-0';
   _height: Animated.Value;
   _initialBannerTimeoutID: TimeoutID | null = null;
-  _isTransitioning: boolean = false; // TODO: Should remove this.
   _transitionIDNumber: number = 1;
 
   constructor(props: Props) {
@@ -85,7 +83,6 @@ export default class BannerComponent extends Component<Props, State> {
   }
 
   componentWillUnmount(): void {
-    this._isTransitioning = false;
     this._initialBannerTimeoutID && clearTimeout(this._initialBannerTimeoutID);
     this._initialBannerTimeoutID = null;
   }
@@ -136,6 +133,8 @@ export default class BannerComponent extends Component<Props, State> {
                 ]}
               >
                 <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
                   style={[
                     styles.text,
                     theme.getTextStyleSmallWithEmphasis(),
@@ -160,15 +159,12 @@ export default class BannerComponent extends Component<Props, State> {
     );
   }
 
-  _genPerformBannerTransition(
+  async _genPerformBannerTransition(
     prevBanner: Banner | null,
     nextBanner: Banner | null,
   ): Promise<void> {
-    const transitionID = `request-${this._transitionIDNumber}`;
-    ++this._transitionIDNumber;
-
     if (isEqualBannerRendering(prevBanner, nextBanner)) {
-      return Promise.resolve();
+      return;
     }
 
     invariant(
@@ -176,59 +172,39 @@ export default class BannerComponent extends Component<Props, State> {
       'Expecting either previous banner or next banner to exist',
     );
 
-    // TODO: This logic will go haywire when trying to present multiple
-    // transitions simultaneously.
-    this._isTransitioning = true;
-    let transitionChain = Promise.resolve();
+    const transitionID = `request-${this._transitionIDNumber}`;
+    this._currentTransitionID = transitionID;
+    ++this._transitionIDNumber;
 
     if (prevBanner) {
-      transitionChain = transitionChain.then(
-        () =>
-          this._isTransitioning &&
-          this._genPerformTransitionOut(
-            nullthrows(prevBanner),
-            nextBanner ? 'NEXT_BANNER' : 'EMPTY',
-          ),
+      await this._genPerformTransitionOut(
+        transitionID,
+        prevBanner,
+        nextBanner ? 'NEXT_BANNER' : 'EMPTY',
       );
     }
 
-    if (nextBanner) {
-      transitionChain = transitionChain.then(
-        () =>
-          this._isTransitioning &&
-          this._genPerformTransitionIn(
-            nullthrows(nextBanner),
-            prevBanner ? 'PREVIOUS_BANNER' : 'EMPTY',
-          ),
+    if (nextBanner && this._currentTransitionID === transitionID) {
+      await this._genPerformTransitionIn(
+        transitionID,
+        nextBanner,
+        prevBanner ? 'PREVIOUS_BANNER' : 'EMPTY',
       );
+    } else if (this._currentTransitionID === transitionID) {
+      this.setState({ transition: { type: 'EMPTY' } });
     }
-
-    if (!nextBanner) {
-      transitionChain = transitionChain.then(
-        () =>
-          this._isTransitioning &&
-          this._currentTrasitionID === transitionID &&
-          this.setState({ transition: { type: 'EMPTY' } }),
-      );
-    }
-
-    return transitionChain
-      .then(() => {
-        this._isTransitioning = false;
-        this._currentTransitionID = transitionID;
-      })
-      .catch(() => {
-        this._isTransitioning = false;
-        this._currentTransitionID = transitionID;
-      });
   }
 
-  _genPerformTransitionOut(banner: Banner, to: *): Promise<void> {
+  _genPerformTransitionOut(
+    transitionID: ID,
+    banner: Banner,
+    to: *,
+  ): Promise<void> {
     return new Promise(resolve => {
       this.setState(
         { transition: { banner, to, type: 'TRANSITION_OUT' } },
         () => {
-          if (!this._isTransitioning) {
+          if (transitionID !== this._currentTransitionID) {
             return;
           }
           Animated.timing(this._height, {
@@ -243,14 +219,18 @@ export default class BannerComponent extends Component<Props, State> {
     });
   }
 
-  _genPerformTransitionIn(banner: Banner, from: *): Promise<void> {
+  _genPerformTransitionIn(
+    transitionID: ID,
+    banner: Banner,
+    from: *,
+  ): Promise<void> {
     return new Promise(resolve => {
-      if (!this._isTransitioning) {
-        return;
-      }
       this.setState(
         { transition: { banner, from, type: 'TRANSITION_IN' } },
         () => {
+          if (transitionID !== this._currentTransitionID) {
+            return;
+          }
           Animated.timing(this._height, {
             easing: Easing.out(Easing.cubic),
             duration: TRANSITION_IN_MILLIS,
@@ -292,7 +272,7 @@ const styles = StyleSheet.create({
   root: {},
 
   text: {
-    marginRight: 12,
+    marginHorizontal: 12,
   },
 });
 
