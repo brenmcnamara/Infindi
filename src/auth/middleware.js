@@ -7,7 +7,7 @@ import UserInfo from 'common/lib/models/UserInfo';
 
 import invariant from 'invariant';
 
-import { dismissBanner, requestBanner } from '../banner/Actions';
+import { requestBanner } from '../banner/Actions';
 
 import type { AuthStatus } from './types';
 import type { Next, PureAction, StoreType } from '../store';
@@ -130,7 +130,6 @@ async function genPerformSignUp(
   try {
     await genPerformSignUpImpl(changeStatus, next, signUpForm);
   } catch (error) {
-    console.log(error);
     const findiError = FindiError.fromUnknownEntity(error);
     const errorMessage = findiError.errorMessage;
     changeStatus({ errorMessage, signUpForm, type: 'SIGN_UP_FAILURE' });
@@ -138,7 +137,7 @@ async function genPerformSignUp(
       requestBanner({
         bannerChannel: 'SIGN_UP',
         bannerType: 'ALERT',
-        id: 'SIGN_UP_REQUEST_ERROR',
+        id: 'SIGN_UP_REQUEST',
         priority: 'NORMAL',
         showSpinner: false,
         text: errorMessage,
@@ -154,11 +153,16 @@ async function genPerformSignUpImpl(
 ): Promise<void> {
   changeStatus({ signUpForm, type: 'SIGN_UP_INITIALIZE' });
   next(
-    dismissBanner(
-      'SIGN_UP_REQUEST_ERROR',
-      /* shouldThrowOnDismissingNonExistantToast */ false,
-    ),
+    requestBanner({
+      bannerChannel: 'SIGN_UP',
+      bannerType: 'INFO',
+      id: 'SIGN_UP_REQUEST',
+      priority: 'NORMAL',
+      showSpinner: true,
+      text: 'Creating new user account...',
+    }),
   );
+
   await FindiService.genCreateUser(signUpForm);
 
   const { email, password } = signUpForm;

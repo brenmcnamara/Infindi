@@ -23,23 +23,35 @@ export default function navigation(
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'EXIT_ACCOUNT_DETAILS':
+    case 'AUTH_STATUS_CHANGE': {
+      const { status } = action;
+      if (status.type === 'LOGGED_IN') {
+        return { ...state, shouldShowSignUpScreen: false };
+      }
+      return state;
+    }
+
+    case 'EXIT_ACCOUNT_DETAILS': {
       return {
         ...state,
         accountDetailsID: null,
       };
+    }
 
-    case 'SET_SHOULD_SHOW_SIGN_UP_SCREEN':
+    case 'SET_SHOULD_SHOW_SIGN_UP_SCREEN': {
       return { ...state, shouldShowSignUpScreen: action.show };
+    }
 
-    case 'VIEW_TAB':
+    case 'VIEW_TAB': {
       return { ...state, tabName: action.tabName };
+    }
 
-    case 'VIEW_ACCOUNT_DETAILS':
+    case 'VIEW_ACCOUNT_DETAILS': {
       return {
         ...state,
         accountDetailsID: action.accountID,
       };
+    }
   }
   return state;
 }

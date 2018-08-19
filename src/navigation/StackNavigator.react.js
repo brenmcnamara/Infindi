@@ -51,9 +51,12 @@ type State = {
 class StackNavigator extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      screenStack: props.calculateStackForState(props.reduxState, null),
-    };
+    const screenStack = props.calculateStackForState(props.reduxState, null);
+    invariant(
+      screenStack.length === 1,
+      'StackNavigator must be initialized with a screen stack of size 1',
+    );
+    this.state = { screenStack };
   }
 
   static getDerivedStateFromProps(props: Props, state: ?State): State {

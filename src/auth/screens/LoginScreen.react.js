@@ -265,10 +265,12 @@ function calculateLoginType(state: ReduxState): LoginType {
     case 'LOGGED_OUT':
     case 'LOGOUT_FAILURE':
     case 'LOGOUT_INITIALIZE':
+    case 'SIGN_UP_FAILURE':
       return 'NORMAL';
 
     case 'LOGGED_IN':
     case 'LOGIN_INITIALIZE':
+    case 'SIGN_UP_INITIALIZE':
       return 'LOADING';
 
     case 'LOGIN_FAILURE':
