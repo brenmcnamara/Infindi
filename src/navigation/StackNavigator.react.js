@@ -54,7 +54,8 @@ class StackNavigator extends React.Component<Props, State> {
     const screenStack = props.calculateStackForState(props.reduxState, null);
     invariant(
       screenStack.length === 1,
-      'StackNavigator must be initialized with a screen stack of size 1',
+      'StackNavigator must be initialized with a screen stack of size 1: [%s]',
+      screenStack.join(', '),
     );
     this.state = { screenStack };
   }

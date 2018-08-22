@@ -23,14 +23,6 @@ export default function navigation(
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'AUTH_STATUS_CHANGE': {
-      const { status } = action;
-      if (status.type === 'LOGGED_IN') {
-        return { ...state, shouldShowSignUpScreen: false };
-      }
-      return state;
-    }
-
     case 'EXIT_ACCOUNT_DETAILS': {
       return {
         ...state,

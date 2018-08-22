@@ -19,7 +19,13 @@ export default function authStatus(
 ) {
   switch (action.type) {
     case 'AUTH_STATUS_CHANGE': {
-      return { ...state, status: action.status };
+      const { status } = action;
+      return {
+        ...state,
+        isShowingSignUpScreen:
+          status.type !== 'LOGGED_IN' && state.isShowingSignUpScreen,
+        status,
+      };
     }
 
     case 'SHOW_SIGN_UP_SCREEN': {
