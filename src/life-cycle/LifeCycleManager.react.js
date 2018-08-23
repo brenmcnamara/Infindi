@@ -55,7 +55,7 @@ class LifeCycleManager extends React.Component<Props> {
   };
 
   _onLogoutUser = (): void => {
-    this.props.dispatch(UserInfoActions.deleteEverything());
+    this.props.dispatch(UserInfoActions.clearReduxState());
   };
 
   _onAddActiveUser = (userInfo: UserInfo): void => {
@@ -71,8 +71,8 @@ class LifeCycleManager extends React.Component<Props> {
   };
 
   _onRemoveActiveUser = (): void => {
-    this.props.dispatch(AccountActions.deleteEverything());
-    this.props.dispatch(AccountLinkActions.deleteEverything());
+    this.props.dispatch(AccountActions.clearReduxState());
+    this.props.dispatch(AccountLinkActions.clearReduxState());
   };
 
   _onAddAccount = (accountID: ID): void => {

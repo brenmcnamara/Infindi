@@ -23,7 +23,7 @@ import type {
 
 // TODO: What about pagination?
 export type ActionCreators<TModelName: string> = {|
-  +deleteEverything: () => Action$ModelDeleteEverything<TModelName>,
+  +clearReduxState: () => Action$ModelClearReduxState<TModelName>,
 
   +deleteCursor: (cursorID: ID) => Action$ModelDeleteCursor<TModelName>,
 
@@ -54,7 +54,7 @@ export type Action<
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
 > =
-  | Action$ModelDeleteEverything<TModelName>
+  | Action$ModelClearReduxState<TModelName>
   | Action$ModelDeleteCursor<TModelName>
   | Action$ModelDeleteListener<TModelName>
   | Action$ModelDeleteOperation<TModelName>
@@ -64,9 +64,9 @@ export type Action<
   | Action$ModelSetCursor<TModelName>
   | Action$ModelUpdateState<TModelName, TRaw, TModel, TCollection>;
 
-export type Action$ModelDeleteEverything<TModelName: string> = {|
+export type Action$ModelClearReduxState<TModelName: string> = {|
   +modelName: TModelName,
-  +type: 'MODEL_DELETE_EVERYTHING',
+  +type: 'MODEL_CLEAR_REDUX_STATE',
 |};
 
 export type Action$ModelDeleteCursor<TModelName: string> = {|
@@ -181,9 +181,9 @@ export function generateActionCreators<
 >(ModelCtor: Class<TModel>): ActionCreators<TModelName> {
   const modelName = ModelCtor.modelName;
   return {
-    deleteEverything: () => ({
+    clearReduxState: () => ({
       modelName,
-      type: 'MODEL_DELETE_EVERYTHING',
+      type: 'MODEL_CLEAR_REDUX_STATE',
     }),
 
     deleteCursor: (cursorID: ID) => ({

@@ -420,7 +420,7 @@ export default class Middleware<
       next(action);
 
       switch (action.type) {
-        case 'MODEL_DELETE_EVERYTHING': {
+        case 'MODEL_CLEAR_REDUX_STATE': {
           const { modelName } = this.constructor.__ModelCtor;
           if (action.modelName === modelName) {
             this._deleteEverything();
