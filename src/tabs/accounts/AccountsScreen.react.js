@@ -84,9 +84,8 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderAccountsLoading(theme: Theme) {
-    const { isDownloading } = this.props;
     return (
-      isDownloading && (
+      this._shouldShowLoadingState() && (
         <Content>
           <BannerManager
             channels={['CORE', 'ACCOUNTS']}
@@ -101,11 +100,8 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderAccounts(theme: Theme) {
-    const { isDownloading, accounts } = this.props;
-
     return (
-      !isDownloading &&
-      accounts.size > 0 && (
+      this._shouldShowAccountsAndLinks() && (
         <Content>
           <BannerManager
             channels={['CORE', 'ACCOUNTS']}
@@ -122,10 +118,8 @@ class AccountsScreen extends Component<Props> {
   }
 
   _renderNullState(theme: Theme) {
-    const { isDownloading, accounts } = this.props;
     return (
-      !isDownloading &&
-      accounts.size <= 0 && (
+      this._shouldShowNullState() && (
         <Content>
           <BannerManager
             channels={['CORE', 'ACCOUNTS']}
@@ -226,7 +220,7 @@ class AccountsScreen extends Component<Props> {
   });
 
   _getData() {
-    const accountLinks = this._getAccountLinksRequiringAttention();
+    const accountLinks = this._calculateOrderedAccountLinks();
     const { accounts } = this.props;
     // TODO: METADATA
     const groupList = [
@@ -342,7 +336,7 @@ class AccountsScreen extends Component<Props> {
     return rows;
   }
 
-  _getAccountLinksRequiringAttention(): Immutable.List<AccountLink> {
+  _calculateOrderedAccountLinks(): Immutable.List<AccountLink> {
     return this.props.accountLinks.reduce((list, accountLink) => {
       // Put all linking account links at the beginning of the array.
       if (accountLink.isLinking || accountLink.isInMFA) {
@@ -355,6 +349,22 @@ class AccountsScreen extends Component<Props> {
       return list;
     }, Immutable.List());
   }
+
+  _shouldShowNullState(): boolean {
+    return (
+      !this.props.isDownloading &&
+      this.props.accounts.size === 0 &&
+      this.props.accountLinks.size === 0
+    );
+  }
+
+  _shouldShowLoadingState(): boolean {
+    return this.props.isDownloading;
+  }
+
+  _shouldShowAccountsAndLinks(): boolean {
+    return !this._shouldShowNullState() && !this._shouldShowLoadingState();
+  }
 }
 
 function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
@@ -364,7 +374,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
     'Trying to render account data when no user is logged in',
   );
   return {
-    accountLinks: AccountLinkStateUtils.getCollection(reduxState),
+    accountLinks: getAccountLinksRequiringAttention(reduxState),
     accounts: AccountStateUtils.getCollection(reduxState),
     isDownloading:
       !LifeCycleStateUtils.didLoadAccounts(reduxState) ||
@@ -428,4 +438,14 @@ function getTotalBalanceForAccountContainer(
   collection: AccountCollection,
 ): Dollars {
   return collection.reduce((sum, account) => sum + account.balance, 0);
+}
+
+function getAccountLinksRequiringAttention(
+  reduxState: ReduxState,
+): AccountLinkCollection  {
+  const accountLinks = AccountLinkStateUtils.getCollection(reduxState);
+  return accountLinks.filter(
+    accountLink =>
+      accountLink.isLinking || accountLink.isInMFA || accountLink.isLinkFailure,
+  );
 }
