@@ -1,5 +1,7 @@
 /* @flow */
 
+/* eslint-disable flowtype/generic-spacing */
+
 import type FindiError from 'common/lib/FindiError';
 import type Immutable from 'immutable';
 
@@ -7,6 +9,7 @@ import type { ID } from 'common/types/core';
 import type {
   ModelCollectionQuery,
   ModelOrderedCollectionQuery,
+  ModelQuery,
 } from 'common/lib/models/Model';
 
 export type LoadState =
@@ -21,7 +24,6 @@ export type ModelCursor<TModelName: string> = {|
   +query: ModelOrderedCollectionQuery,
 |};
 
-// eslint-disable-next-line flowtype/generic-spacing
 export type ModelCursorMap<TModelName: string> = Immutable.Map<
   ID,
   ModelCursor<TModelName>,
@@ -36,7 +38,6 @@ export type ModelCursorState<TModelName: string> = {|
   +modelName: TModelName,
 |};
 
-// eslint-disable-next-line flowtype/generic-spacing
 export type ModelCursorStateMap<TModelName: string> = Immutable.Map<
   ID,
   ModelCursorState<TModelName>,
@@ -49,7 +50,6 @@ export type ModelListener<TModelName: string> = {|
   +query: ModelCollectionQuery,
 |};
 
-// eslint-disable-next-line flowtype/generic-spacing
 export type ModelListenerMap<TModelName: string> = Immutable.Map<
   ID,
   ModelListener<TModelName>,
@@ -62,7 +62,6 @@ export type ModelListenerState<TModelName: string> = {|
   +modelName: TModelName,
 |};
 
-// eslint-disable-next-line flowtype/generic-spacing
 export type ModelListenerStateMap<TModelName: string> = Immutable.Map<
   ID,
   ModelListenerState<TModelName>,
@@ -71,23 +70,43 @@ export type ModelListenerStateMap<TModelName: string> = Immutable.Map<
 export type ModelOperation<TModelName: string> = {|
   +id: ID,
   +modelName: TModelName,
-  +query: ModelCollectionQuery,
+  +query: ModelQuery,
 |};
 
-// eslint-disable-next-line flowtype/generic-spacing
 export type ModelOperationMap<TModelName: string> = Immutable.Map<
   ID,
   ModelOperation<TModelName>,
 >;
 
-export type ModelOperationState<TModelName: string> = {|
+export type ModelOperationState<TModelName: string> =
+  | ModelOperationState$Collection<TModelName>
+  | ModelOperationState$OrderedCollection<TModelName>
+  | ModelOperationState$Single<TModelName>;
+
+export type ModelOperationState$Collection<TModelName: string> = {|
   +loadState: LoadState,
   +modelIDs: Immutable.Set<ID>,
   +modelName: TModelName,
   +operationID: ID,
+  +queryType: 'COLLECTION_QUERY',
 |};
 
-// eslint-disable-next-line flowtype/generic-spacing
+export type ModelOperationState$OrderedCollection<TModelName: string> = {|
+  +loadState: LoadState,
+  +modelIDs: Immutable.List<ID>,
+  +modelName: TModelName,
+  +operationID: ID,
+  +queryType: 'ORDERED_COLLECTION_QUERY',
+|};
+
+export type ModelOperationState$Single<TModelName: string> = {|
+  +loadState: LoadState,
+  +modelID: ID | null,
+  +modelName: TModelName,
+  +operationID: ID,
+  +queryType: 'SINGLE_QUERY',
+|};
+
 export type ModelOperationStateMap<TModelName: string> = Immutable.Map<
   ID,
   ModelOperationState<TModelName>,

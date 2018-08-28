@@ -1,26 +1,22 @@
 /* @flow */
 
 import * as React from 'react';
-import AccountActions, {
-  createListener as createAccountListener,
-} from '../data-model/actions/Account';
-import AccountLinkActions, {
-  createListener as createAccountLinkListener,
-} from '../data-model/actions/AccountLink';
+import AccountActions from '../data-model/actions/Account';
+import AccountDataUtils from '../data-model/data-utils/Account';
+import AccountLinkActions from '../data-model/actions/AccountLink';
+import AccountLinkDataUtils from '../data-model/data-utils/AccountLink';
 import AccountQuery from 'common/lib/models/AccountQuery';
 import AccountLinkQuery from 'common/lib/models/AccountLinkQuery';
 import AccountStateUtils from '../data-model/state-utils/Account';
 import AuthStateUtils from '../auth/StateUtils';
 import Immutable from 'immutable';
 import LifeCycleActions from './Actions';
-import TransactionActions, {
-  createCursor as createTransactionCursor,
-} from '../data-model/actions/Transaction';
+import TransactionActions from '../data-model/actions/Transaction';
+import TransactionDataUtils from '../data-model/data-utils/Transaction';
 import TransactionQuery from 'common/lib/models/TransactionQuery';
 import UserInfo from 'common/lib/models/UserInfo';
-import UserInfoActions, {
-  createOperation as createUserInfoOperation,
-} from '../data-model/actions/UserInfo';
+import UserInfoActions from '../data-model/actions/UserInfo';
+import UserInfoDataUtils from '../data-model/data-utils/UserInfo';
 import UserInfoStateUtils from '../data-model/state-utils/UserInfo';
 
 import invariant from 'invariant';
@@ -46,8 +42,13 @@ const TRANSACTION_PAGE_SIZE = 20;
 class LifeCycleManager extends React.Component<Props> {
   _onLoginUser = (userInfo: UserInfo): void => {
     if (userInfo.isAdmin) {
-      const userInfoQuery = UserInfo.FirebaseCollectionUNSAFE;
-      const userInfoOperation = createUserInfoOperation(userInfoQuery);
+      const userInfoQuery = {
+        handle: UserInfo.FirebaseCollectionUNSAFE,
+        type: 'COLLECTION_QUERY',
+      };
+      const userInfoOperation = UserInfoDataUtils.createOperation(
+        userInfoQuery,
+      );
       this.props.dispatch(
         UserInfoActions.setAndRunOperation(userInfoOperation),
       );
@@ -60,13 +61,15 @@ class LifeCycleManager extends React.Component<Props> {
 
   _onAddActiveUser = (userInfo: UserInfo): void => {
     const accountLinkQuery = AccountLinkQuery.Collection.forUser(userInfo.id);
-    const accountLinkListener = createAccountLinkListener(accountLinkQuery);
+    const accountLinkListener = AccountLinkDataUtils.createListener(
+      accountLinkQuery,
+    );
     this.props.dispatch(
       AccountLinkActions.setAndRunListener(accountLinkListener),
     );
 
-    const accountQuery = AccountQuery.Single.forUser(userInfo.id);
-    const accountListener = createAccountListener(accountQuery);
+    const accountQuery = AccountQuery.Collection.forUser(userInfo.id);
+    const accountListener = AccountDataUtils.createListener(accountQuery);
     this.props.dispatch(AccountActions.setAndRunListener(accountListener));
   };
 
@@ -83,7 +86,10 @@ class LifeCycleManager extends React.Component<Props> {
     );
 
     const query = TransactionQuery.OrderedCollection.forAccount(accountID);
-    const cursor = createTransactionCursor(query, TRANSACTION_PAGE_SIZE);
+    const cursor = TransactionDataUtils.createCursor(
+      query,
+      TRANSACTION_PAGE_SIZE,
+    );
     this.props.dispatch(TransactionActions.setCursor(cursor));
     this.props.dispatch(
       LifeCycleActions.addAccountToTransactionCursorPair(accountID, cursor.id),

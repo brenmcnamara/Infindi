@@ -1,5 +1,7 @@
 /* @flow */
 
+/* eslint-disable flowtype/generic-spacing */
+
 import FindiError from 'common/lib/FindiError';
 import Immutable from 'immutable';
 
@@ -7,7 +9,13 @@ import invariant from 'invariant';
 
 import type { EmitterSubscription } from '../../shared/types';
 import type { ID, ModelStub } from 'common/types/core';
-import type { Model, ModelCollection } from 'common/lib/models/Model';
+import type {
+  Model,
+  ModelFetcher,
+  ModelCollection,
+  ModelMutator,
+  ModelOrderedCollection,
+} from 'common/lib/models/Model';
 import type {
   ModelCursor,
   ModelCursorMap,
@@ -31,6 +39,15 @@ export default class Middleware<
   TRaw: ModelStub<TModelName>,
   TModel: Model<TModelName, TRaw>,
   TCollection: ModelCollection<TModelName, TRaw, TModel>,
+  TOrderedCollection: ModelOrderedCollection<TModelName, TRaw, TModel>,
+  TModelFetcher: ModelFetcher<
+    TModelName,
+    TRaw,
+    TModel,
+    TCollection,
+    TOrderedCollection,
+  >,
+  TModelMutator: ModelMutator<TModelName, TRaw, TModel>,
 > {
   // ---------------------------------------------------------------------------
   //
@@ -38,6 +55,8 @@ export default class Middleware<
   //
   // ---------------------------------------------------------------------------
   static __ModelCtor: Class<TModel>;
+  static __ModelFetcher: TModelFetcher;
+  static __ModelMutator: TModelMutator;
 
   // ---------------------------------------------------------------------------
   //
@@ -112,8 +131,11 @@ export default class Middleware<
       modelName: this.constructor.__ModelCtor.modelName,
     };
 
+    // TODO: FIREBASE-DEPENDENCY
+    const { handle } = listener.query;
+
     const subscription = createFirebaseListenerAdapter(
-      listener.query.onSnapshot(snapshot =>
+      handle.onSnapshot(snapshot =>
         this._onListenerSnapshot(listener.id, snapshot),
       ),
     );
@@ -137,88 +159,79 @@ export default class Middleware<
       operation.id,
     );
 
-    const operationState: ModelOperationState<TModelName> = {
-      operationID: operation.id,
-      loadState: { type: 'LOADING' },
-      modelIDs: Immutable.Set(),
-      modelName: this.constructor.__ModelCtor.modelName,
-    };
+    const { query } = operation;
+    let operationState: ModelOperationState<TModelName>;
 
-    operation.query
-      .get()
-      .then(snapshot => {
-        // NOTE: The user could have deleted the operation before it completed.
-        // Need to check that the operation still exists.
-        const operationInnerScope = this._operationMap.get(operation.id);
-        if (!operationInnerScope) {
-          return;
-        }
-        let operationStateInnerScope = this._operationStateMap.get(
-          operation.id,
-        );
-        invariant(
-          operationStateInnerScope,
-          'Expecting operation state to exist for %s and given operation: %s',
-          this.constructor.__ModelCtor.modelName,
-          operation.id,
-        );
-
-        const modelIDs: Array<ID> = snapshot.docs.map(doc => doc.data().id);
-        const idAndModelPairs: Array<[ID, TModel]> = snapshot.docs.map(doc => {
-          const model = this.constructor.__ModelCtor.fromRaw(doc.data());
-          return [model.id, model];
-        });
-
-        operationStateInnerScope = {
-          ...operationStateInnerScope,
-          loadState: { type: 'STEADY' },
-          modelIDs: Immutable.Set(modelIDs),
+    switch (query.type) {
+      case 'COLLECTION_QUERY': {
+        operationState = {
+          loadState: { type: 'LOADING' },
+          modelIDs: Immutable.Set(),
+          modelName: this.constructor.__ModelCtor.modelName,
+          operationID: operation.id,
+          queryType: 'COLLECTION_QUERY',
         };
+        break;
+      }
 
-        this._operationStateMap = this._operationStateMap.set(
-          operation.id,
-          operationStateInnerScope,
-        );
-        this._collection = this._collection.merge(
-          Immutable.Map(idAndModelPairs),
-        );
-        this._dispatchUpdate();
-      })
-      .catch(error => {
-        // NOTE: The user could have deleted the operation before it completed.
-        // Need to check that the operation still exists.
-        const operationInnerScope = this._operationMap.get(operation.id);
-        if (!operationInnerScope) {
-          return;
-        }
-        let operationStateInnerScope = this._operationStateMap.get(
-          operation.id,
-        );
-        invariant(
-          operationStateInnerScope,
-          'Expecting operation state to exist for %s and given operation: %s',
-          this.constructor.__ModelCtor.modelName,
-          operation.id,
-        );
-
-        const findiError = FindiError.fromUnknownEntity(error);
-        operationStateInnerScope = {
-          ...operationStateInnerScope,
-          loadState: { error: findiError, type: 'FAILURE' },
+      case 'ORDERED_COLLECTION_QUERY': {
+        operationState = {
+          loadState: { type: 'LOADING' },
+          modelIDs: Immutable.List(),
+          operationID: operation.id,
+          queryType: 'ORDERED_COLLECTION_OPERATION',
         };
+        break;
+      }
 
-        this._operationStateMap = this._operationStateMap.set(
-          operation.id,
-          operationStateInnerScope,
-        );
-        this._dispatchUpdate();
-      });
+      case 'SINGLE_QUERY': {
+        operationState = {
+          loadState: { type: 'LOADING' },
+          modelID: null,
+          operationID: operation.id,
+          queryType: 'SINGLE_QUERY',
+        };
+        break;
+      }
+
+      default: {
+        invariant(false, 'Unrecognized query type: %s', query.type);
+      }
+    }
 
     this._operationMap = this._operationMap.set(operation.id, operation);
     this._operationStateMap = this._operationStateMap.set(
       operation.id,
       operationState,
     );
+
+    this._genRunOperation(operation).catch(error => {
+      // NOTE: The user could have deleted the operation before it completed.
+      // Need to check that the operation still exists.
+      const operationInnerScope = this._operationMap.get(operation.id);
+      if (!operationInnerScope) {
+        return;
+      }
+      let operationStateInnerScope = this._operationStateMap.get(operation.id);
+      invariant(
+        operationStateInnerScope,
+        'Expecting operation state to exist for %s and given operation: %s',
+        this.constructor.__ModelCtor.modelName,
+        operation.id,
+      );
+
+      const findiError = FindiError.fromUnknownEntity(error);
+      operationStateInnerScope = {
+        ...operationStateInnerScope,
+        loadState: { error: findiError, type: 'FAILURE' },
+      };
+
+      this._operationStateMap = this._operationStateMap.set(
+        operation.id,
+        operationStateInnerScope,
+      );
+      this._dispatchUpdate();
+    });
   };
 
   _deleteEverything = (): void => {
@@ -341,15 +354,17 @@ export default class Middleware<
     this._cursorStateMap = this._cursorStateMap.set(cursorID, cursorState);
     this._dispatchUpdate();
 
-    // NOTE: Assuming firebase query.
-    let query = cursor.query;
+    const query: ModelOrderedCollectionQuery = cursor.query;
+
+    // TODO: FIREBASE-DEPENDENCY
+    let { handle } = query;
     const { cursorRef } = cursorState;
 
     if (cursorRef) {
-      query = query.startAfter(cursorRef);
+      handle = handle.handlestartAfter(cursorRef);
     }
 
-    query
+    handle
       .limit(cursor.pageSize)
       .get()
       .then(snapshot => {
@@ -498,6 +513,93 @@ export default class Middleware<
         }
       }
     };
+  };
+
+  _genRunOperation = async (operation: ModelOperation<*>): Promise<void> => {
+    let operationState = this._operationStateMap.get(operation.id);
+    invariant(
+      operationState,
+      'Expecting operationState to be set for operation %s for model %s',
+      operation.id,
+      this.constructor.__ModelCtor.modelName,
+    );
+    invariant(
+      operationState.loadState.type === 'LOADING',
+      // eslint-disable-next-line max-len
+      'Expecting operation state to be set to loadState LOADING for operation id %s for model %s. This is a pre-condition for calling _genRunOperation',
+      operation.id,
+      this.constructor.__ModelCtor.modelName,
+    );
+
+    const { query } = operation;
+    switch (query.type) {
+      case 'COLLECTION_QUERY': {
+        const collection = await this.constructor.__ModelFetcher.genCollectionQuery(
+          operation.query,
+        );
+        operationState = {
+          ...operationState,
+          loadState: { type: 'STEADY' },
+          modelIDs: Immutable.Set(collection.keys()),
+        };
+
+        this._operationStateMap = this._operationStateMap.set(
+          operation.id,
+          operationState,
+        );
+        this._collection = this._collection.merge(collection);
+        break;
+      }
+
+      case 'ORDERED_COLLECTION_QUERY': {
+        const orderedCollection = await this.constructor.ModelFetcher.genOrderedCollectionQuery(
+          operation.query,
+        );
+
+        operationState = {
+          ...operationState,
+          loadState: { type: 'STEADY' },
+          modelIDs: Immutable.List(orderedCollection.keys()),
+        };
+
+        this._operationStateMap = this._operationStateMap.set(
+          operation.id,
+          operationState,
+        );
+        this._collection = this._collection.merge(orderedCollection);
+
+        break;
+      }
+
+      case 'SINGLE_QUERY': {
+        const model = await this.constructor.__ModelFetcher.genSingleQuery(
+          operation.query,
+        );
+
+        operationState = {
+          ...operationState,
+          loadState: { type: 'STEADY' },
+          modelID: model && model.id,
+        };
+
+        if (model) {
+          this._collection = this._collection.set(model.id, model);
+        }
+
+        break;
+      }
+
+      default: {
+        invariant(
+          false,
+          'Unrecognized operation type: %s for operation %s for model %s',
+          operation.type,
+          operation.id,
+          this.constructor.__ModelCtor.modelName,
+        );
+      }
+    }
+    this._dispatchUpdate();
   };
 }
 

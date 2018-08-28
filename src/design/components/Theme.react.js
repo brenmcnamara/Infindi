@@ -7,9 +7,7 @@ import React, { createContext } from 'react';
 import type { ComponentType } from 'react';
 import type { Theme, ThemeName } from '../themes';
 
-const { Consumer, Provider } = createContext({
-  theme: Themes.light,
-});
+const { Consumer, Provider } = createContext({ theme: Themes.light });
 
 export type Props = {
   children?: ?any,

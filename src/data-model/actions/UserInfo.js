@@ -2,19 +2,9 @@
 
 import UserInfo from 'common/lib/models/UserInfo';
 
-import {
-  generateActionCreators,
-  generateCreateCursor,
-  generateCreateListener,
-  generateCreateOperation,
-} from './Actions';
+import { generateActionCreators } from './Actions';
 
 import type { Action as ActionTemplate } from './Actions';
-import type {
-  ModelCollectionQuery,
-  ModelOrderedCollectionQuery,
-} from 'common/lib/models/Model';
-import type { ModelCursor, ModelListener, ModelOperation } from '../types';
 import type {
   UserInfoCollection,
   UserInfoRaw,
@@ -27,27 +17,5 @@ export type Action = ActionTemplate<
   UserInfo,
   UserInfoCollection,
 >;
-
-type CreateCursor = (
-  query: ModelOrderedCollectionQuery,
-  pageSize: number,
-) => ModelCursor<'UserInfo'>;
-
-type CreateListener = (
-  query: ModelCollectionQuery,
-) => ModelListener<'UserInfo'>;
-
-type CreateOperation = (
-  query: ModelCollectionQuery,
-) => ModelOperation<'UserInfo'>;
-
-// $FlowFixMe - Template types are correct.
-export const createCursor: CreateCursor = generateCreateCursor(UserInfo);
-// $FlowFixMe - Template types are correct.
-export const createListener: CreateListener = generateCreateListener(UserInfo);
-// $FlowFixMe - Template types are correct.
-export const createOperation: CreateOperation = generateCreateOperation(
-  UserInfo,
-);
 
 export default generateActionCreators(UserInfo);

@@ -1,14 +1,7 @@
 /* @flow */
 
-import uuid from 'uuid/v1';
-
 import type { ID, ModelStub } from 'common/types/core';
-import type {
-  Model,
-  ModelCollection,
-  ModelCollectionQuery,
-  ModelOrderedCollectionQuery,
-} from 'common/lib/models/Model';
+import type { Model, ModelCollection } from 'common/lib/models/Model';
 import type {
   ModelCursor,
   ModelCursorMap,
@@ -127,52 +120,6 @@ export type Action$ModelUpdateState<
   +operationStateMap: ModelOperationStateMap<TModelName>,
   +type: 'MODEL_UPDATE_STATE',
 |};
-
-export function generateCreateCursor<
-  TModelName: string,
-  TRaw: ModelStub<TModelName>,
-  TModel: Model<TModelName, TRaw>,
->(ModelCtor: Class<TModel>) {
-  return (
-    query: ModelOrderedCollectionQuery,
-    pageSize: number,
-  ): ModelCursor<TModelName> => {
-    return {
-      id: uuid(),
-      modelName: ModelCtor.modelName,
-      pageSize,
-      query,
-    };
-  };
-}
-
-export function generateCreateListener<
-  TModelName: string,
-  TRaw: ModelStub<TModelName>,
-  TModel: Model<TModelName, TRaw>,
->(ModelCtor: Class<TModel>) {
-  return (query: ModelCollectionQuery): ModelListener<TModelName> => {
-    return {
-      id: uuid(),
-      modelName: ModelCtor.modelName,
-      query,
-    };
-  };
-}
-
-export function generateCreateOperation<
-  TModelName: string,
-  TRaw: ModelStub<TModelName>,
-  TModel: Model<TModelName, TRaw>,
->(ModelCtor: Class<TModel>) {
-  return (query: ModelCollectionQuery): ModelOperation<TModelName> => {
-    return {
-      id: uuid(),
-      modelName: ModelCtor.modelName,
-      query,
-    };
-  };
-}
 
 export function generateActionCreators<
   TModelName: string,
