@@ -128,7 +128,7 @@ if (__DEV__) {
     modal,
     banner,
     // Logging is last.
-    reduxLogger,
+    // reduxLogger,
   );
 } else {
   middleware = applyMiddleware(
