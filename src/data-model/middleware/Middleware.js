@@ -68,6 +68,7 @@ export default class Middleware<
   _collection: TCollection = Immutable.Map();
   _cursorMap: ModelCursorMap<TModelName> = Immutable.Map();
   _cursorStateMap: ModelCursorStateMap<TModelName> = Immutable.Map();
+  _deletedModels: Immutable.Set<ID> = Immutable.Set();
   _listenerMap: ModelListenerMap<TModelName> = Immutable.Map();
   _listenerSubscriptionMap: ListenerSubscriptionMap = Immutable.Map();
   _listenerStateMap: ModelListenerStateMap<TModelName> = Immutable.Map();
@@ -284,6 +285,18 @@ export default class Middleware<
     );
   };
 
+  _deleteModelLocally = (modelID: ID): void => {
+    invariant(
+      this._collection.has(modelID),
+      'Expecting model %s for %s to exist',
+      modelID,
+      this.constructor.__ModelCtor.modelName,
+    );
+
+    this._collection = this._collection.delete(modelID);
+    this._deletedModels = this._deletedModels.add(modelID);
+  };
+
   _deleteOperation = (operationID: ID): void => {
     invariant(
       this._operationMap.get(operationID),
@@ -305,11 +318,13 @@ export default class Middleware<
       listenerID,
     );
 
-    const modelIDs: Array<ID> = snapshot.docs.map(doc => doc.data().id);
-    const idAndModelPairs: Array<[ID, TModel]> = snapshot.docs.map(doc => {
-      const model = this.constructor.__ModelCtor.fromRaw(doc.data());
-      return [model.id, model];
-    });
+    const idAndModelPairs: Array<[ID, TModel]> = snapshot.docs
+      .map(doc => {
+        const model = this.constructor.__ModelCtor.fromRaw(doc.data());
+        return [model.id, model];
+      })
+      .filter(pair => !this._deletedModels.has(pair[0]));
+    const modelIDs: Array<ID> = idAndModelPairs.map(pair => pair[0]);
 
     listenerState = {
       ...listenerState,
@@ -380,11 +395,13 @@ export default class Middleware<
         }
 
         const didReachEnd = snapshot.docs.length < cursor.pageSize;
-        const modelIDs = snapshot.docs.map(doc => doc.data().id);
-        const idAndModelPairs = snapshot.docs.map(doc => {
-          const model = this.constructor.__ModelCtor.fromRaw(doc.data());
-          return [model.id, model];
-        });
+        const idAndModelPairs = snapshot.docs
+          .map(doc => {
+            const model = this.constructor.__ModelCtor.fromRaw(doc.data());
+            return [model.id, model];
+          })
+          .filter(pair => !this._deletedModels[pair[0]]);
+        const modelIDs = idAndModelPairs.map(pair => pair[0]);
 
         const cursorRef =
           snapshot.docs.length > 0
@@ -462,6 +479,15 @@ export default class Middleware<
           break;
         }
 
+        case 'MODEL_DELETE_MODEL_LOCALLY': {
+          const { modelName } = this.constructor.__ModelCtor;
+          if (action.modelName === modelName) {
+            this._deleteModelLocally(action.modelID);
+            this._dispatchUpdate();
+          }
+          break;
+        }
+
         case 'MODEL_DELETE_OPERATION': {
           const { modelName } = this.constructor.__ModelCtor;
           if (action.modelName === modelName) {
@@ -534,9 +560,13 @@ export default class Middleware<
     const { query } = operation;
     switch (query.type) {
       case 'COLLECTION_QUERY': {
-        const collection = await this.constructor.__ModelFetcher.genCollectionQuery(
+        let collection = await this.constructor.__ModelFetcher.genCollectionQuery(
           operation.query,
         );
+        collection = collection.filter(
+          model => !this._deleteModels.has(model.id),
+        );
+
         operationState = {
           ...operationState,
           loadState: { type: 'STEADY' },
@@ -552,8 +582,14 @@ export default class Middleware<
       }
 
       case 'ORDERED_COLLECTION_QUERY': {
-        const orderedCollection = await this.constructor.ModelFetcher.genOrderedCollectionQuery(
+        // TODO: This code path has not been tested yet. There is no use case
+        // at the moment.
+
+        let orderedCollection = await this.constructor.ModelFetcher.genOrderedCollectionQuery(
           operation.query,
+        );
+        orderedCollection = orderedCollection.filter(
+          model => !this._deletedModels.has(model.id),
         );
 
         operationState = {
@@ -576,16 +612,25 @@ export default class Middleware<
           operation.query,
         );
 
-        operationState = {
-          ...operationState,
-          loadState: { type: 'STEADY' },
-          modelID: model && model.id,
-        };
-
-        if (model) {
+        if (!model || this._deleteModels.has(model.id)) {
+          operationState = {
+            ...operationState,
+            loadState: { type: 'STEADY' },
+            modelID: null,
+          };
+        } else {
+          operationState = {
+            ...operationState,
+            loadState: { type: 'STEADY' },
+            modelID: model.id,
+          };
           this._collection = this._collection.set(model.id, model);
         }
 
+        this._operationStateMap = this._operationStateMap.set(
+          operation.id,
+          operationState,
+        );
         break;
       }
 

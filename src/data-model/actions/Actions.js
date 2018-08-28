@@ -22,6 +22,8 @@ export type ActionCreators<TModelName: string> = {|
 
   +deleteListener: (listenerID: ID) => Action$ModelDeleteListener<TModelName>,
 
+  +deleteModelLocally: (modelID: ID) => Action$DeleteModelLocally<TModelName>,
+
   +deleteOperation: (
     operationID: ID,
   ) => Action$ModelDeleteOperation<TModelName>,
@@ -50,6 +52,7 @@ export type Action<
   | Action$ModelClearReduxState<TModelName>
   | Action$ModelDeleteCursor<TModelName>
   | Action$ModelDeleteListener<TModelName>
+  | Action$ModelDeleteModelLocally<TModelName>
   | Action$ModelDeleteOperation<TModelName>
   | Action$ModelFetchCursorPage<TModelName>
   | Action$ModelSetAndRunListener<TModelName>
@@ -72,6 +75,12 @@ export type Action$ModelDeleteListener<TModelName: string> = {|
   +listenerID: ID,
   +modelName: TModelName,
   +type: 'MODEL_DELETE_LISTENER',
+|};
+
+export type Action$ModelDeleteModelLocally<TModelName: string> = {|
+  +modelID: ID,
+  +modelName: TModelName,
+  +type: 'MODEL_DELETE_MODEL_LOCALLY',
 |};
 
 export type Action$ModelDeleteOperation<TModelName: string> = {|
@@ -143,6 +152,12 @@ export function generateActionCreators<
       listenerID,
       modelName,
       type: 'MODEL_DELETE_LISTENER',
+    }),
+
+    deleteModelLocally: (modelID: ID) => ({
+      modelID,
+      modelName,
+      type: 'MODEL_DELETE_MODEL_LOCALLY',
     }),
 
     deleteOperation: (operationID: ID) => ({
