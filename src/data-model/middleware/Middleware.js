@@ -395,29 +395,33 @@ export default class Middleware<
         }
 
         const didReachEnd = snapshot.docs.length < cursor.pageSize;
-        const idAndModelPairs = snapshot.docs
+        const addedIDAndModelPairs = snapshot.docs
           .map(doc => {
             const model = this.constructor.__ModelCtor.fromRaw(doc.data());
             return [model.id, model];
           })
           .filter(pair => !this._deletedModels[pair[0]]);
-        const modelIDs = idAndModelPairs.map(pair => pair[0]);
+        const addedModelIDs = addedIDAndModelPairs.map(pair => pair[0]);
 
         const cursorRef =
           snapshot.docs.length > 0
             ? snapshot.docs[snapshot.docs.length - 1]
             : null;
 
+        const modelIDs = cursorState.modelIDs.concat(
+          Immutable.List(addedModelIDs),
+        );
+
         cursorState = {
           ...cursorState,
           cursorRef,
           didReachEnd,
-          loadState: { type: 'STEADY' },
-          modelIDs: cursorState.modelIDs.concat(Immutable.List(modelIDs)),
+          loadState: modelIDs.size > 0 ? { type: 'STEADY' } : { type: 'EMPTY' },
+          modelIDs,
         };
         // NOTE: All mutations should be kept in this section here.
         this._collection = this._collection.merge(
-          Immutable.Map(idAndModelPairs),
+          Immutable.Map(addedIDAndModelPairs),
         );
         this._cursorStateMap = this._cursorStateMap.set(cursorID, cursorState);
 
