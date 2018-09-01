@@ -13,7 +13,7 @@ import type {
 } from 'common/lib/models/Model';
 
 export type LoadState =
-  | {| +type: 'EMPTY' | 'LOADING' | 'STEADY' |}
+  | {| +type: 'UNINITIALIZED' | 'LOADING' | 'STEADY' |}
   | {| +error: FindiError, +type: 'FAILURE' |};
 
 // TODO: Move this to common.

@@ -108,7 +108,7 @@ export default class Middleware<
       cursorID: cursor.id,
       cursorRef: null,
       didReachEnd: false,
-      loadState: { type: 'EMPTY' },
+      loadState: { type: 'UNINITIALIZED' },
       modelIDs: Immutable.List(),
       modelName: this.constructor.__ModelCtor.modelName,
     };
@@ -416,7 +416,7 @@ export default class Middleware<
           ...cursorState,
           cursorRef,
           didReachEnd,
-          loadState: modelIDs.size > 0 ? { type: 'STEADY' } : { type: 'EMPTY' },
+          loadState: { type: 'STEADY' },
           modelIDs,
         };
         // NOTE: All mutations should be kept in this section here.

@@ -245,7 +245,7 @@ class AccountDetailsScreen extends Component<Props> {
       });
     }
 
-    if (loadState.type === 'EMPTY') {
+    if (loadState.type === 'STEADY' && transactions.size === 0) {
       data.push({
         key: 'TRANSACTION_EMPTY',
         render: this._renderTransactionEmpty,

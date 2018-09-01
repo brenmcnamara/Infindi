@@ -2,8 +2,6 @@
 
 import Immutable from 'immutable';
 
-import type FindiError from 'common/lib/FindiError';
-
 import type { Model, ModelCollection } from 'common/lib/models/Model';
 import type {
   ModelCursorMap,
@@ -15,10 +13,6 @@ import type {
 } from '../types';
 import type { ModelStub } from 'common/types/core';
 import type { PureAction } from '../../store';
-
-export type ModelLoadState =
-  | {| +error: FindiError, +type: 'FAILURE' |}
-  | {| +type: 'EMPTY' | 'LOADING' | 'STEADY' |};
 
 export type State<
   TModelName: string,
