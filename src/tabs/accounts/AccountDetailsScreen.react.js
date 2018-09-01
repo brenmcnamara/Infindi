@@ -226,10 +226,14 @@ class AccountDetailsScreen extends Component<Props> {
     ];
 
     let isFirstTransaction = true;
-    transactions.forEach(transaction => {
+    transactions.forEach((transaction, index) => {
+      // NOTE: Need to create an inner scope variable so we have a copy of the value
+      // value since render is delayed before it is called.
+      const isFirstTransactionInnerScope = isFirstTransaction;
       data.push({
         key: `TRANSACTION_${transaction.id}`,
-        render: () => this._renderTransaction(transaction, isFirstTransaction),
+        render: () =>
+          this._renderTransaction(transaction, isFirstTransactionInnerScope),
       });
       isFirstTransaction = false;
     });
