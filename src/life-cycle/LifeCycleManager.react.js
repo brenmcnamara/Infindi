@@ -13,18 +13,20 @@ import Immutable from 'immutable';
 import LifeCycleActions from './Actions';
 import TransactionActions from '../data-model/actions/Transaction';
 import TransactionDataUtils from '../data-model/data-utils/Transaction';
-import TransactionQuery from 'common/lib/models/TransactionQuery';
 import UserInfo from 'common/lib/models/UserInfo';
 import UserInfoActions from '../data-model/actions/UserInfo';
 import UserInfoDataUtils from '../data-model/data-utils/UserInfo';
 import UserInfoStateUtils from '../data-model/state-utils/UserInfo';
 
 import invariant from 'invariant';
+import nullthrows from 'nullthrows';
 
 import { connect } from 'react-redux';
 
 import type { ID } from 'common/types/core';
 import type { ReduxProps, ReduxState } from '../store';
+
+import Transaction from 'common/lib/models/Transaction';
 
 export type Props = ReduxProps & ComponentProps & ComputedProps;
 
@@ -78,14 +80,14 @@ class LifeCycleManager extends React.Component<Props> {
     this.props.dispatch(AccountLinkActions.clearReduxState());
   };
 
-  _onAddAccount = (accountID: ID): void => {
+  _onAddAccount = (userID: ID, accountID: ID): void => {
     invariant(
       !this.props.accountToTransactionCursor.get(accountID),
       'Expecting no transaction cursor to exist for account: %s',
       accountID,
     );
 
-    const query = TransactionQuery.OrderedCollection.forAccount(accountID);
+    const query = createTransactionQuery(userID, accountID);
     const cursor = TransactionDataUtils.createCursor(
       query,
       TRANSACTION_PAGE_SIZE,
@@ -129,7 +131,10 @@ class LifeCycleManager extends React.Component<Props> {
 
     this.props.accountIDs.forEach(accountID => {
       if (!prevProps.accountIDs.has(accountID)) {
-        this._onAddAccount(accountID);
+        this._onAddAccount(
+          nullthrows(this.props.loggedInUserInfo).id,
+          accountID,
+        );
       }
     });
 
@@ -171,3 +176,24 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
 }
 
 export default connect(mapReduxStateToProps)(LifeCycleManager);
+
+// NOTE: Getting permission issues with certain transaction queries. Need
+// to include userRef.refID in the query or firebase will create a permission
+// denied exception, even though the query returns the same result with and
+// without the userRef.refID filter. I suspect this is as a result of indexing.
+function createTransactionQuery(
+  userID: ID,
+  accountID: ID,
+): ModelOrderedCollectionQuery {
+  return {
+    handle: Transaction.FirebaseCollectionUNSAFE.where(
+      'userRef.refID',
+      '==',
+      userID,
+    )
+      .where('accountRef.refID', '==', accountID)
+      .orderBy('transactionDate', 'desc')
+      .orderBy('id'),
+    type: 'ORDERED_COLLECTION_QUERY',
+  };
+}

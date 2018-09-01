@@ -376,7 +376,7 @@ export default class Middleware<
     const { cursorRef } = cursorState;
 
     if (cursorRef) {
-      handle = handle.handlestartAfter(cursorRef);
+      handle = handle.startAfter(cursorRef);
     }
 
     handle
