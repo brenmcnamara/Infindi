@@ -74,15 +74,6 @@ function getIsInWatchSession(reduxState: ReduxState): boolean {
   return reduxState.lifeCycle.watchSessionActiveUserID !== null;
 }
 
-function isActiveUserInitialized(reduxState: ReduxState): boolean {
-  return (
-    didLoadAccounts(reduxState) &&
-    didLoadAccountLinks(reduxState) &&
-    didLoadProviders(reduxState) &&
-    didCreateTransactionCursors(reduxState)
-  );
-}
-
 function getTransactionCursorState(
   reduxState: ReduxState,
   accountID: ID,
@@ -112,5 +103,4 @@ export default {
   getIsInWatchSession,
   getTransactionCursorState,
   getUserFetchLoadState,
-  isActiveUserInitialized,
 };
