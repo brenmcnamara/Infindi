@@ -2,6 +2,7 @@
 
 import AuthStateUtils from './auth/StateUtils';
 import Content from './shared/components/Content.react';
+import Icons from './design/icons';
 import LifeCycleActions from './life-cycle/Actions';
 import LifeCycleStateUtils from './life-cycle/StateUtils';
 import React, { Component } from 'react';
@@ -9,11 +10,14 @@ import Screen from './shared/components/Screen.react';
 import ThemeComponent, { GetTheme } from './design/components/Theme.react';
 import UserInfoStateUtils from './data-model/state-utils/UserInfo';
 
+import invariant from 'invariant';
+
 import {
   ActivityIndicator,
   Animated,
   Easing,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -23,6 +27,7 @@ import {
 import { connect } from 'react-redux';
 import { dismissModal, RightPaneModalID } from './modal/Actions';
 
+import type FindiError from 'common/lib/FindiError';
 import type UserInfo, { UserInfoCollection } from 'common/lib/models/UserInfo';
 
 import type { ID } from 'common/types/core';
@@ -170,6 +175,14 @@ class RightPaneScreen extends Component<Props> {
     );
   }
 
+  _renderError(theme: Theme, error: FindiError) {
+    return (
+      <View key="ERROR" style={styles.errorRoot}>
+        <Image source={Icons.Error} style={styles.errorImage} />
+      </View>
+    );
+  }
+
   _renderUserInfo(theme: Theme, userInfo: UserInfo, isFirst: boolean) {
     const userGroups = [];
     if (userInfo.isAdmin) {
@@ -267,24 +280,42 @@ class RightPaneScreen extends Component<Props> {
     } = this.props;
 
     const data = [this._renderHeader(theme)];
-    if (
-      userFetchLoadState.type === 'LOADING' ||
-      userFetchLoadState.type === 'EMPTY'
-    ) {
-      data.push(this._renderSpinner(theme));
-    }
 
-    let isFirstUserInfo = true;
-    userInfos.forEach(userInfo => {
-      if (currentUserID !== userInfo.id) {
-        data.push(this._renderUserInfo(theme, userInfo, isFirstUserInfo));
+    switch (userFetchLoadState.type) {
+      case 'LOADING':
+      case 'UNINITIALIZED': {
+        data.push(this._renderSpinner(theme));
+        break;
       }
-      isFirstUserInfo = false;
-    });
 
-    if (activeUserID !== currentUserID) {
-      // Currently in watch session.
-      data.push(this._renderExitButton(theme));
+      case 'STEADY': {
+        let isFirstUserInfo = true;
+        userInfos.forEach(userInfo => {
+          if (currentUserID !== userInfo.id) {
+            data.push(this._renderUserInfo(theme, userInfo, isFirstUserInfo));
+          }
+          isFirstUserInfo = false;
+        });
+
+        if (activeUserID !== currentUserID) {
+          // Currently in watch session.
+          data.push(this._renderExitButton(theme));
+        }
+        break;
+      }
+
+      case 'FAILURE': {
+        data.push(this._renderError(theme, userFetchLoadState.error));
+        break;
+      }
+
+      default: {
+        invariant(
+          false,
+          'Unexpected user load status type: %s',
+          userFetchLoadState.type,
+        );
+      }
     }
 
     return data;
@@ -298,6 +329,13 @@ const styles = StyleSheet.create({
 
   content: {
     width: PANE_WIDTH,
+  },
+
+  errorImage: {},
+
+  errorRoot: {
+    alignItems: 'center',
+    paddingTop: 16,
   },
 
   headerRoot: {
