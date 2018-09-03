@@ -371,8 +371,7 @@ const styles = StyleSheet.create({
 
   spinnerRoot: {
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
+    paddingTop: 16,
   },
 });
 
