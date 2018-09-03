@@ -1,5 +1,7 @@
 /* @flow */
 
+/* eslint-disable max-len */
+
 import AccountLinkMiddleware from '../data-model/middleware/AccountLink';
 import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
 import AccountMiddleware from '../data-model/middleware/Account';
@@ -30,7 +32,6 @@ import type { Action as Action$Modal } from '../modal/Actions';
 import type { Action as Action$ModalMiddleware } from '../modal/middleware';
 import type { Action as Action$Navigation } from '../navigation/Actions';
 import type { Action as Action$Provider } from '../data-model/actions/Provider';
-// eslint-disable-next-line max-len
 import type { Action as Action$ProviderFuzzySearch } from '../data-model/actions/ProviderFuzzySearch';
 import type { Action as Action$Transaction } from '../data-model/actions/Transaction';
 import type { Action as Action$UserInfo } from '../data-model/actions/UserInfo';
@@ -128,7 +129,7 @@ if (__DEV__) {
     modal,
     banner,
     // Logging is last.
-    reduxLogger,
+    // reduxLogger,
   );
 } else {
   middleware = applyMiddleware(
