@@ -36,6 +36,11 @@ function didLoadAccountLinks(reduxState: ReduxState): boolean {
   return listenerState.loadState.type === 'STEADY';
 }
 
+function didLoadProviders(reduxState: ReduxState): boolean {
+  // Assuming that there is at least 1 provider (very safe assumption).
+  return reduxState.providerFuzzySearch.fullCollection.size > 0;
+}
+
 function didCreateTransactionCursors(reduxState: ReduxState): boolean {
   const { lifeCycle, transaction } = reduxState;
   const { accountToTransactionCursor } = lifeCycle;
@@ -73,6 +78,7 @@ function isActiveUserInitialized(reduxState: ReduxState): boolean {
   return (
     didLoadAccounts(reduxState) &&
     didLoadAccountLinks(reduxState) &&
+    didLoadProviders(reduxState) &&
     didCreateTransactionCursors(reduxState)
   );
 }
@@ -101,6 +107,7 @@ export default {
   didCreateTransactionCursors,
   didLoadAccountLinks,
   didLoadAccounts,
+  didLoadProviders,
   getActiveUserID,
   getIsInWatchSession,
   getTransactionCursorState,

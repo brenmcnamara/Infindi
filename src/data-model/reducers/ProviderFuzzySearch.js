@@ -3,18 +3,24 @@
 import Immutable from 'immutable';
 
 import type { LoadState } from '../types';
-import type { ProviderOrderedCollection } from 'common/lib/models/Provider';
+import type {
+  ProviderCollection,
+  ProviderOrderedCollection,
+} from 'common/lib/models/Provider';
 import type { PureAction } from '../../store';
 
 export type State = {
+  filteredCollection: ProviderOrderedCollection,
+  fullCollection: ProviderCollection,
   loadState: LoadState,
-  orderedCollection: ProviderOrderedCollection,
 };
 
 const DEFAULT_STATE = {
-  loadState: { type: 'EMPTY' },
   // $FlowFixMe - Immutable is being stupid.
-  orderedCollection: Immutable.OrderedMap(),
+  filteredCollection: Immutable.OrderedMap(),
+  // $FlowFixMe - Immutable is being stupid.
+  fullCollection: Immutable.OrderedMap(),
+  loadState: { type: 'UNINITIALIZED' },
 };
 
 export default function providers(
@@ -32,8 +38,9 @@ export default function providers(
     case 'FETCH_PROVIDERS_SUCCESS': {
       return {
         ...state,
+        filteredCollection: action.orderedCollection,
+        fullCollection: state.fullCollection.merge(action.orderedCollection),
         loadState: { type: 'STEADY' },
-        orderedCollection: action.orderedCollection,
       };
     }
 

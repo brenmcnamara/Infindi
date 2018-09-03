@@ -6,6 +6,7 @@ import Content from '../../shared/components/Content.react';
 import Downloading from '../../shared/components/Downloading.react';
 import Icons from '../../design/icons';
 import List from '../../list-ui/List.react';
+import ProviderFuzzySearchActions from '../../data-model/actions/ProviderFuzzySearch';
 import Screen from '../../shared/components/Screen.react';
 
 import invariant from 'invariant';
@@ -24,7 +25,7 @@ import { connect } from 'react-redux';
 import { GetTheme } from '../../design/components/Theme.react';
 import { NavBarHeight } from '../../design/layout';
 import { ProviderSearchError } from '../../../content/index';
-import { requestProviderLogin, updateProviderSearchText } from '../Actions';
+import { viewProviderLogin } from '../../navigation/Actions';
 
 import type AccountLink, {
   AccountLinkCollection,
@@ -208,11 +209,11 @@ class ProviderSearchScreen extends React.Component<Props> {
   };
 
   _onChangeSearch = (text: string): void => {
-    this.props.dispatch(updateProviderSearchText(text));
+    this.props.dispatch(ProviderFuzzySearchActions.fetchProviders(text));
   };
 
   _onSelectProvider = throttle(500, (provider: Provider): void => {
-    this.props.dispatch(requestProviderLogin(provider.id));
+    this.props.dispatch(viewProviderLogin(provider.id));
   });
 
   _getAccountLinkForProvider(provider: Provider): AccountLink | null {
@@ -249,7 +250,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
     didCompleteInitialSearch,
     enableInteraction: true,
     providerLoadState: reduxState.providerFuzzySearch.loadState,
-    providers: reduxState.providerFuzzySearch.orderedCollection,
+    providers: reduxState.providerFuzzySearch.filteredCollection,
     searchText: reduxState.accountVerification.providerSearchText,
   };
 }

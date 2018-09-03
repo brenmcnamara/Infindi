@@ -36,12 +36,12 @@ import {
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import { GetTheme } from '../../design/components/Theme.react';
-import {
-  requestProviderLogin,
-  requestProviderSearch,
-} from '../../link/Actions';
 import { requestInfoModal } from '../../modal/Actions';
-import { viewAccountDetails } from '../../navigation/Actions';
+import {
+  viewAccountDetails,
+  viewProviderLogin,
+  viewProviderSearch,
+} from '../../navigation/Actions';
 
 import type Account, {
   AccountCollection,
@@ -171,7 +171,7 @@ class AccountsScreen extends Component<Props> {
   }
 
   _onPressAddAccount = throttle(500, (): void => {
-    this.props.dispatch(requestProviderSearch());
+    this.props.dispatch(viewProviderSearch());
   });
 
   _onSelectGroupInfo = throttle(
@@ -215,7 +215,7 @@ class AccountsScreen extends Component<Props> {
         }),
       );
     } else {
-      this.props.dispatch(requestProviderLogin(accountLink.providerRef.refID));
+      this.props.dispatch(viewProviderLogin(accountLink.providerRef.refID));
     }
   });
 
@@ -442,7 +442,7 @@ function getTotalBalanceForAccountContainer(
 
 function getAccountLinksRequiringAttention(
   reduxState: ReduxState,
-): AccountLinkCollection  {
+): AccountLinkCollection {
   const accountLinks = AccountLinkStateUtils.getCollection(reduxState);
   return accountLinks.filter(
     accountLink =>

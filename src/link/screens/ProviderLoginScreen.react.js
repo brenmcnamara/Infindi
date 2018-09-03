@@ -146,7 +146,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
 
   const formType = accountLink && accountLink.isInMFA ? 'MFA' : 'LOGIN';
   const provider =
-    reduxState.providerFuzzySearch.orderedCollection.get(providerID) || null;
+    reduxState.providerFuzzySearch.filteredCollection.get(providerID) || null;
 
   return {
     callToAction,

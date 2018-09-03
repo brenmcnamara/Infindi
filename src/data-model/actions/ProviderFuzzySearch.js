@@ -23,3 +23,11 @@ type Action$FetchProvidersFailure = {|
   +error: FindiError,
   +type: 'FETCH_PROVIDERS_FAILURE',
 |};
+
+function fetchProviders(searchText: string) {
+  return { searchText, type: 'FETCH_PROVIDERS_INITIALIZE' };
+}
+
+export default {
+  fetchProviders,
+};

@@ -46,7 +46,7 @@ function calculateState(reduxState: ReduxState): State {
 
   // Loop through providers. There could be providers that do not have
   // account links.
-  reduxState.providerFuzzySearch.orderedCollection.forEach(provider => {
+  reduxState.providerFuzzySearch.fullCollection.forEach(provider => {
     providerDataMap = providerDataMap.set(provider.id, {
       isViewingLoginScreen: selectedProviderID === provider.id,
       pendingRequest: providerPendingLoginRequestMap[provider.id] || null,
@@ -56,7 +56,7 @@ function calculateState(reduxState: ReduxState): State {
     });
   });
 
-  // We can override providerStateMap values in this second pass. The data
+  // We can override providerDataMap values in this second pass. The data
   // from the account links has higher priority.
   accountLinks.forEach(accountLink => {
     const providerID = accountLink.providerRef.refID;

@@ -18,8 +18,6 @@ import type { LoginForm as YodleeLoginForm } from 'common/types/yodlee-v1.0';
 export type Action =
   | Action$ClearLoginForm
   | Action$ExitAccountVerification
-  | Action$RequestProviderLogin
-  | Action$RequestProviderSearch
   | Action$SubmitLoginFormFailure
   | Action$SubmitLoginFormInitialize
   | Action$SubmitLoginFormSuccess
@@ -39,35 +37,6 @@ export type Action$ExitAccountVerification = {|
 
 export function exitAccountVerification() {
   return { type: 'EXIT_ACCOUNT_VERIFICATION' };
-}
-
-export type Action$RequestProviderSearch = {|
-  +type: 'REQUEST_PROVIDER_SEARCH',
-|};
-
-export function requestProviderSearch() {
-  return { type: 'REQUEST_PROVIDER_SEARCH' };
-}
-
-export type Action$RequestProviderLogin = {|
-  +providerID: ID,
-  +type: 'REQUEST_PROVIDER_LOGIN',
-|};
-
-export function requestProviderLogin(providerID: ID) {
-  return { providerID, type: 'REQUEST_PROVIDER_LOGIN' };
-}
-
-export type Action$UpdateProviderSearchText = {|
-  +searchText: string,
-  +type: 'UPDATE_PROVIDER_SEARCH_TEXT',
-|};
-
-export function updateProviderSearchText(searchText: string) {
-  return {
-    searchText,
-    type: 'UPDATE_PROVIDER_SEARCH_TEXT',
-  };
 }
 
 export function unsupportedProvider(reason: string) {
@@ -116,7 +85,6 @@ export type Action$SubmitMFAFormInitialize = {|
   +providerID: ID,
   +type: 'SUBMIT_MFA_FORM_INITIALIZE',
 |};
-
 
 export type Action$SubmitMFAFormSuccess = {|
   +operationID: ID,

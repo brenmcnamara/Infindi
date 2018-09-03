@@ -7,7 +7,8 @@ export type Action =
   | Action$ExitAccountDetails
   | Action$SetShouldShowSignUpScreen
   | Action$ViewTab
-  | Action$ViewAccountDetails;
+  | Action$ViewAccountDetails
+  | Action$ViewProviderSearch;
 
 export type Action$ViewTab = {|
   +tabName: TabName,
@@ -17,6 +18,15 @@ export type Action$ViewTab = {|
 export type Action$ViewAccountDetails = {|
   +accountID: ID,
   +type: 'VIEW_ACCOUNT_DETAILS',
+|};
+
+export type Action$ViewProviderSearch = {|
+  +type: 'VIEW_PROVIDER_SEARCH',
+|};
+
+export type Action$ViewProviderLogin = {|
+  +providerID: ID,
+  +type: 'VIEW_PROVIDER_LOGIN',
 |};
 
 export type Action$ExitAccountDetails = {|
@@ -35,6 +45,14 @@ export function viewAccountDetails(accountID: ID) {
     accountID,
     type: 'VIEW_ACCOUNT_DETAILS',
   };
+}
+
+export function viewProviderSearch() {
+  return { type: 'VIEW_PROVIDER_SEARCH' };
+}
+
+export function viewProviderLogin(providerID: ID) {
+  return { providerID, type: 'VIEW_PROVIDER_LOGIN' };
 }
 
 export function exitAccountDetails() {

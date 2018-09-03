@@ -13,11 +13,8 @@ import invariant from 'invariant';
 import throttle from '../shared/throttle';
 
 import { connect } from 'react-redux';
-import { exitAccountDetails } from '../navigation/Actions';
-import {
-  exitAccountVerification,
-  requestProviderSearch,
-} from '../link/Actions';
+import { exitAccountDetails, viewProviderSearch } from './Actions';
+import { exitAccountVerification } from '../link/Actions';
 import { requestLeftPane, requestRightPane } from '../modal/Actions';
 
 import type { Action, ReduxProps, ReduxState } from '../store';
@@ -56,7 +53,7 @@ class MainNavigator extends React.Component<Props> {
         return exitAccountVerification();
 
       case 'ProviderLogin -> ProviderSearch':
-        return requestProviderSearch();
+        return viewProviderSearch();
 
       default:
         return invariant(false, `Unrecognized screen change: ${change}`);

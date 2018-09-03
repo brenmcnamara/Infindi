@@ -1,5 +1,7 @@
 /* @flow */
 
+/* eslint-disable max-len */
+
 import account from '../data-model/reducers/Account';
 import accountLink from '../data-model/reducers/AccountLink';
 import accountVerification from '../link/reducers/accountVerification';
@@ -27,7 +29,6 @@ import type { State as State$LifeCycle } from '../life-cycle/Reducer';
 import type { State as State$Modal } from '../modal/Reducer';
 import type { State as State$Navigation } from '../navigation/Reducer';
 import type { State as State$Provider } from '../data-model/reducers/Provider';
-// eslint-disable-next-line max-len
 import type { State as State$ProviderFuzzySearch } from '../data-model/reducers/ProviderFuzzySearch';
 import type { State as State$Settings } from '../settings/Reducer';
 import type { State as State$Transaction } from '../data-model/reducers/Transaction';

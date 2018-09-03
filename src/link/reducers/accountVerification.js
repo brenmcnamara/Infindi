@@ -38,6 +38,21 @@ export default function accountVerification(
   action: PureAction,
 ): State {
   switch (action.type) {
+    case 'CLEAR_LOGIN_FORM': {
+      const { providerID } = action;
+      const loginFormContainer = { ...state.loginFormContainer };
+      if (state.defaultLoginFormContainer[providerID]) {
+        loginFormContainer[providerID] =
+          state.defaultLoginFormContainer[providerID];
+      } else {
+        // NOTE: A default login form could not exist when a login form exists
+        // if the user loads the login form from the account links without ever
+        // loading the provider for that login form.
+        delete loginFormContainer[providerID];
+      }
+      return { ...state, loginFormContainer };
+    }
+
     case 'EXIT_ACCOUNT_VERIFICATION': {
       return { ...state, page: null };
     }
@@ -68,52 +83,6 @@ export default function accountVerification(
 
     case 'FETCH_PROVIDERS_FAILURE': {
       return { ...state, didCompleteInitialSearch: false };
-    }
-
-    case 'REQUEST_PROVIDER_LOGIN': {
-      return {
-        ...state,
-        page: { type: 'LOGIN', providerID: action.providerID },
-      };
-    }
-
-    case 'REQUEST_PROVIDER_SEARCH': {
-      return {
-        ...state,
-        page: { type: 'SEARCH' },
-      };
-    }
-
-    case 'UPDATE_PROVIDER_SEARCH_TEXT': {
-      return {
-        ...state,
-        providerSearchText: action.searchText,
-      };
-    }
-
-    case 'SUBMIT_LOGIN_FORM_INITIALIZE': {
-      const { providerID } = action;
-      const providerPendingLoginRequestMap = {
-        ...state.providerPendingLoginRequestMap,
-      };
-      const source = state.loginFormSource[providerID];
-      invariant(
-        source,
-        'Expecting login form source to exist when submitting login form for provider: %s',
-        providerID,
-      );
-      providerPendingLoginRequestMap[providerID] =
-        source === 'PROVIDER' ? 'LOGIN' : 'MFA';
-      return { ...state, providerPendingLoginRequestMap };
-    }
-
-    case 'SUBMIT_LOGIN_FORM_FAILURE': {
-      const { providerID } = action;
-      const providerPendingLoginRequestMap = {
-        ...state.providerPendingLoginRequestMap,
-      };
-      providerPendingLoginRequestMap[providerID] = 'FAILURE';
-      return { ...state, providerPendingLoginRequestMap };
     }
 
     case 'MODEL_UPDATE_STATE': {
@@ -175,19 +144,29 @@ export default function accountVerification(
       };
     }
 
-    case 'CLEAR_LOGIN_FORM': {
+    case 'SUBMIT_LOGIN_FORM_FAILURE': {
       const { providerID } = action;
-      const loginFormContainer = { ...state.loginFormContainer };
-      if (state.defaultLoginFormContainer[providerID]) {
-        loginFormContainer[providerID] =
-          state.defaultLoginFormContainer[providerID];
-      } else {
-        // NOTE: A default login form could not exist when a login form exists
-        // if the user loads the login form from the account links without ever
-        // loading the provider for that login form.
-        delete loginFormContainer[providerID];
-      }
-      return { ...state, loginFormContainer };
+      const providerPendingLoginRequestMap = {
+        ...state.providerPendingLoginRequestMap,
+      };
+      providerPendingLoginRequestMap[providerID] = 'FAILURE';
+      return { ...state, providerPendingLoginRequestMap };
+    }
+
+    case 'SUBMIT_LOGIN_FORM_INITIALIZE': {
+      const { providerID } = action;
+      const providerPendingLoginRequestMap = {
+        ...state.providerPendingLoginRequestMap,
+      };
+      const source = state.loginFormSource[providerID];
+      invariant(
+        source,
+        'Expecting login form source to exist when submitting login form for provider: %s',
+        providerID,
+      );
+      providerPendingLoginRequestMap[providerID] =
+        source === 'PROVIDER' ? 'LOGIN' : 'MFA';
+      return { ...state, providerPendingLoginRequestMap };
     }
 
     case 'UPDATE_LOGIN_FORM': {
@@ -195,6 +174,20 @@ export default function accountVerification(
       const loginFormContainer = { ...state.loginFormContainer };
       loginFormContainer[providerID] = loginForm;
       return { ...state, loginFormContainer };
+    }
+
+    case 'VIEW_PROVIDER_LOGIN': {
+      return {
+        ...state,
+        page: { type: 'LOGIN', providerID: action.providerID },
+      };
+    }
+
+    case 'VIEW_PROVIDER_SEARCH': {
+      return {
+        ...state,
+        page: { type: 'SEARCH' },
+      };
     }
   }
   return state;

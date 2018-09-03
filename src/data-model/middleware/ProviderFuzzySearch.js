@@ -6,7 +6,7 @@ import Immutable from 'immutable';
 import Provider from 'common/lib/models/Provider';
 import ReduxMiddleware from '../../shared/redux/ReduxMiddleware';
 
-import type { Next, PureAction, ReduxState } from '../../store';
+import type { PureAction, ReduxState } from '../../store';
 
 type SearchRequest = {| +searchText: string |} | null;
 
@@ -24,19 +24,8 @@ export default class ProviderFuzzySearch extends ReduxMiddleware<State> {
     prevState: State,
     action: PureAction,
   ): State => {
-    const fuzzySearchStatus = reduxState.providerFuzzySearch.loadState.type;
-
     switch (action.type) {
-      case 'REQUEST_PROVIDER_SEARCH':
-      case 'REQUEST_PROVIDER_LOGIN': {
-        if (fuzzySearchStatus === 'EMPTY' || fuzzySearchStatus === 'FAILURE') {
-          const searchText = reduxState.accountVerification.providerSearchText;
-          return { ...prevState, searchRequest: { searchText } };
-        }
-        return prevState;
-      }
-
-      case 'UPDATE_PROVIDER_SEARCH_TEXT': {
+      case 'FETCH_PROVIDERS_INITIALIZE': {
         const { searchText } = action;
         return { ...prevState, searchRequest: { searchText } };
       }
@@ -50,35 +39,36 @@ export default class ProviderFuzzySearch extends ReduxMiddleware<State> {
   __didUpdateState = (currentState: State, prevState: State): void => {
     const { searchRequest } = currentState;
     if (searchRequest && searchRequest !== prevState.searchRequest) {
-      const { searchText } = searchRequest;
-      runSearch(searchText, this.__dispatch);
+      this._runSearch(searchRequest);
     }
   };
-}
 
-async function runSearch(searchText: string, next: Next): Promise<void> {
-  next({
-    searchText,
-    type: 'FETCH_PROVIDERS_INITIALIZE',
-  });
-  let providers: Array<Provider>;
-  try {
-    providers = await FindiService.genQueryProviders(searchText, 100, 0);
-  } catch (error) {
-    next({
-      error: FindiError.fromUnknownEntity(error),
-      type: 'FETCH_PROVIDERS_FAILURE',
+  // TODO: There is a subtle bug in this function. If multiple searches get
+  // started, there is no guarantee of the order the searches will get completed
+  // so an earlier search can complete after a later search, causing the results
+  // of the later, more relevant search to get overridden by stale search
+  // results.
+  async _runSearch(searchRequest: string): Promise<void> {
+    let providers: Array<Provider>;
+    const { searchText } = searchRequest;
+    try {
+      providers = await FindiService.genQueryProviders(searchText, 100, 0);
+    } catch (error) {
+      this.__dispatch({
+        error: FindiError.fromUnknownEntity(error),
+        type: 'FETCH_PROVIDERS_FAILURE',
+      });
+      return;
+    }
+
+    const orderedCollection = Immutable.OrderedMap(
+      providers.map(provider => [provider.id, provider]),
+    );
+
+    this.__dispatch({
+      // $FlowFixMe - Immutable is being stupid.
+      orderedCollection,
+      type: 'FETCH_PROVIDERS_SUCCESS',
     });
-    return;
   }
-
-  const orderedCollection = Immutable.OrderedMap(
-    providers.map(provider => [provider.id, provider]),
-  );
-
-  next({
-    // $FlowFixMe - Immutable is being stupid.
-    orderedCollection,
-    type: 'FETCH_PROVIDERS_SUCCESS',
-  });
 }

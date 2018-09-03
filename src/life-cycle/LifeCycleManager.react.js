@@ -11,6 +11,7 @@ import AccountStateUtils from '../data-model/state-utils/Account';
 import AuthStateUtils from '../auth/StateUtils';
 import Immutable from 'immutable';
 import LifeCycleActions from './Actions';
+import ProviderFuzzySearchActions from '../data-model/actions/ProviderFuzzySearch';
 import TransactionActions from '../data-model/actions/Transaction';
 import TransactionDataUtils from '../data-model/data-utils/Transaction';
 import UserInfo from 'common/lib/models/UserInfo';
@@ -73,6 +74,8 @@ class LifeCycleManager extends React.Component<Props> {
     const accountQuery = AccountQuery.Collection.forUser(userInfo.id);
     const accountListener = AccountDataUtils.createListener(accountQuery);
     this.props.dispatch(AccountActions.setAndRunListener(accountListener));
+
+    this.props.dispatch(ProviderFuzzySearchActions.fetchProviders(''));
   };
 
   _onRemoveActiveUser = (): void => {
