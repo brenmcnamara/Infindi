@@ -7,22 +7,18 @@ import Screen from './shared/components/Screen.react';
 import TextDesign from './design/text';
 
 import { connect } from 'react-redux';
+import { FatalError as FatalErrorContent } from '../content';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { NoInternet as NoInternetContent } from '../content';
 
-class NoInternetScreen extends Component<{}> {
+class FatalErrorScreen extends Component<{}> {
   render() {
     return (
       <Screen>
         <Content>
           <View style={styles.root}>
-            <Image
-              resizeMode="contain"
-              source={Icons.Wifi}
-              style={styles.icon}
-            />
+            <Image source={Icons.ErrorLarge} />
             <Text style={[styles.text, TextDesign.header3]}>
-              {NoInternetContent}
+              {FatalErrorContent}
             </Text>
           </View>
         </Content>
@@ -31,22 +27,18 @@ class NoInternetScreen extends Component<{}> {
   }
 }
 
-export default connect()(NoInternetScreen);
+export default connect()(FatalErrorScreen);
 
 const styles = StyleSheet.create({
-  icon: {
-    height: 60,
-  },
-
   root: {
     alignItems: 'center',
     flex: 1,
-    marginTop: 80,
+    marginTop: 140,
   },
 
   text: {
-    paddingHorizontal: 16,
-    paddingTop: 32,
+    paddingHorizontal: 40,
+    paddingTop: 60,
     textAlign: 'center',
   },
 });

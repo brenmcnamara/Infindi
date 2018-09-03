@@ -93,6 +93,13 @@ export const NoInternet = cleanupWhitespace(`
 `);
 
 /**
+ * Shows when we cannot even initialize the app.
+ */
+export const FatalError = cleanupWhitespace(`
+  Findi could not be loaded at this time. Sorry for the inconvenience.
+`);
+
+/**
  * Message that shows when the user has no action items on the home page.
  */
 export const ActionItemPagerNullState = cleanupWhitespace(`

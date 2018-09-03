@@ -9,6 +9,7 @@ import Delta from '../../assets/icons/Delta-50x33.png';
 import Discover from '../../assets/icons/Discover-50x33.png';
 import Download from '../../assets/icons/Download-30x30.png';
 import Error from '../../assets/icons/Error-20x20.png';
+import ErrorLarge from '../../assets/icons/Error-60x60.png';
 import Home from '../../assets/icons/Home-28x28.png';
 import InfindiLogo from '../../assets/icons/InfindiLogo-59x28.png';
 import InfindiLogoDark from '../../assets/icons/InfindiLogoDark-32x15.png';
@@ -54,6 +55,7 @@ export default {
   },
   Download,
   Error,
+  ErrorLarge,
   Home,
   InfindiLogo,
   InfindiLogoDark,
