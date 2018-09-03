@@ -568,7 +568,7 @@ export default class Middleware<
           operation.query,
         );
         collection = collection.filter(
-          model => !this._deleteModels.has(model.id),
+          model => !this._deletedModels.has(model.id),
         );
 
         operationState = {
