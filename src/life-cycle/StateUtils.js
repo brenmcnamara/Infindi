@@ -100,7 +100,7 @@ function getTransactionCursorState(
 function getUserFetchLoadState(reduxState: ReduxState): LoadState {
   const { userInfo } = reduxState;
   const operationState = userInfo.operationStateMap.first();
-  return operationState ? operationState.loadState : { type: 'EMPTY' };
+  return operationState ? operationState.loadState : { type: 'UNINITIALIZED' };
 }
 
 export default {
