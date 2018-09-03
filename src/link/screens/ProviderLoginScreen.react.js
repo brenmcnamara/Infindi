@@ -125,12 +125,9 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
     reduxState,
     accountLink => accountLink.providerRef.refID === providerID,
   );
-  // TODO: Properly handle provider loading failure.
   invariant(
-    loginForm ||
-      reduxState.providerFuzzySearch.status === 'EMPTY' ||
-      reduxState.providerFuzzySearch.status === 'LOADING',
-    'Expecting login form to either be loading or to exist for providerID: %s',
+    loginForm,
+    'Expecting login form exist for providerID: %s',
     providerID,
   );
   const callToAction = loginForm
