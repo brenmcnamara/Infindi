@@ -19,7 +19,10 @@ const DEFAULT_STATE = {
   // $FlowFixMe - Immutable is being stupid.
   filteredCollection: Immutable.OrderedMap(),
   // $FlowFixMe - Immutable is being stupid.
-  fullCollection: Immutable.OrderedMap(),
+  fullCollection: Immutable.Map(),
+  // TODO: It is not clear what the semantics of this are. loadState is being
+  // updated sometimes on fuzzy search fetches and sometimes during the initial
+  // fetch.
   loadState: { type: 'UNINITIALIZED' },
 };
 
@@ -28,18 +31,30 @@ export default function providers(
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'FETCH_PROVIDERS_INITIALIZE': {
-      // NOTE: Does not handle the case where we have simultaneous fetches.
-      // That will probably never happen, so just assume we are only ever
-      // fetching providers one at a time.
+    case 'FETCH_ALL_PROVIDERS_FAILURE': {
+      return {
+        ...state,
+        loadState: { error: action.error, type: 'FAILURE' },
+      };
+    }
+
+    case 'FETCH_ALL_PROVIDERS_INITIALIZE': {
       return { ...state, loadState: { type: 'LOADING' } };
+    }
+
+    case 'FETCH_ALL_PROVIDERS_SUCCESS': {
+      return {
+        ...state,
+        filteredCollection: action.collection,
+        fullCollection: Immutable.Map(action.collection),
+        loadState: { type: 'STEADY' },
+      };
     }
 
     case 'FETCH_PROVIDERS_SUCCESS': {
       return {
         ...state,
         filteredCollection: action.orderedCollection,
-        fullCollection: state.fullCollection.merge(action.orderedCollection),
         loadState: { type: 'STEADY' },
       };
     }

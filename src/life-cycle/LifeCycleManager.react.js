@@ -75,7 +75,7 @@ class LifeCycleManager extends React.Component<Props> {
     const accountListener = AccountDataUtils.createListener(accountQuery);
     this.props.dispatch(AccountActions.setAndRunListener(accountListener));
 
-    this.props.dispatch(ProviderFuzzySearchActions.fetchProviders(''));
+    this.props.dispatch(ProviderFuzzySearchActions.fetchAllProviders());
   };
 
   _onRemoveActiveUser = (): void => {
