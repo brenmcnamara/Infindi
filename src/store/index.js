@@ -5,9 +5,9 @@
 import AccountLinkMiddleware from '../data-model/middleware/AccountLink';
 import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
 import AccountMiddleware from '../data-model/middleware/Account';
-import ProviderFuzzySearchMiddleware from '../data-model/middleware/ProviderFuzzySearch';
 import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
 import ProviderMiddleware from '../data-model/middleware/Provider';
+import RequestMiddleware from './RequestMiddleware';
 import TransactionMiddleware from '../data-model/middleware/Transaction';
 import UserInfoMiddleware from '../data-model/middleware/UserInfo';
 
@@ -33,6 +33,7 @@ import type { Action as Action$ModalMiddleware } from '../modal/middleware';
 import type { Action as Action$Navigation } from '../navigation/Actions';
 import type { Action as Action$Provider } from '../data-model/actions/Provider';
 import type { Action as Action$ProviderFuzzySearch } from '../data-model/actions/ProviderFuzzySearch';
+import type { Action as Action$RequestMiddleware } from './RequestMiddleware';
 import type { Action as Action$Transaction } from '../data-model/actions/Transaction';
 import type { Action as Action$UserInfo } from '../data-model/actions/UserInfo';
 import type { State } from './RootReducer';
@@ -55,6 +56,7 @@ export type PureAction =
   | Action$Navigation
   | Action$Provider
   | Action$ProviderFuzzySearch
+  | Action$RequestMiddleware
   | Action$Transaction
   | Action$UserInfo;
 
@@ -92,7 +94,7 @@ export type CombineReducers<TState: Object> = (reducerMap: {
 const accountLinkMiddleware = new AccountLinkMiddleware();
 const accountMiddleware = new AccountMiddleware();
 const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
-const providerFuzzySearchMiddleware = new ProviderFuzzySearchMiddleware();
+const requestMiddleware = new RequestMiddleware();
 const providerLoginMiddleware = new ProviderLoginMiddleware();
 const providerMiddleware = new ProviderMiddleware();
 
@@ -117,19 +119,21 @@ if (__DEV__) {
     transactionMiddleware.handle,
     userInfoMiddleware.handle,
     // -------------------------------------------------------------------------
-    // CUSTOM DATA MODEL MIDDLEWARE
+    // REQUEST HANDLER
     // -------------------------------------------------------------------------
-    providerFuzzySearchMiddleware.handle,
+    requestMiddleware.handle,
     // -------------------------------------------------------------------------
-    // UI MIDDLEWARE
+    // CUSTOM MIDDLEWARE
     // -------------------------------------------------------------------------
     providerLoginMiddleware.handle,
-    // Then comes ui-managing middleware.
     accountLinkFlowMiddleware.handle,
+    // -------------------------------------------------------------------------
+    // BOILERPLATE UI MIDDLEWARE
+    // -------------------------------------------------------------------------
     modal,
     banner,
     // Logging is last.
-    // reduxLogger,
+    reduxLogger,
   );
 } else {
   middleware = applyMiddleware(
@@ -146,15 +150,17 @@ if (__DEV__) {
     transactionMiddleware.handle,
     userInfoMiddleware.handle,
     // -------------------------------------------------------------------------
-    // CUSTOM DATA MODEL MIDDLEWARE
+    // REQUEST HANDLER
     // -------------------------------------------------------------------------
-    providerFuzzySearchMiddleware.handle,
+    requestMiddleware.handle,
+    // -------------------------------------------------------------------------
+    // CUSTOM MIDDLEWARE
+    // -------------------------------------------------------------------------
+    providerLoginMiddleware.handle,
+    accountLinkFlowMiddleware.handle,
     // -------------------------------------------------------------------------
     // UI MIDDLEWARE
     // -------------------------------------------------------------------------
-    providerLoginMiddleware.handle,
-    // Then comes ui-managing middleware.
-    accountLinkFlowMiddleware.handle,
     modal,
     banner,
   );

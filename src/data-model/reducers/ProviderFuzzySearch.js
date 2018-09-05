@@ -1,6 +1,7 @@
 /* @flow */
 
 import Immutable from 'immutable';
+import ProviderFuzzySearchActions from '../actions/ProviderFuzzySearch';
 
 import type { LoadState } from '../types';
 import type {
@@ -31,39 +32,53 @@ export default function providers(
   action: PureAction,
 ): State {
   switch (action.type) {
-    case 'FETCH_ALL_PROVIDERS_FAILURE': {
-      return {
-        ...state,
-        loadState: { error: action.error, type: 'FAILURE' },
-      };
+    case 'REQUEST_FAILURE': {
+      if (
+        action.requestID ===
+          ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID ||
+        action.requestID ===
+          ProviderFuzzySearchActions.PROVIDER_FUZZY_SEARCH_REQUEST_ID
+      ) {
+        return {
+          ...state,
+          loadState: { error: action.error, type: 'FAILURE' },
+        };
+      }
+      return state;
     }
 
-    case 'FETCH_ALL_PROVIDERS_INITIALIZE': {
-      return { ...state, loadState: { type: 'LOADING' } };
+    case 'REQUEST_INITIALIZE': {
+      if (
+        action.requestID ===
+        ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID
+      ) {
+        return { ...state, loadState: { type: 'LOADING' } };
+      }
+      return state;
     }
 
-    case 'FETCH_ALL_PROVIDERS_SUCCESS': {
-      return {
-        ...state,
-        filteredCollection: action.collection,
-        fullCollection: Immutable.Map(action.collection),
-        loadState: { type: 'STEADY' },
-      };
-    }
-
-    case 'FETCH_PROVIDERS_SUCCESS': {
-      return {
-        ...state,
-        filteredCollection: action.orderedCollection,
-        loadState: { type: 'STEADY' },
-      };
-    }
-
-    case 'FETCH_PROVIDERS_FAILURE': {
-      return {
-        ...state,
-        loadState: { error: action.error, type: 'FAILURE' },
-      };
+    case 'REQUEST_SUCCESS': {
+      if (
+        action.requestID ===
+        ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID
+      ) {
+        return {
+          ...state,
+          filteredCollection: action.value,
+          fullCollection: Immutable.Map(action.collection),
+          loadState: { type: 'STEADY' },
+        };
+      } else if (
+        action.requestID ===
+        ProviderFuzzySearchActions.PROVIDER_FUZZY_SEARCH_REQUEST_ID
+      ) {
+        return {
+          ...state,
+          filteredCollection: action.value,
+          loadState: { type: 'STEADY' },
+        };
+      }
+      return state;
     }
   }
   return state;

@@ -1,8 +1,12 @@
 /* @flow */
 
-import type FindiError from 'common/lib/FindiError';
+import FindiService from '../../FindiService';
+import Immutable from 'immutable';
 
-import type { ProviderOrderedCollection } from 'common/lib/models/Provider';
+import type FindiError from 'common/lib/FindiError';
+import type Provider, {
+  ProviderOrderedCollection,
+} from 'common/lib/models/Provider';
 
 export type Action =
   | Action$FetchAllProvidersFailure
@@ -12,44 +16,84 @@ export type Action =
   | Action$FetchProvidersInitialize
   | Action$FetchProvidersSuccess;
 
-type Action$FetchProvidersInitialize = {|
-  +searchText: string,
-  +type: 'FETCH_PROVIDERS_INITIALIZE',
+const PROVIDER_FETCH_ALL_REQUEST_ID = 'PROVIDER_FETCH_ALL';
+const PROVIDER_FUZZY_SEARCH_REQUEST_ID = 'PROVIDER_FUZZY_SEARCH';
+
+type Action$FetchAllProvidersFailure = {|
+  +error: FindiError,
+  +requestID: PROVIDER_FETCH_ALL_REQUEST_ID,
+  +type: 'REQUEST_FAILURE',
 |};
 
-type Action$FetchProvidersSuccess = {|
-  +orderedCollection: ProviderOrderedCollection,
-  +type: 'FETCH_PROVIDERS_SUCCESS',
+type Action$FetchAllProvidersInitialize = {|
+  +genInvoke: () => Promise<ProviderOrderedCollection>,
+  +requestID: PROVIDER_FETCH_ALL_REQUEST_ID,
+  +type: 'REQUEST_INITIALIZE',
+|};
+
+type Action$FetchAllProvidersSuccess = {|
+  +requestID: PROVIDER_FETCH_ALL_REQUEST_ID,
+  +type: 'REQUEST_SUCCESS',
+  +value: ProviderOrderedCollection,
 |};
 
 type Action$FetchProvidersFailure = {|
   +error: FindiError,
-  +type: 'FETCH_PROVIDERS_FAILURE',
+  +requestID: PROVIDER_FUZZY_SEARCH_REQUEST_ID,
+  +type: 'REQUEST_FAILURE',
 |};
 
-type Action$FetchAllProvidersInitialize = {|
-  +type: 'FETCH_ALL_PROVIDERS_INITIALIZE',
+type Action$FetchProvidersInitialize = {|
+  +requestID: PROVIDER_FUZZY_SEARCH_REQUEST_ID,
+  +type: 'REQUEST_INITIALIZE',
+  +value: ProviderOrderedCollection,
 |};
 
-type Action$FetchAllProvidersSuccess = {|
-  +collection: ProviderOrderedCollection,
-  +type: 'FETCH_ALL_PROVIDERS_SUCCESS',
-|};
-
-type Action$FetchAllProvidersFailure = {|
-  +error: FindiError,
-  +type: 'FETCH_ALL_PROVIDERS_FAILURE',
+type Action$FetchProvidersSuccess = {|
+  +requestID: PROVIDER_FUZZY_SEARCH_REQUEST_ID,
+  +type: 'REQUEST_SUCCESS',
+  +value: ProviderOrderedCollection,
 |};
 
 function fetchAllProviders() {
-  return { type: 'FETCH_ALL_PROVIDERS_INITIALIZE' };
+  return {
+    genInvoke: genInvokeFetchAll,
+    requestID: PROVIDER_FETCH_ALL_REQUEST_ID,
+    type: 'REQUEST_INITIALIZE',
+  };
 }
 
 function fetchProviders(searchText: string) {
-  return { searchText, type: 'FETCH_PROVIDERS_INITIALIZE' };
+  return {
+    genInvoke: createGenInvokeFuzzySearch(searchText),
+    requestID: PROVIDER_FUZZY_SEARCH_REQUEST_ID,
+    type: 'REQUEST_INITIALIZE',
+  };
+}
+
+function createGenInvokeFuzzySearch(searchText: string) {
+  return async () => {
+    const providers: Array<Provider> = await FindiService.genQueryProviders(
+      searchText,
+      100,
+      0,
+    );
+    return Immutable.OrderedMap(providers.map(p => [p.id, p]));
+  };
+}
+
+async function genInvokeFetchAll() {
+  const providers: Array<Provider> = await FindiService.genQueryProviders(
+    '',
+    100,
+    0,
+  );
+  return Immutable.OrderedMap(providers.map(p => [p.id, p]));
 }
 
 export default {
   fetchAllProviders,
   fetchProviders,
+  PROVIDER_FETCH_ALL_REQUEST_ID,
+  PROVIDER_FUZZY_SEARCH_REQUEST_ID,
 };
