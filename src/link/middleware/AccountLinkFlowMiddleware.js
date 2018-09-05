@@ -2,7 +2,7 @@
 
 import AccountLinkStateUtils from '../../data-model/state-utils/AccountLink';
 import Immutable from 'immutable';
-import ReduxMiddleware from '../../shared/redux/ReduxMiddleware';
+import ReduxDiffMiddleware from '../../shared/redux/ReduxDiffMiddleware';
 
 import invariant from 'invariant';
 
@@ -73,7 +73,9 @@ function calculateState(reduxState: ReduxState): State {
   return { providerDataMap };
 }
 
-export default class AccountLinkFlowMiddleware extends ReduxMiddleware<State> {
+export default class AccountLinkFlowMiddleware extends ReduxDiffMiddleware<
+  State,
+> {
   _bannerBuffer: Array<Banner> = [];
 
   static __calculateInitialState = calculateState;

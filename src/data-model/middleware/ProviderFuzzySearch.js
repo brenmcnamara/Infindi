@@ -4,7 +4,7 @@ import FindiError from 'common/lib/FindiError';
 import FindiService from '../../FindiService';
 import Immutable from 'immutable';
 import Provider from 'common/lib/models/Provider';
-import ReduxMiddleware from '../../shared/redux/ReduxMiddleware';
+import ReduxDiffMiddleware from '../../shared/redux/ReduxDiffMiddleware';
 
 import type { PureAction, ReduxState } from '../../store';
 
@@ -26,7 +26,7 @@ type State = {
 // handles the semantics of initialization, success, failure triples of actions.
 // We can also encode strategies for what to do when we get a new request
 // that may complete with a previously sent action.
-export default class ProviderFuzzySearch extends ReduxMiddleware<State> {
+export default class ProviderFuzzySearch extends ReduxDiffMiddleware<State> {
   static __calculateInitialState = (reduxState: ReduxState): State => {
     return { searchRequest: null };
   };

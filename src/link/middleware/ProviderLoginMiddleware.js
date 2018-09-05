@@ -1,7 +1,7 @@
 /* @flow */
 
 import FindiService from '../../FindiService';
-import ReduxMiddleware from '../../shared/redux/ReduxMiddleware';
+import ReduxDiffMiddleware from '../../shared/redux/ReduxDiffMiddleware';
 
 import invariant from 'invariant';
 
@@ -22,7 +22,9 @@ type State = {|
   +submittedLoginForm: YodleeLoginForm | null,
 |};
 
-export default class ProviderLoginMiddleware extends ReduxMiddleware<State> {
+export default class ProviderLoginMiddleware extends ReduxDiffMiddleware<
+  State,
+> {
   static __calculateInitialState = () => ({
     formType: null,
     submitFormAction: null,

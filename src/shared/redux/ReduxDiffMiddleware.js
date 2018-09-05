@@ -6,7 +6,11 @@ import type { Next, PureAction, ReduxState, StoreType } from '../../store';
 
 export type ActionPhase = 'PRE-ACTION' | 'POST-ACTION';
 
-export default class ReduxMiddleware<TState> {
+/**
+ * An abstraction for redux middleware where we are checking for changes in the
+ * state. This middleware is not suited for inspecting individual actions.
+ */
+export default class ReduxDiffMiddleware<TState> {
   _state: TState;
   _next: Next | null = null;
 
