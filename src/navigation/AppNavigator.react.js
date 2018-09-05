@@ -24,8 +24,8 @@ export default class AppNavigator extends React.Component<Props> {
     );
   }
 
-  _calculateScreenForState = (state: ReduxState): string => {
-    const { auth } = state;
+  _calculateScreenForState = (reduxState: ReduxState): string => {
+    const { auth } = reduxState;
     switch (auth.status.type) {
       case 'LOGIN_INITIALIZE':
       case 'LOGIN_FAILURE':
@@ -34,7 +34,6 @@ export default class AppNavigator extends React.Component<Props> {
       case 'LOGGED_OUT':
       case 'SIGN_UP_FAILURE':
       case 'SIGN_UP_INITIALIZE': {
-        // The user can only see the login page if they have internet.
         return 'Auth';
       }
 
