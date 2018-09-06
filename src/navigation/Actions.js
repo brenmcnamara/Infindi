@@ -8,6 +8,7 @@ export type Action =
   | Action$SetShouldShowSignUpScreen
   | Action$ViewTab
   | Action$ViewAccountDetails
+  | Action$ViewProviderLogin
   | Action$ViewProviderSearch;
 
 export type Action$ViewTab = {|

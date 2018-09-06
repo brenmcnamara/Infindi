@@ -15,6 +15,7 @@ import type {
   ModelCollection,
   ModelMutator,
   ModelOrderedCollection,
+  ModelOrderedCollectionQuery,
 } from 'common/lib/models/Model';
 import type {
   ModelCursor,
@@ -28,6 +29,9 @@ import type {
   ModelOperation,
   ModelOperationMap,
   ModelOperationState,
+  ModelOperationState$Collection,
+  ModelOperationState$OrderedCollection,
+  ModelOperationState$Single,
   ModelOperationStateMap,
 } from '../types';
 import type { Next, PureAction, StoreType } from '../../store';
@@ -152,7 +156,7 @@ export default class Middleware<
     );
   };
 
-  _setAndRunOperation = (operation: ModelOperation<TModelName>): void => {
+  _setAndRunOperation = (operation: ModelOperation<*>): void => {
     invariant(
       !this._operationMap.get(operation.id),
       'Trying to create an operation for %s that already exists: %s',
@@ -161,37 +165,42 @@ export default class Middleware<
     );
 
     const { query } = operation;
-    let operationState: ModelOperationState<TModelName>;
+    let operationState;
 
     switch (query.type) {
       case 'COLLECTION_QUERY': {
-        operationState = {
+        // $FlowFixMe - Need to find a way to type this properly
+        operationState = ({
           loadState: { type: 'LOADING' },
           modelIDs: Immutable.Set(),
           modelName: this.constructor.__ModelCtor.modelName,
           operationID: operation.id,
           queryType: 'COLLECTION_QUERY',
-        };
+        }: ModelOperationState$Collection<TModelName>);
         break;
       }
 
       case 'ORDERED_COLLECTION_QUERY': {
-        operationState = {
+        // $FlowFixMe - Need to find a way to type this properly
+        operationState = ({
           loadState: { type: 'LOADING' },
           modelIDs: Immutable.List(),
+          modelName: this.constructor.__ModelCtor.modelName,
           operationID: operation.id,
-          queryType: 'ORDERED_COLLECTION_OPERATION',
-        };
+          queryType: 'ORDERED_COLLECTION_QUERY',
+        }: ModelOperationState$OrderedCollection<TModelName>);
         break;
       }
 
       case 'SINGLE_QUERY': {
-        operationState = {
+        // $FlowFixMe - Need to find a way to type this properly
+        operationState = ({
           loadState: { type: 'LOADING' },
           modelID: null,
+          modelName: this.constructor.__ModelCtor.modelName,
           operationID: operation.id,
           queryType: 'SINGLE_QUERY',
-        };
+        }: ModelOperationState$Single<TModelName>);
         break;
       }
 
@@ -222,6 +231,7 @@ export default class Middleware<
       );
 
       const findiError = FindiError.fromUnknownEntity(error);
+      // $FlowFixMe - Do not know how to precisely type this. Could be 1 of 3 types.
       operationStateInnerScope = {
         ...operationStateInnerScope,
         loadState: { error: findiError, type: 'FAILURE' },
@@ -395,12 +405,12 @@ export default class Middleware<
         }
 
         const didReachEnd = snapshot.docs.length < cursor.pageSize;
-        const addedIDAndModelPairs = snapshot.docs
+        const addedIDAndModelPairs: Array<[ID, TModel]> = snapshot.docs
           .map(doc => {
             const model = this.constructor.__ModelCtor.fromRaw(doc.data());
             return [model.id, model];
           })
-          .filter(pair => !this._deletedModels[pair[0]]);
+          .filter(pair => !this._deletedModels.has(pair[0]));
         const addedModelIDs = addedIDAndModelPairs.map(pair => pair[0]);
 
         const cursorRef =
@@ -565,17 +575,19 @@ export default class Middleware<
     switch (query.type) {
       case 'COLLECTION_QUERY': {
         let collection = await this.constructor.__ModelFetcher.genCollectionQuery(
-          operation.query,
+          query,
         );
         collection = collection.filter(
           model => !this._deletedModels.has(model.id),
         );
 
-        operationState = {
+        // $FlowFixMe - Need to find a way to type this properly
+        operationState = ({
           ...operationState,
           loadState: { type: 'STEADY' },
           modelIDs: Immutable.Set(collection.keys()),
-        };
+          queryType: 'COLLECTION_QUERY',
+        }: ModelOperationState$Collection<TModelName>);
 
         this._operationStateMap = this._operationStateMap.set(
           operation.id,
@@ -589,18 +601,20 @@ export default class Middleware<
         // TODO: This code path has not been tested yet. There is no use case
         // at the moment.
 
-        let orderedCollection = await this.constructor.ModelFetcher.genOrderedCollectionQuery(
-          operation.query,
+        let orderedCollection = await this.constructor.__ModelFetcher.genOrderedCollectionQuery(
+          query,
         );
         orderedCollection = orderedCollection.filter(
           model => !this._deletedModels.has(model.id),
         );
 
-        operationState = {
+        // $FlowFixMe - Need to find a way to type this properly
+        operationState = ({
           ...operationState,
           loadState: { type: 'STEADY' },
           modelIDs: Immutable.List(orderedCollection.keys()),
-        };
+          queryType: 'ORDERED_COLLECTION_QUERY',
+        }: ModelOperationState$OrderedCollection<TModelName>);
 
         this._operationStateMap = this._operationStateMap.set(
           operation.id,
@@ -613,21 +627,25 @@ export default class Middleware<
 
       case 'SINGLE_QUERY': {
         const model = await this.constructor.__ModelFetcher.genSingleQuery(
-          operation.query,
+          query,
         );
 
-        if (!model || this._deleteModels.has(model.id)) {
-          operationState = {
+        if (!model || this._deletedModels.has(model.id)) {
+          // $FlowFixMe - Need to find a way to type this properly
+          operationState = ({
             ...operationState,
             loadState: { type: 'STEADY' },
             modelID: null,
-          };
+            queryType: 'SINGLE_QUERY',
+          }: ModelOperationState$Single<TModelName>);
         } else {
-          operationState = {
+          // $FlowFixMe - Need to find a way to type this properly
+          operationState = ({
             ...operationState,
             loadState: { type: 'STEADY' },
             modelID: model.id,
-          };
+            queryType: 'SINGLE_QUERY',
+          }: ModelOperationState$Single<TModelName>);
           this._collection = this._collection.set(model.id, model);
         }
 
@@ -642,7 +660,7 @@ export default class Middleware<
         invariant(
           false,
           'Unrecognized operation type: %s for operation %s for model %s',
-          operation.type,
+          query.type,
           operation.id,
           this.constructor.__ModelCtor.modelName,
         );

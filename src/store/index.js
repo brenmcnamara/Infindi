@@ -56,7 +56,6 @@ export type PureAction =
   | Action$Navigation
   | Action$Provider
   | Action$ProviderFuzzySearch
-  | Action$RequestMiddleware
   | Action$Transaction
   | Action$UserInfo;
 

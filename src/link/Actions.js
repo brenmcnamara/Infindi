@@ -24,8 +24,7 @@ export type Action =
   | Action$SubmitMFAFormFailure
   | Action$SubmitMFAFormInitialize
   | Action$SubmitMFAFormSuccess
-  | Action$UpdateLoginForm
-  | Action$UpdateProviderSearchText;
+  | Action$UpdateLoginForm;
 
 export const PROVIDER_LOGIN_MODAL_ID = 'YODLEE_LOGIN';
 

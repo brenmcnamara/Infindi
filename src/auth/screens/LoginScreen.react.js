@@ -40,6 +40,8 @@ type State = {
   isShowingLoginError: boolean,
 };
 
+type TextInputRef = ElementRef<typeof TextInput>;
+
 const AMPLITUDE = 7;
 const PRECISION = 15;
 const NUMBER_OF_SHAKES = 3;
@@ -58,7 +60,7 @@ class LoginScreen extends Component<Props, State> {
   _errorWiggleAnimation = new Animated.Value(0);
   _isAnimating: boolean = false;
   _isWaitingForLoginResult: boolean = false;
-  _passwordInputRef: ElementRef<typeof TextInput>;
+  _passwordInputRef: TextInputRef | null;
 
   componentDidMount(): void {
     if (this.props.loginType === 'ERROR') {
@@ -211,7 +213,7 @@ class LoginScreen extends Component<Props, State> {
   };
 
   _onSubmitEmail = (): void => {
-    this._passwordInputRef.focus();
+    this._passwordInputRef && this._passwordInputRef.focus();
   };
 
   _onSubmitPassword = (): void => {
@@ -227,7 +229,7 @@ class LoginScreen extends Component<Props, State> {
     this.props.dispatch(login(this.state.credentials));
   };
 
-  _setPasswordRef = (ref: ElementRef<typeof TextInput>) => {
+  _setPasswordRef = (ref: TextInputRef | null) => {
     this._passwordInputRef = ref;
   };
 

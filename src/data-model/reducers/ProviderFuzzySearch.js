@@ -65,7 +65,7 @@ export default function providers(
         return {
           ...state,
           filteredCollection: action.value,
-          fullCollection: Immutable.Map(action.collection),
+          fullCollection: Immutable.Map(action.value),
           loadState: { type: 'STEADY' },
         };
       } else if (

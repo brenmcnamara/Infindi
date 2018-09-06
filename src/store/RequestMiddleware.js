@@ -10,9 +10,9 @@ import type { ID } from 'common/types/core';
 import type { Next, PureAction, ReduxState, StoreType } from '.';
 
 export type Action<T> =
-  | Action$Failure
-  | Action$Initialize<T>
-  | Action$Success<T>;
+  | Action$RequestFailure
+  | Action$RequestInitialize<T>
+  | Action$RequestSuccess<T>;
 
 export type Action$RequestInitialize<T> = {|
   +genInvoke: () => Promise<T>,
@@ -66,6 +66,7 @@ export default class NetworkRequestMiddleware {
           // this request.
           return;
         }
+        // $FlowFixMe - I don't have a way currently to precisely type this.
         this._dispatch({
           requestID,
           type: 'REQUEST_SUCCESS',
@@ -91,6 +92,7 @@ export default class NetworkRequestMiddleware {
           return;
         }
         const findiError = FindiError.fromUnknownEntity(error);
+        // $FlowFixMe - I don't have a way currently to precisely type this.
         this._dispatch({
           error: findiError,
           requestID,
@@ -122,7 +124,7 @@ export default class NetworkRequestMiddleware {
       this._store,
       'Cannot call "_getState" until the middleware has been connected to redux',
     );
-    this._store.getState();
+    return this._store.getState();
   }
 
   handle = (store: StoreType) => (next: Next) => {

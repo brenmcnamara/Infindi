@@ -22,7 +22,9 @@ export type ActionCreators<TModelName: string> = {|
 
   +deleteListener: (listenerID: ID) => Action$ModelDeleteListener<TModelName>,
 
-  +deleteModelLocally: (modelID: ID) => Action$DeleteModelLocally<TModelName>,
+  +deleteModelLocally: (
+    modelID: ID,
+  ) => Action$ModelDeleteModelLocally<TModelName>,
 
   +deleteOperation: (
     operationID: ID,

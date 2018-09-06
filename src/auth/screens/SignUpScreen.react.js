@@ -244,23 +244,23 @@ class SignUpScreen extends Component<Props, State> {
 
   _onSubmitConfirmPassword = (): void => {};
 
-  _setFirstNameInputRef = (ref: TextInputRef): void => {
+  _setFirstNameInputRef = (ref: TextInputRef | null): void => {
     this._firstNameInputRef = ref;
   };
 
-  _setLastNameInputRef = (ref: TextInputRef): void => {
+  _setLastNameInputRef = (ref: TextInputRef | null): void => {
     this._lastNameInputRef = ref;
   };
 
-  _setEmailInputRef = (ref: TextInputRef): void => {
+  _setEmailInputRef = (ref: TextInputRef | null): void => {
     this._emailInputRef = ref;
   };
 
-  _setPasswordInputRef = (ref: TextInputRef): void => {
+  _setPasswordInputRef = (ref: TextInputRef | null): void => {
     this._passwordInputRef = ref;
   };
 
-  _setConfirmPasswordInputRef = (ref: TextInputRef): void => {
+  _setConfirmPasswordInputRef = (ref: TextInputRef | null): void => {
     this._confirmPasswordInputRef = ref;
   };
 

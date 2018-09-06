@@ -52,7 +52,7 @@ export default (store: StoreType) => (next: Next) => {
         const newQueue = bannerQueue.slice();
         const index = bannerQueue.findIndex(banner => banner.id === bannerID);
         invariant(
-          !action.shouldThrowOnDismissingNonExistantToast || index >= 0,
+          index >= 0,
           'Trying to dismiss toast that is not in queue: %s',
           bannerID,
         );

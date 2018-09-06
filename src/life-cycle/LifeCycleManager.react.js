@@ -25,6 +25,7 @@ import nullthrows from 'nullthrows';
 import { connect } from 'react-redux';
 
 import type { ID } from 'common/types/core';
+import type { ModelOrderedCollectionQuery } from 'common/lib/models/Model';
 import type { ReduxProps, ReduxState } from '../store';
 
 import Transaction from 'common/lib/models/Transaction';

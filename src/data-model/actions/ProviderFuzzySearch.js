@@ -21,36 +21,36 @@ const PROVIDER_FUZZY_SEARCH_REQUEST_ID = 'PROVIDER_FUZZY_SEARCH';
 
 type Action$FetchAllProvidersFailure = {|
   +error: FindiError,
-  +requestID: PROVIDER_FETCH_ALL_REQUEST_ID,
+  +requestID: 'PROVIDER_FETCH_ALL',
   +type: 'REQUEST_FAILURE',
 |};
 
 type Action$FetchAllProvidersInitialize = {|
   +genInvoke: () => Promise<ProviderOrderedCollection>,
-  +requestID: PROVIDER_FETCH_ALL_REQUEST_ID,
+  +requestID: 'PROVIDER_FETCH_ALL',
   +type: 'REQUEST_INITIALIZE',
 |};
 
 type Action$FetchAllProvidersSuccess = {|
-  +requestID: PROVIDER_FETCH_ALL_REQUEST_ID,
+  +requestID: 'PROVIDER_FETCH_ALL',
   +type: 'REQUEST_SUCCESS',
   +value: ProviderOrderedCollection,
 |};
 
 type Action$FetchProvidersFailure = {|
   +error: FindiError,
-  +requestID: PROVIDER_FUZZY_SEARCH_REQUEST_ID,
+  +requestID: 'PROVIDER_FUZZY_SEARCH',
   +type: 'REQUEST_FAILURE',
 |};
 
 type Action$FetchProvidersInitialize = {|
-  +requestID: PROVIDER_FUZZY_SEARCH_REQUEST_ID,
+  +genInvoke: () => Promise<ProviderOrderedCollection>,
+  +requestID: 'PROVIDER_FUZZY_SEARCH',
   +type: 'REQUEST_INITIALIZE',
-  +value: ProviderOrderedCollection,
 |};
 
 type Action$FetchProvidersSuccess = {|
-  +requestID: PROVIDER_FUZZY_SEARCH_REQUEST_ID,
+  +requestID: 'PROVIDER_FUZZY_SEARCH',
   +type: 'REQUEST_SUCCESS',
   +value: ProviderOrderedCollection,
 |};
@@ -78,6 +78,7 @@ function createGenInvokeFuzzySearch(searchText: string) {
       100,
       0,
     );
+    // $FlowFixMe - Immutable is being stupid, this is correct.
     return Immutable.OrderedMap(providers.map(p => [p.id, p]));
   };
 }
@@ -88,6 +89,7 @@ async function genInvokeFetchAll() {
     100,
     0,
   );
+  // $FlowFixMe - Immutable is being stupid, this is correct.
   return Immutable.OrderedMap(providers.map(p => [p.id, p]));
 }
 

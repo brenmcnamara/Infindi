@@ -174,23 +174,22 @@ class AccountsScreen extends Component<Props> {
     this.props.dispatch(viewProviderSearch());
   });
 
-  _onSelectGroupInfo = throttle(
-    500,
-    (theme: Theme, groupType: AccountGroupType): void => {
-      const content = AccountGroupInfoContent[groupType];
-      invariant(content, 'No info exists for group type: %s.', groupType);
-      this.props.dispatch(
-        requestInfoModal({
-          id: `GROUP_INFO_${groupType}`,
-          priority: 'USER_REQUESTED',
-          render: () => (
-            <Text style={theme.getTextStyleNormal()}>{content}</Text>
-          ),
-          title: getFormattedGroupType(groupType),
-        }),
-      );
-    },
-  );
+  _onSelectGroupInfo = throttle(500, (groupType: AccountGroupType): void => {
+    const content = AccountGroupInfoContent[groupType];
+    invariant(content, 'No info exists for group type: %s.', groupType);
+    this.props.dispatch(
+      requestInfoModal({
+        id: `GROUP_INFO_${groupType}`,
+        priority: 'USER_REQUESTED',
+        render: () => (
+          <GetTheme>
+            {theme => <Text style={theme.getTextStyleNormal()}>{content}</Text>}
+          </GetTheme>
+        ),
+        title: getFormattedGroupType(groupType),
+      }),
+    );
+  });
 
   _onSelectAccount = throttle(500, (account: Account): void => {
     this.props.dispatch(viewAccountDetails(account.id));
@@ -299,7 +298,7 @@ class AccountsScreen extends Component<Props> {
               <AccountGroupHeader
                 balance={balance}
                 groupType={group.type}
-                onSelectInfo={() => this._onSelectGroupInfo(theme, group.type)}
+                onSelectInfo={() => this._onSelectGroupInfo(group.type)}
               />
             )}
           </GetTheme>

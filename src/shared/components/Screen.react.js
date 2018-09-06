@@ -9,6 +9,7 @@ import { StyleSheet, View } from 'react-native';
 export type Props = {
   avoidKeyboard: boolean,
   avoidNavBar: boolean,
+  avoidTabBar: boolean,
   children?: ?any,
 };
 

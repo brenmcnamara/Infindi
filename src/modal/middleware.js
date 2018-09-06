@@ -51,7 +51,7 @@ export default (store: StoreType) => (next: Next) => {
         const { modal } = action;
         const index = modalQueue.findIndex(_modal => _modal.id === modal.id);
         invariant(
-          index < 0 || action.shouldIgnoreRequestingExistingModal,
+          index < 0,
           'Trying to add multiple modals with the id: %s',
           action.modal.id,
         );

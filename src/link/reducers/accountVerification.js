@@ -1,10 +1,14 @@
 /* @flow */
 
+import ProviderFuzzySearchActions from '../../data-model/actions/ProviderFuzzySearch';
+
 import invariant from 'invariant';
 
 import { isSameLoginForm } from '../utils';
 
-import type Provider from 'common/lib/models/Provider';
+import type Provider, {
+  ProviderOrderedCollection,
+} from 'common/lib/models/Provider';
 
 import type { AccountVerificationPage, LoginFormContainer } from '../types';
 import type { ID } from 'common/types/core';
@@ -55,34 +59,6 @@ export default function accountVerification(
 
     case 'EXIT_ACCOUNT_VERIFICATION': {
       return { ...state, page: null };
-    }
-
-    case 'FETCH_PROVIDERS_SUCCESS': {
-      // Refresh the login form container.
-      const defaultLoginFormContainer = { ...state.defaultLoginFormContainer };
-      const loginFormContainer = { ...state.loginFormContainer };
-      const loginFormSource = { ...state.loginFormSource };
-
-      action.orderedCollection.forEach(provider => {
-        const loginForm = getYodleeLoginForm(provider);
-        defaultLoginFormContainer[provider.id] = loginForm;
-        if (loginFormSource[provider.id] !== 'ACCOUNT_LINK') {
-          loginFormContainer[provider.id] = loginForm;
-          loginFormSource[provider.id] = 'PROVIDER';
-        }
-      });
-
-      return {
-        ...state,
-        defaultLoginFormContainer,
-        didCompleteInitialSearch: true,
-        loginFormContainer,
-        loginFormSource,
-      };
-    }
-
-    case 'FETCH_PROVIDERS_FAILURE': {
-      return { ...state, didCompleteInitialSearch: false };
     }
 
     case 'MODEL_UPDATE_STATE': {
@@ -141,6 +117,57 @@ export default function accountVerification(
         loginFormContainer,
         loginFormSource,
         providerPendingLoginRequestMap,
+      };
+    }
+
+    case 'REQUEST_FAILURE': {
+      if (
+        (action.requestID !==
+          ProviderFuzzySearchActions.PROVIDER_FUZZY_SEARCH_REQUEST_ID) &&
+        (action.requestID !==
+          ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID)
+      ) {
+        return state;
+      }
+
+      // TODO: Clear up search semantics / naming around initial search. This
+      // gets reset after any search fails.
+      return { ...state, didCompleteInitialSearch: false };
+    }
+
+    // TODO: Doing this on every search update is super expensive!
+    case 'REQUEST_SUCCESS': {
+      if (
+        (action.requestID !==
+          ProviderFuzzySearchActions.PROVIDER_FUZZY_SEARCH_REQUEST_ID) &&
+        (action.requestID !==
+          ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID)
+      ) {
+        return state;
+      }
+
+      const orderedCollection: ProviderOrderedCollection = action.value;
+
+      // Refresh the login form container.
+      const defaultLoginFormContainer = { ...state.defaultLoginFormContainer };
+      const loginFormContainer = { ...state.loginFormContainer };
+      const loginFormSource = { ...state.loginFormSource };
+
+      orderedCollection.forEach(provider => {
+        const loginForm = getYodleeLoginForm(provider);
+        defaultLoginFormContainer[provider.id] = loginForm;
+        if (loginFormSource[provider.id] !== 'ACCOUNT_LINK') {
+          loginFormContainer[provider.id] = loginForm;
+          loginFormSource[provider.id] = 'PROVIDER';
+        }
+      });
+
+      return {
+        ...state,
+        defaultLoginFormContainer,
+        didCompleteInitialSearch: true,
+        loginFormContainer,
+        loginFormSource,
       };
     }
 
