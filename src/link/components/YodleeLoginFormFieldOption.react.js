@@ -46,9 +46,11 @@ export default class YodleeLoginFormFieldOption extends React.Component<Props> {
                       },
                     ]}
                   >
-                    <Text style={[styles.itemText, theme.getTextStyleNormal()]}>
-                      {optionItem.displayText}
-                    </Text>
+                    <View style={styles.itemTextContainer}>
+                      <Text style={theme.getTextStyleNormal()}>
+                        {optionItem.displayText}
+                      </Text>
+                    </View>
                     {optionItem.isSelected === 'true' ? (
                       <Image
                         resizeMode="contain"
@@ -56,7 +58,6 @@ export default class YodleeLoginFormFieldOption extends React.Component<Props> {
                         style={styles.checkmarkIcon}
                       />
                     ) : null}
-                    )}
                   </View>
                 </TouchableOpacity>
               </View>
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
   },
 
-  itemText: {
+  itemTextContainer: {
     flex: 1,
   },
 
