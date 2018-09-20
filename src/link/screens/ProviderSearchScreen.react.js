@@ -45,7 +45,7 @@ type ComponentProps = {};
 type ComputedProps = {
   accountLinks: AccountLinkCollection,
   enableInteraction: boolean,
-  providerLoadState: LoadState,
+  providerSearchLoadState: LoadState,
   providers: ProviderOrderedCollection,
   searchText: string,
 };
@@ -57,11 +57,11 @@ class ProviderSearchScreen extends React.Component<Props> {
   _searchRef: ElementRef<typeof TextInput> | null = null;
 
   render() {
-    const { providerLoadState } = this.props;
-    const shouldShowError = providerLoadState.type === 'FAILURE';
+    const { providerSearchLoadState } = this.props;
+    const shouldShowError = providerSearchLoadState.type === 'FAILURE';
     const shouldShowSpinner =
-      providerLoadState.type === 'UNINITIALIZED' ||
-      providerLoadState.type === 'LOADING';
+      providerSearchLoadState.type === 'UNINITIALIZED' ||
+      providerSearchLoadState.type === 'LOADING';
 
     return (
       <Screen avoidNavBar={true}>
@@ -247,7 +247,7 @@ function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
   return {
     accountLinks: AccountLinkStateUtils.getCollection(reduxState),
     enableInteraction: true,
-    providerLoadState: reduxState.providerFuzzySearch.loadState,
+    providerSearchLoadState: reduxState.providerFuzzySearch.searchLoadState,
     providers: reduxState.providerFuzzySearch.filteredCollection,
     searchText: reduxState.accountVerification.providerSearchText,
   };

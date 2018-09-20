@@ -4,9 +4,8 @@ import FindiService from '../../FindiService';
 import Immutable from 'immutable';
 
 import type FindiError from 'common/lib/FindiError';
-import type Provider, {
-  ProviderOrderedCollection,
-} from 'common/lib/models/Provider';
+
+import type { ProviderOrderedCollection } from 'common/lib/models/Provider';
 
 export type Action =
   | Action$FetchAllProvidersFailure
@@ -73,22 +72,14 @@ function fetchProviders(searchText: string) {
 
 function createGenInvokeFuzzySearch(searchText: string) {
   return async () => {
-    const providers: Array<Provider> = await FindiService.genQueryProviders(
-      searchText,
-      100,
-      0,
-    );
+    const providers = await FindiService.genQueryProviders(searchText, 100, 0);
     // $FlowFixMe - Immutable is being stupid, this is correct.
     return Immutable.OrderedMap(providers.map(p => [p.id, p]));
   };
 }
 
 async function genInvokeFetchAll() {
-  const providers: Array<Provider> = await FindiService.genQueryProviders(
-    '',
-    100,
-    0,
-  );
+  const providers = await FindiService.genQueryProviders('', 100, 0);
   // $FlowFixMe - Immutable is being stupid, this is correct.
   return Immutable.OrderedMap(providers.map(p => [p.id, p]));
 }

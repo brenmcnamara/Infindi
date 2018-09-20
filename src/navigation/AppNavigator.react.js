@@ -2,8 +2,10 @@
 
 import * as React from 'react';
 import AuthNavigator from './AuthNavigator.react';
+import CheckInternetScreen from '../CheckInternetScreen.react';
 import LoadingScreen from '../LoadingScreen.react';
 import MainNavigator from './MainNavigator.react';
+import ProviderFuzzySearchStateUtils from '../data-model/state-utils/ProviderFuzzySearch';
 import SwitchNavigator from './SwitchNavigator.react';
 
 import invariant from 'invariant';
@@ -25,6 +27,18 @@ export default class AppNavigator extends React.Component<Props> {
   }
 
   _calculateScreenForState = (reduxState: ReduxState): string => {
+    const providerInitialLoadState = ProviderFuzzySearchStateUtils.getInitialLoadState(
+      reduxState,
+    );
+    if (
+      providerInitialLoadState.type === 'UNINITIALIZED' ||
+      providerInitialLoadState.type === 'LOADING'
+    ) {
+      return 'Loading';
+    } else if (providerInitialLoadState.type === 'FAILURE') {
+      return 'CheckInternet';
+    }
+
     const { auth } = reduxState;
     switch (auth.status.type) {
       case 'LOGIN_INITIALIZE':
@@ -55,6 +69,10 @@ const Screens = [
   {
     component: AuthNavigator,
     screen: 'Auth',
+  },
+  {
+    component: CheckInternetScreen,
+    screen: 'CheckInternet',
   },
   {
     component: LoadingScreen,

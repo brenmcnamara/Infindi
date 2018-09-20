@@ -13,7 +13,8 @@ import type { PureAction } from '../../store';
 export type State = {
   filteredCollection: ProviderOrderedCollection,
   fullCollection: ProviderCollection,
-  loadState: LoadState,
+  initialLoadState: LoadState,
+  searchLoadState: LoadState,
 };
 
 const DEFAULT_STATE = {
@@ -21,10 +22,10 @@ const DEFAULT_STATE = {
   filteredCollection: Immutable.OrderedMap(),
   // $FlowFixMe - Immutable is being stupid.
   fullCollection: Immutable.Map(),
-  // TODO: It is not clear what the semantics of this are. loadState is being
-  // updated sometimes on fuzzy search fetches and sometimes during the initial
-  // fetch.
-  loadState: { type: 'UNINITIALIZED' },
+  // Load state for initially fetching the providers.
+  initialLoadState: { type: 'UNINITIALIZED' },
+  // Load state for subsequent searches of the providers.
+  searchLoadState: { type: 'UNINITIALIZED' },
 };
 
 export default function providers(
@@ -35,13 +36,20 @@ export default function providers(
     case 'REQUEST_FAILURE': {
       if (
         action.requestID ===
-          ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID ||
-        action.requestID ===
-          ProviderFuzzySearchActions.PROVIDER_FUZZY_SEARCH_REQUEST_ID
+        ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID
       ) {
         return {
           ...state,
-          loadState: { error: action.error, type: 'FAILURE' },
+          initialLoadState: { error: action.error, type: 'FAILURE' },
+          searchLoadState: { error: action.error, type: 'FAILURE' },
+        };
+      } else if (
+        action.requestID ===
+        ProviderFuzzySearchActions.PROVIDER_FUZZY_SEARCH_REQUEST_ID
+      ) {
+        return {
+          ...state,
+          searchLoadState: { error: action.error, type: 'FAILURE' },
         };
       }
       return state;
@@ -52,7 +60,16 @@ export default function providers(
         action.requestID ===
         ProviderFuzzySearchActions.PROVIDER_FETCH_ALL_REQUEST_ID
       ) {
-        return { ...state, loadState: { type: 'LOADING' } };
+        return {
+          ...state,
+          initialLoadState: { type: 'LOADING' },
+          searchLoadState: { type: 'LOADING' },
+        };
+      } else if (
+        action.requestID ===
+        ProviderFuzzySearchActions.PROVIDER_FUZZY_SEARCH_REQUEST_ID
+      ) {
+        return { ...state, searchLoadState: { type: 'LOADING' } };
       }
       return state;
     }
@@ -66,7 +83,8 @@ export default function providers(
           ...state,
           filteredCollection: action.value,
           fullCollection: Immutable.Map(action.value),
-          loadState: { type: 'STEADY' },
+          initialLoadState: { type: 'STEADY' },
+          searchLoadState: { type: 'STEADY' },
         };
       } else if (
         action.requestID ===
@@ -75,7 +93,7 @@ export default function providers(
         return {
           ...state,
           filteredCollection: action.value,
-          loadState: { type: 'STEADY' },
+          searchLoadState: { type: 'STEADY' },
         };
       }
       return state;
