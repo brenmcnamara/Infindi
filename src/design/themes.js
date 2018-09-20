@@ -276,7 +276,7 @@ const Themes = {
       header2: 22,
       header3: 18,
 
-      normal: 14,
+      normal: 15,
       small: 14,
       tiny: 12,
     },
@@ -335,7 +335,7 @@ const Themes = {
       header2: 22,
       header3: 18,
 
-      normal: 14,
+      normal: 15,
       small: 14,
       tiny: 12,
     },
