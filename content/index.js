@@ -1,6 +1,14 @@
 /* @flow */
 
 /**
+ * This message fails if the app fails to initialize and we believe the reason
+ * for the failure is that there is no internet connection.
+ */
+export const CheckInternet = cleanupWhitespace(`
+  Please check your internet connection.
+`);
+
+/**
  * Content that shows when the user is on the accounts page, but they have
  * no accounts yet.
  */
@@ -168,8 +176,13 @@ export const AccountLinkBanner = {
   `),
 };
 
+/**
+ * Shows when the user clicks on the "Add Account" dialog and the providers
+ * in the list failed to load.
+ */
 export const ProviderSearchError = cleanupWhitespace(`
-  There is an issue with our service. Please try again later.
+  Search is not working. We are working on fixing this issue, and
+  apologize for any inconvenience.
 `);
 
 /**
