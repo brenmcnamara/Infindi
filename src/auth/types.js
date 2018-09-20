@@ -56,6 +56,7 @@ export type VerificationPayload = {|
   +type: 'EMAIL',
 |};
 
+// TODO: Remove uses of errorMessage and errorCode, and replace them with FindiError.
 export type AuthStatus =
   | {|
       +type: 'LOGOUT_INITIALIZE',

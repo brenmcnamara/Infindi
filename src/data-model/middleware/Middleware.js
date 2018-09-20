@@ -28,7 +28,6 @@ import type {
   ModelListenerStateMap,
   ModelOperation,
   ModelOperationMap,
-  ModelOperationState,
   ModelOperationState$Collection,
   ModelOperationState$OrderedCollection,
   ModelOperationState$Single,

@@ -5,13 +5,13 @@
 import AccountLinkMiddleware from '../data-model/middleware/AccountLink';
 import AccountLinkFlowMiddleware from '../link/middleware/AccountLinkFlowMiddleware';
 import AccountMiddleware from '../data-model/middleware/Account';
+import AuthMiddleware from '../auth/AuthMiddleware';
 import ProviderLoginMiddleware from '../link/middleware/ProviderLoginMiddleware';
 import ProviderMiddleware from '../data-model/middleware/Provider';
 import RequestMiddleware from './RequestMiddleware';
 import TransactionMiddleware from '../data-model/middleware/Transaction';
 import UserInfoMiddleware from '../data-model/middleware/UserInfo';
 
-import authentication from '../auth/middleware';
 import modal from '../modal/middleware';
 import rootReducer from './RootReducer';
 import thunk from 'redux-thunk';
@@ -26,6 +26,7 @@ import type { Action as Action$ActionItems } from '../action-items/Actions';
 import type { Action as Action$Auth } from '../auth/Actions';
 import type { Action as Action$Banner } from '../banner/Actions';
 import type { Action as Action$BannerMiddleware } from '../banner/middleware';
+import type { Action as Action$FatalFailure } from '../fatal-failure/Actions';
 import type { Action as Action$LifeCycle } from '../life-cycle/Actions';
 import type { Action as Action$Link } from '../link/Actions';
 import type { Action as Action$Modal } from '../modal/Actions';
@@ -33,7 +34,6 @@ import type { Action as Action$ModalMiddleware } from '../modal/middleware';
 import type { Action as Action$Navigation } from '../navigation/Actions';
 import type { Action as Action$Provider } from '../data-model/actions/Provider';
 import type { Action as Action$ProviderFuzzySearch } from '../data-model/actions/ProviderFuzzySearch';
-import type { Action as Action$RequestMiddleware } from './RequestMiddleware';
 import type { Action as Action$Transaction } from '../data-model/actions/Transaction';
 import type { Action as Action$UserInfo } from '../data-model/actions/UserInfo';
 import type { State } from './RootReducer';
@@ -49,6 +49,7 @@ export type PureAction =
   | Action$Auth
   | Action$Banner
   | Action$BannerMiddleware
+  | Action$FatalFailure
   | Action$LifeCycle
   | Action$Link
   | Action$Modal
@@ -90,13 +91,13 @@ export type CombineReducers<TState: Object> = (reducerMap: {
   [key: string]: Reducer<*>,
 }) => Reducer<TState>;
 
+const authMiddleware = new AuthMiddleware();
 const accountLinkMiddleware = new AccountLinkMiddleware();
 const accountMiddleware = new AccountMiddleware();
 const accountLinkFlowMiddleware = new AccountLinkFlowMiddleware();
-const requestMiddleware = new RequestMiddleware();
 const providerLoginMiddleware = new ProviderLoginMiddleware();
 const providerMiddleware = new ProviderMiddleware();
-
+const requestMiddleware = new RequestMiddleware();
 const transactionMiddleware = new TransactionMiddleware();
 const userInfoMiddleware = new UserInfoMiddleware();
 
@@ -108,7 +109,7 @@ if (__DEV__) {
     // Thunk comes first.
     thunk,
     // Then comes middleware that need network access.
-    authentication,
+    authMiddleware.handle,
     // -------------------------------------------------------------------------
     // BOILERPLATE DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------
@@ -139,7 +140,7 @@ if (__DEV__) {
     // Thunk comes first.
     thunk,
     // Then comes middleware that need network access.
-    authentication,
+    authMiddleware,
     // -------------------------------------------------------------------------
     // BOILERPLATE DATA MODEL MIDDLEWARE
     // -------------------------------------------------------------------------

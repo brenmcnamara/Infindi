@@ -8,6 +8,7 @@ import accountVerification from '../link/reducers/accountVerification';
 import actionItems from '../action-items/Reducer';
 import auth from '../auth/reducer';
 import banner from '../banner/Reducer';
+import fatalFailure from '../fatal-failure/Reducer';
 import lifeCycle from '../life-cycle/Reducer';
 import provider from '../data-model/reducers/Provider';
 import providerFuzzySearch from '../data-model/reducers/ProviderFuzzySearch';
@@ -25,6 +26,7 @@ import type { State as State$AccountVerification } from '../link/reducers/accoun
 import type { State as State$ActionItems } from '../action-items/Reducer';
 import type { State as State$Auth } from '../auth/reducer';
 import type { State as State$Banner } from '../banner/Reducer';
+import type { State as State$FatalFailure } from '../fatal-failure/Reducer';
 import type { State as State$LifeCycle } from '../life-cycle/Reducer';
 import type { State as State$Modal } from '../modal/Reducer';
 import type { State as State$Navigation } from '../navigation/Reducer';
@@ -41,6 +43,7 @@ export type State = {|
   +actionItems: State$ActionItems,
   +auth: State$Auth,
   +banner: State$Banner,
+  +fatalFailure: State$FatalFailure,
   +lifeCycle: State$LifeCycle,
   +modal: State$Modal,
   +navigation: State$Navigation,
@@ -59,6 +62,7 @@ export default combineReducers({
   accountVerification,
   auth,
   banner,
+  fatalFailure,
   lifeCycle,
   modal,
   navigation,

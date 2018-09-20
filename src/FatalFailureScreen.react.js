@@ -6,11 +6,25 @@ import React, { Component } from 'react';
 import Screen from './shared/components/Screen.react';
 import TextDesign from './design/text';
 
+import invariant from 'invariant';
+
 import { connect } from 'react-redux';
-import { FatalError as FatalErrorContent } from '../content';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
-class FatalErrorScreen extends Component<{}> {
+import type FindiError from 'common/lib/FindiError';
+
+import type { Action, ReduxProps, ReduxState } from './store';
+
+export type Props = ReduxProps & ComponentProps & ComputedProps;
+
+type ComponentProps = {};
+
+type ComputedProps = {
+  error: FindiError,
+  retryAction: Action,
+};
+
+class FatalFailureScreen extends Component<Props> {
   render() {
     return (
       <Screen>
@@ -18,7 +32,7 @@ class FatalErrorScreen extends Component<{}> {
           <View style={styles.root}>
             <Image source={Icons.ErrorLarge} />
             <Text style={[styles.text, TextDesign.header3]}>
-              {FatalErrorContent}
+              {this.props.error.errorMessage}
             </Text>
           </View>
         </Content>
@@ -27,7 +41,17 @@ class FatalErrorScreen extends Component<{}> {
   }
 }
 
-export default connect()(FatalErrorScreen);
+function mapReduxStateToProps(reduxState: ReduxState): ComputedProps {
+  const { error, retry } = reduxState.fatalFailure;
+  invariant(error, 'Expecting initializationFailure to have an error');
+  invariant(retry, 'Expecting initializationFailure to have a retry action');
+  return {
+    error,
+    retryAction: retry,
+  };
+}
+
+export default connect(mapReduxStateToProps)(FatalFailureScreen);
 
 const styles = StyleSheet.create({
   root: {
