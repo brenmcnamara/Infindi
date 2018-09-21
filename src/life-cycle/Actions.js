@@ -1,5 +1,9 @@
 /* @flow */
 
+import ProviderFuzzySearchActions from '../data-model/actions/ProviderFuzzySearch';
+import ProviderFuzzySearchStateUtils from '../data-model/state-utils/ProviderFuzzySearch';
+
+import type { Dispatch, GetState } from '../store';
 import type { ID } from 'common/types/core';
 
 export type Action =
@@ -59,9 +63,27 @@ function exitWatchSession() {
   };
 }
 
+function retryAppInitialization() {
+  // NOTE: Redoing the app initialization is tricky. If app initialization fails,
+  // we assume that the firebase listeners and cursors are set correctly, because
+  // they are listening to a socket for data (and because the firebase data is
+  // cached and can be loaded even when offline). Need to check on a
+  // case-by-case basis if any of the initilizations failed and re-run them.
+  return (dispatch: Dispatch, getState: GetState) => {
+    const reduxState = getState();
+    const providerInitialLoadState = ProviderFuzzySearchStateUtils.getInitialLoadState(
+      reduxState,
+    );
+    if (providerInitialLoadState.type === 'FAILURE') {
+      dispatch(ProviderFuzzySearchActions.fetchAllProviders());
+    }
+  };
+}
+
 export default {
   addAccountToTransactionCursorPair,
   enterWatchSession,
   exitWatchSession,
   removeAccountToTransactionCursorPair,
+  retryAppInitialization,
 };

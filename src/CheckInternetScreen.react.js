@@ -3,30 +3,53 @@
 import * as React from 'react';
 import Content from './shared/components/Content.react';
 import Icons from './design/icons';
+import LifeCycleActions from './life-cycle/Actions';
 import Screen from './shared/components/Screen.react';
-import TextDesign from './design/text';
+import TextButton from './shared/components/TextButton.react';
 
 import { CheckInternet } from '../content';
+import { connect } from 'react-redux';
+import { GetTheme } from './design/components/Theme.react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
-export type Props = {};
+import type { ReduxProps } from './store';
 
-export default class CheckInternetScreen extends React.Component<Props> {
+export type Props = ReduxProps & {};
+
+class CheckInternetScreen extends React.Component<Props> {
   render() {
     return (
-      <Screen>
-        <Content>
-          <View style={styles.root}>
-            <Image source={Icons.ErrorLarge} />
-            <Text style={[styles.text, TextDesign.header3]}>
-              {CheckInternet}
-            </Text>
-          </View>
-        </Content>
-      </Screen>
+      <GetTheme>
+        {theme => (
+          <Screen>
+            <Content>
+              <View style={styles.root}>
+                <Image source={Icons.ErrorLarge} />
+                <Text style={[styles.text, theme.getTextStyleHeader3()]}>
+                  {CheckInternet}
+                </Text>
+                <View style={styles.retryContainer}>
+                  <TextButton
+                    onPress={this._onPressTryAgain}
+                    size="LARGE"
+                    text="Try again"
+                    type="SPECIAL"
+                  />
+                </View>
+              </View>
+            </Content>
+          </Screen>
+        )}
+      </GetTheme>
     );
   }
+
+  _onPressTryAgain = (): void => {
+    this.props.dispatch(LifeCycleActions.retryAppInitialization());
+  };
 }
+
+export default connect()(CheckInternetScreen);
 
 const styles = StyleSheet.create({
   root: {
@@ -37,7 +60,11 @@ const styles = StyleSheet.create({
 
   text: {
     paddingHorizontal: 40,
-    paddingTop: 60,
+    paddingTop: 40,
     textAlign: 'center',
+  },
+
+  retryContainer: {
+    paddingTop: 20,
   },
 });
