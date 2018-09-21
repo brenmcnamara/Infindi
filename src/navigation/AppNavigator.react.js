@@ -27,18 +27,6 @@ export default class AppNavigator extends React.Component<Props> {
   }
 
   _calculateScreenForState = (reduxState: ReduxState): string => {
-    const providerInitialLoadState = ProviderFuzzySearchStateUtils.getInitialLoadState(
-      reduxState,
-    );
-    if (
-      providerInitialLoadState.type === 'UNINITIALIZED' ||
-      providerInitialLoadState.type === 'LOADING'
-    ) {
-      return 'Loading';
-    } else if (providerInitialLoadState.type === 'FAILURE') {
-      return 'CheckInternet';
-    }
-
     const { auth } = reduxState;
     switch (auth.status.type) {
       case 'LOGIN_INITIALIZE':
@@ -52,6 +40,17 @@ export default class AppNavigator extends React.Component<Props> {
       }
 
       case 'LOGGED_IN': {
+        const providerInitialLoadState = ProviderFuzzySearchStateUtils.getInitialLoadState(
+          reduxState,
+        );
+        if (
+          providerInitialLoadState.type === 'UNINITIALIZED' ||
+          providerInitialLoadState.type === 'LOADING'
+        ) {
+          return 'Loading';
+        } else if (providerInitialLoadState.type === 'FAILURE') {
+          return 'CheckInternet';
+        }
         return 'Main';
       }
 
